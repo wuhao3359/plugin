@@ -17,6 +17,17 @@ public static class Keys
     public static Byte num9_key = 105;
     public static Byte num_sub_key = 109;
     public static Byte F1_key = 112;
+    public static Byte F2_key = 113;
+    public static Byte F3_key = 114;
+    public static Byte F4_key = 115;
+    public static Byte F5_key = 116;
+    public static Byte F6_key = 117;
+    public static Byte F7_key = 118;
+    public static Byte F8_key = 119;
+    public static Byte F9_key = 120;
+    public static Byte F10_key = 121;
+    public static Byte F11_key = 122;
+    public static Byte F12_key = 123;
     public static Byte esc_key = 27;
     public static Byte space_key = 32;
     public static Byte a_key = 65;

@@ -35,6 +35,9 @@ namespace WoAutoCollectionPlugin.Bot
 
         private bool LastFish = false;
 
+        private int num = 0;
+        private int fishTime = 12;
+
         public CollectionFishBot(GameData GameData)
         {
             this.GameData = GameData;
@@ -51,6 +54,7 @@ namespace WoAutoCollectionPlugin.Bot
             canMove = false;
             readyMove = false;
             closed = false;
+            num = 0;
         }
 
         // 前往指定钓鱼地点 [√]
@@ -60,10 +64,6 @@ namespace WoAutoCollectionPlugin.Bot
         {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
-            int repair = -1;
-            if (str.Length >= 1) {
-                repair = int.Parse(str[1]);
-            }
 
             fishsw = new();
             Init();
@@ -77,27 +77,32 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 ToArea = Position.ToPurpleFishArea;
                 FishArea = Position.PurpleFishArea;
+                fishTime = Position.PurpleFishTime;
+            } else if (area == 2) {
+                ToArea = Position.ToWhiteFishArea;
+                FishArea = Position.WhiteFishArea;
+                fishTime = Position.WhiteFishTime;
             }
 
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
-            KeyOperates.KeyMethod(Keys.q_key);
-            Thread.Sleep(3000);
+            //KeyOperates.KeyMethod(Keys.q_key);
+            //Thread.Sleep(3000);
             // 通过路径到达固定区域位置
-            position = MovePositions(ToArea, true);
+            //position = MovePositions(ToArea, true);
 
-            KeyOperates.KeyMethod(Keys.q_key);
-            Thread.Sleep(3000);
-            KeyOperates.KeyMethod(Keys.q_key);
+            //KeyOperates.KeyMethod(Keys.q_key);
+            //Thread.Sleep(3000);
+            //KeyOperates.KeyMethod(Keys.q_key);
 
             // 在固定区域到达作业点 作业循环 40min切换  0->2->1->2->0....
             int currentPoint = 0;
             Stopwatch sw = new();
 
-            for (int i = 0; i <= 20; i++)
+            for (int i = 0; i <= 10; i++)
             {
                 sw.Reset();
-                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                if (closed)
                 {
                     PluginLog.Log($"中途结束");
                     return false;
@@ -122,7 +127,7 @@ namespace WoAutoCollectionPlugin.Bot
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
                 {
                     Thread.Sleep(1000);
-                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    if (closed)
                     {
                         PluginLog.Log($"中途结束");
                         return false;
@@ -133,7 +138,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
 
-                if (repair >= 0 && RepairUi.NeedsRepair())
+                if (RepairUi.NeedsRepair())
                 {
                     CommonBot.Repair();
                 }
@@ -142,11 +147,29 @@ namespace WoAutoCollectionPlugin.Bot
                 while (!canMove)
                 {
                     Thread.Sleep(1000);
-                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    if (closed)
                     {
                         PluginLog.Log($"中途结束");
                         return false;
                     }
+                }
+
+                // 判断是否需要修理
+                if (RepairUi.NeedsRepair())
+                {
+                    CommonBot.Repair();
+                }
+
+                // 判断是否需要精制
+                int count = RepairUi.CanExtractMateria();
+                if (count >= 5)
+                {
+                    CommonBot.ExtractMateria(count);
+                }
+
+                if (num >= 70) {
+                    PluginLog.Log($"获得了70条目标");
+                    return true;
                 }
             }
             PluginLog.Log($"任务结束");
@@ -210,19 +233,14 @@ namespace WoAutoCollectionPlugin.Bot
         private void OnCollectionFishBite()
         {
             Record.SetTugHook(TugType.Bite, Record.Hook);
-            PluginLog.Log("Fish bit with {BiteType}", Record.Tug);
             Task task = new(() =>
             {
                 PluginLog.Log($"Fish bit with {Record.Tug} fish time: {fishsw.ElapsedMilliseconds / 1000}");
-                if (fishsw.ElapsedMilliseconds / 1000 < 10)
-                {
-                    KeyOperates.KeyMethod(Keys.n1_key);
-                }
-                else
+                if (fishsw.ElapsedMilliseconds / 1000 >= fishTime)
                 {
                     switch (Record.Tug.ToString())
                     {
-                        case "Week":
+                        case "Weak":
                             KeyOperates.KeyMethod(Keys.n3_key);
                             break;
                         case "Strong":
@@ -231,8 +249,8 @@ namespace WoAutoCollectionPlugin.Bot
                         default:
                             break;
                     }
-                    KeyOperates.KeyMethod(Keys.n1_key);
                 }
+                KeyOperates.KeyMethod(Keys.n1_key);
             });
             task.Start();
         }
@@ -241,6 +259,10 @@ namespace WoAutoCollectionPlugin.Bot
         {
             Task task = new(() =>
             {
+                if (num >= 70) {
+                    KeyOperates.KeyMethod(Keys.F1_key);
+                    return;
+                }
                 Thread.Sleep(2000);
                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                 if (!readyMove)
@@ -285,14 +307,15 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(6000);
                         if (gp > 560)
                         {
-                            KeyOperates.KeyMethod(Keys.n5_key);
+                            KeyOperates.KeyMethod(Keys.F4_key);
+                            Thread.Sleep(1500);
                             existStatus = true;
                             gp -= 560;
                         }
                     }
                     if (LastFish && gp > 350)
                     {
-                        KeyOperates.KeyMethod(Keys.n6_key, 0, true);
+                        KeyOperates.KeyMethod(Keys.F5_key);
                         Thread.Sleep(1500);
                     }
                     LastFish = false;
@@ -311,7 +334,10 @@ namespace WoAutoCollectionPlugin.Bot
             LastFish = true;
             Task task = new(() =>
             {
+                num++;
+                Thread.Sleep(1000);
                 KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(200);
                 KeyOperates.KeyMethod(Keys.num0_key);
             });
             task.Start();

@@ -24,9 +24,43 @@ namespace WoAutoCollectionPlugin.Ui
                 var AtkComponentButton = Addon->RepairAllButton;
                 var button = AtkComponentButton->ButtonBGNode;
                 var nb = button->NextSiblingNode;
-                var isVisible = (AtkUnitBase->Flags & 0x20) == 0x20;
-                if (isVisible) {
-                    AtkUnitBase->SetFocusNode(nb, true);
+                AtkUnitBase->SetFocusNode(nb, true);
+                return true;
+            }
+            return false;
+        }
+
+        public static unsafe bool CanRepair()
+        {
+            var im = InventoryManager.Instance();
+            if (im == null)
+            {
+                PluginLog.Error("InventoryManager was null");
+                return false;
+            }
+
+            var equipped = im->GetInventoryContainer(InventoryType.EquippedItems);
+            if (equipped == null)
+            {
+                PluginLog.Error("InventoryContainer was null");
+                return false;
+            }
+
+            if (equipped->Loaded == 0)
+            {
+                PluginLog.Error($"InventoryContainer is not loaded");
+                return false;
+            }
+
+            for (var i = 0; i < equipped->Size; i++)
+            {
+                var item = equipped->GetInventorySlot(i);
+                if (item == null)
+                    continue;
+
+                if (item->Condition <= 29000)
+                {
+                    PluginLog.Log($"{item->Condition}");
                     return true;
                 }
             }
@@ -61,7 +95,7 @@ namespace WoAutoCollectionPlugin.Ui
                 if (item == null)
                     continue;
 
-                if (item->Condition <= 5000) {
+                if (item->Condition <= 8000) {
                     PluginLog.Log($"{item->Condition}");
                     return true;
                 }

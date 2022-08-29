@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
@@ -10,17 +11,6 @@ using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
-// 8/9
-// *  测试移动脚本[√]
-// 1. 测试空岛钓鱼脚本稳定性[√]
-// 1.1 空岛脚本加入循环[√]
-// 2. 传送功能[√]
-// 2.1 hook使用技能[取消]
-// 3. 获取采集点位置 时间[取消]
-// 4. 一键启动[√]
-
-// 8/9 6.1更新
-// 1. 整合生产脚本[√]
 namespace WoAutoCollectionPlugin
 {
     public sealed class WoAutoCollectionPlugin : IDalamudPlugin
@@ -84,7 +74,7 @@ namespace WoAutoCollectionPlugin
                     HelpMessage = "fish {param}"
                 });
 
-                DalamudApi.CommandManager.AddHandler(fish, new CommandInfo(OnCollectionFishCommand)
+                DalamudApi.CommandManager.AddHandler(collectionfish, new CommandInfo(OnCollectionFishCommand)
                 {
                     HelpMessage = "collectionfish {param}"
                 });
@@ -134,6 +124,7 @@ namespace WoAutoCollectionPlugin
             // PluginUi.Dispose();
             DalamudApi.CommandManager.RemoveHandler(collect);
             DalamudApi.CommandManager.RemoveHandler(fish);
+            DalamudApi.CommandManager.RemoveHandler(collectionfish);
             DalamudApi.CommandManager.RemoveHandler(gather);
             DalamudApi.CommandManager.RemoveHandler(woTest);
             DalamudApi.CommandManager.RemoveHandler(actionTest);
@@ -173,7 +164,7 @@ namespace WoAutoCollectionPlugin
             if (str.Length > 1) {
                 cycle = int.Parse(str[1]);
             }
-            PluginLog.Log($"fish: {args}");
+            PluginLog.Log($"fish: {args} length: {str.Length}");
 
             if (area <= 0)
             {
@@ -194,8 +185,15 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 int cycle = 0;
-                while (isRunning && cycle < 6)
+                while (isRunning && cycle < 3)
                 {
+                    if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent] 
+                    || DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
+                        PluginLog.Log($"当前状态无法进行任务, skip...");
+                        cycle++;
+                        Thread.Sleep(3000);
+                        continue;
+                    }
                     if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
                     {
                         PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
@@ -207,6 +205,7 @@ namespace WoAutoCollectionPlugin
 
                     if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
                     {
+                        PluginLog.Log($"start task...");
                         DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
                         FishBot.RunYFishScript(args);
                         DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
@@ -262,12 +261,13 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 int cycle = 0;
-                while (isRunning && cycle < 6)
+                while (isRunning)
                 {
                     DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
                     CollectionFishBot.RunCollectionFishScript(args);
                     DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
 
+                    isRunning = false;
                     cycle++;
                     PluginLog.Log($"准备开始下一轮, {cycle}");
                     Thread.Sleep(3000);
@@ -348,9 +348,9 @@ namespace WoAutoCollectionPlugin
             //RecipeNoteUi.OpenRecipeNote(recipeId);
 
             // focus
-            //UiDebug addonInspector = null;
-            //addonInspector ??= new UiDebug();
-            //addonInspector.Draw();
+            UiDebug addonInspector = null;
+            addonInspector ??= new UiDebug();
+            addonInspector.Draw();
         }
 
         private void OnActionTestCommand(string command, string args)

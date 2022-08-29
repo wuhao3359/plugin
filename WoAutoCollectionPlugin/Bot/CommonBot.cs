@@ -39,12 +39,14 @@ namespace WoAutoCollectionPlugin.Bot
                 return flag;
             }
 
-            KeyOperates.KeyMethod(Keys.plus_key);
+            KeyOperates.KeyMethod(Keys.F12_key);
             Thread.Sleep(200);
             if (RepairUi.AllRepairButton())
             {
-                Thread.Sleep(300);
+                Thread.Sleep(1000);
                 KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(1000);
+                CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(4000);
             }
@@ -62,10 +64,14 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num2_key);
-            Thread.Sleep(1500);
+            KeyOperates.KeyMethod(Keys.num0_key);
+            Thread.Sleep(2000);
             if (RepairUi.AllRepairButton())
             {
-                Thread.Sleep(300);
+                Thread.Sleep(1000);
+                KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(1000);
+                CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(500);
@@ -87,10 +93,11 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"ExtractMateria stopping");
                 return true;
             }
-            KeyOperates.KeyMethod(Keys.minus_key);
+            KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1000);
             for (int i = 0; i < count; i++) {
                 KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(1000);
                 KeyOperates.KeyMethod(Keys.num4_key);
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(3500);
@@ -125,7 +132,7 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(1000);
             KeyOperates.KeyMethod(Keys.num1_key);
             KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(2500);
+            Thread.Sleep(3000);
             for (int i = 0; i < Category; i++) {
                 KeyOperates.KeyMethod(Keys.num2_key);
             }
@@ -136,7 +143,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             int n = 0;
-            while (!RecipeNoteUi.SelectYesNoIsOpen() && n < 30)
+            while (!RecipeNoteUi.SelectYesNoIsOpen() && n < 15)
             {
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(500);

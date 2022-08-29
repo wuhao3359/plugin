@@ -16,10 +16,10 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1093f, 1093f, 1428f),
             new Vector3 (1091f, 1093f, 1406f),
         };
-        public static Vector3 YunGuanRepairNPC = new(866f, 2720f, 1873f);
+        public static Vector3 YunGuanRepairNPC = new(869f, 2720f, 1876f);
         // 去区域A的路径 TerritoryType: 930 
         public static Vector3[] ToAreaA = {
-            new Vector3 (866f, 2720f, 1873f),
+            new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3214f, 2545f, 854f),
@@ -47,21 +47,22 @@ namespace WoAutoCollectionPlugin.Utility
 
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化
-        // Purple 紫票 佛恩·米克 灰蚯蚓 13.5-25.8 https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
+        // Purple 紫票 佛恩·米克 灰蚯蚓 16.5-25.8 https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static Vector3[] ToPurpleFishArea = {
             new Vector3 (0f, 0f, 0f)
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] PurpleFishArea = {
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
+            new Vector3 (916f, 2303f, 3107f),
+            new Vector3 (955f, 2303f, 3071f),
+            new Vector3 (934f, 2303f, 3087f),
         };
+        public static int PurpleFishTime = 16 ;
 
         // White 白票 灵岩之剑 万能拟饵 11.9-20.6 https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
         // 去钓鱼区域的路径 TerritoryType: ? 
-        public static Vector3[] ToWhithFishArea = {
+        public static Vector3[] ToWhiteFishArea = {
             new Vector3 (0f, 0f, 0f)
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
@@ -70,6 +71,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (0f, 0f, 0f),
             new Vector3 (0f, 0f, 0f),
         };
+        public static int WhiteFishTime = 11;
 
 
         // ------------------------------- 园艺 ------------------------------------

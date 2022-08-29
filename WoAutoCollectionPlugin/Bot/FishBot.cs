@@ -65,19 +65,49 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
-                Vector3 position = MovePositions(ToArea, false);
-                // 进入空岛 10 00 40 40
+                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                double d = Maths.Distance(position, ToArea[1]);
+                if (Maths.Distance(position, ToArea[1]) > 10)
+                {
+                    MovePositions(ToArea, false);
+                }
+                else {
+                    PluginLog.Log($"距离: {d} 不需要移动");
+                }
+
+                // 进入空岛
                 KeyOperates.KeyMethod(Keys.num1_key);
                 KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(500);
                 KeyOperates.KeyMethod(Keys.num0_key);
+                int n = 0;
+                while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
+                    Thread.Sleep(500);
+                    n++;
+                }
                 KeyOperates.KeyMethod(Keys.num0_key);
+                n = 0;
+                while (!CommonUi.AddonSelectYesnoIsOpen() && n < 5)
+                {
+                    Thread.Sleep(500);
+                    n++;
+                }
                 Thread.Sleep(1500);
-                KeyOperates.KeyMethod(Keys.num4_key);
+                CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(1500);
-                KeyOperates.KeyMethod(Keys.num4_key);
+
+                n = 0;
+                while (!CommonUi.AddonContentsFinderConfirmOpen() && n < 5)
+                {
+                    Thread.Sleep(500);
+                    n++;
+                }
+                Thread.Sleep(2000);
+                CommonUi.ContentsFinderConfirmButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
+                KeyOperates.KeyMethod(Keys.num0_key);
+
                 Thread.Sleep(10000);
             }
             return true;
@@ -88,6 +118,10 @@ namespace WoAutoCollectionPlugin.Bot
         {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
+            int repair = 0;
+            if (str.Length >= 3) {
+                repair = int.Parse(str[2]);
+            }
 
             yfishsw = new();
             Init();
@@ -112,12 +146,21 @@ namespace WoAutoCollectionPlugin.Bot
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
 
             // 修理
-            if (RepairUi.NeedsRepair())
+            if (RepairUi.CanRepair())
             {
-                if (!CommonBot.Repair()) {
-                    position = KeyOperates.TestMoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                PluginLog.Log($"修理装备...");
+                position = KeyOperates.TestMoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                if (repair > 0)
+                {
+                    CommonBot.Repair();
+                }
+                else
+                {
                     CommonBot.NpcRepair();
                 }
+            }
+            else {
+                PluginLog.Log($"不需要修理装备...");
             }
 
             KeyOperates.KeyMethod(Keys.q_key);
@@ -171,8 +214,6 @@ namespace WoAutoCollectionPlugin.Bot
                         break;
                     }
                 }
-
-                
 
                 readyMove = true;
                 while (!canMove)
