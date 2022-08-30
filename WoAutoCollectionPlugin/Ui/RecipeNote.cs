@@ -23,9 +23,9 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
-        public static bool SelectYesNoIsOpen()
+        public static bool SelectYesnoIsOpen()
         {
-            var (addon, success) = IsAddonVisible("SelectYesNo");
+            var (addon, success) = IsAddonVisible("SelectYesno");
             return success;
         }
 

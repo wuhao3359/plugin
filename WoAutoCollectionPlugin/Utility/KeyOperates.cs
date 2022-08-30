@@ -272,7 +272,7 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 200;
+            sleep = 100;
         }
         else
         {

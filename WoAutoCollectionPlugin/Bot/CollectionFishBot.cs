@@ -43,7 +43,7 @@ namespace WoAutoCollectionPlugin.Bot
             this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
             EventFramework = new EventFramework(DalamudApi.SigScanner);
-            CommonBot = new CommonBot(GameData);
+            CommonBot = new CommonBot(KeyOperates);
 
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
@@ -59,7 +59,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         // 前往指定钓鱼地点 [√]
         // 钓鱼   [√]
-        // 清背包 (换工票/精选) [×] TODO
+        // 清背包 (换工票/精选) [ ] TODO
         public bool RunCollectionFishScript(string args)
         {
             string[] str = args.Split(' ');

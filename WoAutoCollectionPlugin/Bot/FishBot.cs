@@ -34,7 +34,7 @@ namespace WoAutoCollectionPlugin.Bot
             this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
             EventFramework = new EventFramework(DalamudApi.SigScanner);
-            CommonBot = new CommonBot(GameData);
+            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void Init()
@@ -68,7 +68,7 @@ namespace WoAutoCollectionPlugin.Bot
                 ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
                 double d = Maths.Distance(position, ToArea[1]);
-                if (Maths.Distance(position, ToArea[1]) > 10)
+                if (Maths.Distance(position, ToArea[1]) > 5)
                 {
                     MovePositions(ToArea, false);
                 }
@@ -96,6 +96,11 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(1500);
                 CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(500);
+
+                if (CommonUi.AddonSelectYesnoIsOpen()) {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
 
                 n = 0;
                 while (!CommonUi.AddonContentsFinderConfirmOpen() && n < 5)
@@ -103,10 +108,14 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(500);
                     n++;
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(1500);
                 CommonUi.ContentsFinderConfirmButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(500);
+
+                if (CommonUi.AddonContentsFinderConfirmOpen()) {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
 
                 Thread.Sleep(10000);
             }

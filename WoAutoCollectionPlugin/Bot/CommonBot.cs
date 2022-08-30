@@ -8,16 +8,17 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CommonBot
     {
-        private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
+
+        private ClickBot? ClickBot;
 
         private bool closed = false;
 
-        public CommonBot(GameData GameData)
+        public CommonBot(KeyOperates KeyOperates)
         {
-            this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
+            this.KeyOperates = KeyOperates;
             Init();
+            ClickBot = new ClickBot(KeyOperates);
         }
 
         public void Init()
@@ -46,9 +47,19 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(1000);
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
+
+                if (!CommonUi.AddonSelectYesnoIsOpen()) 
+                {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
                 CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(4000);
+                Thread.Sleep(500);
+                if (CommonUi.AddonSelectYesnoIsOpen())
+                {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
+                Thread.Sleep(3500);
             }
             else {
                 flag = false;
@@ -71,9 +82,18 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(1000);
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
+
+                if (!CommonUi.AddonSelectYesnoIsOpen())
+                {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
                 CommonUi.SelectYesButton();
                 KeyOperates.KeyMethod(Keys.num0_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(500);
+
+                if (CommonUi.AddonSelectYesnoIsOpen()) {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
                 Thread.Sleep(500);
             }
             else
@@ -143,7 +163,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             int n = 0;
-            while (!RecipeNoteUi.SelectYesNoIsOpen() && n < 15)
+            while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 15)
             {
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(500);

@@ -47,7 +47,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化
-        // Purple 紫票 佛恩·米克 灰蚯蚓 16.5-25.8 https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
+        // Purple 紫票 佛恩·米克 (灰蚯蚓 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static Vector3[] ToPurpleFishArea = {
             new Vector3 (0f, 0f, 0f)
@@ -60,7 +60,7 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static int PurpleFishTime = 16 ;
 
-        // White 白票 灵岩之剑 万能拟饵 11.9-20.6 https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
+        // White 白票 灵岩之剑 (万能拟饵 11.9-20.6) https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static Vector3[] ToWhiteFishArea = {
             new Vector3 (0f, 0f, 0f)
@@ -72,6 +72,19 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (0f, 0f, 0f),
         };
         public static int WhiteFishTime = 11;
+
+        // 普通鱼 萨维奈卡拉墨鱼 (万能拟饵 9.2-13.7) (青花鱼块 4-10.9) https://fish.ffmomola.com/#/wiki?spotId=269&fishId=36686
+        // 去钓鱼区域的路径 TerritoryType: ? 
+        public static Vector3[] ToNormalFishArea = {
+            new Vector3 (0f, 0f, 0f)
+        };
+        // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
+        public static Vector3[] NormalFishArea = {
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+        };
+        public static int NormalFishTime = 4;
 
 
         // ------------------------------- 园艺 ------------------------------------

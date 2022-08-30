@@ -19,7 +19,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             //this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(GameData);
+            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void Init()
