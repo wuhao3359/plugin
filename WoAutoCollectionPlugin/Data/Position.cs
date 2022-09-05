@@ -125,5 +125,47 @@ namespace WoAutoCollectionPlugin.Utility
         public static int[] TestABC = {
             1, 7, 13,
         };
+
+        public static int[] TestIndexNum3 = {
+            4, 4, 4
+        };
+
+        public static int Gatheing1Button = 3;
+        public static int Gatheing2Button = 8;
+
+        public static Vector3[] Area3 = {
+            new Vector3 (1651f, 2219f, 2104f), // 进入A
+            new Vector3 (1609f, 2216f, 2092f),
+            new Vector3 (1599f, 2216f, 2085f),
+            new Vector3 (1615f, 2216f, 2060f),
+            new Vector3 (1669f, 2234f, 2082f), // 离开A
+            new Vector3 (1796f, 2235f, 2159f), // 进入B
+            new Vector3 (1854f, 2225f, 2149f),
+            new Vector3 (1845f, 2223f, 2192f),
+            new Vector3 (1864f, 2228f, 2193f),
+            new Vector3 (1855f, 2227f, 2209f),
+            new Vector3 (1740f, 2238f, 2279f), // 离开B
+            new Vector3 (1643f, 2205f, 2349f), // 进入C
+            new Vector3 (1613f, 2182f, 2397f),
+            new Vector3 (1600f, 2182f, 2387f),
+            new Vector3 (1575f, 2182f, 2352f),
+            new Vector3 (1614f, 2186f, 2355f),
+            new Vector3 (1651f, 2224f, 2280f), // 离开C
+        };
+
+        public static int[] Index3 = {
+            1, 2, 3, 6, 7, 8, 9, 12, 13, 14, 15
+        };
+
+        public static int[] IndexNum3 = {
+            3, 4, 4
+        };
+
+        public static int[] ABC3 = {
+            1, 6, 12,
+        };
+        public static int Gatheing3Button = 4;
+        // 火水晶
+        public static int Gatheing100Button = 5;
     }
 }

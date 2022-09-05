@@ -109,8 +109,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 sw.Start();
 
-                position = KeyOperates.TestMoveToPoint(position, FishArea[2], territoryType, false);
-                position = KeyOperates.TestMoveToPoint(position, FishArea[currentPoint], territoryType, false);
+                position = KeyOperates.MoveToPoint(position, FishArea[2], territoryType, false);
+                position = KeyOperates.MoveToPoint(position, FishArea[currentPoint], territoryType, false);
                 if (currentPoint > 0)
                 {
                     currentPoint = 0;
@@ -188,7 +188,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"中途结束");
                     return KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.TestMoveToPoint(position, ToArea[i], territoryType, UseMount);
+                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
                 Thread.Sleep(1000);
             }

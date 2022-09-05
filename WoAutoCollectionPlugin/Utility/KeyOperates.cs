@@ -37,18 +37,25 @@ public class KeyOperates
         return position;
     }
 
-    public Vector3 TestMoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType)
+    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType)
     {
-        return TestMoveToPoint(positionA, positionB, territoryType, false, true);
+        return MoveToPoint(positionA, positionB, territoryType, false, true);
     }
 
-    public Vector3 TestMoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount)
+    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount)
     {
-        return TestMoveToPoint(positionA, positionB, territoryType, UseMount, true);
+        return MoveToPoint(positionA, positionB, territoryType, UseMount, true);
     }
 
-    public Vector3 TestMoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount, bool log)
+    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount, bool log)
     {
+        Init();
+
+        if (!DalamudApi.Condition[ConditionFlag.Mounted])
+        {
+            UseMount = false;
+        }
+
         double errorDisntance = 5.5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
         KeyMethod(Keys.w_key, 200);
@@ -229,13 +236,19 @@ public class KeyOperates
     {
         MoveStop();
         FlyStop();
-        closed = false;
+        Init();
     }
 
     public void ForceStop()
     {
         Stop();
         closed = true;
+    }
+
+    public void Init() {
+        closed = false;
+        moving = 0;
+        flying = 0;
     }
 
     private void MoveStop()

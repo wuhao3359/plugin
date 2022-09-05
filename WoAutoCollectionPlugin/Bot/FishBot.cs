@@ -158,7 +158,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (RepairUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = KeyOperates.TestMoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
                 if (repair > 0)
                 {
                     CommonBot.Repair();
@@ -185,7 +185,7 @@ namespace WoAutoCollectionPlugin.Bot
             int currentPoint = 0;
             Stopwatch sw = new();
 
-            for (int i = 0; i <= 20; i++)
+            for (int i = 0; i <= 10; i++)
             {
                 sw.Reset();
                 if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
@@ -195,8 +195,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 sw.Start();
 
-                position = KeyOperates.TestMoveToPoint(position, YFishArea[2], territoryType, false);
-                position = KeyOperates.TestMoveToPoint(position, YFishArea[currentPoint], territoryType, false);
+                position = KeyOperates.MoveToPoint(position, YFishArea[2], territoryType, false);
+                position = KeyOperates.MoveToPoint(position, YFishArea[currentPoint], territoryType, false);
                 if (currentPoint > 0)
                 {
                     currentPoint = 0;
@@ -233,6 +233,10 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return false;
                     }
+                    if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                    {
+                        break;
+                    }
                 }
             }
             PluginLog.Log($"任务结束");
@@ -251,7 +255,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"中途结束");
                     return KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.TestMoveToPoint(position, ToArea[i], territoryType, UseMount);
+                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
                 Thread.Sleep(1000);
             }

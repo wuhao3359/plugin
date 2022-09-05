@@ -295,7 +295,6 @@ namespace WoAutoCollectionPlugin
             {
                 isRunning = false;
                 GatherBot.StopNormalScript();
-                isRunning = false;
                 taskRunning = false;
                 return;
             }
@@ -306,10 +305,12 @@ namespace WoAutoCollectionPlugin
                 return;
             }
 
+            taskRunning = true;
+            isRunning = true;
             Task task = new(() =>
             {
                 int n = 0;
-                while (isRunning & n < 10)
+                while (isRunning & n < 1000)
                 {
                     GatherBot.RunNormalScript(area);
                     n++;
@@ -347,10 +348,6 @@ namespace WoAutoCollectionPlugin
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
 
-            // focus
-            UiDebug addonInspector = null;
-            addonInspector ??= new UiDebug();
-            addonInspector.Draw();
         }
 
         private void OnActionTestCommand(string command, string args)

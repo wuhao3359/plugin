@@ -32,6 +32,7 @@ public static class Keys
     public static Byte space_key = 32;
     public static Byte a_key = 65;
     public static Byte d_key = 68;
+    public static Byte e_key = 69;
     public static Byte l_key = 76;
     public static Byte n_key = 78;
     public static Byte q_key = 81;
