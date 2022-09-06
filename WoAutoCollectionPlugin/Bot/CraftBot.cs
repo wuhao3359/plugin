@@ -112,17 +112,7 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(1000);
             KeyOperates.KeyMethod(Keys.esc_key);
 
-            // 判断是否需要修理
-            if (RepairUi.NeedsRepair()) {
-                CommonBot.Repair();
-            }
-
-            // 判断是否需要精制
-            int count = RepairUi.CanExtractMateria();
-            if (count >= 5)
-            {
-                CommonBot.ExtractMateria(count);
-            }
+            CommonBot.RepairAndExtractMateria();
 
             // 上交收藏品和交换道具
             if (craftName.Contains("收藏用") && exchangeItem > 0)

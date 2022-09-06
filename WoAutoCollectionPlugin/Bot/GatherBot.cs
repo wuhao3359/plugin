@@ -16,12 +16,15 @@ namespace WoAutoCollectionPlugin.Bot
         private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
 
+        private CommonBot? CommonBot;
+
         private static bool closed = false;
 
         public GatherBot(GameData GameData)
         {
             this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
+            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void Init()
@@ -40,10 +43,10 @@ namespace WoAutoCollectionPlugin.Bot
             int[] ABC = Array.Empty<int>();
             int GathingButton = 0;
 
-            (Area, index, indexNum, ABC, GathingButton) = GetArea(area);
+            (Area, index, indexNum, ABC) = GetArea(area);
             // TODO 传送
+            // 去起始点O
 
-            // 去起始点O 
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"采集 {position.X} {position.Y} {position.Z}");
 
@@ -139,7 +142,6 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                 }
 
-                                PluginLog.Log($"GathingButton: {GathingButton}");
                                 if (!CommonUi.GatheringButton(GathingButton)) {
                                     KeyOperates.KeyMethod(Keys.num0_key);
                                     KeyOperates.KeyMethod(Keys.num0_key);
@@ -192,6 +194,8 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"not work point {i}");
                 }
             }
+
+            CommonBot.RepairAndExtractMateria();
             return true;
         }
 
@@ -201,12 +205,11 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.ForceStop();
         }
 
-        public (Vector3[], int[], int[], int[], int) GetArea(int area) {
+        public (Vector3[], int[], int[], int[]) GetArea(int area) {
             Vector3[] Area = Array.Empty<Vector3>();
             int[] index = Array.Empty<int>();
             int[] indexNum = Array.Empty<int>();
             int[] ABC = Array.Empty<int>();
-            int GathingButton = 0;
 
             if (area == 1)
             {   // 1-稻槎草
@@ -214,7 +217,6 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
-                GathingButton = Position.Gatheing1Button;
             }
             else if (area == 2)
             {
@@ -223,7 +225,6 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
-                GathingButton = Position.Gatheing2Button;
             }
             else if (area == 3)
             {
@@ -232,7 +233,6 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
-                GathingButton = Position.Gatheing3Button;
             }
             else if (area == 100)
             {
@@ -241,10 +241,9 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
-                GathingButton = Position.Gatheing100Button;
             }
 
-            return (Area, index, indexNum, ABC, GathingButton);
+            return (Area, index, indexNum, ABC);
         }
 
         public int GetGathingButton(int area) {

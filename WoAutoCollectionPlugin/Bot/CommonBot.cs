@@ -31,6 +31,26 @@ namespace WoAutoCollectionPlugin.Bot
             closed = true;
         }
 
+        public void RepairAndExtractMateria() {
+            // 判断是否需要修理
+            if (RepairUi.NeedsRepair())
+            {
+                Repair();
+            }
+
+            // 判断是否需要精制
+            int count = RepairUi.CanExtractMateria();
+            if (count >= 5)
+            {
+                ExtractMateria(count);
+            }
+
+            int n = 0;
+            while (RepairUi.AddonRepairIsOpen() && n < 3) {
+                KeyOperates.KeyMethod(Keys.esc_key);
+            }
+        }
+
         // 修理
         public bool Repair() {
             bool flag = true;

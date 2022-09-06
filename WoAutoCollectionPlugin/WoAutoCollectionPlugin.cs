@@ -187,33 +187,37 @@ namespace WoAutoCollectionPlugin
                 int cycle = 0;
                 while (isRunning && cycle < 5)
                 {
-                    if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent] 
-                    || DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
-                        PluginLog.Log($"当前状态无法进行任务, skip...");
-                        cycle++;
-                        Thread.Sleep(3000);
-                        continue;
-                    }
-                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
-                    {
-                        PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
-                    }
-                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
-                    {
-                        FishBot.RunIntoYunGuanScript();
-                    }
+                    try {
+                        if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
+                        || DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
+                            PluginLog.Log($"当前状态无法进行任务, skip...");
+                            cycle++;
+                            Thread.Sleep(3000);
+                            continue;
+                        }
+                        if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                        {
+                            PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                        }
+                        if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                        {
+                            FishBot.RunIntoYunGuanScript();
+                        }
 
-                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
-                    {
-                        PluginLog.Log($"start task...");
-                        DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
-                        FishBot.RunYFishScript(args);
-                        DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
-                    }
-                    else
-                    {
-                        PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
-                        Thread.Sleep(2000);
+                        if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                        {
+                            PluginLog.Log($"start task...");
+                            DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
+                            FishBot.RunYFishScript(args);
+                            DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
+                        }
+                        else
+                        {
+                            PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                            Thread.Sleep(2000);
+                        }
+                    } catch (Exception e) {
+                        PluginLog.Error($"error!!!\n{e}");
                     }
 
                     cycle++;
@@ -263,9 +267,15 @@ namespace WoAutoCollectionPlugin
                 int cycle = 0;
                 while (isRunning)
                 {
-                    DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
-                    CollectionFishBot.RunCollectionFishScript(args);
-                    DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
+                    try
+                    {
+                        DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
+                        CollectionFishBot.RunCollectionFishScript(args);
+                        DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
+                    }
+                    catch (Exception e) {
+                        PluginLog.Error($"error!!!\n{e}");
+                    }
 
                     isRunning = false;
                     cycle++;
@@ -312,7 +322,13 @@ namespace WoAutoCollectionPlugin
                 int n = 0;
                 while (isRunning & n < 1000)
                 {
-                    GatherBot.RunNormalScript(area);
+                    try
+                    {
+                        GatherBot.RunNormalScript(area);
+                    } catch (Exception e) {
+                        PluginLog.Error($"error!!!\n{e}");
+                    }
+                   
                     n++;
                     PluginLog.Log($"{n} 次结束");
                 }
@@ -329,18 +345,6 @@ namespace WoAutoCollectionPlugin
 
             // 人物状态测试
             //DalamudApi.Condition.ConditionChange += ChangeCondition;
-
-            //bool repair = RepairUi.AddonRepairIsOpen();
-            //PluginLog.Log($"{repair}...");
-            // 修理界面 测试
-            //if (CommandInterface.Instance.NeedsRepair())
-            //{
-            //    PluginLog.Log($"NeedsRepair...");
-            //}
-            //else
-            //{
-            //    PluginLog.Log($"end...");
-            //}
 
             //string recipeName = "上级以太药";
             //PluginLog.Log($"{recipeName}");
@@ -393,7 +397,13 @@ namespace WoAutoCollectionPlugin
             {
                 while (isRunning)
                 {
-                    CraftBot.RunCraftScript(args);
+                    try
+                    {
+                        CraftBot.RunCraftScript(args);
+                    } catch (Exception e) {
+                        PluginLog.Error($"error!!!\n{e}");
+                    }
+
                     PluginLog.Log($"end");
                     //isRunning = false;
                 }
