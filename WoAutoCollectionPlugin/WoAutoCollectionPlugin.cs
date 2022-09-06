@@ -185,7 +185,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 int cycle = 0;
-                while (isRunning && cycle < 3)
+                while (isRunning && cycle < 5)
                 {
                     if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent] 
                     || DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
