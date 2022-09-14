@@ -184,17 +184,19 @@ namespace WoAutoCollectionPlugin
             isRunning = true;
             Task task = new(() =>
             {
+                PluginLog.Log($"start task...");
                 int cycle = 0;
+                DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
                 while (isRunning && cycle < 5)
                 {
                     try {
-                        if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
-                        || DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
-                            PluginLog.Log($"当前状态无法进行任务, skip...");
-                            cycle++;
-                            Thread.Sleep(3000);
-                            continue;
-                        }
+                        //if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
+                        //|| DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
+                        //    PluginLog.Log($"当前状态无法进行任务, skip...");
+                        //    cycle++;
+                        //    Thread.Sleep(3000);
+                        //    continue;
+                        //}
                         if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
                         {
                             PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
@@ -206,10 +208,7 @@ namespace WoAutoCollectionPlugin
 
                         if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
                         {
-                            PluginLog.Log($"start task...");
-                            DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
                             FishBot.RunYFishScript(args);
-                            DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
                         }
                         else
                         {
@@ -226,6 +225,7 @@ namespace WoAutoCollectionPlugin
                 }
                 PluginLog.Log($"end");
                 taskRunning = false;
+                DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
 
                 if (cycle > 0) {
                     isRunning = false;

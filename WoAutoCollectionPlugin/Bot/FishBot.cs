@@ -77,16 +77,21 @@ namespace WoAutoCollectionPlugin.Bot
                 }
 
                 // 进入空岛
-                KeyOperates.KeyMethod(Keys.num1_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(500);
-                KeyOperates.KeyMethod(Keys.num0_key);
+                if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
+                    KeyOperates.KeyMethod(Keys.num1_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(500);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
                 int n = 0;
                 while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
                     Thread.Sleep(500);
                     n++;
                 }
-                KeyOperates.KeyMethod(Keys.num0_key);
+                if (CommonUi.AddonSelectStringIsOpen()) {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
+                
                 n = 0;
                 while (!CommonUi.AddonSelectYesnoIsOpen() && n < 5)
                 {
@@ -94,9 +99,12 @@ namespace WoAutoCollectionPlugin.Bot
                     n++;
                 }
                 Thread.Sleep(1500);
-                CommonUi.SelectYesButton();
-                KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(500);
+                if (CommonUi.AddonSelectYesnoIsOpen())
+                {
+                    CommonUi.SelectYesButton();
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(500);
+                }
 
                 if (CommonUi.AddonSelectYesnoIsOpen()) {
                     KeyOperates.KeyMethod(Keys.num0_key);
@@ -109,9 +117,12 @@ namespace WoAutoCollectionPlugin.Bot
                     n++;
                 }
                 Thread.Sleep(1500);
-                CommonUi.ContentsFinderConfirmButton();
-                KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(500);
+                if (CommonUi.AddonContentsFinderConfirmOpen())
+                {
+                    CommonUi.ContentsFinderConfirmButton();
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(500);
+                }
 
                 if (CommonUi.AddonContentsFinderConfirmOpen()) {
                     KeyOperates.KeyMethod(Keys.num0_key);

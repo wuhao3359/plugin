@@ -157,6 +157,15 @@ public class KeyOperates
                 FlyStop();
             }
 
+            double beforeDistance = distance;
+            positionA = GetUserPosition(SizeFactor);
+            distance = Maths.Distance(positionA, positionB);
+            if (log)
+            {
+                PluginLog.Log($"distance: {distance} height: {height} moving: {moving} flying: {flying}");
+            }
+            index++;
+
             radians = Maths.Radians(positionA, positionB, positionC);
             angle = 0;
             if (radians > -1 && radians < 1)
@@ -169,7 +178,7 @@ public class KeyOperates
             }
             // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
             time = Convert.ToInt32(angle / 30 * 100 - 100);
-            if (time > -80)
+            if (time > -50 && distance > 10)
             {
                 if (DirectionOfPoint < 0)
                 {
@@ -187,14 +196,7 @@ public class KeyOperates
                 }
             }
 
-            double beforeDistance = distance;
-            positionA = GetUserPosition(SizeFactor);
-            distance = Maths.Distance(positionA, positionB);
-            if (log)
-            {
-                PluginLog.Log($"distance: {distance} height: {height} moving: {moving} flying: {flying}");
-            }
-            index++;
+           
 
             if (distance > errorDisntance && beforeDistance == distance)
             {

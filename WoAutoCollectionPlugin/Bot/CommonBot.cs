@@ -160,6 +160,7 @@ namespace WoAutoCollectionPlugin.Bot
             return false;
         }
 
+        // TODO 关闭界面
         // 交收藏品
         public bool CraftUpload(string craftName)
         {
@@ -202,6 +203,7 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        // TODO 关闭界面
         // 交换道具
         public bool CraftExchange(int item)
         {

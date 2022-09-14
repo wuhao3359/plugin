@@ -234,6 +234,14 @@ namespace WoAutoCollectionPlugin.Bot
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
             }
+            else if (area == 4)
+            {
+                // 4-葛根
+                Area = Position.Area4;
+                index = Position.Index4;
+                indexNum = Position.IndexNum4;
+                ABC = Position.ABC4;
+            }
             else if (area == 100)
             {
                 // 100-火水晶
@@ -262,6 +270,11 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 3-棕榈糖浆
                 GathingButton = Position.Gatheing3Button;
+            }
+            else if (area == 4)
+            {
+                // 4-葛根
+                GathingButton = Position.Gatheing4Button;
             }
             else if (area == 100)
             {
