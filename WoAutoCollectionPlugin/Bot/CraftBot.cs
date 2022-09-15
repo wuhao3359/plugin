@@ -63,24 +63,21 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
 
-                n = 0;
-                while (!RecipeNoteUi.SynthesizeButton() && n < 5) {
-                    Thread.Sleep(300);
-                    n++;
-                    if (closed)
-                    {
-                        PluginLog.Log($"craft stopping");
-                        return;
-                    }
-                }
-
-                Thread.Sleep(500);
                 // TODO Select HQ
 
-                KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(500);
+                if (RecipeNoteUi.RecipeNoteIsOpen())
+                {
+                    RecipeNoteUi.SynthesizeButton();
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                }
+                else {
+                    PluginLog.Log($"RecipeNote not open, continue");
+                    continue;
+                }
 
                 n = 0;
-                while (!RecipeNoteUi.SynthesisIsOpen() && n < 5) {
+                while (!RecipeNoteUi.SynthesisIsOpen() && RecipeNoteUi.RecipeNoteIsOpen() && n < 5) {
                     Thread.Sleep(200);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     n++;
@@ -110,7 +107,9 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Thread.Sleep(1000);
-            KeyOperates.KeyMethod(Keys.esc_key);
+            if (RecipeNoteUi.RecipeNoteIsOpen()) {
+                KeyOperates.KeyMethod(Keys.esc_key);
+            }
 
             CommonBot.RepairAndExtractMateria();
 

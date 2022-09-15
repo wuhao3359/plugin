@@ -183,6 +183,7 @@ namespace WoAutoCollectionPlugin.Bot
                 else
                 {
                     PluginLog.Log($"去点{i} { Area[i].X} { Area[i].Y} { Area[i].Z}");
+                    CommonBot.RepairAndExtractMateria();
                     if (!DalamudApi.Condition[ConditionFlag.Mounted])
                     {
                         KeyOperates.KeyMethod(Keys.q_key);
@@ -194,8 +195,6 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"not work point {i}");
                 }
             }
-
-            CommonBot.RepairAndExtractMateria();
             return true;
         }
 
@@ -212,7 +211,7 @@ namespace WoAutoCollectionPlugin.Bot
             int[] ABC = Array.Empty<int>();
 
             if (area == 1)
-            {   // 1-稻槎草
+            {   // 1-稻槎草(lv.68)
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
@@ -220,7 +219,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 2)
             {
-                // 2-繁缕
+                // 2-繁缕(lv.68)
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
@@ -228,7 +227,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 3)
             {
-                // 3-棕榈糖浆
+                // 3-棕榈糖浆(lv.82)
                 Area = Position.Area3;
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
@@ -236,7 +235,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 4)
             {
-                // 4-葛根
+                // 4-葛根(lv.65)
                 Area = Position.Area4;
                 index = Position.Index4;
                 indexNum = Position.IndexNum4;
@@ -244,12 +243,13 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 100)
             {
-                // 100-火水晶
+                // 100-火水晶(lv.68)
                 Area = Position.Area3;
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
             }
+            // TODO 5-大蜜蜂的巢(lv.75) 6-巨人新薯(lv.87) 7-山地小麦(lv.73)
 
             return (Area, index, indexNum, ABC);
         }

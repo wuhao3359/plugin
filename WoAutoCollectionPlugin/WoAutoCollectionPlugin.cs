@@ -264,14 +264,13 @@ namespace WoAutoCollectionPlugin
             isRunning = true;
             Task task = new(() =>
             {
+                DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
                 int cycle = 0;
                 while (isRunning)
                 {
                     try
                     {
-                        DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
                         CollectionFishBot.RunCollectionFishScript(args);
-                        DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
                     }
                     catch (Exception e) {
                         PluginLog.Error($"error!!!\n{e}");
@@ -283,6 +282,7 @@ namespace WoAutoCollectionPlugin
                     Thread.Sleep(3000);
                 }
                 PluginLog.Log($"end");
+                DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
                 taskRunning = false;
 
                 if (cycle > 0)

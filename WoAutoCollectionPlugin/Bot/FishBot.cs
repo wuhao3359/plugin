@@ -90,6 +90,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 if (CommonUi.AddonSelectStringIsOpen()) {
                     KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                 }
                 
                 n = 0;
@@ -108,6 +109,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (CommonUi.AddonSelectYesnoIsOpen()) {
                     KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                 }
 
                 n = 0;
@@ -125,6 +127,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
 
                 if (CommonUi.AddonContentsFinderConfirmOpen()) {
+                    KeyOperates.KeyMethod(Keys.num0_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                 }
 
