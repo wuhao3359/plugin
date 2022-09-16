@@ -50,7 +50,6 @@ namespace WoAutoCollectionPlugin.Bot
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"采集 {position.X} {position.Y} {position.Z}");
 
-            //KeyOperates.KeyMethod(Keys.q_key, 0, true);
             Thread.Sleep(500);
 
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
@@ -93,7 +92,7 @@ namespace WoAutoCollectionPlugin.Bot
                         if (go != null)
                         {
                             KeyOperates.KeyMethod(Keys.e_key);
-                            position = KeyOperates.MoveToPoint(position, Area[i], territoryType, true, false);
+                            position = KeyOperates.MoveToPoint(position, Area[i], territoryType, false, false);
                             PluginLog.Log($"到达到达点{i} {position.X} {position.Y} {position.Z}");
                             var targetMgr = DalamudApi.TargetManager;
                             if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
@@ -108,17 +107,16 @@ namespace WoAutoCollectionPlugin.Bot
 
                                 KeyOperates.KeyMethod(Keys.num0_key);
                                 Thread.Sleep(500);
-                                int n = 0;
-                                while (!CommonUi.AddonGatheringIsOpen() && n < 5) {
-                                    KeyOperates.KeyMethod(Keys.num0_key);
-                                    Thread.Sleep(500);
-                                    n++;
-                                    if (closed)
-                                    {
-                                        PluginLog.Log($"Gathing stopping");
-                                        return true;
-                                    }
-                                }
+                                //while (!CommonUi.AddonGatheringIsOpen() && n < 5) {
+                                //    KeyOperates.KeyMethod(Keys.num0_key);
+                                //    Thread.Sleep(500);
+                                //    n++;
+                                //    if (closed)
+                                //    {
+                                //        PluginLog.Log($"Gathing stopping");
+                                //        return true;
+                                //    }
+                                //}
                                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                                 uint gp = player.CurrentGp;
                                 if (area < 100)
@@ -143,11 +141,13 @@ namespace WoAutoCollectionPlugin.Bot
                                 }
 
                                 if (!CommonUi.GatheringButton(GathingButton)) {
-                                    KeyOperates.KeyMethod(Keys.num0_key);
-                                    KeyOperates.KeyMethod(Keys.num0_key);
-                                    Thread.Sleep(500);
+                                    while (CommonUi.AddonGatheringIsOpen()) {
+                                        KeyOperates.KeyMethod(Keys.num0_key);
+                                        Thread.Sleep(500);
+                                    }
                                 }
 
+                                // TODO
                                 KeyOperates.KeyMethod(Keys.num0_key);
                                 Thread.Sleep(500);
                                 if (!DalamudApi.Condition[ConditionFlag.Gathering42]) {
@@ -184,11 +184,6 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     PluginLog.Log($"去点{i} { Area[i].X} { Area[i].Y} { Area[i].Z}");
                     CommonBot.RepairAndExtractMateria();
-                    if (!DalamudApi.Condition[ConditionFlag.Mounted])
-                    {
-                        KeyOperates.KeyMethod(Keys.q_key);
-                        Thread.Sleep(2000);
-                    }
 
                     position = KeyOperates.MoveToPoint(position, Area[i], territoryType, true, false);
                     PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
@@ -211,7 +206,7 @@ namespace WoAutoCollectionPlugin.Bot
             int[] ABC = Array.Empty<int>();
 
             if (area == 1)
-            {   // 1-稻槎草(lv.68)
+            {   // 1-稻槎草(园:68)
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
@@ -219,7 +214,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 2)
             {
-                // 2-繁缕(lv.68)
+                // 2-繁缕(园:68)
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
@@ -227,7 +222,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 3)
             {
-                // 3-棕榈糖浆(lv.82)
+                // 3-棕榈糖浆(园:82)
                 Area = Position.Area3;
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
@@ -235,7 +230,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (area == 4)
             {
-                // 4-葛根(lv.65)
+                // 4-葛根(园:65)
                 Area = Position.Area4;
                 index = Position.Index4;
                 indexNum = Position.IndexNum4;
@@ -249,7 +244,7 @@ namespace WoAutoCollectionPlugin.Bot
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
             }
-            // TODO 5-大蜜蜂的巢(lv.75) 6-巨人新薯(lv.87) 7-山地小麦(lv.73)
+            // TODO 5-大蜜蜂的巢(园:75) 6-巨人新薯(园:87) 7-山地小麦(园:73) 灵银矿(矿:53) 灵银沙(矿:51)
 
             return (Area, index, indexNum, ABC);
         }

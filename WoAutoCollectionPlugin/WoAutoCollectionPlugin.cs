@@ -160,10 +160,6 @@ namespace WoAutoCollectionPlugin
         {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
-            int cycle = 0;
-            if (str.Length > 1) {
-                cycle = int.Parse(str[1]);
-            }
             PluginLog.Log($"fish: {args} length: {str.Length}");
 
             if (area <= 0)
@@ -185,9 +181,8 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start task...");
-                int cycle = 0;
                 DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
-                while (isRunning && cycle < 5)
+                while (isRunning)
                 {
                     try {
                         //if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
@@ -219,17 +214,12 @@ namespace WoAutoCollectionPlugin
                         PluginLog.Error($"error!!!\n{e}");
                     }
 
-                    cycle++;
-                    PluginLog.Log($"准备开始下一轮, {cycle}");
+                    PluginLog.Log($"准备开始下一轮...");
                     Thread.Sleep(3000);
                 }
                 PluginLog.Log($"end");
                 taskRunning = false;
                 DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
-
-                if (cycle > 0) {
-                    isRunning = false;
-                }
 
                 FishBot.Init();
             });
@@ -239,11 +229,6 @@ namespace WoAutoCollectionPlugin
         private void OnCollectionFishCommand(string command, string args) {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
-            int cycle = 0;
-            if (str.Length > 1)
-            {
-                cycle = int.Parse(str[1]);
-            }
             PluginLog.Log($"collectionfish: {args}");
 
             if (area <= 0)
@@ -265,7 +250,6 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
-                int cycle = 0;
                 while (isRunning)
                 {
                     try
@@ -277,18 +261,12 @@ namespace WoAutoCollectionPlugin
                     }
 
                     isRunning = false;
-                    cycle++;
-                    PluginLog.Log($"准备开始下一轮, {cycle}");
+                    PluginLog.Log($"准备开始下一轮...");
                     Thread.Sleep(3000);
                 }
                 PluginLog.Log($"end");
                 DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
                 taskRunning = false;
-
-                if (cycle > 0)
-                {
-                    isRunning = false;
-                }
 
                 FishBot.Init();
             });
@@ -346,11 +324,11 @@ namespace WoAutoCollectionPlugin
             // 人物状态测试
             //DalamudApi.Condition.ConditionChange += ChangeCondition;
 
-            //string recipeName = "上级以太药";
+            string recipeName = "上级以太药";
             //PluginLog.Log($"{recipeName}");
-            //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
-            //RecipeNoteUi.OpenRecipeNote(recipeId);
+            RecipeNoteUi.OpenRecipeNote(recipeId);
 
         }
 

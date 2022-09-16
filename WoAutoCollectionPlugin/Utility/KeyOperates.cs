@@ -51,9 +51,9 @@ public class KeyOperates
     {
         Init();
 
-        if (!DalamudApi.Condition[ConditionFlag.Mounted])
-        {
-            UseMount = false;
+        if (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted]) {
+            KeyMethod(Keys.q_key);
+            Thread.Sleep(2000);
         }
 
         double errorDisntance = 5.5;

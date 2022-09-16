@@ -51,11 +51,9 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"craft stopping");
                     return;
                 }
-                int n = 0;
-                while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 5) {
+                while (!RecipeNoteUi.RecipeNoteIsOpen()) {
                     KeyOperates.KeyMethod(Keys.n_key);
                     Thread.Sleep(500);
-                    n++;
                     if (closed)
                     {
                         PluginLog.Log($"craft stopping");
@@ -69,31 +67,30 @@ namespace WoAutoCollectionPlugin.Bot
                 if (RecipeNoteUi.RecipeNoteIsOpen())
                 {
                     RecipeNoteUi.SynthesizeButton();
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    while (RecipeNoteUi.RecipeNoteIsOpen()) {
+                        KeyOperates.KeyMethod(Keys.num0_key);
+                        Thread.Sleep(500);
+                        if (closed)
+                        {
+                            PluginLog.Log($"craft stopping");
+                            return;
+                        }
+                    }
                 }
                 else {
                     PluginLog.Log($"RecipeNote not open, continue");
                     continue;
                 }
 
-                n = 0;
-                while (!RecipeNoteUi.SynthesisIsOpen() && RecipeNoteUi.RecipeNoteIsOpen() && n < 5) {
-                    Thread.Sleep(200);
-                    KeyOperates.KeyMethod(Keys.num0_key);
-                    n++;
-                    if (closed)
-                    {
-                        PluginLog.Log($"craft stopping");
-                        return;
-                    }
+                if (!RecipeNoteUi.SynthesisIsOpen()) {
+                    Thread.Sleep(500);
                 }
-                Thread.Sleep(500);
                 KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
                 if (craftName == "")
                     craftName = RecipeNoteUi.GetItemName();
 
-                n = 0;
+                int n = 0;
                 while (RecipeNoteUi.SynthesisIsOpen() && n < 100) {
                     Thread.Sleep(500);
                     if (closed)

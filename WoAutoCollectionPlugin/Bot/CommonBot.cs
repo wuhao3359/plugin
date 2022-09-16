@@ -232,14 +232,14 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     KeyOperates.KeyMethod(Keys.num2_key);
                 }
-
-                KeyOperates.KeyMethod(Keys.num6_key);
-                KeyOperates.KeyMethod(Keys.num9_key);
-                KeyOperates.KeyMethod(Keys.num4_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
-                KeyOperates.KeyMethod(Keys.num4_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
             }
+
+            KeyOperates.KeyMethod(Keys.num6_key);
+            KeyOperates.KeyMethod(Keys.num9_key);
+            KeyOperates.KeyMethod(Keys.num4_key);
+            KeyOperates.KeyMethod(Keys.num0_key);
+            KeyOperates.KeyMethod(Keys.num4_key);
+            KeyOperates.KeyMethod(Keys.num0_key);
 
             KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);

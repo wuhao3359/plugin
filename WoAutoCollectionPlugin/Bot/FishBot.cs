@@ -142,8 +142,8 @@ namespace WoAutoCollectionPlugin.Bot
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
             int repair = 0;
-            if (str.Length >= 3) {
-                repair = int.Parse(str[2]);
+            if (str.Length >= 2) {
+                repair = int.Parse(str[1]);
             }
 
             yfishsw = new();
@@ -186,14 +186,19 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"不需要修理装备...");
             }
 
-            KeyOperates.KeyMethod(Keys.q_key);
-            Thread.Sleep(3000);
             // 通过路径到达固定区域位置
             position = MovePositions(ToArea, true);
 
-            KeyOperates.KeyMethod(Keys.q_key);
-            Thread.Sleep(1000);
-            KeyOperates.KeyMethod(Keys.q_key);
+            if (DalamudApi.Condition[ConditionFlag.Mounted])
+            {
+                KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(1000);
+            }
+            if (DalamudApi.Condition[ConditionFlag.Mounted])
+            {
+                KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(500);
+            }
 
             // 在固定区域到达作业点 作业循环 40min切换  0->2->1->2->0....
             int currentPoint = 0;
