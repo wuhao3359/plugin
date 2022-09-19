@@ -16,7 +16,7 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < 4; i++, j++)
             {
                 GameObject go = CurrentPositionCanGather(Area[index[j]], SizeFactor);
-                if (go != null && CanGather(go)) {
+                if (go != null ) {
                     gameObjects.Add(go);
                     gameObjectsIndex.Add(index[j]);
                 }
@@ -33,7 +33,7 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < length; i++)
             {
                 GameObject? gameObject = DalamudApi.ObjectTable[i];
-                if (gameObject != null)
+                if (gameObject != null && CanGather(gameObject))
                 {
                     if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                     {
@@ -48,11 +48,15 @@ namespace WoAutoCollectionPlugin.Utility
                 }
             }
 
-            if (nearestGo!= null && CanGather(nearestGo)) {
+            if (nearestGo != null)
+            {
                 PluginLog.Log($"最近 {index}, {nearestGo.DataId}");
                 return nearestGo;
             }
-            return null;
+            else {
+                PluginLog.Log($"没有找到最近的point");
+                return null;
+            }
         }
 
         public static bool CanGather(GameObject go) {

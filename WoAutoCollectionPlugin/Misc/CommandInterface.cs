@@ -336,7 +336,8 @@ namespace WoAutoCollectionPlugin.Misc
                 return false;
 
             var addon = (AtkUnitBase*)ptr;
-            return addon->UldManager.LoadedState == 3;
+            //return addon->UldManager.LoadedState == 3;
+            return false;
         }
 
         /// <inheritdoc/>

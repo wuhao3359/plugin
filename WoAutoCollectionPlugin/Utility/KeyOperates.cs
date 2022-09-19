@@ -51,6 +51,8 @@ public class KeyOperates
     {
         Init();
 
+        int turn = 0;
+
         if (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted]) {
             KeyMethod(Keys.q_key);
             Thread.Sleep(2000);
@@ -157,16 +159,12 @@ public class KeyOperates
                 FlyStop();
             }
 
+            radians = Maths.Radians(positionA, positionB, positionC);
+
             double beforeDistance = distance;
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
-            if (log)
-            {
-                PluginLog.Log($"distance: {distance} height: {height} moving: {moving} flying: {flying}");
-            }
-            index++;
 
-            radians = Maths.Radians(positionA, positionB, positionC);
             angle = 0;
             if (radians > -1 && radians < 1)
             {
@@ -178,8 +176,12 @@ public class KeyOperates
             }
             // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
             time = Convert.ToInt32(angle / 30 * 100 - 100);
-            if (time > -50 && distance > 10)
+            if (time > -100 && turn < 2)
             {
+                if (distance < 9)
+                {
+                    turn++;
+                }
                 if (DirectionOfPoint < 0)
                 {
                     if (!DalamudApi.KeyState[Keys.a_key])
@@ -196,7 +198,15 @@ public class KeyOperates
                 }
             }
 
-           
+            if (distance > 30 && turn >= 2) {
+                turn--;
+            }
+
+            if (log)
+            {
+                PluginLog.Log($"distance: {distance} angle: {angle} height: {height} moving: {moving} flying: {flying}");
+            }
+            index++;
 
             if (distance > errorDisntance && beforeDistance == distance)
             {
@@ -226,7 +236,9 @@ public class KeyOperates
 
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 3.5;
+                errorDisntance = 4;
+            } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
+                errorDisntance = 3;
             }
         }
         PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");

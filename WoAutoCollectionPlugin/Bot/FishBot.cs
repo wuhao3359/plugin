@@ -90,7 +90,6 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 if (CommonUi.AddonSelectStringIsOpen()) {
                     KeyOperates.KeyMethod(Keys.num0_key);
-                    KeyOperates.KeyMethod(Keys.num0_key);
                 }
                 
                 n = 0;
@@ -163,6 +162,16 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 ToArea = Position.ToAreaB;
                 YFishArea = Position.YFishAreaB;
+            }
+            else if (area == 3)
+            {
+                ToArea = Position.ToAreaC;
+                YFishArea = Position.YFishAreaC;
+            }
+            else if (area == 100)
+            {
+                ToArea = Position.ToArea100;
+                YFishArea = Position.YFishArea100;
             }
 
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
@@ -358,7 +367,7 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
-                            Thread.Sleep(1500);
+                            Thread.Sleep(1000);
                         }
                     }
                     if (gp < maxGp * 0.5)

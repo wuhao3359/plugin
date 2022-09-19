@@ -235,7 +235,7 @@ namespace WoAutoCollectionPlugin.Bot
             Record.SetTugHook(TugType.Bite, Record.Hook);
             Task task = new(() =>
             {
-                PluginLog.Log($"Fish bit with {Record.Tug} fish time: {fishsw.ElapsedMilliseconds / 1000}");
+                PluginLog.Log($"CFish bit with {Record.Tug} fish time: {fishsw.ElapsedMilliseconds / 1000}");
                 if (fishsw.ElapsedMilliseconds / 1000 >= fishTime)
                 {
                     switch (Record.Tug.ToString())
@@ -244,6 +244,9 @@ namespace WoAutoCollectionPlugin.Bot
                             KeyOperates.KeyMethod(Keys.n3_key);
                             break;
                         case "Strong":
+                            KeyOperates.KeyMethod(Keys.n4_key);
+                            break;
+                        case "Legendary":
                             KeyOperates.KeyMethod(Keys.n4_key);
                             break;
                         default:
@@ -294,21 +297,21 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
-                            Thread.Sleep(1500);
+                            Thread.Sleep(1000);
                         }
                     }
                     if (gp < maxGp * 0.5)
                     {
                         KeyOperates.KeyMethod(Keys.minus_key);
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1000);
                     }
                     if (!existStatus)
                     {
-                        Thread.Sleep(6000);
+                        Thread.Sleep(5000);
                         if (gp > 560)
                         {
                             KeyOperates.KeyMethod(Keys.F4_key);
-                            Thread.Sleep(1500);
+                            Thread.Sleep(1000);
                             existStatus = true;
                             gp -= 560;
                         }
@@ -316,7 +319,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (LastFish && gp > 350)
                     {
                         KeyOperates.KeyMethod(Keys.F5_key);
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1000);
                     }
                     LastFish = false;
 

@@ -9,6 +9,153 @@ namespace WoAutoCollectionPlugin.Utility
         //
         public static ushort YunGuanTerritoryType = 939;
 
+        // ------------------------------- 云岛 采集 ------------------------------------ 
+
+        // 采矿默认移动点
+        public static Vector3[] AreaPositionA = {
+            new Vector3 (829f, 2730f, 1788f), 
+            new Vector3 (877f, 2714f, 1781f), 
+            new Vector3 (885f, 2712f, 1777f), // 2 tp
+            new Vector3 (1001f, 2218f, 1675f), // 3
+            new Vector3 (1032f, 2214f, 1705f), // 4
+            new Vector3 (1099f, 2204f, 1777f),
+            new Vector3 (1143f, 2204f, 1796f), // 6
+            new Vector3 (1242f, 2199f, 1843f), // 7
+            new Vector3 (1305f, 2201f, 1729f), // 8
+            new Vector3 (1352f, 2203f, 1649f), // 9
+            new Vector3 (1175f, 2214f, 1577f), // 10
+            new Vector3 (1131f, 2218f, 1659f),
+            new Vector3 (1260f, 2206f, 1641f), // 12
+            new Vector3 (1326f, 2212f, 1571f), // 13
+            new Vector3 (1418f, 2171f, 1523f), // 14
+            new Vector3 (1418f, 2154f, 1435f), // 15
+            new Vector3 (1577f, 2158f, 1439f), // 16
+            new Vector3 (1646f, 2147f, 1421f), // 
+            new Vector3 (1719f, 2153f, 1450f), // 18
+            new Vector3 (1818f, 2147f, 1393f), // 19
+            new Vector3 (1874f, 2151f, 1189f), // 
+            new Vector3 (1817f, 2140f, 1110f), // 21
+            new Vector3 (1920f, 2157f, 1004f), // 
+            new Vector3 (1995f, 2115f, 960f), // 23
+            new Vector3 (2043f, 2131f, 1036f), // 
+            new Vector3 (2045f, 2058f, 1102f), // 25
+            new Vector3 (2104f, 2110f, 1079f), // 26
+            new Vector3 (2154f, 2108f, 1139f), // 
+            new Vector3 (2281f, 2064f, 1146f), // 28
+            new Vector3 (2361f, 2056f, 1145f), // 29
+            new Vector3 (2278f, 2075f, 1005f), // 30
+            new Vector3 (2252f, 2084f, 1020f), // 
+            new Vector3 (2416f, 2063f, 1111f), // 32
+            new Vector3 (2413f, 2065f, 1149f), // 
+            new Vector3 (2422f, 2049f, 1183f), // 34 tp
+            new Vector3 (2590f, 2736f, 697f), // 35
+            new Vector3 (2635f, 2747f, 657f), // 36
+            new Vector3 (2627f, 2747f, 605f), // 
+            new Vector3 (2751f, 2736f, 616f), // 38
+            new Vector3 (2835f, 2751f, 628f), // 
+            new Vector3 (2892f, 2734f, 634f), // 40
+            new Vector3 (2756f, 2752f, 795f), // 
+            new Vector3 (2717f, 2745f, 856f), // 42
+            new Vector3 (2744f, 2761f, 806f), // 
+            new Vector3 (2827f, 2740f, 715f), // 44
+            new Vector3 (2969f, 2740f, 653f), // 
+            new Vector3 (3007f, 2729f, 671f), // 46 tp
+            new Vector3 (3064f, 2546f, 869f), // 47
+            new Vector3 (3122f, 2545f, 800f), // 48
+            new Vector3 (3156f, 2550f, 881f), // 49
+            new Vector3 (3196f, 2554f, 940f), // 
+            new Vector3 (3252f, 2551f, 931f), // 51
+            new Vector3 (3264f, 2555f, 1034f), // 52
+            new Vector3 (3341f, 2539f, 991f), // 
+            new Vector3 (3370f, 2521f, 1037f), // 54
+            new Vector3 (3281f, 2562f, 1081f), // 
+            new Vector3 (3209f, 2540f, 1004f), // 56
+            new Vector3 (3198f, 2540f, 1124f), // 57
+            new Vector3 (3202f, 2530f, 1156f), // 58 tp
+            new Vector3 (3420f, 2620f, 1303f), // 59
+            new Vector3 (3424f, 2620f, 1315f), // 60
+            new Vector3 (3433f, 2640f, 1349f), //
+            new Vector3 (3421f, 2653f, 1364f), // 62 tp
+            new Vector3 (3558f, 2590f, 1537f), // 63
+            new Vector3 (3595f, 2596f, 1562f), // 64
+            new Vector3 (3569f, 2604f, 1640f), // 
+            new Vector3 (3525f, 2598f, 1640f), // 66
+            new Vector3 (3639f, 2583f, 1675f), // 67
+            new Vector3 (3615f, 2598f, 1787f), // 68
+            new Vector3 (3580f, 2600f, 1848f), // 69
+            new Vector3 (3587f, 2698f, 1921f), // 70
+            new Vector3 (3502f, 2602f, 1951f), // 71
+            new Vector3 (3466f, 2602f, 1954f), //
+            new Vector3 (3334f, 2605f, 1712f), // 73
+            new Vector3 (3466f, 2602f, 1954f), //
+            new Vector3 (3465f, 2602f, 1841f), // 75
+            new Vector3 (3451f, 2603f, 1963f), // 76
+            new Vector3 (3446f, 2602f, 2046f), // 77
+            new Vector3 (3466f, 2595f, 2070f), // 78 tp
+            new Vector3 (3100f, 2102f, 2557f), // 79
+            new Vector3 (3062f, 2105f, 2556f), // 80
+            new Vector3 (3024f, 2112f, 2670f), // 81
+            new Vector3 (3140f, 2139f, 2698f), // 82
+            new Vector3 (3232f, 2138f, 2720f), // 83
+            new Vector3 (3380f, 2082f, 2780f), // 84
+            new Vector3 (3340f, 2090f, 2842f), //
+            new Vector3 (3288f, 2085f, 2879f), // 86
+            new Vector3 (3346f, 2096f, 2974f), // 
+            new Vector3 (3259f, 2085f, 2984f), // 88
+            new Vector3 (3181f, 2100f, 3055f), // 
+            new Vector3 (3149f, 2081f, 3077f), // 90
+            new Vector3 (3140f, 2140f, 3022f), // 
+            new Vector3 (3116f, 2140f, 2836f), // 92
+            new Vector3 (3015f, 2143f, 2809f), // 93
+            new Vector3 (2925f, 2142f, 2866f), // 94
+            new Vector3 (2911f, 2145f, 2991f), //
+            new Vector3 (2863f, 2144f, 2994f), // 96
+            new Vector3 (2917f, 2146f, 3063f), // 97
+            new Vector3 (2908f, 2145f, 3028f), // 
+            new Vector3 (2839f, 2138f, 3087f), // 99 tp
+            new Vector3 (2589f, 2330f, 3144f), // 100
+            new Vector3 (2667f, 2330f, 3228f), // 101
+            new Vector3 (2709f, 2339f, 3271f), // 
+            new Vector3 (2511f, 2323f, 3387f), // 103
+            new Vector3 (2450f, 2348f, 3327f), // 
+            new Vector3 (2441f, 2329f, 3242f), // 105
+            new Vector3 (2429f, 2330f, 3280f), // 
+            new Vector3 (2296f, 2332f, 3285f), // 107
+            new Vector3 (2311f, 2331f, 3361f), // 108
+            new Vector3 (2240f, 2363f, 3384f), // 
+            new Vector3 (2217f, 2356f, 3404f), // 110
+            new Vector3 (2184f, 2378f, 3380f), // 111
+            new Vector3 (2162f, 2391f, 3428f), // 
+            new Vector3 (2020f, 2378f, 3302f), // 113
+            new Vector3 (1956f, 2384f, 3267f), // 
+            new Vector3 (1978f, 2380f, 3209f), // 115
+            new Vector3 (1955f, 2384f, 3239f), // 
+            new Vector3 (1870f, 2376f, 3191f), // 117 tp
+            new Vector3 (1479f, 2789f, 3225f), // 118
+            new Vector3 (1441f, 2781f, 3080f), // 119
+            new Vector3 (1352f, 2794f, 3014f), // 120
+            new Vector3 (1288f, 2831f, 3005f), // 
+            new Vector3 (1163f, 2819f, 2906f), // 122
+            new Vector3 (1123f, 2834f, 2956f), // 
+            new Vector3 (1119f, 2793f, 2789f), // 124
+            new Vector3 (1093f, 2789f, 2813f), // 
+            new Vector3 (1043f, 2785f, 2780f), // 126 tp
+            new Vector3 (688f, 2691f, 2013f), // 127
+            new Vector3 (798f, 2757f, 1856f),
+        };
+
+        // 采矿TP点
+        public static int[] TpA = {
+            2, 34, 46, 58, 62, 78, 99, 117, 126,
+        };
+
+        // 采矿采集点
+        public static int[] GatherPositionA = {
+            3, 4, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16, 18, 19, 21, 23, 25, 26, 28, 29, 30, 32, 35, 36, 38, 40, 42, 44, 47, 48, 49, 51, 52, 54, 56, 57,
+            59, 60, 63, 64, 66, 67, 68, 69, 70, 71, 73, 75, 76, 77, 79, 80, 81, 82, 83, 84, 86, 88, 90, 92, 93, 94, 96, 97, 100, 101, 103, 105,
+            107, 108, 110, 111, 113, 115, 118, 119, 120, 122, 124, 127
+        };
+
         // ------------------------------- 云岛 捕鱼 ------------------------------------ 
 
         // 去天穹街进入空岛NPC路径 TerritoryType: 886
@@ -35,13 +182,41 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (866f, 2720f, 1873f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3187f, 2571f, 1099f),
-            new Vector3 (3262f, 2533f, 1119f),
+            new Vector3 (3313f, 2551f, 1042f),
+            new Vector3 (3342f, 2522f, 988f),
         };
         // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishAreaB = {
-            new Vector3 (3297f, 2527f, 1148f),
-            new Vector3 (3267f, 2527f, 1145f),
-            new Vector3 (3280f, 2529f, 1140f),
+            new Vector3 (3310f, 2524f, 942f),
+            new Vector3 (3337f, 2524f, 960f),
+            new Vector3 (3326f, 2525f, 958f),
+        };
+        public static Vector3[] ToAreaC = {
+            new Vector3 (869f, 2720f, 1876f),
+            new Vector3 (913f, 2742f, 1852f),
+            //new Vector3 (3157f, 2583f, 915f),
+            new Vector3 (3094f, 2581f, 867f),
+            new Vector3 (3124f, 2533f, 800f),
+            new Vector3 (3150f, 2531f, 792f),
+        };
+        // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
+        public static Vector3[] YFishAreaC = {
+            new Vector3 (3196f, 2526f, 822f),
+            new Vector3 (3178f, 2530f, 801f),
+            new Vector3 (3180f, 2531f, 809f),
+        };
+        // 去区域100的路径 TerritoryType: 930 
+        public static Vector3[] ToArea100 = {
+            new Vector3 (866f, 2720f, 1873f),
+            new Vector3 (861f, 2721f, 1891f),
+            new Vector3 (1003f, 2831f, 2507f),
+            new Vector3 (1074f, 2785f, 2788f),
+        };
+        // 固定钓鱼区域100 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
+        public static Vector3[] YFishArea100 = {
+            new Vector3 (1163f, 2785f, 2814f),
+            new Vector3 (1110f, 2785f, 2787f),
+            new Vector3 (1134f, 2785f, 2807f),
         };
 
 

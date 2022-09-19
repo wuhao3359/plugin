@@ -1,4 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
@@ -21,9 +22,13 @@ namespace WoAutoCollectionPlugin
 
         private const string fish = "/fish";
 
+        private const string hfish = "/hfish";
+
         private const string collectionfish = "/collectionfish";
 
         private const string gather = "/gather";
+
+        private const string ygather = "/ygather";
 
         private const string woTest = "/woTest";
 
@@ -74,6 +79,11 @@ namespace WoAutoCollectionPlugin
                     HelpMessage = "fish {param}"
                 });
 
+                DalamudApi.CommandManager.AddHandler(hfish, new CommandInfo(OnHFishCommand)
+                {
+                    HelpMessage = "hfish"
+                });
+
                 DalamudApi.CommandManager.AddHandler(collectionfish, new CommandInfo(OnCollectionFishCommand)
                 {
                     HelpMessage = "collectionfish {param}"
@@ -82,6 +92,11 @@ namespace WoAutoCollectionPlugin
                 DalamudApi.CommandManager.AddHandler(gather, new CommandInfo(OnGatherCommand)
                 {
                     HelpMessage = "gather {param}"
+                });
+
+                DalamudApi.CommandManager.AddHandler(ygather, new CommandInfo(OnYGatherCommand)
+                {
+                    HelpMessage = "ygather {param}"
                 });
 
                 DalamudApi.CommandManager.AddHandler(woTest, new CommandInfo(OnWoTestCommand)
@@ -124,8 +139,10 @@ namespace WoAutoCollectionPlugin
             // PluginUi.Dispose();
             DalamudApi.CommandManager.RemoveHandler(collect);
             DalamudApi.CommandManager.RemoveHandler(fish);
+            DalamudApi.CommandManager.RemoveHandler(hfish);
             DalamudApi.CommandManager.RemoveHandler(collectionfish);
             DalamudApi.CommandManager.RemoveHandler(gather);
+            DalamudApi.CommandManager.RemoveHandler(ygather);
             DalamudApi.CommandManager.RemoveHandler(woTest);
             DalamudApi.CommandManager.RemoveHandler(actionTest);
             DalamudApi.CommandManager.RemoveHandler(close);
@@ -180,9 +197,10 @@ namespace WoAutoCollectionPlugin
             isRunning = true;
             Task task = new(() =>
             {
+                int n = 0;
                 PluginLog.Log($"start task...");
                 DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
-                while (isRunning)
+                while (isRunning && n < 10)
                 {
                     try {
                         //if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
@@ -214,12 +232,57 @@ namespace WoAutoCollectionPlugin
                         PluginLog.Error($"error!!!\n{e}");
                     }
 
-                    PluginLog.Log($"准备开始下一轮...");
+                    PluginLog.Log($"准备开始下一轮... {n}");
+                    n++;
                     Thread.Sleep(3000);
                 }
                 PluginLog.Log($"end");
                 taskRunning = false;
                 DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
+
+                FishBot.Init();
+            });
+            task.Start();
+        }
+
+        private void OnHFishCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            int area = int.Parse(str[0]);
+            PluginLog.Log($"Hfish: {args}");
+
+            HFishBot HFishBot = new HFishBot(GameData);
+            if (area <= 0)
+            {
+                isRunning = false;
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            isRunning = true;
+            Task task = new(() =>
+            {
+                
+                DalamudApi.Framework.Update += HFishBot.OnHFishUpdate;
+
+                int n = 0;
+                while (isRunning && n < 360)
+                {
+                    HFishBot.RunScript();
+                    Thread.Sleep(5000);
+                    n++;
+                }
+
+                PluginLog.Log($"end");
+                DalamudApi.Framework.Update -= HFishBot.OnHFishUpdate;
+                taskRunning = false;
 
                 FishBot.Init();
             });
@@ -249,8 +312,9 @@ namespace WoAutoCollectionPlugin
             isRunning = true;
             Task task = new(() =>
             {
+                int n = 0;
                 DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
-                while (isRunning)
+                while (isRunning && n < 10)
                 {
                     try
                     {
@@ -261,7 +325,8 @@ namespace WoAutoCollectionPlugin
                     }
 
                     isRunning = false;
-                    PluginLog.Log($"准备开始下一轮...");
+                    PluginLog.Log($"准备开始下一轮... {n}");
+                    n++;
                     Thread.Sleep(3000);
                 }
                 PluginLog.Log($"end");
@@ -282,7 +347,7 @@ namespace WoAutoCollectionPlugin
             if (area <= 0)
             {
                 isRunning = false;
-                GatherBot.StopNormalScript();
+                GatherBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -315,21 +380,81 @@ namespace WoAutoCollectionPlugin
             task.Start();
         }
 
+        private void OnYGatherCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            int area = int.Parse(str[0]);
+            PluginLog.Log($"ygather: {area}");
+
+            if (area <= 0)
+            {
+                isRunning = false;
+                GatherBot.StopScript();
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            isRunning = true;
+            Task task = new(() =>
+            {
+                while (isRunning) {
+                    try
+                    {
+                        if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                        {
+                            PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                        }
+                        if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                        {
+                            FishBot.RunIntoYunGuanScript();
+                        }
+
+                        if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                        {
+                            GatherBot.RunYGatherScript(args);
+                        }
+                        else
+                        {
+                            PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                            Thread.Sleep(2000);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"error!!!\n{e}");
+                    }
+                    Thread.Sleep(3000);
+                }
+                
+                PluginLog.Log($"all end");
+                taskRunning = false;
+                isRunning = false;
+            });
+            task.Start();
+        }
+
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
             // 技能 hook 测试
+            //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
             // 人物状态测试
             //DalamudApi.Condition.ConditionChange += ChangeCondition;
 
-            string recipeName = "上级以太药";
-            //PluginLog.Log($"{recipeName}");
-            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-            //PluginLog.Log($"{recipeId}");
-            RecipeNoteUi.OpenRecipeNote(recipeId);
-
+            //string recipeName = "上级以太药";
+            ////PluginLog.Log($"{recipeName}");
+            //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            ////PluginLog.Log($"{recipeId}");
+            //RecipeNoteUi.OpenRecipeNote(recipeId);
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -342,7 +467,7 @@ namespace WoAutoCollectionPlugin
 
         private void OnCloseTestCommand(string command, string args)
         {
-            taskRunning = false;
+            Game.DisAble();
         }
 
         // 生产 

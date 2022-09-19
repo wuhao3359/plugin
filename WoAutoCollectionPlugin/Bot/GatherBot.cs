@@ -4,9 +4,11 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 using System.Threading;
 using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -19,6 +21,7 @@ namespace WoAutoCollectionPlugin.Bot
         private CommonBot? CommonBot;
 
         private static bool closed = false;
+        private int count = 0; 
 
         public GatherBot(GameData GameData)
         {
@@ -30,6 +33,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void Init()
         {
             closed = false;
+            count = 0;
         }
 
         // 普通采集点
@@ -193,7 +197,192 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
-        public void StopNormalScript()
+        public void RunYGatherScript(string args) {
+            string[] str = args.Split(' ');
+            int area = int.Parse(str[0]);
+            int repair = 0;
+            if (str.Length >= 2)
+            {
+                repair = int.Parse(str[1]);
+            }
+
+            Init();
+            KeyOperates.KeyMethod(Keys.down_arrow_key, 175);
+            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort territoryType = DalamudApi.ClientState.TerritoryType;
+            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+
+            if (RepairUi.CanRepair())
+            {
+                PluginLog.Log($"修理装备...");
+                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                if (repair > 0)
+                {
+                    CommonBot.Repair();
+                }
+                else
+                {
+                    CommonBot.NpcRepair();
+                }
+            }
+            else
+            {
+                PluginLog.Log($"不需要修理装备...");
+            }
+            int count = RepairUi.CanExtractMateria();
+            if (count >= 5)
+            {
+                PluginLog.Log($"开始精制魔晶石...");
+                CommonBot.ExtractMateria(count);
+            }
+
+            Vector3[] AreaPosition = Array.Empty<Vector3>();
+            int[] Tp = Array.Empty<int>();
+            int[] GatherPosition = Array.Empty<int>();
+            int GathingButton = 1;
+
+            (AreaPosition, Tp, GatherPosition, GathingButton) = GetAreaByType(area);
+
+            for (int k = 0; k < AreaPosition.Length; k++) {
+                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                {
+                    PluginLog.Log($"YGathing stopping");
+                    return;
+                }
+                position = KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
+                PluginLog.Log($"到达{k} TP点{Array.IndexOf(Tp, k) != -1} 采集点{Array.IndexOf(GatherPosition, k) != -1}");
+                // 默认为移动点
+                // 传送点
+                if (Array.IndexOf(Tp, k) != -1) {
+                    if (!DalamudApi.Condition[ConditionFlag.Jumping]) {
+                        KeyOperates.KeyMethod(Keys.w_key, 1500);
+                    }
+                    if (DalamudApi.Condition[ConditionFlag.Jumping])
+                    {
+                        while (DalamudApi.Condition[ConditionFlag.Jumping])
+                        {
+                            PluginLog.Log($"TPing wait");
+                            Thread.Sleep(1000);
+                        }
+                        Thread.Sleep(500);
+                    }
+                }
+
+                // 采集点
+                if (Array.IndexOf(GatherPosition, k) != -1) {
+                    GameObject? go = Util.CurrentPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+                    if (go != null)
+                    {
+                        float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
+                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
+                        float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                        Vector3 GatherPoint = new Vector3(x, y, z);
+                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                        PluginLog.Log($"到达可采集点: {position.X} {position.Y} {position.Z}");
+                        var targetMgr = DalamudApi.TargetManager;
+                        targetMgr.SetTarget(go);
+
+                        int n = 0;
+                        while (DalamudApi.Condition[ConditionFlag.Mounted])
+                        {
+                            if (n >= 3) {
+                                KeyOperates.KeyMethod(Keys.w_key, 200);
+                            }
+                            KeyOperates.KeyMethod(Keys.q_key);
+                            Thread.Sleep(1000);
+                            n++;
+
+                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                            {
+                                PluginLog.Log($"YGathing stopping");
+                                return;
+                            }
+                        }
+                        KeyOperates.KeyMethod(Keys.num0_key);
+                        Thread.Sleep(500);
+                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                        uint gp = player.CurrentGp;
+                        int level = player.Level;
+                        if (level >= 80) {
+                            if (gp >= 500)
+                            {
+                                KeyOperates.KeyMethod(Keys.F3_key);
+                                Thread.Sleep(2000);
+                            }
+                        } else {
+                            if (gp >= 400)
+                            {
+                                KeyOperates.KeyMethod(Keys.F2_key);
+                                Thread.Sleep(2000);
+                            }
+                        }
+
+                        if (!CommonUi.GatheringButton(GathingButton))
+                        {
+                            while (CommonUi.AddonGatheringIsOpen())
+                            {
+                                KeyOperates.KeyMethod(Keys.num0_key);
+                                Thread.Sleep(500);
+
+                                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                                {
+                                    PluginLog.Log($"YGathing stopping");
+                                    return;
+                                }
+                            }
+                        }
+
+                        KeyOperates.KeyMethod(Keys.num0_key);
+                        Thread.Sleep(500);
+                        while (!DalamudApi.Condition[ConditionFlag.Gathering42])
+                        {
+                            KeyOperates.KeyMethod(Keys.num0_key);
+                            Thread.Sleep(500);
+
+                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                            {
+                                PluginLog.Log($"YGathing stopping");
+                                return;
+                            }
+                        }
+                        if (DalamudApi.Condition[ConditionFlag.Gathering42])
+                        {
+                            count += 5;
+                        }
+                        else {
+                            k--;
+                        }
+                        while (DalamudApi.Condition[ConditionFlag.Gathering42])
+                        {
+                            Thread.Sleep(1000);
+
+                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                            {
+                                PluginLog.Log($"YGathing stopping");
+                                return;
+                            }
+                        }
+                        if (count >= 40) {
+                            Game.UseSpellActionById(19700);
+                            if (DalamudApi.Condition[ConditionFlag.Casting]) {
+                                count -= 40;
+                                Thread.Sleep(7000);
+                            }
+                        }
+                    }
+                    else {
+                        PluginLog.Log($"null gather point");
+                    }
+                }
+                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                {
+                    PluginLog.Log($"YGathing stopping");
+                    return;
+                }
+            }
+        }
+
+        public void StopScript()
         {
             closed = true;
             KeyOperates.ForceStop();
@@ -247,6 +436,27 @@ namespace WoAutoCollectionPlugin.Bot
             // TODO 5-大蜜蜂的巢(园:75) 6-巨人新薯(园:87) 7-山地小麦(园:73) 灵银矿(矿:53) 灵银沙(矿:51)
 
             return (Area, index, indexNum, ABC);
+        }
+
+        public (Vector3[], int[], int[], int) GetAreaByType(int type) {
+            Vector3[] AreaPosition = Array.Empty<Vector3>();
+            int[] Tp = Array.Empty<int>();
+            int[] GatherPosition = Array.Empty<int>();
+            int GathingButton = type;
+
+            if (type <= 10)
+            {
+                AreaPosition = Position.AreaPositionA;
+                Tp = Position.TpA;
+                GatherPosition = Position.GatherPositionA;
+                if (type >= 10) {
+                    GathingButton = type - 10;
+                }
+            }
+            else { 
+                
+            }
+            return (AreaPosition, Tp, GatherPosition, GathingButton);
         }
 
         public int GetGathingButton(int area) {

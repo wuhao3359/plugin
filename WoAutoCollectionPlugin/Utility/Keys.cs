@@ -40,6 +40,8 @@ public static class Keys
     public static Byte w_key = 87;
     public static Byte plus_key = 187;
     public static Byte minus_key = 189;
+    public static Byte up_arrow_key = 38;
+    public static Byte down_arrow_key = 40;
     public static Byte n0_key = 48;
     public static Byte n1_key = 49;
     public static Byte n2_key = 50;
