@@ -27,7 +27,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DalamudLibPath>$(appdata)\XIVLauncher\</DalamudLibPath>
+    <DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -53,7 +53,7 @@
 
   <ItemGroup>
     <Reference Include="Dalamud">
-      <HintPath>..\..\..\XIVLauncher\Dalamud.dll</HintPath>
+      <HintPath>Dalamud.dll</HintPath>
     </Reference>
   </ItemGroup>
 

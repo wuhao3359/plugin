@@ -9,21 +9,24 @@
   </PropertyGroup>
 
 	<PropertyGroup>
-		<TargetFramework>net5.0-windows</TargetFramework>
+		<TargetFramework>net6.0-windows</TargetFramework>
 		<Platforms>x64</Platforms>
-		<RuntimeIdentifier>win-x64</RuntimeIdentifier>
 		<Nullable>enable</Nullable>
 		<LangVersion>latest</LangVersion>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
 		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Documentation">
+		<DocumentationFile></DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	
 	<PropertyGroup>
-	<DalamudLibPath>$(appdata)\XIVLauncher\</DalamudLibPath>
+	<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -33,51 +36,21 @@
 		</AssemblySearchPaths>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-	  <LangVersion>preview</LangVersion>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-	  <LangVersion>preview</LangVersion>
-	</PropertyGroup>
-
 	<ItemGroup>
+		<PackageReference Include="DalamudPackager" Version="2.1.8" />
 		<PackageReference Include="ILRepack" Version="2.0.18" GeneratePathProperty="true" />
-		<PackageReference Include="DalamudPackager" Version="2.1.7" />
-		<PackageReference Include="NLua" Version="1.6.0" />
+		<PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.333">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
 		<ProjectReference Include="..\lib\ClickLib\ClickLib\ClickLib.csproj" />
-		<ProjectReference Include="..\lib\FFXIVClientStructs\FFXIVClientStructs.Generators\FFXIVClientStructs.Generators.csproj" />
 		<ProjectReference Include="..\lib\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Reference Include="Dalamud">
-	    <HintPath>..\XIVLauncher\Dalamud.dll</HintPath>
-	  </Reference>
-	  <Reference Include="FFXIVClientStructs">
-	    <HintPath>..\XIVLauncher\FFXIVClientStructs.dll</HintPath>
-	  </Reference>
-	  <Reference Include="ImGui.NET">
-	    <HintPath>..\XIVLauncher\ImGui.NET.dll</HintPath>
-	  </Reference>
-	  <Reference Include="ImGuiScene">
-	    <HintPath>..\XIVLauncher\ImGuiScene.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Lumina">
-	    <HintPath>..\XIVLauncher\Lumina.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Lumina.Excel">
-	    <HintPath>..\XIVLauncher\Lumina.Excel.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Newtonsoft.Json">
-	    <HintPath>..\XIVLauncher\Newtonsoft.Json.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Reloaded.Memory">
-	    <HintPath>..\XIVLauncher\Reloaded.Memory.dll</HintPath>
-	  </Reference>
-	  <Reference Include="Reloaded.Memory.Buffers">
-	    <HintPath>..\XIVLauncher\Reloaded.Memory.Buffers.dll</HintPath>
-	  </Reference>
+		<Reference Include="Dalamud" Private="False" />
+		<Reference Include="ImGui.NET" Private="False" />
+		<Reference Include="ImGuiScene" Private="False" />
+		<Reference Include="Lumina" Private="False" />
+		<Reference Include="Lumina.Excel" Private="False" />
+		<Reference Include="Newtonsoft.Json" Private="False" />
 	</ItemGroup>
 
 	<Target Name="ILRepack" AfterTargets="Build">
@@ -85,6 +58,7 @@
 			<InputAssemblies Include="$(TargetPath)" />
 			<InputAssemblies Include="$(TargetDir)*.dll" Exclude="$(TargetPath);$(TargetDir)NLua.dll;$(TargetDir)KeraLua.dll;$(TargetDir)lua54.dll;$(TargetDir)Serilog.dll" />
 		</ItemGroup>
+		<Exec Command="$(PkgILRepack)\tools\ILRepack.exe /lib:$(DalamudLibPath) /out:$(TargetDir)$(TargetFileName) @(InputAssemblies, ' ')" />
 	</Target>
 
 	<Target Name="CleanOutDir" AfterTargets="ILRepack">

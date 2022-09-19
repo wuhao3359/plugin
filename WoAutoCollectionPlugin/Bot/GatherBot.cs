@@ -111,16 +111,6 @@ namespace WoAutoCollectionPlugin.Bot
 
                                 KeyOperates.KeyMethod(Keys.num0_key);
                                 Thread.Sleep(500);
-                                //while (!CommonUi.AddonGatheringIsOpen() && n < 5) {
-                                //    KeyOperates.KeyMethod(Keys.num0_key);
-                                //    Thread.Sleep(500);
-                                //    n++;
-                                //    if (closed)
-                                //    {
-                                //        PluginLog.Log($"Gathing stopping");
-                                //        return true;
-                                //    }
-                                //}
                                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                                 uint gp = player.CurrentGp;
                                 if (area < 100)

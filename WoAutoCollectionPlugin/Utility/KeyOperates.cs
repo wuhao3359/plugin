@@ -176,9 +176,9 @@ public class KeyOperates
             }
             // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
             time = Convert.ToInt32(angle / 30 * 100 - 100);
-            if (time > -100 && turn < 2)
+            if (time > -90 && turn < 2)
             {
-                if (distance < 9)
+                if (distance < 10)
                 {
                     turn++;
                 }
@@ -304,6 +304,10 @@ public class KeyOperates
         else
         {
             sleep = 100 + sleep;
+        }
+
+        if (sleep == 0) {
+            return;
         }
 
         SendMessage(hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
