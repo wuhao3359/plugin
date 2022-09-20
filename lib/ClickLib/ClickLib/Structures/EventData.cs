@@ -1,4 +1,6 @@
-﻿namespace ClickLib.Structures;
+﻿using System;
+
+namespace ClickLib.Structures;
 
 /// <summary>
 /// Event data.
@@ -12,7 +14,7 @@ public unsafe sealed class EventData : SharedBuffer
     {
         this.Data = (void**)Buffer.Add(new byte[0x18]);
         if (this.Data == null)
-            throw new System.ArgumentNullException("EventData could not be created, null");
+            throw new ArgumentNullException("EventData could not be created, null");
 
         this.Data[0] = null;
         this.Data[1] = null;

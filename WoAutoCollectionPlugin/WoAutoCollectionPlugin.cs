@@ -43,6 +43,7 @@ namespace WoAutoCollectionPlugin
         public Configuration Configuration { get; private set; }
 
         private PluginUI PluginUi { get; init; }
+
         public GameData GameData { get; init; }
 
         private FishBot? FishBot;
@@ -147,6 +148,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(actionTest);
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
+
             // Game.DisAble();
         }
 
@@ -203,13 +205,6 @@ namespace WoAutoCollectionPlugin
                 while (isRunning && n < 10)
                 {
                     try {
-                        //if (DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]
-                        //|| DalamudApi.Condition[ConditionFlag.WaitingForDutyFinder]) {
-                        //    PluginLog.Log($"当前状态无法进行任务, skip...");
-                        //    cycle++;
-                        //    Thread.Sleep(3000);
-                        //    continue;
-                        //}
                         if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
                         {
                             PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
@@ -446,9 +441,6 @@ namespace WoAutoCollectionPlugin
             // 技能 hook 测试
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
-
-            // 人物状态测试
-            //DalamudApi.Condition.ConditionChange += ChangeCondition;
 
             //string recipeName = "上级以太药";
             ////PluginLog.Log($"{recipeName}");

@@ -16,7 +16,7 @@ public abstract class SharedBuffer
     /// <summary>
     /// Gets the shared buffer.
     /// </summary>
-    public static CircularBuffer Buffer { get; }
+    protected static CircularBuffer Buffer { get; }
 
     /// <summary>
     /// Dispose.

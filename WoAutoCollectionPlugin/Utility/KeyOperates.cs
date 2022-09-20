@@ -52,6 +52,7 @@ public class KeyOperates
         Init();
 
         int turn = 0;
+        int notMove = 0;
 
         if (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted]) {
             KeyMethod(Keys.q_key);
@@ -164,6 +165,18 @@ public class KeyOperates
             double beforeDistance = distance;
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
+
+            if (Math.Abs(beforeDistance - distance) < 1.5) {
+                notMove++;
+            }
+
+            if (notMove >= 10) {
+                KeyMethod(Keys.d_key, 300);
+                notMove = 0;
+            } else if (notMove >= 5) {
+                KeyMethod(Keys.a_key, 300);
+                notMove = 0;
+            }
 
             angle = 0;
             if (radians > -1 && radians < 1)

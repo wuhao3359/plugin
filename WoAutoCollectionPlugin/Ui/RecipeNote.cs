@@ -48,21 +48,6 @@ namespace WoAutoCollectionPlugin.Ui
 
         public static unsafe void OpenRecipeNote(uint recipeID)
         {
-            //var addon = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
-            //IntPtr agent0 = DalamudApi.GameGui.FindAgentInterface(addon);
-            //IntPtr agent1 = DalamudApi.GameGui.FindAgentInterface("RecipeNote");
-
-            //PluginLog.Log($"agent0 {agent0.ToInt64()}, agent1 {agent1.ToInt64()}");
-            
-            //AgentRecipeNote* obj0 = (AgentRecipeNote*)agent0;
-            //AgentRecipeNote* obj1 = (AgentRecipeNote*)agent1;
-
-            //if (obj0 == null)
-            //    PluginLog.Log($"obj0: AgentRecipeNote not found too");
-
-            //if (obj1 == null)
-            //    PluginLog.Log($"obj1: AgentRecipeNote not found too");
-
             var agent = AgentRecipeNote.Instance();
 
             if (agent == null)

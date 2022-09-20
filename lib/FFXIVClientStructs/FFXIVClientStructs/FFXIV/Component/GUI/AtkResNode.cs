@@ -106,7 +106,7 @@ public unsafe partial struct AtkResNode
     [MemberFunction("E9 ? ? ? ? 33 C0 48 83 C4 20 5B C3 66 90")]
     public partial void Ctor();
 
-    [MemberFunction("E8 ? ? ? ? 8B 57 6C")]
+    [MemberFunction("E8 ?? ?? ?? ?? 8B 54 FB 04")]
     public partial AtkImageNode* GetAsAtkImageNode();
 
     [MemberFunction("E8 ?? ?? ?? ?? 44 8B 97")]
@@ -182,13 +182,13 @@ public unsafe partial struct AtkResNode
     [MemberFunction("E8 ?? ?? ?? ?? 80 7B 5D 00")]
     public partial void SetHeight(ushort height);
 
-    [MemberFunction("E8 ?? ?? ?? ?? D1 EE")]
+    [MemberFunction("E8 ?? ?? ?? ?? 48 83 C7 08 48 83 EB 01 75 DC")]
     public partial void ToggleVisibility(bool enable);
 
     [MemberFunction("E8 ?? ?? ?? ?? 66 3B C3 74 13")]
     public partial ushort GetPriority();
 
-    [MemberFunction("E8 ?? ?? ?? ?? 8D 45 F0")]
+    [MemberFunction("E8 ?? ?? ?? ?? 8D 56 02 49 8B CD")]
     public partial void SetPriority(ushort priority);
 
     [MemberFunction("E8 ? ? ? ? FF C6 3B F5 72 E5 BA ? ? ? ?")]

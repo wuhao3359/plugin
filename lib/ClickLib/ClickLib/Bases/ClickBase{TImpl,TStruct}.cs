@@ -100,8 +100,8 @@ public abstract unsafe partial class ClickBase<TImpl, TStruct> : ClickBase<TImpl
     {
         var target = AtkStage.GetSingleton();
 
-        var inputData = InputData.Empty();
         var eventData = EventData.ForNormalTarget(target, this.UnitBase);
+        var inputData = InputData.Empty();
 
         this.InvokeReceiveEvent(&this.UnitBase->AtkEventListener, type, which, eventData, inputData);
     }
@@ -116,8 +116,8 @@ public abstract unsafe partial class ClickBase<TImpl, TStruct> : ClickBase<TImpl
     /// <param name="inputData">Input data.</param>
     protected void ClickAddonComponent(AtkComponentNode* target, uint which, EventType type, EventData? eventData = null, InputData? inputData = null)
     {
-        inputData ??= InputData.Empty();
         eventData ??= EventData.ForNormalTarget(target, this.UnitBase);
+        inputData ??= InputData.Empty();
 
         this.InvokeReceiveEvent(&this.UnitBase->AtkEventListener, type, which, eventData, inputData);
     }

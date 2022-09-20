@@ -160,7 +160,5 @@ namespace WoAutoCollectionPlugin.Ui
             }
             return false;
         }
-
-    
     }
 }
