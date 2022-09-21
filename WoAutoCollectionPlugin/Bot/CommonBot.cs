@@ -64,7 +64,6 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(300);
             if (RepairUi.AllRepairButton())
             {
-                KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(800);
 
                 if (!CommonUi.AddonSelectYesnoIsOpen()) 
@@ -75,7 +74,6 @@ namespace WoAutoCollectionPlugin.Bot
                 if (CommonUi.AddonSelectYesnoIsOpen())
                 {
                     CommonUi.SelectYesButton();
-                    KeyOperates.KeyMethod(Keys.num0_key);
                 }
                 Thread.Sleep(3500);
             }
@@ -97,7 +95,6 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(2000);
             if (RepairUi.AllRepairButton())
             {
-                KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
 
                 if (!CommonUi.AddonSelectYesnoIsOpen())
@@ -108,7 +105,6 @@ namespace WoAutoCollectionPlugin.Bot
                 if (CommonUi.AddonSelectYesnoIsOpen())
                 {
                     CommonUi.SelectYesButton();
-                    KeyOperates.KeyMethod(Keys.num0_key);
                 }
                 Thread.Sleep(500);
             }

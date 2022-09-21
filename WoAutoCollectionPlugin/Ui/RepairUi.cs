@@ -1,4 +1,5 @@
 ﻿using System;
+using ClickLib;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -19,13 +20,7 @@ namespace WoAutoCollectionPlugin.Ui
             var ptr = DalamudApi.GameGui.GetAddonByName("Repair", 1);
             if (ptr != IntPtr.Zero)
             {
-                var AtkUnitBase = (AtkUnitBase*)ptr;
-                var Addon = (AddonRepair*)ptr;
-                var AtkComponentButton = Addon->RepairAllButton;
-                var button = AtkComponentButton->ButtonBGNode;
-                var nb = button->NextSiblingNode;
-                AtkUnitBase->SetFocusNode(nb, true);
-                return true;
+                return Click.TrySendClick("repair_all");
             }
             return false;
         }

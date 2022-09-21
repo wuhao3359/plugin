@@ -47,13 +47,6 @@ namespace WoAutoCollectionPlugin.Bot
         // 进入空岛
         public bool RunIntoYunGuanScript()
         {
-            //PluginLog.Log($"{GameData.Aetherytes.Count}");
-            //foreach (var aetheryte in GameData.Aetherytes)
-            //{
-            //    uint key = aetheryte.Key;
-            //    Aetheryte value = aetheryte.Value;
-            //    PluginLog.Log($"{key} {value.Name} {value.Id}{value}");
-            //}
             if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType != 0)
             {
                 // 传送到伊修加德
@@ -81,15 +74,17 @@ namespace WoAutoCollectionPlugin.Bot
                     KeyOperates.KeyMethod(Keys.num1_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    CommonUi.SelectString1Button();
                 }
                 int n = 0;
                 while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
                     Thread.Sleep(500);
                     n++;
                 }
-                if (CommonUi.AddonSelectStringIsOpen()) {
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                n = 0;
+                while (CommonUi.AddonSelectStringIsOpen() && n < 5) {
+                    Thread.Sleep(500);
+                    CommonUi.SelectString1Button();
                 }
                 
                 n = 0;
@@ -99,35 +94,27 @@ namespace WoAutoCollectionPlugin.Bot
                     n++;
                 }
                 Thread.Sleep(1500);
-                if (CommonUi.AddonSelectYesnoIsOpen())
+                n = 0;
+                while (CommonUi.AddonSelectYesnoIsOpen() && n < 5)
                 {
-                    CommonUi.SelectYesButton();
-                    KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
-                }
-
-                if (CommonUi.AddonSelectYesnoIsOpen()) {
-                    KeyOperates.KeyMethod(Keys.num0_key);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    CommonUi.SelectYesButton();
+                    n++;
                 }
 
                 n = 0;
-                while (!CommonUi.AddonContentsFinderConfirmOpen() && n < 5)
+                while (!CommonUi.AddonContentsFinderConfirmIsOpen() && n < 5)
                 {
                     Thread.Sleep(500);
                     n++;
                 }
                 Thread.Sleep(1500);
-                if (CommonUi.AddonContentsFinderConfirmOpen())
+                n = 0;
+                while (CommonUi.AddonContentsFinderConfirmIsOpen() && n < 5)
                 {
-                    CommonUi.ContentsFinderConfirmButton();
-                    KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
-                }
-
-                if (CommonUi.AddonContentsFinderConfirmOpen()) {
-                    KeyOperates.KeyMethod(Keys.num0_key);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    CommonUi.ContentsFinderConfirmButton();
+                    n++;
                 }
 
                 Thread.Sleep(10000);

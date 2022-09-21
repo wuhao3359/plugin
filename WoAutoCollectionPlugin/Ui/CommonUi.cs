@@ -1,4 +1,5 @@
 ﻿using System;
+using ClickLib;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -14,13 +15,23 @@ namespace WoAutoCollectionPlugin.Ui
             return addon != IntPtr.Zero;
         }
 
+        public static unsafe bool SelectString1Button()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("select_string1");
+            }
+            return false;
+        }
+
         public static bool AddonSelectYesnoIsOpen()
         {
             var addon = DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
             return addon != IntPtr.Zero;
         }
 
-        public static bool AddonContentsFinderConfirmOpen()
+        public static bool AddonContentsFinderConfirmIsOpen()
         {
             var addon = DalamudApi.GameGui.GetAddonByName("ContentsFinderConfirm", 1);
             return addon != IntPtr.Zero;
@@ -107,17 +118,7 @@ namespace WoAutoCollectionPlugin.Ui
             var ptr = DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
             if (ptr != IntPtr.Zero)
             {
-                var AtkUnitBase = (AtkUnitBase*)ptr;
-                var Addon = (AddonSelectYesno*)ptr;
-                var AtkComponentButton = Addon->YesButton;
-                var button = AtkComponentButton->ButtonBGNode;
-                var nb = button->NextSiblingNode;
-                var isVisible = (AtkUnitBase->Flags & 0x20) == 0x20;
-                if (isVisible)
-                {
-                    AtkUnitBase->SetFocusNode(nb, true);
-                    return true;
-                }
+                return Click.TrySendClick("select_yes");
             }
             return false;
         }
@@ -127,38 +128,10 @@ namespace WoAutoCollectionPlugin.Ui
             var ptr = DalamudApi.GameGui.GetAddonByName("ContentsFinderConfirm", 1);
             if (ptr != IntPtr.Zero)
             {
-                var AtkUnitBase = (AtkUnitBase*)ptr;
-                var Addon = (AddonContentsFinderConfirm*)ptr;
-                var AtkComponentButton = Addon->CommenceButton;
-                var button = AtkComponentButton->ButtonBGNode;
-                var nb = button->NextSiblingNode;
-                var isVisible = (AtkUnitBase->Flags & 0x20) == 0x20;
-                if (isVisible)
-                {
-                    AtkUnitBase->SetFocusNode(nb, true);
-                    return true;
-                }
+                return Click.TrySendClick("duty_commence");
             }
             return false;
         }
 
-        public static unsafe bool AllRepairButton()
-        {
-            var ptr = DalamudApi.GameGui.GetAddonByName("Repair", 1);
-            if (ptr != IntPtr.Zero)
-            {
-                var AtkUnitBase = (AtkUnitBase*)ptr;
-                var Addon = (AddonRepair*)ptr;
-                var AtkComponentButton = Addon->RepairAllButton;
-                var button = AtkComponentButton->ButtonBGNode;
-                var nb = button->NextSiblingNode;
-                var isVisible = (AtkUnitBase->Flags & 0x20) == 0x20;
-                if (isVisible) {
-                    AtkUnitBase->SetFocusNode(nb, true);
-                    return true;
-                }
-            }
-            return false;
-        }
     }
 }
