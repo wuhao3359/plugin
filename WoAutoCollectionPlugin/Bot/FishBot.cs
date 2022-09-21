@@ -75,16 +75,7 @@ namespace WoAutoCollectionPlugin.Bot
                     KeyOperates.KeyMethod(Keys.num1_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
-<<<<<<< HEAD
-                    KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(1000);
-                    PluginLog.Log($"asd");
-                    Click.TrySendClick("select_string15");
-                    bool b = CommonUi.SelectString1Button();
-                    PluginLog.Log($"{b}");
-=======
                     CommonUi.SelectString1Button();
->>>>>>> e1834f53afcdae64ecf9a1255ef3ce24a376555c
                 }
                 int n = 0;
                 while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
