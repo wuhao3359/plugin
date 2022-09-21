@@ -45,7 +45,6 @@ namespace WoAutoCollectionPlugin.Ui
 
         public void Draw()
         {
-
             CommonUi.SelectYesButton();
         }
 

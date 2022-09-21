@@ -65,7 +65,7 @@ namespace WoAutoCollectionPlugin
 
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
-            //ClickLib.Click.Initialize();
+            ClickLib.Click.Initialize();
 
             try
             {
@@ -442,11 +442,13 @@ namespace WoAutoCollectionPlugin
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
-            //string recipeName = "上级以太药";
-            ////PluginLog.Log($"{recipeName}");
-            //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-            ////PluginLog.Log($"{recipeId}");
-            //RecipeNoteUi.OpenRecipeNote(recipeId);
+            string recipeName = "上级以太药";
+            //PluginLog.Log($"{recipeName}");
+            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            //PluginLog.Log($"{recipeId}");
+            RecipeNoteUi.OpenRecipeNote(recipeId);
+
+            FishBot.RunIntoYunGuanScript();
         }
 
         private void OnActionTestCommand(string command, string args)
