@@ -440,9 +440,6 @@ namespace WoAutoCollectionPlugin
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
-            // 技能 hook 测试
-            //Game.Initialize();
-            //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
             //string recipeName = "鞣革眼罩";
             //PluginLog.Log($"{recipeName}");
