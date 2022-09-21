@@ -1,9 +1,11 @@
-﻿using Dalamud.Game.ClientState.Conditions;
+﻿using ClickLib;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -442,13 +444,15 @@ namespace WoAutoCollectionPlugin
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
-            string recipeName = "上级以太药";
+            //string recipeName = "鞣革眼罩";
             //PluginLog.Log($"{recipeName}");
-            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
-            RecipeNoteUi.OpenRecipeNote(recipeId);
+            //RecipeNoteUi.OpenRecipeNote(recipeId);
 
-            FishBot.RunIntoYunGuanScript();
+            //Click.TrySendClick("select_string1");
+            bool b = Click.TrySendClick("select_string1");
+            PluginLog.Log($"{b}");
         }
 
         private void OnActionTestCommand(string command, string args)

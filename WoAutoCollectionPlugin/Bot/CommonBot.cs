@@ -10,15 +10,12 @@ namespace WoAutoCollectionPlugin.Bot
     {
         private KeyOperates KeyOperates { get; init; }
 
-        private ClickBot? ClickBot;
-
         private bool closed = false;
 
         public CommonBot(KeyOperates KeyOperates)
         {
             this.KeyOperates = KeyOperates;
             Init();
-            ClickBot = new ClickBot(KeyOperates);
         }
 
         public void Init()

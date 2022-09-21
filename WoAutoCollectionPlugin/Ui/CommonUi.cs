@@ -20,7 +20,7 @@ namespace WoAutoCollectionPlugin.Ui
             var ptr = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
             if (ptr != IntPtr.Zero)
             {
-                return Click.TrySendClick("select_string1");
+                return Click.TrySendClick("select_string15");
             }
             return false;
         }

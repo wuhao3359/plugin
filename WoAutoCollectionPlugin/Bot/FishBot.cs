@@ -1,4 +1,5 @@
-﻿using Dalamud.Game;
+﻿using ClickLib;
+using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
@@ -74,7 +75,12 @@ namespace WoAutoCollectionPlugin.Bot
                     KeyOperates.KeyMethod(Keys.num1_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
-                    CommonUi.SelectString1Button();
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(1000);
+                    PluginLog.Log($"asd");
+                    Click.TrySendClick("select_string15");
+                    bool b = CommonUi.SelectString1Button();
+                    PluginLog.Log($"{b}");
                 }
                 int n = 0;
                 while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
