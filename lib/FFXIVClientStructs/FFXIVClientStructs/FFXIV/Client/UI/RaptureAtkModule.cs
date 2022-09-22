@@ -7,13 +7,11 @@ namespace FFXIVClientStructs.FFXIV.Client.UI;
 // Client::UI::RaptureAtkModule
 //   Component::GUI::AtkModule
 //     Component::GUI::AtkModuleInterface
-[StructLayout(LayoutKind.Explicit, Size = 0x28770)]
+[StructLayout(LayoutKind.Explicit, Size = 0x281A0)]
 public partial struct RaptureAtkModule
 {
     [FieldOffset(0x0)] public AtkModule AtkModule;
-
-    [FieldOffset(0x1B390)] public int NameplateInfoCount;
-    [FieldOffset(0x1B398)] public NamePlateInfo NamePlateInfoArray; // 0-50, &NamePlateInfoArray[i]
+    [FieldOffset(0x1ADC8)] public NamePlateInfo NamePlateInfoArray; // 0-50, &NamePlateInfoArray[i]
 
     [MemberFunction("E8 ?? ?? ?? ?? 0F B6 44 24 ?? 48 89 9F")]
     public partial bool ChangeUiMode(uint uiMode);

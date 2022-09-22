@@ -51,10 +51,10 @@ public unsafe partial struct AtkUnitBase
     [MemberFunction("E8 ?? ?? ?? ?? 8D 56 54")]
     public partial AtkResNode* GetNodeById(uint nodeId);
     
-    [MemberFunction("E8 ?? ?? ?? ?? 8D 56 1E")]
+    [MemberFunction("E8 ?? ?? ?? ?? 8D 55 1C")]
     public partial AtkTextNode* GetTextNodeById(uint nodeId);
 
-    [MemberFunction("E8 ?? ?? ?? ?? 8D 53 16")]
+    [MemberFunction("E8 ?? ?? ?? ?? 8D 55 4D")]
     public partial AtkImageNode* GetImageNodeById(uint nodeId);
 
     [MemberFunction("E9 ?? ?? ?? ?? 83 FB 15")]
