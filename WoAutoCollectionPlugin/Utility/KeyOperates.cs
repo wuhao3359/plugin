@@ -166,7 +166,7 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
 
-            if (Math.Abs(beforeDistance - distance) < 1.5) {
+            if (Math.Abs(beforeDistance - distance) < 0.5) {
                 notMove++;
             }
 
@@ -191,7 +191,7 @@ public class KeyOperates
             time = Convert.ToInt32(angle / 30 * 100 - 100);
             if (time > -90 && turn < 2)
             {
-                if (distance < 10)
+                if (distance < 15)
                 {
                     turn++;
                 }
@@ -211,7 +211,7 @@ public class KeyOperates
                 }
             }
 
-            if (distance > 30 && turn >= 2) {
+            if (distance > 50 && turn >= 2) {
                 turn--;
             }
 

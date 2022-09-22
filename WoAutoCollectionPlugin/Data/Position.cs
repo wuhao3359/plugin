@@ -48,7 +48,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2416f, 2063f, 1111f), // 32
             new Vector3 (2413f, 2065f, 1149f), // 
             new Vector3 (2422f, 2049f, 1183f), // 34 tp
-            new Vector3 (2590f, 2736f, 697f), // 35
+            new Vector3 (2586f, 2746f, 685f), // 35
             new Vector3 (2635f, 2747f, 657f), // 36
             new Vector3 (2627f, 2747f, 605f), // 
             new Vector3 (2751f, 2736f, 616f), // 38
@@ -68,8 +68,8 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3264f, 2555f, 1034f), // 52
             new Vector3 (3341f, 2539f, 991f), // 
             new Vector3 (3370f, 2521f, 1037f), // 54
-            new Vector3 (3281f, 2562f, 1081f), // 
-            new Vector3 (3209f, 2540f, 1004f), // 56
+            new Vector3 (3280f, 2565f, 1082f), // 
+            new Vector3 (3214f, 2540f, 1103f), // 56
             new Vector3 (3198f, 2540f, 1124f), // 57
             new Vector3 (3202f, 2530f, 1156f), // 58 tp
             new Vector3 (3420f, 2620f, 1303f), // 59
@@ -83,7 +83,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3639f, 2583f, 1675f), // 67
             new Vector3 (3615f, 2598f, 1787f), // 68
             new Vector3 (3580f, 2600f, 1848f), // 69
-            new Vector3 (3587f, 2698f, 1921f), // 70
+            new Vector3 (3587f, 2618f, 1921f), // 70
             new Vector3 (3502f, 2602f, 1951f), // 71
             new Vector3 (3466f, 2602f, 1954f), //
             new Vector3 (3334f, 2605f, 1712f), // 73
