@@ -320,6 +320,7 @@ namespace WoAutoCollectionPlugin.Bot
                                     return;
                                 }
                             }
+                            
                         }
 
                         KeyOperates.KeyMethod(Keys.num0_key);
@@ -353,11 +354,14 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                         if (count >= 40) {
+                            KeyOperates.KeyMethod(Keys.up_arrow_key, 175);
+                            Thread.Sleep(500);
                             Game.UseSpellActionById(19700);
                             if (DalamudApi.Condition[ConditionFlag.Casting]) {
                                 count -= 40;
-                                Thread.Sleep(7000);
+                                Thread.Sleep(6800);
                             }
+                            KeyOperates.KeyMethod(Keys.down_arrow_key, 175);
                         }
                     }
                     else {

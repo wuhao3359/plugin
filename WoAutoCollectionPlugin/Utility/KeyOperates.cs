@@ -93,17 +93,6 @@ public class KeyOperates
         moving = 1;
         KeyDown(Keys.w_key);
 
-        if (height < -3)
-        {
-            flying = 1;
-            KeyDown(Keys.space_key);
-        }
-        else if (height > 5)
-        {
-            flying = -1;
-            KeyDown(Keys.num_sub_key);
-        }
-
         while (distance > errorDisntance && index < 2400)
         {
             if (closed || territoryType != DalamudApi.ClientState.TerritoryType)

@@ -75,6 +75,7 @@ namespace WoAutoCollectionPlugin.Bot
                     KeyOperates.KeyMethod(Keys.num1_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
                 int n = 0;

@@ -1,4 +1,5 @@
-﻿using Dalamud.Logging;
+﻿using ClickLib;
+using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
@@ -33,12 +34,7 @@ namespace WoAutoCollectionPlugin.Ui
             var ptr = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
             if (ptr != IntPtr.Zero)
             {
-                var AtkUnitBase = (AtkUnitBase*)ptr;
-                var Addon = (AddonRecipeNote*)ptr;
-                var AtkComponentButton = Addon->SynthesizeButton;
-                var button = AtkComponentButton->ButtonBGNode;
-                var nb = button->NextSiblingNode;
-                AtkUnitBase->SetFocusNode(nb, true);
+                return Click.TrySendClick("synthesize");
             }
             else {
                 return false;
@@ -154,7 +150,7 @@ namespace WoAutoCollectionPlugin.Ui
                 return (addonPtr, false);
 
             var addon = (AtkUnitBase*)addonPtr;
-            if (!addon->IsVisible)
+            if (!addon->IsVisible || addon->UldManager.LoadedState != AtkLoadState.Loaded)
                 return (addonPtr, false);
 
             return (addonPtr, true);

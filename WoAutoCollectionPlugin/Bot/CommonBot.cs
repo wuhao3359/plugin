@@ -1,4 +1,5 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Logging;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Ui;
@@ -50,6 +51,23 @@ namespace WoAutoCollectionPlugin.Bot
 
         // 修理
         public bool Repair() {
+            int n = 0;
+            while (DalamudApi.Condition[ConditionFlag.Mounted])
+            {
+                if (n >= 3)
+                {
+                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                }
+                KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(1000);
+                n++;
+
+                if (closed)
+                {
+                    PluginLog.Log($"YGathing stopping");
+                    return true;
+                }
+            }
             bool flag = true;
             if (closed)
             {
@@ -84,6 +102,23 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool NpcRepair()
         {
+            int n = 0;
+            while (DalamudApi.Condition[ConditionFlag.Mounted])
+            {
+                if (n >= 3)
+                {
+                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                }
+                KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(1000);
+                n++;
+
+                if (closed)
+                {
+                    PluginLog.Log($"YGathing stopping");
+                    return true;
+                }
+            }
             bool flag = true;
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num0_key);
@@ -117,6 +152,23 @@ namespace WoAutoCollectionPlugin.Bot
         // 精制
         public bool ExtractMateria(int count)
         {
+            int n = 0;
+            while (DalamudApi.Condition[ConditionFlag.Mounted])
+            {
+                if (n >= 3)
+                {
+                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                }
+                KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(1000);
+                n++;
+
+                if (closed)
+                {
+                    PluginLog.Log($"YGathing stopping");
+                    return true;
+                }
+            }
             if (closed)
             {
                 PluginLog.Log($"ExtractMateria stopping");

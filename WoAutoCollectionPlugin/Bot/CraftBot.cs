@@ -68,7 +68,6 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     RecipeNoteUi.SynthesizeButton();
                     while (RecipeNoteUi.RecipeNoteIsOpen()) {
-                        KeyOperates.KeyMethod(Keys.num0_key);
                         Thread.Sleep(500);
                         if (closed)
                         {
@@ -82,9 +81,7 @@ namespace WoAutoCollectionPlugin.Bot
                     continue;
                 }
 
-                if (!RecipeNoteUi.SynthesisIsOpen()) {
-                    Thread.Sleep(500);
-                }
+                Thread.Sleep(1800);
                 KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
                 if (craftName == "")

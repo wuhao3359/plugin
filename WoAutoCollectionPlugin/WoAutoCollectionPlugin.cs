@@ -444,20 +444,20 @@ namespace WoAutoCollectionPlugin
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
-            string recipeName = "上级以太药";
+            string recipeName = "橙汁";
             //PluginLog.Log($"{recipeName}");
             uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
             RecipeNoteUi.OpenRecipeNote(recipeId);
 
-            FishBot.RunIntoYunGuanScript();
+            //FishBot.RunIntoYunGuanScript();
             //string recipeName = "鞣革眼罩";
             //PluginLog.Log($"{recipeName}");
             //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
 
-            //Click.TrySendClick("select_string1");
+            Click.TrySendClick("select_string1");
             bool b = Click.TrySendClick("select_string1");
             PluginLog.Log($"{b}");
         }
