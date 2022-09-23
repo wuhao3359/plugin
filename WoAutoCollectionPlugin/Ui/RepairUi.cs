@@ -2,8 +2,6 @@
 using ClickLib;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.UI;
-using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace WoAutoCollectionPlugin.Ui
 {
@@ -11,8 +9,8 @@ namespace WoAutoCollectionPlugin.Ui
     {
         public static bool AddonRepairIsOpen()
         {
-            var addon = DalamudApi.GameGui.GetAddonByName("Repair", 1);
-            return addon != IntPtr.Zero;
+            var (addon, success) = CommonUi.IsAddonVisible("Repair");
+            return success;
         }
 
         public static unsafe bool AllRepairButton()

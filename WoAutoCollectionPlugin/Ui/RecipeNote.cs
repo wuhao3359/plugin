@@ -14,19 +14,19 @@ namespace WoAutoCollectionPlugin.Ui
     {
         public static bool SynthesisIsOpen()
         {
-            var(addon, success) = IsAddonVisible("Synthesis");
+            var(addon, success) = CommonUi.IsAddonVisible("Synthesis");
             return success;
         }
 
         public static bool RecipeNoteIsOpen()
         {
-            var (addon, success) = IsAddonVisible("RecipeNote");
+            var (addon, success) = CommonUi.IsAddonVisible("RecipeNote");
             return success;
         }
 
         public static bool SelectYesnoIsOpen()
         {
-            var (addon, success) = IsAddonVisible("SelectYesno");
+            var (addon, success) = CommonUi.IsAddonVisible("SelectYesno");
             return success;
         }
 
@@ -143,18 +143,6 @@ namespace WoAutoCollectionPlugin.Ui
             }
         }
 
-        private unsafe static (IntPtr Addon, bool IsVisible) IsAddonVisible(string addonName)
-        {
-            var addonPtr = DalamudApi.GameGui.GetAddonByName(addonName, 1);
-            if (addonPtr == IntPtr.Zero)
-                return (addonPtr, false);
-
-            var addon = (AtkUnitBase*)addonPtr;
-            if (!addon->IsVisible || addon->UldManager.LoadedState != AtkLoadState.Loaded)
-                return (addonPtr, false);
-
-            return (addonPtr, true);
-        }
 
     }
 }

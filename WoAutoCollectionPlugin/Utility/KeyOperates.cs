@@ -61,31 +61,8 @@ public class KeyOperates
 
         double errorDisntance = 5.5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-        KeyMethod(Keys.w_key, 200);
 
-        Vector3 positionC = GetUserPosition(SizeFactor);
-        double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
-
-        double radians = Maths.Radians(positionA, positionB, positionC);
-        double angle = 0;
-        if (radians > -1 && radians < 1)
-        {
-            angle = Maths.Angle(radians);
-        }
-        else if (radians >= 1)
-        {
-            angle = 180;
-        }
-        int time = Convert.ToInt32(angle / 15 * 100 - 100);
-        if (DirectionOfPoint < 0)
-        {
-            KeyMethod(Keys.a_key, time);
-        }
-        else if (DirectionOfPoint > 0)
-        {
-            KeyMethod(Keys.d_key, time);
-        }
-        positionA = positionC;
+        positionA = Revise(positionA, positionB);
         double distance = Maths.Distance(positionA, positionB);
         double height = Maths.Height(positionA, positionB, UseMount);
 
@@ -108,8 +85,8 @@ public class KeyOperates
                 break;
             }
 
-            positionC = GetUserPosition(SizeFactor);
-            DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
+            Vector3 positionC = GetUserPosition(SizeFactor);
+            double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
 
             // 根据相对高度 上升或下降
             double beforeHeight = height;
@@ -149,25 +126,27 @@ public class KeyOperates
                 FlyStop();
             }
 
-            radians = Maths.Radians(positionA, positionB, positionC);
+            double radians = Maths.Radians(positionA, positionB, positionC);
 
             double beforeDistance = distance;
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
 
-            if (Math.Abs(beforeDistance - distance) < 0.5) {
+            if (Math.Abs(beforeDistance - distance) < 0.8) {
                 notMove++;
             }
 
             if (notMove >= 10) {
                 KeyMethod(Keys.d_key, 300);
+                KeyDown(Keys.space_key);
                 notMove = 0;
             } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
+                KeyDown(Keys.space_key);
                 notMove = 0;
             }
 
-            angle = 0;
+            double angle = 0;
             if (radians > -1 && radians < 1)
             {
                 angle = Maths.Angle(radians);
@@ -177,12 +156,17 @@ public class KeyOperates
                 angle = 180;
             }
             // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
-            time = Convert.ToInt32(angle / 30 * 100 - 100);
+            int time = Convert.ToInt32(angle / 30 * 100 - 100);
             if (time > -90 && turn < 2)
             {
                 if (distance < 15)
                 {
                     turn++;
+                }
+                else {
+                    MoveStop();
+                    Revise(positionA, positionB);
+                    turn = 0;
                 }
                 if (DirectionOfPoint < 0)
                 {
@@ -198,10 +182,6 @@ public class KeyOperates
                         KeyMethod(Keys.d_key, time);
                     }
                 }
-            }
-
-            if (distance > 50 && turn >= 2) {
-                turn--;
             }
 
             if (log)
@@ -329,5 +309,34 @@ public class KeyOperates
     public void KeyUp(Byte key)
     {
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+    }
+
+    public Vector3 Revise(Vector3 positionA, Vector3 positionB) {
+        ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+        KeyMethod(Keys.w_key, 200);
+
+        Vector3 positionC = GetUserPosition(SizeFactor);
+        double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
+
+        double radians = Maths.Radians(positionA, positionB, positionC);
+        double angle = 0;
+        if (radians > -1 && radians < 1)
+        {
+            angle = Maths.Angle(radians);
+        }
+        else if (radians >= 1)
+        {
+            angle = 180;
+        }
+        int time = Convert.ToInt32(angle / 15 * 100 - 100);
+        if (DirectionOfPoint < 0)
+        {
+            KeyMethod(Keys.a_key, time);
+        }
+        else if (DirectionOfPoint > 0)
+        {
+            KeyMethod(Keys.d_key, time);
+        }
+        return positionC;
     }
 }

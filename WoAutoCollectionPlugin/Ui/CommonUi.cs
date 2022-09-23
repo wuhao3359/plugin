@@ -9,13 +9,31 @@ namespace WoAutoCollectionPlugin.Ui
 {
     public static class CommonUi
     {
-        public static bool AddonSelectStringIsOpen()
+        public unsafe static bool AddonSelectStringIsOpen()
         {
-            var addon = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
-            return addon != IntPtr.Zero;
+            var (addon, success) = IsAddonVisible("SelectString");
+            return success;
         }
 
-        public static unsafe bool SelectString1Button()
+        public unsafe static bool AddonSelectYesnoIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("SelectYesno");
+            return success;
+        }
+
+        public unsafe static bool AddonContentsFinderConfirmIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("ContentsFinderConfirm");
+            return success;
+        }
+
+        public unsafe static bool AddonGatheringIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("Gathering");
+            return success;
+        }
+
+        public unsafe static bool SelectString1Button()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
             if (ptr != IntPtr.Zero)
@@ -23,24 +41,6 @@ namespace WoAutoCollectionPlugin.Ui
                 return Click.TrySendClick("select_string1");
             }
             return false;
-        }
-
-        public static bool AddonSelectYesnoIsOpen()
-        {
-            var addon = DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
-            return addon != IntPtr.Zero;
-        }
-
-        public static bool AddonContentsFinderConfirmIsOpen()
-        {
-            var addon = DalamudApi.GameGui.GetAddonByName("ContentsFinderConfirm", 1);
-            return addon != IntPtr.Zero;
-        }
-
-        public static bool AddonGatheringIsOpen()
-        {
-            var addon = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
-            return addon != IntPtr.Zero;
         }
 
         public static unsafe bool GatheringButton(int index)
@@ -53,61 +53,38 @@ namespace WoAutoCollectionPlugin.Ui
                 var ComponentCheckBox = Addon->GatheredItemComponentCheckBox1;
                 if (index == 1)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox1;
+                    return Click.TrySendClick("gathering_checkbox1");
                 }
                 else if (index == 2)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox2;
+                    return Click.TrySendClick("gathering_checkbox2");
                 }
                 else if (index == 3)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox3;
+                    return Click.TrySendClick("gathering_checkbox3");
                 }
                 else if (index == 4)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox4;
+                    return Click.TrySendClick("gathering_checkbox4");
                 }
                 else if (index == 5)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox5;
+                    return Click.TrySendClick("gathering_checkbox5");
                 }
                 else if (index == 6)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox6;
+                    return Click.TrySendClick("gathering_checkbox6");
                 }
                 else if (index == 7)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox7;
+                    return Click.TrySendClick("gathering_checkbox7");
                 }
                 else if (index == 8)
                 {
-                    ComponentCheckBox = Addon->GatheredItemComponentCheckBox8;
+                    return Click.TrySendClick("gathering_checkbox8");
                 }
                 else {
                     return false;
-                }
-                var AtkComponentButton = ComponentCheckBox->AtkComponentButton;
-                var AtkComponentBase = AtkComponentButton.AtkComponentBase;
-                var UldManager = AtkComponentBase.UldManager;
-
-                var isVisible = (AtkUnitBase->Flags & 0x20) == 0x20;
-                if (isVisible)
-                {
-                    AtkResNode* nb = null;
-                    for (int i = 0; i < UldManager.NodeListCount; i++)
-                    {
-                        if (UldManager.NodeList[i]->Type == NodeType.Collision)
-                        {
-                            nb = UldManager.NodeList[i];
-                            break;
-                        }
-
-                    }
-                    if (nb == null) { 
-                        return false;
-                    }
-                    AtkUnitBase->SetFocusNode(nb, true);
-                    return true;
                 }
             }
             return false;
@@ -131,6 +108,19 @@ namespace WoAutoCollectionPlugin.Ui
                 return Click.TrySendClick("duty_commence");
             }
             return false;
+        }
+
+        public unsafe static (IntPtr Addon, bool IsVisible) IsAddonVisible(string addonName)
+        {
+            var addonPtr = DalamudApi.GameGui.GetAddonByName(addonName, 1);
+            if (addonPtr == IntPtr.Zero)
+                return (addonPtr, false);
+
+            var addon = (AtkUnitBase*)addonPtr;
+            if (!addon->IsVisible || addon->UldManager.LoadedState != AtkLoadState.Loaded)
+                return (addonPtr, false);
+
+            return (addonPtr, true);
         }
 
     }

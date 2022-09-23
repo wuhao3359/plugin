@@ -307,23 +307,11 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
 
-                        if (!CommonUi.GatheringButton(GathingButton))
-                        {
-                            while (CommonUi.AddonGatheringIsOpen())
-                            {
-                                KeyOperates.KeyMethod(Keys.num0_key);
-                                Thread.Sleep(500);
-
-                                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
-                                {
-                                    PluginLog.Log($"YGathing stopping");
-                                    return;
-                                }
-                            }
-                            
+                        if (CommonUi.AddonGatheringIsOpen()) {
+                            Thread.Sleep(1000);
+                            CommonUi.GatheringButton(GathingButton);
                         }
 
-                        KeyOperates.KeyMethod(Keys.num0_key);
                         Thread.Sleep(500);
                         while (!DalamudApi.Condition[ConditionFlag.Gathering42])
                         {

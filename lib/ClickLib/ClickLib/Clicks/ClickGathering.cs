@@ -56,4 +56,20 @@ public sealed unsafe class ClickGathering : ClickBase<ClickGathering, AddonGathe
     [ClickName("gathering_checkbox4")]
     public void CheckBox4()
     => this.ClickAddonCheckBox(this.Addon->GatheredItemComponentCheckBox4, 3);
+
+    [ClickName("gathering_checkbox5")]
+    public void CheckBox5()
+    => this.ClickAddonCheckBox(this.Addon->GatheredItemComponentCheckBox5, 4);
+
+    [ClickName("gathering_checkbox6")]
+    public void CheckBox6()
+    => this.ClickAddonCheckBox(this.Addon->GatheredItemComponentCheckBox6, 5);
+
+    [ClickName("gathering_checkbox7")]
+    public void CheckBox7()
+    => this.ClickAddonCheckBox(this.Addon->GatheredItemComponentCheckBox7, 6);
+
+    [ClickName("gathering_checkbox8")]
+    public void CheckBox8()
+    => this.ClickAddonCheckBox(this.Addon->GatheredItemComponentCheckBox8, 7);
 }
