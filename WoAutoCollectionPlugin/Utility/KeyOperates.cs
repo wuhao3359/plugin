@@ -163,11 +163,6 @@ public class KeyOperates
                 {
                     turn++;
                 }
-                else {
-                    MoveStop();
-                    Revise(positionA, positionB);
-                    turn = 0;
-                }
                 if (DirectionOfPoint < 0)
                 {
                     if (!DalamudApi.KeyState[Keys.a_key])
@@ -182,6 +177,11 @@ public class KeyOperates
                         KeyMethod(Keys.d_key, time);
                     }
                 }
+            }
+            if (turn >= 2) {
+                MoveStop();
+                Revise(positionA, positionB);
+                turn = 0;
             }
 
             if (log)

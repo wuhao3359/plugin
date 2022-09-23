@@ -456,10 +456,6 @@ namespace WoAutoCollectionPlugin
             //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
-
-            Click.TrySendClick("select_string1");
-            bool b = Click.TrySendClick("select_string1");
-            PluginLog.Log($"{b}");
         }
 
         private void OnActionTestCommand(string command, string args)
