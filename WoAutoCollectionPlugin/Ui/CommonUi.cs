@@ -100,6 +100,16 @@ namespace WoAutoCollectionPlugin.Ui
             return false;
         }
 
+        public static unsafe bool SelectMaterializeDialogYesButton()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("MaterializeDialog", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("materialize");
+            }
+            return false;
+        }
+
         public static unsafe bool ContentsFinderConfirmButton()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("ContentsFinderConfirm", 1);

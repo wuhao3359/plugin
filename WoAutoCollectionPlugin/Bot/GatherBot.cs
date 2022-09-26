@@ -109,8 +109,19 @@ namespace WoAutoCollectionPlugin.Bot
                                 PluginLog.Log($"work: {go.ObjectId} type: {go.ObjectKind}");
                                 targetMgr.SetTarget(go);
 
-                                KeyOperates.KeyMethod(Keys.num0_key);
-                                Thread.Sleep(500);
+                                int t = 0;
+                                while (CommonUi.AddonGatheringIsOpen() && t < 10)
+                                {
+                                    KeyOperates.KeyMethod(Keys.num0_key);
+                                    Thread.Sleep(500);
+                                    t++;
+                                }
+                                if (t >= 10)
+                                {
+                                    i--;
+                                    continue;
+                                }
+
                                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                                 uint gp = player.CurrentGp;
                                 if (area < 100)
@@ -134,16 +145,10 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                 }
 
-                                if (!CommonUi.GatheringButton(GathingButton)) {
-                                    while (CommonUi.AddonGatheringIsOpen()) {
-                                        KeyOperates.KeyMethod(Keys.num0_key);
-                                        Thread.Sleep(500);
-                                    }
+                                if (CommonUi.AddonGatheringIsOpen()) {
+                                    CommonUi.GatheringButton(GathingButton);
                                 }
 
-                                // TODO
-                                KeyOperates.KeyMethod(Keys.num0_key);
-                                Thread.Sleep(500);
                                 if (!DalamudApi.Condition[ConditionFlag.Gathering42]) {
                                     KeyOperates.KeyMethod(Keys.num0_key);
                                 }
@@ -197,7 +202,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Init();
-            KeyOperates.KeyMethod(Keys.down_arrow_key, 175);
+            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
@@ -219,6 +224,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 PluginLog.Log($"不需要修理装备...");
             }
+            Thread.Sleep(500);
             int count = RepairUi.CanExtractMateria();
             if (count >= 5)
             {
@@ -233,6 +239,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             (AreaPosition, Tp, GatherPosition, GathingButton) = GetAreaByType(area);
 
+            int gatherCount = 0;
             for (int k = 0; k < AreaPosition.Length; k++) {
                 if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {
@@ -245,7 +252,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 传送点
                 if (Array.IndexOf(Tp, k) != -1) {
                     if (!DalamudApi.Condition[ConditionFlag.Jumping]) {
-                        KeyOperates.KeyMethod(Keys.w_key, 1500);
+                        KeyOperates.KeyMethod(Keys.w_key, 1000);
                     }
                     if (DalamudApi.Condition[ConditionFlag.Jumping])
                     {
@@ -267,13 +274,17 @@ namespace WoAutoCollectionPlugin.Bot
                         float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         Vector3 GatherPoint = new Vector3(x, y, z);
+                        if (Maths.Distance(position, GatherPoint) > 100) {
+                            PluginLog.Log($"可采集点太远");
+                            continue;
+                        }
                         position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                         PluginLog.Log($"到达可采集点: {position.X} {position.Y} {position.Z}");
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
 
                         int n = 0;
-                        while (DalamudApi.Condition[ConditionFlag.Mounted])
+                        while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 10)
                         {
                             if (n >= 3) {
                                 KeyOperates.KeyMethod(Keys.w_key, 200);
@@ -288,45 +299,52 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                         }
-                        KeyOperates.KeyMethod(Keys.num0_key);
-                        Thread.Sleep(500);
-                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                        uint gp = player.CurrentGp;
-                        int level = player.Level;
-                        if (level >= 80) {
-                            if (gp >= 500)
-                            {
-                                KeyOperates.KeyMethod(Keys.F3_key);
-                                Thread.Sleep(2000);
-                            }
-                        } else {
-                            if (gp >= 400)
-                            {
-                                KeyOperates.KeyMethod(Keys.F2_key);
-                                Thread.Sleep(2000);
-                            }
-                        }
 
-                        if (CommonUi.AddonGatheringIsOpen()) {
-                            Thread.Sleep(1000);
-                            CommonUi.GatheringButton(GathingButton);
-                        }
-
-                        Thread.Sleep(500);
-                        while (!DalamudApi.Condition[ConditionFlag.Gathering42])
+                        int t = 0;
+                        while (!CommonUi.AddonGatheringIsOpen() && t < 10)
                         {
                             KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
-
                             if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                             {
                                 PluginLog.Log($"YGathing stopping");
                                 return;
                             }
+                            t++;
                         }
+                        if (t >= 10) {
+                            k--;
+                            continue;
+                        }
+                        Thread.Sleep(500);
+
+                        if (CommonUi.AddonGatheringIsOpen()) {
+                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                            uint gp = player.CurrentGp;
+                            int level = player.Level;
+                            if (level >= 80)
+                            {
+                                if (gp >= 500)
+                                {
+                                    KeyOperates.KeyMethod(Keys.F3_key);
+                                    Thread.Sleep(2000);
+                                }
+                            }
+                            else
+                            {
+                                if (gp >= 400)
+                                {
+                                    KeyOperates.KeyMethod(Keys.F2_key);
+                                    Thread.Sleep(2000);
+                                }
+                            }
+                            Thread.Sleep(1000);
+                            CommonUi.GatheringButton(GathingButton);
+                        }
+
                         if (DalamudApi.Condition[ConditionFlag.Gathering42])
                         {
-                            count += 5;
+                            gatherCount += 5;
                         }
                         else {
                             k--;
@@ -341,15 +359,22 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                         }
-                        if (count >= 40) {
-                            KeyOperates.KeyMethod(Keys.up_arrow_key, 175);
+                        if (gatherCount >= 40) {
+                            KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             Thread.Sleep(500);
-                            Game.UseSpellActionById(19700);
+                            try
+                            {
+                                Game.UseSpellActionById(19700);
+                            }
+                            catch {
+                                PluginLog.Log($"use action 19700 error!!!");
+                            }
+                            
                             if (DalamudApi.Condition[ConditionFlag.Casting]) {
-                                count -= 40;
+                                gatherCount -= 40;
                                 Thread.Sleep(6800);
                             }
-                            KeyOperates.KeyMethod(Keys.down_arrow_key, 175);
+                            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
                         }
                     }
                     else {
@@ -431,12 +456,13 @@ namespace WoAutoCollectionPlugin.Bot
                 AreaPosition = Position.AreaPositionA;
                 Tp = Position.TpA;
                 GatherPosition = Position.GatherPositionA;
-                if (type >= 10) {
-                    GathingButton = type - 10;
-                }
+                GathingButton = type;
             }
-            else { 
-                
+            else {
+                AreaPosition = Position.AreaPositionB;
+                Tp = Position.TpB;
+                GatherPosition = Position.GatherPositionB;
+                GathingButton = type - 10;
             }
             return (AreaPosition, Tp, GatherPosition, GathingButton);
         }

@@ -79,6 +79,8 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(300);
             if (RepairUi.AllRepairButton())
             {
+                Thread.Sleep(800);
+                CommonUi.SelectYesButton();
                 Thread.Sleep(3500);
             }
             else {
@@ -96,7 +98,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
@@ -110,13 +112,19 @@ namespace WoAutoCollectionPlugin.Bot
             }
             bool flag = true;
             KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num2_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(2000);
-            if (RepairUi.AllRepairButton())
+
+            if (CommonUi.AddonSelectStringIsOpen())
             {
                 Thread.Sleep(500);
+                CommonUi.SelectString1Button();
+                Thread.Sleep(1500);
+            }
+            
+            if (RepairUi.AddonRepairIsOpen() && RepairUi.AllRepairButton())
+            {
+                Thread.Sleep(800);
+                CommonUi.SelectYesButton();
+                Thread.Sleep(800);
             }
             else
             {
@@ -135,7 +143,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
@@ -157,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
             for (int i = 0; i < count; i++) {
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
-                CommonUi.SelectYesButton();
+                CommonUi.SelectMaterializeDialogYesButton();
                 Thread.Sleep(3500);
             }
             KeyOperates.KeyMethod(Keys.esc_key);

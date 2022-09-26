@@ -62,7 +62,7 @@ public class KeyOperates
         double errorDisntance = 5.5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
-        positionA = Revise(positionA, positionB);
+        positionA = Revise(positionB);
         double distance = Maths.Distance(positionA, positionB);
         double height = Maths.Height(positionA, positionB, UseMount);
 
@@ -70,11 +70,19 @@ public class KeyOperates
         moving = 1;
         KeyDown(Keys.w_key);
 
+        if (UseMount && DalamudApi.Condition[ConditionFlag.Mounted])
+        {
+            if (height < -2) {
+                KeyDown(Keys.space_key);
+                flying = 1;
+            }
+        }
+
         while (distance > errorDisntance && index < 2400)
         {
             if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
             {
-                PluginLog.Log($"移动中途结束 ${closed} ${territoryType} ${DalamudApi.ClientState.TerritoryType}");
+                PluginLog.Log($"移动中途结束 {closed} {territoryType} {DalamudApi.ClientState.TerritoryType}");
                 Stop();
                 return GetUserPosition(SizeFactor);
             }
@@ -91,33 +99,33 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
-
             if (height < -2)
             {
-                if (flying < 0)
+                if (flying <= 0)
                 {
-                    if (DalamudApi.KeyState[Keys.num_sub_key]) {
+                    if (DalamudApi.KeyState[Keys.num_sub_key] && DalamudApi.Condition[ConditionFlag.InFlight])
+                    {
                         KeyUp(Keys.num_sub_key);
                     }
-                    if (!DalamudApi.KeyState[Keys.space_key])
+                    if (!DalamudApi.KeyState[Keys.space_key] || !DalamudApi.Condition[ConditionFlag.InFlight])
                     {
                         KeyDown(Keys.space_key);
                     }
                     flying = 1;
                 }
             }
-            else if (height > 2)
+            else if (height > 3)
             {
-                if (flying > 0)
+                if (flying >= 0)
                 {
-                    if (DalamudApi.KeyState[Keys.space_key])
-                    {
-                        KeyUp(Keys.space_key);
-                    }
-                    if (!DalamudApi.KeyState[Keys.num_sub_key])
+                    if (!DalamudApi.KeyState[Keys.num_sub_key] && DalamudApi.Condition[ConditionFlag.InFlight])
                     {
                         KeyDown(Keys.num_sub_key);
                     }
+                    //if (DalamudApi.KeyState[Keys.space_key])
+                    //{
+                    //    KeyUp(Keys.space_key);
+                    //}
                     flying = -1;
                 }
             }
@@ -132,17 +140,15 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
 
-            if (Math.Abs(beforeDistance - distance) < 0.8) {
+            if (Math.Abs(beforeDistance - distance) < 0.4) {
                 notMove++;
             }
 
             if (notMove >= 10) {
                 KeyMethod(Keys.d_key, 300);
-                KeyDown(Keys.space_key);
                 notMove = 0;
             } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
-                KeyDown(Keys.space_key);
                 notMove = 0;
             }
 
@@ -157,9 +163,9 @@ public class KeyOperates
             }
             // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
             int time = Convert.ToInt32(angle / 30 * 100 - 100);
-            if (time > -90 && turn < 2)
+            if (time > -90 && turn < 10)
             {
-                if (distance < 15)
+                if (distance < 20)
                 {
                     turn++;
                 }
@@ -178,9 +184,9 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 2) {
+            if (turn >= 10) {
                 MoveStop();
-                Revise(positionA, positionB);
+                Revise(positionB);
                 turn = 0;
             }
 
@@ -198,7 +204,7 @@ public class KeyOperates
                 }
                 moving = 1;
             }
-            if (height <= 2 && height >= -2)
+            if (height <= 3 && height >= -2)
             {
                 FlyStop();
             }
@@ -209,16 +215,18 @@ public class KeyOperates
                     KeyDown(Keys.space_key);
                     flying = 1;
                 }
-                else if (height > 2)
+                else if (height > 3)
                 {
-                    KeyDown(Keys.num_sub_key);
+                    if (DalamudApi.Condition[ConditionFlag.InFlight]) {
+                        KeyDown(Keys.num_sub_key);
+                    }
                     flying = -1;
                 }
             }
 
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 4;
+                errorDisntance = 4.5;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
                 errorDisntance = 3;
             }
@@ -243,6 +251,8 @@ public class KeyOperates
 
     public void Init() {
         closed = false;
+        FlyStop();
+        MoveStop();
         moving = 0;
         flying = 0;
     }
@@ -311,8 +321,9 @@ public class KeyOperates
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
     }
 
-    public Vector3 Revise(Vector3 positionA, Vector3 positionB) {
+    public Vector3 Revise(Vector3 positionB) {
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+        Vector3 positionA = GetUserPosition(SizeFactor);
         KeyMethod(Keys.w_key, 200);
 
         Vector3 positionC = GetUserPosition(SizeFactor);
@@ -337,6 +348,7 @@ public class KeyOperates
         {
             KeyMethod(Keys.d_key, time);
         }
+        Thread.Sleep(100);
         return positionC;
     }
 }

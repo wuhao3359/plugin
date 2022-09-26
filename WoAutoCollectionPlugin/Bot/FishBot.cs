@@ -60,16 +60,16 @@ namespace WoAutoCollectionPlugin.Bot
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
                 ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-                double d = Maths.Distance(position, ToArea[1]);
-                if (Maths.Distance(position, ToArea[1]) > 5)
-                {
-                    MovePositions(ToArea, false);
-                }
-                else {
-                    PluginLog.Log($"距离: {d} 不需要移动");
-                }
-
+                //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                //double d = Maths.Distance(position, ToArea[1]);
+                //if (Maths.Distance(position, ToArea[1]) > 5)
+                //{
+                //    MovePositions(ToArea, false);
+                //}
+                //else {
+                //    PluginLog.Log($"距离: {d} 不需要移动");
+                //}
+                MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
                     KeyOperates.KeyMethod(Keys.num1_key);
@@ -78,25 +78,9 @@ namespace WoAutoCollectionPlugin.Bot
                     KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
-                int n = 0;
-                while (!CommonUi.AddonSelectStringIsOpen() && n < 5) {
-                    Thread.Sleep(500);
-                    n++;
-                }
-                n = 0;
-                while (CommonUi.AddonSelectStringIsOpen() && n < 5) {
-                    Thread.Sleep(500);
-                    CommonUi.SelectString1Button();
-                }
-                
-                n = 0;
-                while (!CommonUi.AddonSelectYesnoIsOpen() && n < 5)
-                {
-                    Thread.Sleep(500);
-                    n++;
-                }
+
                 Thread.Sleep(1500);
-                n = 0;
+                int n = 0;
                 while (CommonUi.AddonSelectYesnoIsOpen() && n < 5)
                 {
                     Thread.Sleep(500);
@@ -104,12 +88,6 @@ namespace WoAutoCollectionPlugin.Bot
                     n++;
                 }
 
-                n = 0;
-                while (!CommonUi.AddonContentsFinderConfirmIsOpen() && n < 5)
-                {
-                    Thread.Sleep(500);
-                    n++;
-                }
                 Thread.Sleep(1500);
                 n = 0;
                 while (CommonUi.AddonContentsFinderConfirmIsOpen() && n < 5)

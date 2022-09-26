@@ -401,7 +401,8 @@ namespace WoAutoCollectionPlugin
             isRunning = true;
             Task task = new(() =>
             {
-                while (isRunning) {
+                int n = 0;
+                while (isRunning && n < 10) {
                     try
                     {
                         if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
@@ -428,8 +429,9 @@ namespace WoAutoCollectionPlugin
                         PluginLog.Error($"error!!!\n{e}");
                     }
                     Thread.Sleep(3000);
+                    n++;
                 }
-                
+
                 PluginLog.Log($"all end");
                 taskRunning = false;
                 isRunning = false;
