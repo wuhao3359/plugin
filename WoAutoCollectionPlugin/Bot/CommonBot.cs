@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
+using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Ui;
@@ -273,6 +274,17 @@ namespace WoAutoCollectionPlugin.Bot
 
             KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
+            return true;
+        }
+
+        public bool SetTarget(string targetName) {
+            var target = DalamudApi.ObjectTable.FirstOrDefault(obj => obj.Name.TextValue.ToLowerInvariant() == targetName);
+            if (target == default) {
+                return false;
+            }
+
+            DalamudApi.TargetManager.SetTarget(target);
+            KeyOperates.KeyMethod(Keys.num0_key);
             return true;
         }
     }

@@ -13,8 +13,8 @@ namespace WoAutoCollectionPlugin.Utility
 
         // 采矿默认移动点
         public static Vector3[] AreaPositionA = {
-            new Vector3 (829f, 2730f, 1788f), 
-            new Vector3 (877f, 2714f, 1781f), 
+            new Vector3 (829f, 2730f, 1788f),
+            new Vector3 (877f, 2714f, 1781f),
             new Vector3 (885f, 2708f, 1777f), // 2 tp
             new Vector3 (1001f, 2218f, 1675f), // 3
             new Vector3 (1032f, 2214f, 1705f), // 4
@@ -300,16 +300,37 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static Vector3 YunGuanRepairNPC = new(869f, 2720f, 1876f);
         // 去区域A的路径 TerritoryType: 930 
-        public static Vector3[] ToAreaA = {
+        public static Vector3[] ToAreaA1 = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3214f, 2545f, 854f),
         };
-        // 固定钓鱼区域A 0-钓鱼点A1 1-钓鱼点A2 2-移动中转点 TerritoryType: 930 
+        public static Vector3[] ATransitToATransit = {
+            new Vector3 (869f, 2720f, 1876f),
+            new Vector3 (913f, 2742f, 1852f),
+            new Vector3 (3157f, 2583f, 915f),
+            new Vector3 (3157f, 2583f, 915f),
+        };
+        // 固定钓鱼区域A 0-钓鱼点A1 1-钓鱼点A1 ... 
         public static Vector3[] YFishAreaA = {
             new Vector3 (3254f, 2540f, 873f),
             new Vector3 (3248f, 2540f, 845f),
+            new Vector3 (3254f, 2540f, 873f),
+            new Vector3 (3248f, 2540f, 845f),
+        };
+        public static Vector3[] YFishAreaA2 = {
+            new Vector3 (3254f, 2540f, 873f),
+            new Vector3 (3248f, 2540f, 845f),
+        };
+        public static Vector3[] YFishAreaA3 = {
+            new Vector3 (3254f, 2540f, 873f),
+            new Vector3 (3248f, 2540f, 845f),
+        };
+        // 固定钓鱼区域A 中转点
+        public static Vector3[] YTransitA = {
+            new Vector3 (3246f, 2542f, 866f),
+            new Vector3 (3246f, 2542f, 866f),
             new Vector3 (3246f, 2542f, 866f),
         };
         // 去区域B的路径 TerritoryType: 930 

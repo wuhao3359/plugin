@@ -120,10 +120,14 @@ namespace WoAutoCollectionPlugin.Bot
             // 划分区域
             Vector3[] ToArea = Array.Empty<Vector3>();
             Vector3[] YFishArea = Array.Empty<Vector3>();
+            Vector3[] YTransit = Array.Empty<Vector3>();
+            Vector3[] Transits = Array.Empty<Vector3>();
             if (area == 1)
             {
-                ToArea = Position.ToAreaA;
+                ToArea = Position.ToAreaA1;
                 YFishArea = Position.YFishAreaA;
+                YTransit = Position.YTransitA;
+                Transits = Position.ATransitToATransit;
             }
             else if (area == 2)
             {
@@ -148,7 +152,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (RepairUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
                 if (repair > 0)
                 {
                     CommonBot.Repair();
@@ -176,11 +180,12 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(500);
             }
 
-            // 在固定区域到达作业点 作业循环 40min切换  0->2->1->2->0....
-            int currentPoint = 0;
             Stopwatch sw = new();
 
-            for (int i = 0; i <= 10; i++)
+            // 在固定区域到达作业点 作业循环 40min切换
+            int currentPoint = 0;
+            int t = 1;
+            for (int i = 0; i <= 9; i++)
             {
                 sw.Reset();
                 if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
@@ -190,16 +195,20 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 sw.Start();
 
-                position = KeyOperates.MoveToPoint(position, YFishArea[2], territoryType, false);
-                position = KeyOperates.MoveToPoint(position, YFishArea[currentPoint], territoryType, false);
-                if (currentPoint > 0)
+                position = KeyOperates.MoveToPoint(position, YTransit[currentPoint], territoryType, false);
+                position = KeyOperates.MoveToPoint(position, YFishArea[2 * currentPoint + t], territoryType, false);
+
+                currentPoint++;
+                if (currentPoint > 3)
                 {
                     currentPoint = 0;
+                    t++;
+
+                    if (t > 2) {
+                        t = 1;
+                    }
                 }
-                else
-                {
-                    currentPoint = 1;
-                }
+
                 // 开始作业
                 readyMove = false;
                 KeyOperates.KeyMethod(Keys.w_key, 200);
@@ -233,6 +242,17 @@ namespace WoAutoCollectionPlugin.Bot
                         break;
                     }
                 }
+                if (i == 9) {
+                    i = 0;
+                }
+
+                Vector3[] TransitToTransit = Array.Empty<Vector3>();
+                for (int m = 0; m < 4; m++) {
+                    TransitToTransit.SetValue(Transits.GetValue(4 * currentPoint + m), 0);
+                }
+
+                // 通过路径到达固定区域位置
+                position = MovePositions(ToArea, true);
             }
             PluginLog.Log($"任务结束");
             return true;
@@ -250,7 +270,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"中途结束");
                     return KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount);
+                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
                 Thread.Sleep(1000);
             }

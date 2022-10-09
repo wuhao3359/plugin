@@ -446,18 +446,16 @@ namespace WoAutoCollectionPlugin
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
-            string recipeName = "橙汁";
-            //PluginLog.Log($"{recipeName}");
-            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-            //PluginLog.Log($"{recipeId}");
-            RecipeNoteUi.OpenRecipeNote(recipeId);
-
-            //FishBot.RunIntoYunGuanScript();
-            //string recipeName = "鞣革眼罩";
+            //string recipeName = "橙汁";
             //PluginLog.Log($"{recipeName}");
             //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
+
+            // target
+            CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
+            string targetName = "";
+            commonBot.SetTarget(targetName);
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -477,6 +475,7 @@ namespace WoAutoCollectionPlugin
         // {param0}-宏按键
         // {param1}-周期 
         // {param2}-兑换物品(id)
+        // TODO 
         private void OnCraftCommand(string command, string args)
         {
             string[] str = args.Split(' ');
