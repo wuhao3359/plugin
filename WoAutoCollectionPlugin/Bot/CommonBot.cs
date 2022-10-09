@@ -77,7 +77,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             KeyOperates.KeyMethod(Keys.F12_key);
-            Thread.Sleep(300);
+            Thread.Sleep(1000);
             if (RepairUi.AllRepairButton())
             {
                 Thread.Sleep(800);
@@ -113,7 +113,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             bool flag = true;
             KeyOperates.KeyMethod(Keys.num0_key);
-
+            Thread.Sleep(1000);
             if (CommonUi.AddonSelectStringIsOpen())
             {
                 Thread.Sleep(500);
