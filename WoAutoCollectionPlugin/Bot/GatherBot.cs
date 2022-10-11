@@ -41,13 +41,8 @@ namespace WoAutoCollectionPlugin.Bot
         {
             Init();
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3[] Area = Array.Empty<Vector3>();
-            int[] index = Array.Empty<int>();
-            int[] indexNum = Array.Empty<int>();
-            int[] ABC = Array.Empty<int>();
-            int GathingButton = 0;
-
-            (Area, index, indexNum, ABC) = GetArea(area);
+            
+            (Vector3[] Area, int[] index, int[] indexNum, int[] ABC) = GetArea(area);
             // TODO 传送
             // 去起始点O
 
@@ -61,7 +56,7 @@ namespace WoAutoCollectionPlugin.Bot
             List< int > gameObjectsIndex = new();
             for (int i = 0, j = 0, k = 0 ; i < Area.Length; i++)
             {
-                GathingButton = GetGathingButton(area);
+                int GathingButton = GetGathingButton(area);
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
