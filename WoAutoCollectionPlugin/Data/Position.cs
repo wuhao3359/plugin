@@ -299,41 +299,27 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1091f, 1093f, 1406f),
         };
         public static Vector3 YunGuanRepairNPC = new(869f, 2720f, 1876f);
-        // 去区域A的路径 TerritoryType: 930 
-        public static Vector3[] ToAreaA1 = {
+        // 去区域的路径 TerritoryType: 930 0-钓鱼点A1 1-钓鱼点A1 ... 
+        public static Vector3[] ToArea1 = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3214f, 2545f, 854f),
         };
-        public static Vector3[] ATransitToATransit = {
+        public static Vector3[] YFishArea1 = {
+            new Vector3 (3254f, 2540f, 873f),
+            new Vector3 (3248f, 2540f, 845f),
+        };
+        public static Vector3[] ToArea11 = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
-            new Vector3 (3157f, 2583f, 915f),
+            new Vector3 (3214f, 2545f, 854f),
         };
-        // 固定钓鱼区域A 0-钓鱼点A1 1-钓鱼点A1 ... 
-        public static Vector3[] YFishAreaA = {
-            new Vector3 (3254f, 2540f, 873f),
-            new Vector3 (3248f, 2540f, 845f),
+        public static Vector3[] YFishArea11 = {
             new Vector3 (3254f, 2540f, 873f),
             new Vector3 (3248f, 2540f, 845f),
         };
-        public static Vector3[] YFishAreaA2 = {
-            new Vector3 (3254f, 2540f, 873f),
-            new Vector3 (3248f, 2540f, 845f),
-        };
-        public static Vector3[] YFishAreaA3 = {
-            new Vector3 (3254f, 2540f, 873f),
-            new Vector3 (3248f, 2540f, 845f),
-        };
-        // 固定钓鱼区域A 中转点
-        public static Vector3[] YTransitA = {
-            new Vector3 (3246f, 2542f, 866f),
-            new Vector3 (3246f, 2542f, 866f),
-            new Vector3 (3246f, 2542f, 866f),
-        };
-        // 去区域B的路径 TerritoryType: 930 
         public static Vector3[] ToAreaB = {
             new Vector3 (866f, 2720f, 1873f),
             new Vector3 (913f, 2742f, 1852f),
@@ -341,7 +327,6 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3313f, 2551f, 1042f),
             new Vector3 (3342f, 2522f, 988f),
         };
-        // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishAreaB = {
             new Vector3 (3310f, 2524f, 942f),
             new Vector3 (3337f, 2524f, 960f),
@@ -350,25 +335,21 @@ namespace WoAutoCollectionPlugin.Utility
         public static Vector3[] ToAreaC = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
-            //new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3094f, 2581f, 867f),
             new Vector3 (3124f, 2533f, 800f),
             new Vector3 (3150f, 2531f, 792f),
         };
-        // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishAreaC = {
             new Vector3 (3196f, 2526f, 822f),
             new Vector3 (3178f, 2530f, 801f),
             new Vector3 (3180f, 2531f, 809f),
         };
-        // 去区域100的路径 TerritoryType: 930 
         public static Vector3[] ToArea100 = {
             new Vector3 (866f, 2720f, 1873f),
             new Vector3 (861f, 2721f, 1891f),
             new Vector3 (1003f, 2831f, 2507f),
             new Vector3 (1074f, 2785f, 2788f),
         };
-        // 固定钓鱼区域100 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishArea100 = {
             new Vector3 (1163f, 2785f, 2814f),
             new Vector3 (1110f, 2785f, 2787f),

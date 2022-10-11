@@ -204,7 +204,7 @@ namespace WoAutoCollectionPlugin
                 int n = 0;
                 PluginLog.Log($"start task...");
                 DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
-                while (isRunning && n < 10)
+                while (isRunning && n < 8)
                 {
                     try {
                         if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
@@ -218,7 +218,7 @@ namespace WoAutoCollectionPlugin
 
                         if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
                         {
-                            FishBot.RunYFishScript(args);
+                            FishBot.RunYFishScript(args, n & 1);
                         }
                         else
                         {
