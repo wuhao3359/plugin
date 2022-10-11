@@ -198,7 +198,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Thread.Sleep(1000);
-            KeyOperates.KeyMethod(Keys.num1_key);
+            SetTarget("收藏品交易员");
+            //KeyOperates.KeyMethod(Keys.num1_key);
             Thread.Sleep(500);
             KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(3000);
@@ -242,7 +243,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Thread.Sleep(2000);
-            KeyOperates.KeyMethod(Keys.num3_key);
+            SetTarget("工票交易员");
+            //KeyOperates.KeyMethod(Keys.num3_key);
             Thread.Sleep(500);
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num0_key);
