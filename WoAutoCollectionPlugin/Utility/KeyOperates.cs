@@ -321,6 +321,13 @@ public class KeyOperates
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
     }
 
+    public void ClickMouseLeft(int x, int y)
+    {
+        int lparam = (y << 16) + x + 31 * 2;
+        SendMessage(hwnd, Keys.WM_LBUTTONDOWN, (IntPtr)0, (IntPtr)lparam);
+        SendMessage(hwnd, Keys.WM_LBUTTONUP, (IntPtr)0, (IntPtr)0);
+    }
+
     public Vector3 Revise(Vector3 positionB) {
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
         Vector3 positionA = GetUserPosition(SizeFactor);

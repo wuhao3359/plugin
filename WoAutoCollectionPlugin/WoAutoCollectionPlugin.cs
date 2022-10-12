@@ -10,6 +10,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
@@ -68,6 +69,7 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
+            DalamudApi.ChatManager = new ChatManager();
 
             try
             {
@@ -151,6 +153,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
 
+            DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
 
@@ -456,6 +459,11 @@ namespace WoAutoCollectionPlugin
             CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
             string targetName = "";
             commonBot.SetTarget(targetName);
+
+            // 使用技能
+            DalamudApi.ChatManager.SendMessage("/ac 技能名");
+
+            DalamudApi.ChatGui.Print("/ac 技能名");
         }
 
         private void OnActionTestCommand(string command, string args)

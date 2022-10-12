@@ -18,6 +18,7 @@ using Dalamud.Game.Libc;
 using Dalamud.Game.Network;
 using Dalamud.IoC;
 using Dalamud.Plugin;
+using WoAutoCollectionPlugin.Managers;
 
 // ReSharper disable CheckNamespace
 // ReSharper disable UnusedAutoPropertyAccessor.Local
@@ -41,6 +42,10 @@ public class DalamudApi
     [PluginService]
     //[RequiredVersion("1.0")]
     public static ChatHandlers ChatHandlers { get; private set; } = null!;
+
+    [PluginService]
+    //[RequiredVersion("1.0")]
+    internal static ChatManager ChatManager { get; set; } = null!;
 
     [PluginService]
     //[RequiredVersion("1.0")]
