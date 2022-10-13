@@ -102,6 +102,44 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        public void YFishScript(string args) {
+            int n = 0;
+            DalamudApi.Framework.Update += OnYFishUpdate;
+            while (!closed && n < 8)
+            {
+                try
+                {
+                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                    {
+                        PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                    }
+                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                    {
+                        RunIntoYunGuanScript();
+                    }
+
+                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                    {
+                        RunYFishScript(args, n & 1);
+                    }
+                    else
+                    {
+                        PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                        Thread.Sleep(2000);
+                    }
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+
+                PluginLog.Log($"准备开始下一轮... {n}");
+                n++;
+                Thread.Sleep(3000);
+            }
+            DalamudApi.Framework.Update -= OnYFishUpdate;
+        }
+
         // 在空岛中 自动前往指定地点钓鱼
         public bool RunYFishScript(string args, int N)
         {

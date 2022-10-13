@@ -33,6 +33,20 @@ namespace WoAutoCollectionPlugin.Bot
             CommonBot.Closed();
         }
 
+        public void CraftScript(string args) {
+            while (!closed)
+            {
+                try
+                {
+                    RunCraftScript(args);
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+            }
+        }
+
         public void RunCraftScript(string args)
         {
             Init();
