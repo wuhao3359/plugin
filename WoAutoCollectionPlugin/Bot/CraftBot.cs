@@ -140,9 +140,25 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                     }
                 }
-
             }
         }
 
+        // TODO 日常使用
+        // 1.生产白票
+        // 2.自动采集缺少的材料
+        // 3.中间自动采集限时材料
+        public void DailyScript(string args) {
+            while (!closed)
+            {
+                try
+                {
+                    
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+            }
+        }
     }
 }

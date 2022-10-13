@@ -1,17 +1,11 @@
-﻿using ClickLib;
-using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Command;
+﻿using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Managers;
-using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
@@ -40,6 +34,8 @@ namespace WoAutoCollectionPlugin
         private const string close = "/close";
 
         private const string craft = "/craft";
+
+        private const string daily = "/daily";
 
         public WoAutoCollectionPlugin Plugin { get; private set; }
 
@@ -124,6 +120,11 @@ namespace WoAutoCollectionPlugin
                     HelpMessage = "Craft"
                 });
 
+                DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnDailyCommand)
+                {
+                    HelpMessage = "Daily"
+                });
+
                 GameData = new GameData(DalamudApi.DataManager);
                 FishBot = new FishBot(GameData);
                 CollectionFishBot = new CollectionFishBot(GameData);
@@ -152,6 +153,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(actionTest);
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
+            DalamudApi.CommandManager.RemoveHandler(daily);
 
             DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
@@ -355,6 +357,12 @@ namespace WoAutoCollectionPlugin
             DalamudApi.ChatGui.Print("/ac 技能名");
 
             // 鼠标点击测试
+
+            // 背包测试
+            BagManager bagManager = new BagManager();
+            bagManager.test();
+
+            // 时间测试
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -399,6 +407,36 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Log($"start...");
                 CraftBot.CraftScript(args);
+                PluginLog.Log($"end...");
+                taskRunning = false;
+            });
+            task.Start();
+        }
+
+        private void OnDailyCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            PluginLog.Log($"daily: {args} length: {args.Length}");
+
+            if (args.Length <= 1)
+            {
+                PluginLog.Log($"stop");
+                // stop
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            Task task = new(() =>
+            {
+                PluginLog.Log($"start...");
+                CraftBot.DailyScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
