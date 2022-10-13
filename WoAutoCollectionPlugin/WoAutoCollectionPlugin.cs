@@ -464,6 +464,8 @@ namespace WoAutoCollectionPlugin
             DalamudApi.ChatManager.SendMessage("/ac 技能名");
 
             DalamudApi.ChatGui.Print("/ac 技能名");
+
+            // 鼠标点击测试
         }
 
         private void OnActionTestCommand(string command, string args)
