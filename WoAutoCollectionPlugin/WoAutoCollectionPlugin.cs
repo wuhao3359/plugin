@@ -202,10 +202,9 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
-                
-                PluginLog.Log($"start task...");
+                PluginLog.Log($"start...");
                 FishBot.YFishScript(args);
-                PluginLog.Log($"end");
+                PluginLog.Log($"end...");
                 taskRunning = false;
                 FishBot.Init();
             });
@@ -234,7 +233,9 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
-                PluginLog.Log($"end");
+                PluginLog.Log($"start...");
+                HFishBot.Script();
+                PluginLog.Log($"end...");
                 taskRunning = false;
             });
             task.Start();
@@ -261,8 +262,9 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
+                PluginLog.Log($"start...");
                 CollectionFishBot.CollectionFishScript(args);
-                PluginLog.Log($"end");
+                PluginLog.Log($"end...");
                 taskRunning = false;
             });
             task.Start();
@@ -290,9 +292,10 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
+                PluginLog.Log($"start...");
                 GatherBot.NormalScript(area);
                 taskRunning = false;
-                PluginLog.Log($"all end");
+                PluginLog.Log($"end...");
             });
             task.Start();
         }
@@ -320,8 +323,9 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
+                PluginLog.Log($"start...");
                 GatherBot.YGatherScript(args);
-                PluginLog.Log($"all end");
+                PluginLog.Log($"end...");
                 taskRunning = false;
             });
             task.Start();
@@ -393,9 +397,9 @@ namespace WoAutoCollectionPlugin
             taskRunning = true;
             Task task = new(() =>
             {
-                PluginLog.Log($"start");
+                PluginLog.Log($"start...");
                 CraftBot.CraftScript(args);
-                PluginLog.Log($"all end");
+                PluginLog.Log($"end...");
                 taskRunning = false;
             });
             task.Start();
