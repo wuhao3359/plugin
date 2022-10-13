@@ -326,14 +326,15 @@ public class KeyOperates
         //int lparam = (y << 16) + x + 31 * 2;
         int lparam = (y << 16) | x;
         SendMessage(hwnd, Keys.WM_LBUTTONDOWN, (IntPtr)0, (IntPtr)lparam);
+        Thread.Sleep(100);
         SendMessage(hwnd, Keys.WM_LBUTTONUP, (IntPtr)0, (IntPtr)0);
     }
 
     public void MouseMove(int x, int y)
     {
         // (y<<16) | x
-        //int lparam = (y << 16) + x + 31 * 2;
-        int lparam = (y << 16) | x;
+        int lparam = (y << 16) + x + 31 * 2;
+        //int lparam = (y << 16) | x;
         SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, (IntPtr)lparam);
     }
 

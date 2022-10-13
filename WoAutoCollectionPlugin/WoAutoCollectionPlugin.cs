@@ -346,21 +346,21 @@ namespace WoAutoCollectionPlugin
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
 
-            // target
-            CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
-            string targetName = "艾妮";
-            commonBot.SetTarget(targetName);
+            // target ok
+            //CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
+            //string targetName = "艾妮";
+            //commonBot.SetTarget(targetName);
 
-            // 使用技能
-            //DalamudApi.ChatManager.SendMessage("/ac 技能名");
-
-            DalamudApi.ChatGui.Print("/ac 冲刺");
+            //// 使用技能
+            ////DalamudApi.ChatManager.SendMessage("/ac 技能名");
+            //DalamudApi.CommandManager.ProcessCommand("/ac 冲刺");
 
             // 鼠标点击测试
+            GatherBot.test();
 
-            // 背包测试
-            BagManager bagManager = new BagManager();
-            bagManager.test();
+            // 背包测试 ok
+            //BagManager bagManager = new BagManager();
+            //bagManager.test();
 
             // 时间测试
         }

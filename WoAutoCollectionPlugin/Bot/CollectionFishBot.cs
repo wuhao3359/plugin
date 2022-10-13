@@ -76,6 +76,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(3000);
             }
             DalamudApi.Framework.Update -= OnCollectionFishUpdate;
+            closed = false;
         }
 
         // 前往指定钓鱼地点 [√]

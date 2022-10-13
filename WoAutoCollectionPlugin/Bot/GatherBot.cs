@@ -32,6 +32,11 @@ namespace WoAutoCollectionPlugin.Bot
             CommonBot = new CommonBot(KeyOperates);
         }
 
+        public void test() {
+            KeyOperates.MouseMove(653, 311);
+            //KeyOperates.ClickMouseLeft(653, 311);
+        }
+
         public void Init()
         {
             closed = false;
@@ -54,6 +59,7 @@ namespace WoAutoCollectionPlugin.Bot
                 n++;
                 PluginLog.Log($"{n} 次结束");
             }
+            closed = false;
         }
 
         // 普通采集点
@@ -234,7 +240,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(3000);
                 n++;
             }
-            PluginLog.Log($"end");
+            closed = false;
         }
 
         // 进入空岛

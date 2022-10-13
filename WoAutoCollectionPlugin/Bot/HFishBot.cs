@@ -42,6 +42,7 @@ namespace WoAutoCollectionPlugin.Bot
                 n++;
             }
             DalamudApi.Framework.Update -= OnHFishUpdate;
+            closed = false;
         }
 
         public void RunScript() {
