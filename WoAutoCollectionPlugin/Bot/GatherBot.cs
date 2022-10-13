@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
+using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
@@ -21,7 +22,8 @@ namespace WoAutoCollectionPlugin.Bot
         private CommonBot? CommonBot;
 
         private static bool closed = false;
-        private int count = 0; 
+        private int count = 0;
+        private int gatherCount = 0;
 
         public GatherBot(GameData GameData)
         {
@@ -36,18 +38,31 @@ namespace WoAutoCollectionPlugin.Bot
             count = 0;
         }
 
+        public void NormalScript(int area) {
+            int n = 0;
+            while (!closed & n < 1000)
+            {
+                try
+                {
+                    RunNormalScript(area);
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+
+                n++;
+                PluginLog.Log($"{n} 次结束");
+            }
+        }
+
         // 普通采集点
         public bool RunNormalScript(int area)
         {
             Init();
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3[] Area = Array.Empty<Vector3>();
-            int[] index = Array.Empty<int>();
-            int[] indexNum = Array.Empty<int>();
-            int[] ABC = Array.Empty<int>();
-            int GathingButton = 0;
-
-            (Area, index, indexNum, ABC) = GetArea(area);
+            
+            (Vector3[] Area, int[] index, int[] indexNum, int[] ABC) = GetArea(area);
             // TODO 传送
             // 去起始点O
 
@@ -61,7 +76,7 @@ namespace WoAutoCollectionPlugin.Bot
             List< int > gameObjectsIndex = new();
             for (int i = 0, j = 0, k = 0 ; i < Area.Length; i++)
             {
-                GathingButton = GetGathingButton(area);
+                int GathingButton = GetGathingButton(area);
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
@@ -192,6 +207,113 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        public void YGatherScript(string args) {
+            int n = 0;
+            while (!closed && n < 10)
+            {
+                if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                {
+                    PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                }
+                if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                {
+                    RunIntoYunGuanScript();
+                }
+
+                if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                {
+                    RunYGatherScript(args);
+                    gatherCount = 0;
+                }
+                else
+                {
+                    PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                    Thread.Sleep(2000);
+                }
+
+                Thread.Sleep(3000);
+                n++;
+            }
+            PluginLog.Log($"end");
+        }
+
+        // 进入空岛
+        public bool RunIntoYunGuanScript()
+        {
+            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType != 0)
+            {
+                // 传送到伊修加德
+                Teleporter.Teleport(70);
+                // 转移到天穹街
+                // TODO
+            }
+            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+            {
+                // 移动到指定NPC 路径点
+                Vector3[] ToArea = Position.YunGuanNPC;
+                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                //double d = Maths.Distance(position, ToArea[1]);
+                //if (Maths.Distance(position, ToArea[1]) > 5)
+                //{
+                //    MovePositions(ToArea, false);
+                //}
+                //else {
+                //    PluginLog.Log($"距离: {d} 不需要移动");
+                //}
+                MovePositions(ToArea, false);
+                // 进入空岛
+                if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
+                {
+                    KeyOperates.KeyMethod(Keys.num1_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(500);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    CommonUi.SelectString1Button();
+                }
+
+                Thread.Sleep(1500);
+                int n = 0;
+                while (CommonUi.AddonSelectYesnoIsOpen() && n < 5)
+                {
+                    Thread.Sleep(500);
+                    CommonUi.SelectYesButton();
+                    n++;
+                }
+
+                Thread.Sleep(1500);
+                n = 0;
+                while (CommonUi.AddonContentsFinderConfirmIsOpen() && n < 5)
+                {
+                    Thread.Sleep(500);
+                    CommonUi.ContentsFinderConfirmButton();
+                    n++;
+                }
+
+                Thread.Sleep(10000);
+            }
+            return true;
+        }
+
+        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
+        {
+            ushort territoryType = DalamudApi.ClientState.TerritoryType;
+            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            for (int i = 0; i < ToArea.Length; i++)
+            {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return KeyOperates.GetUserPosition(SizeFactor);
+                }
+                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
+                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                Thread.Sleep(1000);
+            }
+            return position;
+        }
+
         public void RunYGatherScript(string args) {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
@@ -232,14 +354,8 @@ namespace WoAutoCollectionPlugin.Bot
                 CommonBot.ExtractMateria(count);
             }
 
-            Vector3[] AreaPosition = Array.Empty<Vector3>();
-            int[] Tp = Array.Empty<int>();
-            int[] GatherPosition = Array.Empty<int>();
-            int GathingButton = 1;
+            (Vector3[] AreaPosition, int[] Tp, int[] GatherPosition, int GathingButton) = GetAreaByType(area);
 
-            (AreaPosition, Tp, GatherPosition, GathingButton) = GetAreaByType(area);
-
-            int gatherCount = 0;
             for (int k = 0; k < AreaPosition.Length; k++) {
                 if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {

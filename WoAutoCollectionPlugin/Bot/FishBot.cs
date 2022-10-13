@@ -102,11 +102,49 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        public void YFishScript(string args) {
+            int n = 0;
+            DalamudApi.Framework.Update += OnYFishUpdate;
+            while (!closed && n < 8)
+            {
+                try
+                {
+                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                    {
+                        PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                    }
+                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                    {
+                        RunIntoYunGuanScript();
+                    }
+
+                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                    {
+                        RunYFishScript(args, n & 1);
+                    }
+                    else
+                    {
+                        PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                        Thread.Sleep(2000);
+                    }
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+
+                PluginLog.Log($"准备开始下一轮... {n}");
+                n++;
+                Thread.Sleep(3000);
+            }
+            DalamudApi.Framework.Update -= OnYFishUpdate;
+        }
+
         // 在空岛中 自动前往指定地点钓鱼
-        public bool RunYFishScript(string args)
+        public bool RunYFishScript(string args, int N)
         {
             string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
+            int area = int.Parse(str[0]) + N * 10;
             int repair = 0;
             if (str.Length >= 2) {
                 repair = int.Parse(str[1]);
@@ -118,28 +156,7 @@ namespace WoAutoCollectionPlugin.Bot
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             // 划分区域
-            Vector3[] ToArea = Array.Empty<Vector3>();
-            Vector3[] YFishArea = Array.Empty<Vector3>();
-            if (area == 1)
-            {
-                ToArea = Position.ToAreaA;
-                YFishArea = Position.YFishAreaA;
-            }
-            else if (area == 2)
-            {
-                ToArea = Position.ToAreaB;
-                YFishArea = Position.YFishAreaB;
-            }
-            else if (area == 3)
-            {
-                ToArea = Position.ToAreaC;
-                YFishArea = Position.YFishAreaC;
-            }
-            else if (area == 100)
-            {
-                ToArea = Position.ToArea100;
-                YFishArea = Position.YFishArea100;
-            }
+            (Vector3[] ToArea, Vector3[] YFishArea) = GetAreaPoint(area);
 
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
@@ -148,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (RepairUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
                 if (repair > 0)
                 {
                     CommonBot.Repair();
@@ -176,11 +193,10 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(500);
             }
 
-            // 在固定区域到达作业点 作业循环 40min切换  0->2->1->2->0....
-            int currentPoint = 0;
             Stopwatch sw = new();
-
-            for (int i = 0; i <= 10; i++)
+            // 在固定区域到达作业点 作业循环 40min切换
+            int currentPoint = 0;
+            for (int i = 0; i <= 9; i++)
             {
                 sw.Reset();
                 if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
@@ -196,10 +212,11 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     currentPoint = 0;
                 }
-                else
-                {
+                else {
                     currentPoint = 1;
                 }
+
+
                 // 开始作业
                 readyMove = false;
                 KeyOperates.KeyMethod(Keys.w_key, 200);
@@ -250,7 +267,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"中途结束");
                     return KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount);
+                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
                 Thread.Sleep(1000);
             }
@@ -353,6 +370,53 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             });
             task.Start();
+        }
+
+        private (Vector3[], Vector3[]) GetAreaPoint(int area) {
+            Vector3[] ToArea = Array.Empty<Vector3>();
+            Vector3[] YFishArea = Array.Empty<Vector3>();
+
+            if (area == 1)
+            {
+                ToArea = Position.ToArea1;
+                YFishArea = Position.YFishArea1;
+            }
+            else if (area == 11)
+            {
+                ToArea = Position.ToArea11;
+                YFishArea = Position.YFishArea11;
+            }
+            else if (area == 2)
+            {
+                ToArea = Position.ToAreaB;
+                YFishArea = Position.YFishAreaB;
+            }
+            else if (area == 12)
+            {
+                ToArea = Position.ToAreaB;
+                YFishArea = Position.YFishAreaB;
+            }
+            else if (area == 3)
+            {
+                ToArea = Position.ToAreaC;
+                YFishArea = Position.YFishAreaC;
+            }
+            else if (area == 13)
+            {
+                ToArea = Position.ToAreaC;
+                YFishArea = Position.YFishAreaC;
+            }
+            else if (area == 100)
+            {
+                ToArea = Position.ToArea100;
+                YFishArea = Position.YFishArea100;
+            }
+            else if (area == 110)
+            {
+                ToArea = Position.ToArea100;
+                YFishArea = Position.YFishArea100;
+            }
+            return (ToArea, YFishArea);
         }
     }
 }

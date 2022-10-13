@@ -62,7 +62,7 @@ public class KeyOperates
         double errorDisntance = 5.5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
-        positionA = Revise(positionB);
+        positionA = ReviseNoTime(positionB);
         double distance = Maths.Distance(positionA, positionB);
         double height = Maths.Height(positionA, positionB, UseMount);
 
@@ -186,7 +186,7 @@ public class KeyOperates
             }
             if (turn >= 10) {
                 MoveStop();
-                Revise(positionB);
+                Revise(positionB, 1000);
                 turn = 0;
             }
 
@@ -321,10 +321,30 @@ public class KeyOperates
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
     }
 
-    public Vector3 Revise(Vector3 positionB) {
+    public void ClickMouseLeft(int x, int y)
+    {
+        //int lparam = (y << 16) + x + 31 * 2;
+        int lparam = (y << 16) | x;
+        SendMessage(hwnd, Keys.WM_LBUTTONDOWN, (IntPtr)0, (IntPtr)lparam);
+        SendMessage(hwnd, Keys.WM_LBUTTONUP, (IntPtr)0, (IntPtr)0);
+    }
+
+    public void MouseMove(int x, int y)
+    {
+        // (y<<16) | x
+        //int lparam = (y << 16) + x + 31 * 2;
+        int lparam = (y << 16) | x;
+        SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, (IntPtr)lparam);
+    }
+
+    public Vector3 ReviseNoTime(Vector3 positionB) {
+        return Revise(positionB, 250);
+    }
+
+    public Vector3 Revise(Vector3 positionB, int tt) {
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
         Vector3 positionA = GetUserPosition(SizeFactor);
-        KeyMethod(Keys.w_key, 200);
+        KeyMethod(Keys.w_key, tt);
 
         Vector3 positionC = GetUserPosition(SizeFactor);
         double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
@@ -348,7 +368,7 @@ public class KeyOperates
         {
             KeyMethod(Keys.d_key, time);
         }
-        Thread.Sleep(100);
+        Thread.Sleep(80);
         return positionC;
     }
 }

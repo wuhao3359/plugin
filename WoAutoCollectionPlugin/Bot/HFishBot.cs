@@ -31,6 +31,19 @@ namespace WoAutoCollectionPlugin.Bot
             Record = new FishRecord();
         }
 
+        public void Script()
+        {
+            DalamudApi.Framework.Update += OnHFishUpdate;
+            int n = 0;
+            while (!closed && n < 360)
+            {
+                RunScript();
+                Thread.Sleep(5000);
+                n++;
+            }
+            DalamudApi.Framework.Update -= OnHFishUpdate;
+        }
+
         public void RunScript() {
             if (!DalamudApi.Condition[ConditionFlag.OccupiedInCutSceneEvent] && !DalamudApi.Condition[ConditionFlag.Fishing])
             {

@@ -1,16 +1,11 @@
-﻿using ClickLib;
-using Dalamud.Game.ClientState.Conditions;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Command;
+﻿using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
-using System.Collections.Generic;
 using System.Numerics;
-using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
-using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
@@ -40,6 +35,8 @@ namespace WoAutoCollectionPlugin
 
         private const string craft = "/craft";
 
+        private const string daily = "/daily";
+
         public WoAutoCollectionPlugin Plugin { get; private set; }
 
         public Configuration Configuration { get; private set; }
@@ -68,6 +65,7 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
+            DalamudApi.ChatManager = new ChatManager();
 
             try
             {
@@ -122,6 +120,11 @@ namespace WoAutoCollectionPlugin
                     HelpMessage = "Craft"
                 });
 
+                DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnDailyCommand)
+                {
+                    HelpMessage = "Daily"
+                });
+
                 GameData = new GameData(DalamudApi.DataManager);
                 FishBot = new FishBot(GameData);
                 CollectionFishBot = new CollectionFishBot(GameData);
@@ -150,7 +153,9 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(actionTest);
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
+            DalamudApi.CommandManager.RemoveHandler(daily);
 
+            DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
 
@@ -186,7 +191,6 @@ namespace WoAutoCollectionPlugin
             if (area <= 0)
             {
                 FishBot.StopYFishScript();
-                isRunning = false;
                 taskRunning = false;
                 return;
             }
@@ -198,45 +202,12 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
-            isRunning = true;
             Task task = new(() =>
             {
-                int n = 0;
-                PluginLog.Log($"start task...");
-                DalamudApi.Framework.Update += FishBot.OnYFishUpdate;
-                while (isRunning && n < 10)
-                {
-                    try {
-                        if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
-                        {
-                            PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
-                        }
-                        if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
-                        {
-                            FishBot.RunIntoYunGuanScript();
-                        }
-
-                        if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
-                        {
-                            FishBot.RunYFishScript(args);
-                        }
-                        else
-                        {
-                            PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
-                            Thread.Sleep(2000);
-                        }
-                    } catch (Exception e) {
-                        PluginLog.Error($"error!!!\n{e}");
-                    }
-
-                    PluginLog.Log($"准备开始下一轮... {n}");
-                    n++;
-                    Thread.Sleep(3000);
-                }
-                PluginLog.Log($"end");
+                PluginLog.Log($"start...");
+                FishBot.YFishScript(args);
+                PluginLog.Log($"end...");
                 taskRunning = false;
-                DalamudApi.Framework.Update -= FishBot.OnYFishUpdate;
-
                 FishBot.Init();
             });
             task.Start();
@@ -251,7 +222,6 @@ namespace WoAutoCollectionPlugin
             HFishBot HFishBot = new HFishBot(GameData);
             if (area <= 0)
             {
-                isRunning = false;
                 taskRunning = false;
                 return;
             }
@@ -263,25 +233,12 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
-            isRunning = true;
             Task task = new(() =>
             {
-                
-                DalamudApi.Framework.Update += HFishBot.OnHFishUpdate;
-
-                int n = 0;
-                while (isRunning && n < 360)
-                {
-                    HFishBot.RunScript();
-                    Thread.Sleep(5000);
-                    n++;
-                }
-
-                PluginLog.Log($"end");
-                DalamudApi.Framework.Update -= HFishBot.OnHFishUpdate;
+                PluginLog.Log($"start...");
+                HFishBot.Script();
+                PluginLog.Log($"end...");
                 taskRunning = false;
-
-                FishBot.Init();
             });
             task.Start();
         }
@@ -294,7 +251,6 @@ namespace WoAutoCollectionPlugin
             if (area <= 0)
             {
                 CollectionFishBot.StopCollectionFishScript();
-                isRunning = false;
                 taskRunning = false;
                 return;
             }
@@ -306,31 +262,12 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
-            isRunning = true;
             Task task = new(() =>
             {
-                int n = 0;
-                DalamudApi.Framework.Update += CollectionFishBot.OnCollectionFishUpdate;
-                while (isRunning && n < 10)
-                {
-                    try
-                    {
-                        CollectionFishBot.RunCollectionFishScript(args);
-                    }
-                    catch (Exception e) {
-                        PluginLog.Error($"error!!!\n{e}");
-                    }
-
-                    isRunning = false;
-                    PluginLog.Log($"准备开始下一轮... {n}");
-                    n++;
-                    Thread.Sleep(3000);
-                }
-                PluginLog.Log($"end");
-                DalamudApi.Framework.Update -= CollectionFishBot.OnCollectionFishUpdate;
+                PluginLog.Log($"start...");
+                CollectionFishBot.CollectionFishScript(args);
+                PluginLog.Log($"end...");
                 taskRunning = false;
-
-                FishBot.Init();
             });
             task.Start();
         }
@@ -343,7 +280,6 @@ namespace WoAutoCollectionPlugin
 
             if (area <= 0)
             {
-                isRunning = false;
                 GatherBot.StopScript();
                 taskRunning = false;
                 return;
@@ -356,23 +292,12 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
-            isRunning = true;
             Task task = new(() =>
             {
-                int n = 0;
-                while (isRunning & n < 1000)
-                {
-                    try
-                    {
-                        GatherBot.RunNormalScript(area);
-                    } catch (Exception e) {
-                        PluginLog.Error($"error!!!\n{e}");
-                    }
-                   
-                    n++;
-                    PluginLog.Log($"{n} 次结束");
-                }
-                PluginLog.Log($"all end");
+                PluginLog.Log($"start...");
+                GatherBot.NormalScript(area);
+                taskRunning = false;
+                PluginLog.Log($"end...");
             });
             task.Start();
         }
@@ -398,43 +323,12 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
-            isRunning = true;
             Task task = new(() =>
             {
-                int n = 0;
-                while (isRunning && n < 10) {
-                    try
-                    {
-                        if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
-                        {
-                            PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
-                        }
-                        if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
-                        {
-                            FishBot.RunIntoYunGuanScript();
-                        }
-
-                        if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
-                        {
-                            GatherBot.RunYGatherScript(args);
-                        }
-                        else
-                        {
-                            PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
-                            Thread.Sleep(2000);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        PluginLog.Error($"error!!!\n{e}");
-                    }
-                    Thread.Sleep(3000);
-                    n++;
-                }
-
-                PluginLog.Log($"all end");
+                PluginLog.Log($"start...");
+                GatherBot.YGatherScript(args);
+                PluginLog.Log($"end...");
                 taskRunning = false;
-                isRunning = false;
             });
             task.Start();
         }
@@ -446,18 +340,29 @@ namespace WoAutoCollectionPlugin
             //Game.Initialize();
             //DalamudApi.CommandManager.ProcessCommand($"/gearset change \"{set}\"");
 
-            string recipeName = "橙汁";
-            //PluginLog.Log($"{recipeName}");
-            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-            //PluginLog.Log($"{recipeId}");
-            RecipeNoteUi.OpenRecipeNote(recipeId);
-
-            //FishBot.RunIntoYunGuanScript();
-            //string recipeName = "鞣革眼罩";
+            //string recipeName = "橙汁";
             //PluginLog.Log($"{recipeName}");
             //uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             //PluginLog.Log($"{recipeId}");
             //RecipeNoteUi.OpenRecipeNote(recipeId);
+
+            // target
+            CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
+            string targetName = "";
+            commonBot.SetTarget(targetName);
+
+            // 使用技能
+            DalamudApi.ChatManager.SendMessage("/ac 技能名");
+
+            DalamudApi.ChatGui.Print("/ac 技能名");
+
+            // 鼠标点击测试
+
+            // 背包测试
+            BagManager bagManager = new BagManager();
+            bagManager.test();
+
+            // 时间测试
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -477,6 +382,7 @@ namespace WoAutoCollectionPlugin
         // {param0}-宏按键
         // {param1}-周期 
         // {param2}-兑换物品(id)
+        // TODO 
         private void OnCraftCommand(string command, string args)
         {
             string[] str = args.Split(' ');
@@ -486,7 +392,6 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Log($"stop");
                 CraftBot.StopCraftScript();
-                isRunning = false;
                 taskRunning = false;
                 return;
             }
@@ -497,24 +402,42 @@ namespace WoAutoCollectionPlugin
                 return;
             }
 
-            isRunning = true;
             taskRunning = true;
             Task task = new(() =>
             {
-                while (isRunning)
-                {
-                    try
-                    {
-                        CraftBot.RunCraftScript(args);
-                    } catch (Exception e) {
-                        PluginLog.Error($"error!!!\n{e}");
-                    }
+                PluginLog.Log($"start...");
+                CraftBot.CraftScript(args);
+                PluginLog.Log($"end...");
+                taskRunning = false;
+            });
+            task.Start();
+        }
 
-                    PluginLog.Log($"end");
-                    //isRunning = false;
-                }
-                PluginLog.Log($"all end");
-                isRunning = false;
+        private void OnDailyCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            PluginLog.Log($"daily: {args} length: {args.Length}");
+
+            if (args.Length <= 1)
+            {
+                PluginLog.Log($"stop");
+                // stop
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            Task task = new(() =>
+            {
+                PluginLog.Log($"start...");
+                CraftBot.DailyScript(args);
+                PluginLog.Log($"end...");
                 taskRunning = false;
             });
             task.Start();

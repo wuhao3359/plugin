@@ -141,7 +141,7 @@ public readonly struct RepeatingInterval : IEquatable<RepeatingInterval>
     // Print eorzean hours in human readable format.
     public string PrintHours(bool simple = false)
     {
-        var start = new TimeStamp(ShiftTime).CurrentEorzeaMinuteOfDay();
+        var start = new TimeStamp(ShiftTime).CurrentEorzeaMinuteOfDay(); // 396.58
         if (start < 0)
             start += RealTime.MinutesPerDay;
 

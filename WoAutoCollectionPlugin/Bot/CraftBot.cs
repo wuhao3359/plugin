@@ -33,27 +33,45 @@ namespace WoAutoCollectionPlugin.Bot
             CommonBot.Closed();
         }
 
+        public void CraftScript(string args) {
+            while (!closed)
+            {
+                try
+                {
+                    RunCraftScript(args);
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+            }
+        }
+
         public void RunCraftScript(string args)
         {
             Init();
             string[] str = args.Split(' ');
             int pressKey = int.Parse(str[0]) + 48;
-            int cycles = int.Parse(str[1]);
-            PluginLog.Log($"{pressKey} {cycles}");
+            String recipeName = str[1];
+            PluginLog.Log($"{pressKey} {recipeName}");
             int exchangeItem = 10;
             if (str.Length > 2) {
                 exchangeItem = int.Parse(str[2]);
             }
 
-            String craftName = "";
-            for (int i = 0; i < cycles; i++) {
+            String craftName = recipeName;
+            int i = 0;
+            while (!closed) { 
                 if (closed) {
                     PluginLog.Log($"craft stopping");
                     return;
                 }
                 while (!RecipeNoteUi.RecipeNoteIsOpen()) {
-                    KeyOperates.KeyMethod(Keys.n_key);
-                    Thread.Sleep(500);
+                    uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+                    PluginLog.Log($"{recipeName}, {recipeId}");
+                    RecipeNoteUi.OpenRecipeNote(recipeId);
+
+                    Thread.Sleep(800);
                     if (closed)
                     {
                         PluginLog.Log($"craft stopping");
@@ -61,7 +79,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
 
-                // TODO Select HQ
+                // TODO Select Item
 
                 Thread.Sleep(500);
                 if (RecipeNoteUi.RecipeNoteIsOpen())
@@ -97,26 +115,50 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
                 PluginLog.Log($"Finish: {i} Item: {craftName}");
+                i++;
                 Thread.Sleep(1000);
-            }
 
-            Thread.Sleep(1000);
-            if (RecipeNoteUi.RecipeNoteIsOpen()) {
-                KeyOperates.KeyMethod(Keys.esc_key);
-            }
+                if (i >= 12) {
+                    Thread.Sleep(1000);
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        KeyOperates.KeyMethod(Keys.esc_key);
+                    }
+                    else {
+                        continue;
+                    }
 
-            CommonBot.RepairAndExtractMateria();
+                    CommonBot.RepairAndExtractMateria();
 
-            // 上交收藏品和交换道具
-            if (craftName.Contains("收藏用") && exchangeItem > 0)
-            {
-                if (!CommonBot.CraftUploadAndExchange(craftName, exchangeItem))
-                {
-                    PluginLog.Log($"params error... plz check");
-                    return;
+                    // 上交收藏品和交换道具
+                    if (craftName.Contains("收藏用") && exchangeItem > 0)
+                    {
+                        if (!CommonBot.CraftUploadAndExchange(craftName, exchangeItem))
+                        {
+                            PluginLog.Log($"params error... plz check");
+                            return;
+                        }
+                    }
                 }
             }
         }
 
+        // TODO 日常使用
+        // 1.生产白票
+        // 2.自动采集缺少的材料
+        // 3.中间自动采集限时材料
+        public void DailyScript(string args) {
+            while (!closed)
+            {
+                try
+                {
+                    
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+            }
+        }
     }
 }
