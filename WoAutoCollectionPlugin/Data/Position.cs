@@ -16,7 +16,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (829f, 2730f, 1788f),
             new Vector3 (877f, 2714f, 1781f),
             new Vector3 (885f, 2708f, 1777f), // 2 tp
-            new Vector3 (1001f, 2218f, 1675f), // 3
+            new Vector3 (1001f, 2219f, 1675f), // 3
             new Vector3 (1032f, 2214f, 1705f), // 4
             new Vector3 (1099f, 2207f, 1787f),
             new Vector3 (1143f, 2200f, 1796f), // 6
@@ -48,7 +48,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2416f, 2063f, 1111f), // 32
             new Vector3 (2413f, 2065f, 1149f), // 
             new Vector3 (2422f, 2044f, 1183f), // 34 tp
-            new Vector3 (2585f, 2738f, 690f), // 35
+            new Vector3 (2585f, 2739f, 690f), // 35
             new Vector3 (2635f, 2743f, 657f), // 36
             new Vector3 (2627f, 2747f, 605f), // 
             new Vector3 (2751f, 2736f, 616f), // 38
@@ -60,7 +60,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2827f, 2740f, 715f), // 44
             new Vector3 (2969f, 2740f, 653f), // 
             new Vector3 (3007f, 2724f, 671f), // 46 tp
-            new Vector3 (3064f, 2546f, 869f), // 47
+            new Vector3 (3064f, 2547f, 869f), // 47
             new Vector3 (3122f, 2545f, 800f), // 48
             new Vector3 (3156f, 2550f, 881f), // 49
             new Vector3 (3196f, 2554f, 940f), // 
@@ -72,11 +72,11 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3214f, 2540f, 1103f), // 56
             new Vector3 (3198f, 2532f, 1124f), // 57
             new Vector3 (3202f, 2528f, 1156f), // 58 tp
-            new Vector3 (3420f, 2652f, 1303f), // 59
+            new Vector3 (3420f, 2653f, 1303f), // 59
             new Vector3 (3424f, 2652f, 1315f), // 60
             new Vector3 (3430f, 2652f, 1337f), //
             new Vector3 (3423f, 2652f, 1363f), // 62 tp
-            new Vector3 (3558f, 2590f, 1537f), // 63
+            new Vector3 (3558f, 2591f, 1537f), // 63
             new Vector3 (3595f, 2596f, 1562f), // 64
             new Vector3 (3569f, 2604f, 1640f), // 
             new Vector3 (3525f, 2598f, 1640f), // 66
@@ -92,7 +92,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3451f, 2603f, 1963f), // 76
             new Vector3 (3446f, 2602f, 2046f), // 77
             new Vector3 (3466f, 2590f, 2070f), // 78 tp
-            new Vector3 (3100f, 2112f, 2557f), // 79
+            new Vector3 (3100f, 2113f, 2557f), // 79
             new Vector3 (3062f, 2113f, 2556f), // 80
             new Vector3 (3024f, 2112f, 2670f), // 81
             new Vector3 (3140f, 2139f, 2698f), // 82
@@ -113,7 +113,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2917f, 2146f, 3063f), // 97
             new Vector3 (2908f, 2145f, 3028f), // 
             new Vector3 (2839f, 2133f, 3087f), // 99 tp
-            new Vector3 (2589f, 2330f, 3144f), // 100
+            new Vector3 (2589f, 2331f, 3144f), // 100
             new Vector3 (2667f, 2330f, 3228f), // 101
             new Vector3 (2709f, 2339f, 3271f), // 
             new Vector3 (2511f, 2323f, 3387f), // 103
@@ -131,7 +131,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1978f, 2380f, 3209f), // 115
             new Vector3 (1955f, 2384f, 3239f), // 
             new Vector3 (1870f, 2371f, 3191f), // 117 tp
-            new Vector3 (1479f, 2789f, 3225f), // 118
+            new Vector3 (1479f, 2790f, 3225f), // 118
             new Vector3 (1441f, 2781f, 3080f), // 119
             new Vector3 (1352f, 2794f, 3014f), // 120
             new Vector3 (1288f, 2831f, 3005f), // 
@@ -140,7 +140,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1119f, 2793f, 2789f), // 124
             new Vector3 (1093f, 2789f, 2813f), // 
             new Vector3 (1043f, 2780f, 2780f), // 126 tp
-            new Vector3 (688f, 2691f, 2013f), // 127
+            new Vector3 (688f, 2692f, 2013f), // 127
             new Vector3 (798f, 2757f, 1856f),
             new Vector3 (835f, 2729f, 1852f),
         };
@@ -164,13 +164,13 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (688f, 2693f, 2014f), // 
             new Vector3 (720f, 2692f, 2050f), // 3
             new Vector3 (698f, 2691f, 2080f), // 4 tp
-            new Vector3 (1177f, 2830f, 2911f), // 5
+            new Vector3 (1177f, 2831f, 2911f), // 5
             new Vector3 (956f, 2837f, 3037f), // 6
             new Vector3 (1265f, 2827f, 2990f), // 7
             new Vector3 (1386f, 2791f, 3118f), // 8
             new Vector3 (1504f, 2796f, 3293f), // 9
             new Vector3 (1563f, 2786f, 3272f), // 10 tp
-            new Vector3 (1911f, 2386f, 3193f), // 11
+            new Vector3 (1911f, 2387f, 3193f), // 11
             new Vector3 (1933f, 2386f, 3141f), // 
             new Vector3 (2033f, 2386f, 3191f), // 13
             new Vector3 (2015f, 2394f, 3204f), // 
@@ -187,7 +187,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2699f, 2327f, 3168f), // 
             new Vector3 (2659f, 2326f, 3128f), // 
             new Vector3 (2691f, 2320f, 3095f), // 27 tp
-            new Vector3 (2900f, 2140f, 3050f), // 28
+            new Vector3 (2900f, 2141f, 3050f), // 28
             new Vector3 (2836f, 2143f, 3034f), // 29
             new Vector3 (2787f, 2148f, 2938f), // 30
             new Vector3 (2962f, 2149f, 2835f), // 31
@@ -205,7 +205,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3039f, 2100f, 2578f), // 43
             new Vector3 (3089f, 2105f, 2555f), // 44
             new Vector3 (3086f, 2097f, 2533f), // 45 tp
-            new Vector3 (3490f, 2597f, 2026f), // 46
+            new Vector3 (3490f, 2598f, 2026f), // 46
             new Vector3 (3401f, 2602f, 1991f), // 47
             new Vector3 (3445f, 2609f, 1899f), // 48
             new Vector3 (3592f, 2605f, 1866f), // 49
@@ -217,13 +217,13 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3621f, 2603f, 1593f), // 55
             new Vector3 (3562f, 2589f, 1515f), // 56
             new Vector3 (3574f, 2586f, 1487f), // 57 tp
-            new Vector3 (3431f, 2653f, 1346f), // 58
+            new Vector3 (3431f, 2654f, 1346f), // 58
             new Vector3 (3429f, 2654f, 1323f), // 59
             new Vector3 (3413f, 2653f, 1298f), // 60
             new Vector3 (3377f, 2653f, 1319f), // 61
             new Vector3 (3374f, 2653f, 1335f), // 
             new Vector3 (3366f, 2653f, 1332f), // 63 tp
-            new Vector3 (3212f, 2535f, 1115f), // 64
+            new Vector3 (3212f, 2536f, 1115f), // 64
             new Vector3 (3289f, 2538f, 1134f), // 65
             new Vector3 (3268f, 2536f, 1102f), // 
             new Vector3 (3312f, 2535f, 1050f), // 67
@@ -235,7 +235,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3157f, 2550f, 835f), // 73
             new Vector3 (3108f, 2536f, 820f), // 
             new Vector3 (3093f, 2532f, 817f), // 75 tp
-            new Vector3 (2889f, 2740f, 649f), // 76
+            new Vector3 (2889f, 2741f, 649f), // 76
             new Vector3 (2833f, 2729f, 794f), // 77
             new Vector3 (2756f, 2748f, 868f), // 
             new Vector3 (2695f, 2740f, 820f), // 9
@@ -248,7 +248,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2593f, 2739f, 644f), // 86
             new Vector3 (2541f, 2735f, 667f), //
             new Vector3 (2508f, 2735f, 668f), // 88 tp
-            new Vector3 (2387f, 2051f, 1122f), // 89
+            new Vector3 (2387f, 2052f, 1122f), // 89
             new Vector3 (2364f, 2056f, 1086f), // 90
             new Vector3 (2274f, 2057f, 1131f), // 91
             new Vector3 (2267f, 2085f, 1027f), // 92
@@ -271,7 +271,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1007f, 2225f, 1722f), // 109
             new Vector3 (984f, 2217f, 1665f), // 
             new Vector3 (972f, 2216f, 1681f), // 111 tp
-            new Vector3 (852f, 2746f, 1846f), // 
+            new Vector3 (852f, 2747f, 1846f), // 
             new Vector3 (886f, 2723f, 1866f), // 112
             new Vector3 (817f, 2742f, 1860f), // 
             new Vector3 (758f, 2709f, 1852f), // 114
