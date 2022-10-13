@@ -65,7 +65,7 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
-            DalamudApi.ChatManager = new ChatManager();
+            //DalamudApi.ChatManager = new ChatManager();
 
             try
             {
@@ -155,7 +155,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
 
-            DalamudApi.ChatManager?.Dispose();
+            //DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
 
@@ -348,13 +348,13 @@ namespace WoAutoCollectionPlugin
 
             // target
             CommonBot commonBot = new CommonBot(new KeyOperates(GameData));
-            string targetName = "";
+            string targetName = "艾妮";
             commonBot.SetTarget(targetName);
 
             // 使用技能
-            DalamudApi.ChatManager.SendMessage("/ac 技能名");
+            //DalamudApi.ChatManager.SendMessage("/ac 技能名");
 
-            DalamudApi.ChatGui.Print("/ac 技能名");
+            DalamudApi.ChatGui.Print("/ac 冲刺");
 
             // 鼠标点击测试
 
