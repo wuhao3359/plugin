@@ -323,21 +323,20 @@ namespace WoAutoCollectionPlugin.Utility
         // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishAreaB = {
             new Vector3 (3310f, 2524f, 942f),
-            new Vector3 (3337f, 2524f, 960f),
+            new Vector3 (3339f, 2524f, 968f),
             new Vector3 (3326f, 2525f, 958f),
         };
         public static Vector3[] ToAreaC = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
-            //new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3094f, 2581f, 867f),
             new Vector3 (3124f, 2533f, 800f),
             new Vector3 (3150f, 2531f, 792f),
         };
-        // 固定钓鱼区域B 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
+        // 固定钓鱼区域C 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
         public static Vector3[] YFishAreaC = {
             new Vector3 (3196f, 2526f, 822f),
-            new Vector3 (3178f, 2530f, 801f),
+            new Vector3 (3165f, 2530f, 791f),
             new Vector3 (3180f, 2531f, 809f),
         };
         // 去区域100的路径 TerritoryType: 930 

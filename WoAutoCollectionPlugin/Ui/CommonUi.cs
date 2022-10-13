@@ -15,6 +15,12 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonSelectIconStringIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("SelectIconString");
+            return success;
+        }
+
         public unsafe static bool AddonSelectYesnoIsOpen()
         {
             var (addon, success) = IsAddonVisible("SelectYesno");
@@ -39,6 +45,16 @@ namespace WoAutoCollectionPlugin.Ui
             if (ptr != IntPtr.Zero)
             {
                 return Click.TrySendClick("select_string1");
+            }
+            return false;
+        }
+
+        public unsafe static bool SelectIconString2Button()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("SelectIconString", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("select_icon_string2");
             }
             return false;
         }
