@@ -44,6 +44,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void NormalScript(int area) {
+            closed = false;
             int n = 0;
             while (!closed & n < 1000)
             {
@@ -59,7 +60,6 @@ namespace WoAutoCollectionPlugin.Bot
                 n++;
                 PluginLog.Log($"{n} 次结束");
             }
-            closed = false;
         }
 
         // 普通采集点
@@ -214,33 +214,40 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void YGatherScript(string args) {
+            closed = false;
             int n = 0;
-            while (!closed && n < 10)
+            while (!closed && n < 20)
             {
-                if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                try
                 {
-                    PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
-                }
-                if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
-                {
-                    RunIntoYunGuanScript();
-                }
+                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                    {
+                        PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
+                    }
+                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                    {
+                        RunIntoYunGuanScript();
+                    }
 
-                if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
-                {
-                    RunYGatherScript(args);
-                    gatherCount = 0;
+                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                    {
+                        RunYGatherScript(args);
+                        gatherCount = 0;
+                    }
+                    else
+                    {
+                        PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
+                        Thread.Sleep(2000);
+                    }
                 }
-                else
+                catch (Exception e)
                 {
-                    PluginLog.Log($"当前位置不在空岛, {DalamudApi.ClientState.TerritoryType} ,skip...");
-                    Thread.Sleep(2000);
+                    PluginLog.Error($"error!!!\n{e}");
                 }
 
                 Thread.Sleep(3000);
                 n++;
             }
-            closed = false;
         }
 
         // 进入空岛
@@ -271,6 +278,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
                 {
+                    // CommonBot.SetTarget(""); TODO
                     KeyOperates.KeyMethod(Keys.num1_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(500);

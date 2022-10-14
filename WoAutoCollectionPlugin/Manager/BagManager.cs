@@ -58,6 +58,42 @@ internal class BagManager
 
         int count = InventoryManager.Instance()->GetInventoryItemCount(ItemId);
         PluginLog.Log($"{Inventory1} {Inventory2} {Inventory3} {Inventory4} {count}");
+    }
 
+    public unsafe int InventoryRemaining() {
+        var bag0 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory1);
+        var bag1 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory2);
+        var bag2 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory3);
+        var bag3 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory4);
+
+        int count = 0;
+        if (bag0 != null && bag1 != null && bag2 != null && bag3 != null)
+        {
+            
+            for (int i = 0; i < 35; i++)
+            {
+                if (bag0->Items[i].ItemID == 0)
+                {
+                    count++;
+                }
+                if (bag1->Items[i].ItemID == 0)
+                {
+                    count++;
+                }
+                if (bag2->Items[i].ItemID == 0)
+                {
+                    count++;
+                }
+                if (bag3->Items[i].ItemID == 0)
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public unsafe int GetInventoryItemCount(uint ItemId) {
+        return InventoryManager.Instance()->GetInventoryItemCount(ItemId);
     }
 }

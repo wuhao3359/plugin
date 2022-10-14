@@ -112,12 +112,10 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
             bool flag = true;
-            KeyOperates.KeyMethod(Keys.num1_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(1000);
+            SetTarget("修理工");
+            Thread.Sleep(1200);
             if (CommonUi.AddonSelectStringIsOpen())
             {
-                Thread.Sleep(500);
                 CommonUi.SelectIconString2Button();
                 Thread.Sleep(1500);
             }
@@ -287,6 +285,9 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             DalamudApi.TargetManager.SetTarget(target);
+            Thread.Sleep(200);
+            KeyOperates.KeyMethod(Keys.num0_key);
+            Thread.Sleep(200);
             KeyOperates.KeyMethod(Keys.num0_key);
             return true;
         }

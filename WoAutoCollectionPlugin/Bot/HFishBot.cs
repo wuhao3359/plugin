@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -33,16 +34,24 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void Script()
         {
+            closed = false;
             DalamudApi.Framework.Update += OnHFishUpdate;
             int n = 0;
             while (!closed && n < 360)
             {
-                RunScript();
+                try
+                {
+                    RunScript();
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+
                 Thread.Sleep(5000);
                 n++;
             }
             DalamudApi.Framework.Update -= OnHFishUpdate;
-            closed = false;
         }
 
         public void RunScript() {

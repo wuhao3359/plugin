@@ -103,6 +103,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void YFishScript(string args) {
+            closed = false;
             int n = 0;
             DalamudApi.Framework.Update += OnYFishUpdate;
             while (!closed && n < 8)
@@ -138,7 +139,6 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(3000);
             }
             DalamudApi.Framework.Update -= OnYFishUpdate;
-            closed = false;
         }
 
         // 在空岛中 自动前往指定地点钓鱼

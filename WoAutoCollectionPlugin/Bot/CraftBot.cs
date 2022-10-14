@@ -34,6 +34,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void CraftScript(string args) {
+            closed = false;
             while (!closed)
             {
                 try
@@ -148,6 +149,7 @@ namespace WoAutoCollectionPlugin.Bot
         // 2.自动采集缺少的材料
         // 3.中间自动采集限时材料
         public void DailyScript(string args) {
+            closed = false;
             while (!closed)
             {
                 try

@@ -58,6 +58,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void CollectionFishScript(string args) {
+            closed = false;
             int n = 0;
             DalamudApi.Framework.Update +=OnCollectionFishUpdate;
             while (!closed && n < 10)
@@ -76,7 +77,6 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(3000);
             }
             DalamudApi.Framework.Update -= OnCollectionFishUpdate;
-            closed = false;
         }
 
         // 前往指定钓鱼地点 [√]

@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
@@ -41,6 +42,8 @@ namespace WoAutoCollectionPlugin
 
         public Configuration Configuration { get; private set; }
 
+        public static SeTime Time { get; private set; } = null!;
+
         private PluginUI PluginUi { get; init; }
 
         public GameData GameData { get; init; }
@@ -66,6 +69,7 @@ namespace WoAutoCollectionPlugin
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
             //DalamudApi.ChatManager = new ChatManager();
+            Time = new SeTime();
 
             try
             {
@@ -155,6 +159,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
 
+            Time.Dispose();
             //DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
@@ -356,13 +361,16 @@ namespace WoAutoCollectionPlugin
             //DalamudApi.CommandManager.ProcessCommand("/ac 冲刺");
 
             // 鼠标点击测试
-            GatherBot.test();
+            //GatherBot.test();
+
+            // 时间测试
+            var hour = Time.ServerTime.CurrentEorzeaHour();
+            var minute = Time.ServerTime.CurrentEorzeaMinute();
+            PluginLog.Log($"{hour} {minute}");
 
             // 背包测试 ok
             //BagManager bagManager = new BagManager();
             //bagManager.test();
-
-            // 时间测试
         }
 
         private void OnActionTestCommand(string command, string args)

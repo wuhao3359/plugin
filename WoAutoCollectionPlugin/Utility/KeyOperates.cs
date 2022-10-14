@@ -184,9 +184,9 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 10) {
+            if (turn >= 8) {
                 MoveStop();
-                Revise(positionB, 1000);
+                positionA = Revise(positionB, 800);
                 turn = 0;
             }
 
@@ -262,6 +262,14 @@ public class KeyOperates
         if (DalamudApi.KeyState[Keys.w_key])
         {
             KeyUp(Keys.w_key);
+        }
+        if (DalamudApi.KeyState[Keys.a_key])
+        {
+            KeyUp(Keys.a_key);
+        }
+        if (DalamudApi.KeyState[Keys.d_key])
+        {
+            KeyUp(Keys.d_key);
         }
     }
 
