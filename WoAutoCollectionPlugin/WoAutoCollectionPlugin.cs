@@ -3,9 +3,12 @@ using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
@@ -47,13 +50,6 @@ namespace WoAutoCollectionPlugin
         private PluginUI PluginUi { get; init; }
 
         public GameData GameData { get; init; }
-
-        private FishBot? FishBot;
-        private CollectionFishBot? CollectionFishBot;
-        private GatherBot? GatherBot;
-        private CraftBot? CraftBot;
-
-        public bool isRunning = true;
 
         public bool taskRunning = false;
 
@@ -130,11 +126,6 @@ namespace WoAutoCollectionPlugin
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
-                FishBot = new FishBot(GameData);
-                CollectionFishBot = new CollectionFishBot(GameData);
-                GatherBot = new GatherBot(GameData);
-                CraftBot = new CraftBot(GameData);
-
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -193,6 +184,7 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"fish: {args} length: {str.Length}");
 
+            FishBot FishBot = new FishBot(GameData);
             if (area <= 0)
             {
                 FishBot.StopYFishScript();
@@ -253,6 +245,7 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"collectionfish: {args}");
 
+            CollectionFishBot CollectionFishBot = new CollectionFishBot(GameData);
             if (area <= 0)
             {
                 CollectionFishBot.StopCollectionFishScript();
@@ -283,6 +276,7 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"gather: {area}");
 
+            GatherBot GatherBot = new GatherBot(GameData);
             if (area <= 0)
             {
                 GatherBot.StopScript();
@@ -313,9 +307,9 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"ygather: {area}");
 
+            GatherBot GatherBot = new GatherBot(GameData);
             if (area <= 0)
             {
-                isRunning = false;
                 GatherBot.StopScript();
                 taskRunning = false;
                 return;
@@ -356,9 +350,22 @@ namespace WoAutoCollectionPlugin
             //string targetName = "艾妮";
             //commonBot.SetTarget(targetName);
 
-            //// 使用技能
+            //// 使用技能 Miner Botanist Fisher
             ////DalamudApi.ChatManager.SendMessage("/ac 技能名");
             //DalamudApi.CommandManager.ProcessCommand("/ac 冲刺");
+            string message = "/gearset change Miner";
+
+            DalamudApi.CommandManager.ProcessCommand(message);
+
+            var (text, length) = PrepareString(message);
+            var payload = PrepareContainer(text, length);
+            ProcessChatBox _processChatBox = new ProcessChatBox(DalamudApi.SigScanner);
+            IntPtr _uiModulePtr = DalamudApi.GameGui.GetUIModule();
+
+            _processChatBox.Invoke(_uiModulePtr, payload, IntPtr.Zero, (byte)0);
+
+            Marshal.FreeHGlobal(payload);
+            Marshal.FreeHGlobal(text);
 
             // 鼠标点击测试
             //GatherBot.test();
@@ -371,6 +378,25 @@ namespace WoAutoCollectionPlugin
             // 背包测试 ok
             //BagManager bagManager = new BagManager();
             //bagManager.test();
+        }
+
+        private static (IntPtr, long) PrepareString(string message)
+        {
+            var bytes = Encoding.UTF8.GetBytes(message);
+            var mem = Marshal.AllocHGlobal(bytes.Length + 30);
+            Marshal.Copy(bytes, 0, mem, bytes.Length);
+            Marshal.WriteByte(mem + bytes.Length, 0);
+            return (mem, bytes.Length + 1);
+        }
+
+        private static IntPtr PrepareContainer(IntPtr message, long length)
+        {
+            var mem = Marshal.AllocHGlobal(400);
+            Marshal.WriteInt64(mem, message.ToInt64());
+            Marshal.WriteInt64(mem + 0x8, 64);
+            Marshal.WriteInt64(mem + 0x10, length);
+            Marshal.WriteInt64(mem + 0x18, 0);
+            return mem;
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -396,10 +422,11 @@ namespace WoAutoCollectionPlugin
             string[] str = args.Split(' ');
             PluginLog.Log($"craft: {args} length: {args.Length}");
 
+            CraftBot CraftBot = new CraftBot(GameData);
             if (args.Length <= 1)
             {
                 PluginLog.Log($"stop");
-                CraftBot.StopCraftScript();
+                CraftBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -426,10 +453,12 @@ namespace WoAutoCollectionPlugin
             string[] str = args.Split(' ');
             PluginLog.Log($"daily: {args} length: {args.Length}");
 
+            DailyBot DailyBot = new DailyBot(GameData);
             if (args.Length <= 1)
             {
                 PluginLog.Log($"stop");
                 // stop
+                DailyBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -444,7 +473,8 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                CraftBot.DailyScript(args);
+                
+                DailyBot.DailyScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });

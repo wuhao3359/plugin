@@ -20,6 +20,9 @@ public class KeyOperates
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
+    [DllImport("user32.dll")]
+    private static extern int mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
+
     public KeyOperates(GameData GameData)
     {
         this.GameData = GameData;
@@ -341,9 +344,11 @@ public class KeyOperates
     public void MouseMove(int x, int y)
     {
         // (y<<16) | x
-        int lparam = (y << 16) + x + 31 * 2;
+        //int lparam = (y << 16) + x + 31 * 2;
         //int lparam = (y << 16) | x;
-        SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, (IntPtr)lparam);
+        IntPtr lparam = new IntPtr((y << 16) | x);
+        SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, lparam);
+        //mouse_event(Keys.MOUSEEVENTF_MOVE, 50, 50, 0, 0);
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {

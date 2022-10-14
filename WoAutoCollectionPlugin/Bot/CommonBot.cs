@@ -25,7 +25,7 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
         }
 
-        public void Closed()
+        public void StopScript()
         {
             closed = true;
         }
