@@ -1,5 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
+using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Ui;
@@ -24,7 +25,7 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
         }
 
-        public void Closed()
+        public void StopScript()
         {
             closed = true;
         }
@@ -76,9 +77,11 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             KeyOperates.KeyMethod(Keys.F12_key);
-            Thread.Sleep(300);
+            Thread.Sleep(1000);
             if (RepairUi.AllRepairButton())
             {
+                Thread.Sleep(800);
+                CommonUi.SelectYesButton();
                 Thread.Sleep(3500);
             }
             else {
@@ -96,7 +99,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
@@ -109,14 +112,19 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
             bool flag = true;
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num2_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(2000);
-            if (RepairUi.AllRepairButton())
+            SetTarget("修理工");
+            Thread.Sleep(1200);
+            if (CommonUi.AddonSelectStringIsOpen())
             {
-                Thread.Sleep(500);
+                CommonUi.SelectIconString2Button();
+                Thread.Sleep(1500);
+            }
+            
+            if (RepairUi.AddonRepairIsOpen() && RepairUi.AllRepairButton())
+            {
+                Thread.Sleep(800);
+                CommonUi.SelectYesButton();
+                Thread.Sleep(800);
             }
             else
             {
@@ -135,7 +143,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
@@ -157,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
             for (int i = 0; i < count; i++) {
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
-                CommonUi.SelectYesButton();
+                CommonUi.SelectMaterializeDialogYesButton();
                 Thread.Sleep(3500);
             }
             KeyOperates.KeyMethod(Keys.esc_key);
@@ -189,7 +197,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Thread.Sleep(1000);
-            KeyOperates.KeyMethod(Keys.num1_key);
+            SetTarget("收藏品交易员");
+            //KeyOperates.KeyMethod(Keys.num1_key);
             Thread.Sleep(500);
             KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(3000);
@@ -233,7 +242,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Thread.Sleep(2000);
-            KeyOperates.KeyMethod(Keys.num3_key);
+            SetTarget("工票交易员");
+            //KeyOperates.KeyMethod(Keys.num3_key);
             Thread.Sleep(500);
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num0_key);
@@ -265,6 +275,20 @@ namespace WoAutoCollectionPlugin.Bot
 
             KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
+            return true;
+        }
+
+        public bool SetTarget(string targetName) {
+            var target = DalamudApi.ObjectTable.FirstOrDefault(obj => obj.Name.TextValue.ToLowerInvariant() == targetName);
+            if (target == default) {
+                return false;
+            }
+
+            DalamudApi.TargetManager.SetTarget(target);
+            Thread.Sleep(200);
+            KeyOperates.KeyMethod(Keys.num0_key);
+            Thread.Sleep(200);
+            KeyOperates.KeyMethod(Keys.num0_key);
             return true;
         }
     }

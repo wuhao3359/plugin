@@ -42,6 +42,10 @@ public class DalamudApi
     //[RequiredVersion("1.0")]
     public static ChatHandlers ChatHandlers { get; private set; } = null!;
 
+    //[PluginService]
+    ////[RequiredVersion("1.0")]
+    //internal static ChatManager ChatManager { get; set; } = null!;
+
     [PluginService]
     //[RequiredVersion("1.0")]
     public static ClientState ClientState { get; private set; } = null!;

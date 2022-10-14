@@ -55,6 +55,12 @@ public static class Keys
 
     public static int WM_KEYDOWN = 0x100;
     public static int WM_KEYUP = 0x0101;
-    public static int VK_S = 83;
 
+    public static short WM_MOUSEMOVE = 0x0200;
+    public static short WM_LBUTTONDOWN = 0x0201;
+    public static short WM_LBUTTONUP = 0x0202;
+
+    public static short MOUSEEVENTF_MOVE = 0x0001;
+    public static short MOUSEEVENTF_LEFTDOWN = 0x0002;
+    public static short MOUSEEVENTF_LEFTUP = 0x0004;
 }

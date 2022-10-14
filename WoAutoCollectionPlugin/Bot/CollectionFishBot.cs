@@ -57,6 +57,28 @@ namespace WoAutoCollectionPlugin.Bot
             num = 0;
         }
 
+        public void CollectionFishScript(string args) {
+            closed = false;
+            int n = 0;
+            DalamudApi.Framework.Update +=OnCollectionFishUpdate;
+            while (!closed && n < 10)
+            {
+                try
+                {
+                    RunCollectionFishScript(args);
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"error!!!\n{e}");
+                }
+
+                PluginLog.Log($"准备开始下一轮... {n}");
+                n++;
+                Thread.Sleep(3000);
+            }
+            DalamudApi.Framework.Update -= OnCollectionFishUpdate;
+        }
+
         // 前往指定钓鱼地点 [√]
         // 钓鱼   [√]
         // 清背包 (换工票/精选) [ ] TODO
