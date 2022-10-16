@@ -380,9 +380,9 @@ namespace WoAutoCollectionPlugin.Utility
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] WhiteFishArea = {
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
+            new Vector3 (2287f, 2193f, 3119f),
+            new Vector3 (2253f, 2192f, 3126f),
+            new Vector3 (2264f, 2194f, 3107f),
         };
         public static int WhiteFishTime = 11;
 

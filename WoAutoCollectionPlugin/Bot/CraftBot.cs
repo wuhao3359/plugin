@@ -2,6 +2,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
 
@@ -68,6 +69,7 @@ namespace WoAutoCollectionPlugin.Bot
             int i = 0;
             while (!closed)
             {
+                Thread.Sleep(1000);
                 if (closed)
                 {
                     PluginLog.Log($"craft stopping");
@@ -79,7 +81,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"{recipeName}, {recipeId}");
                     RecipeNoteUi.OpenRecipeNote(recipeId);
 
-                    Thread.Sleep(800);
+                    Thread.Sleep(1000);
                     if (closed)
                     {
                         PluginLog.Log($"craft stopping");
@@ -129,7 +131,7 @@ namespace WoAutoCollectionPlugin.Bot
                 i++;
                 Thread.Sleep(1000);
 
-                if (i >= 12)
+                if (BagManager.InventoryRemaining() <= 20)
                 {
                     Thread.Sleep(1000);
                     if (RecipeNoteUi.RecipeNoteIsOpen())
@@ -151,8 +153,12 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"params error... plz check");
                             return;
                         }
+                        else {
+                            PluginLog.Log($"CraftUploadAndExchange End.");
+                        }
                     }
                 }
+                Thread.Sleep(1000);
             }
         }
     }

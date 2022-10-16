@@ -8,8 +8,10 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -53,19 +55,23 @@ namespace WoAutoCollectionPlugin.Bot
         {
             canMove = false;
             readyMove = false;
-            closed = false;
-            num = 0;
         }
 
         public void CollectionFishScript(string args) {
             closed = false;
+            num = 0;
             int n = 0;
             DalamudApi.Framework.Update +=OnCollectionFishUpdate;
-            while (!closed && n < 10)
+            while (!closed && n < 12)
             {
                 try
                 {
                     RunCollectionFishScript(args);
+                    if (BagManager.InventoryRemaining() <= 5)
+                    {
+                        PluginLog.Log($"获得了{num}条目标");
+                        break;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -189,8 +195,7 @@ namespace WoAutoCollectionPlugin.Bot
                     CommonBot.ExtractMateria(count);
                 }
 
-                if (num >= 70) {
-                    PluginLog.Log($"获得了70条目标");
+                if (BagManager.InventoryRemaining() <= 5) {
                     return true;
                 }
             }
@@ -251,7 +256,7 @@ namespace WoAutoCollectionPlugin.Bot
                             break;
                         case "Legendary":
                             KeyOperates.KeyMethod(Keys.n4_key);
-                            break;
+                            break; 
                         default:
                             break;
                     }
@@ -265,7 +270,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             Task task = new(() =>
             {
-                if (num >= 70) {
+                if (BagManager.InventoryRemaining() <= 5) {
                     KeyOperates.KeyMethod(Keys.F1_key);
                     return;
                 }
@@ -298,7 +303,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (stackCount >= 3)
                         {
-                            KeyOperates.KeyMethod(Keys.n0_key);
+                            Game.ExecuteMessage("/ac 沙利亚克的恩宠");
                             gp += 150;
                             Thread.Sleep(1000);
                         }
@@ -310,10 +315,10 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (!existStatus)
                     {
-                        Thread.Sleep(5000);
+                        Thread.Sleep(3000);
                         if (gp > 560)
                         {
-                            KeyOperates.KeyMethod(Keys.F4_key);
+                            Game.ExecuteMessage("/ac 耐心II");
                             Thread.Sleep(1000);
                             existStatus = true;
                             gp -= 560;
@@ -321,7 +326,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (LastFish && gp > 350)
                     {
-                        KeyOperates.KeyMethod(Keys.F5_key);
+                        Game.ExecuteMessage("/ac 专一垂钓");
                         Thread.Sleep(1000);
                     }
                     LastFish = false;
@@ -341,10 +346,11 @@ namespace WoAutoCollectionPlugin.Bot
             Task task = new(() =>
             {
                 num++;
-                Thread.Sleep(1000);
-                KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(200);
-                KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(800);
+                if (CommonUi.AddonSelectYesnoIsOpen()) {
+                    CommonUi.SelectYesButton();
+                }
+                Thread.Sleep(300);
             });
             task.Start();
         }

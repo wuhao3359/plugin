@@ -6,6 +6,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using WoAutoCollectionPlugin;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 public class KeyOperates
@@ -143,12 +144,13 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
 
-            if (Math.Abs(beforeDistance - distance) < 0.4) {
+            if (Math.Abs(beforeDistance - distance) < 0.35) {
                 notMove++;
             }
 
             if (notMove >= 10) {
                 KeyMethod(Keys.d_key, 300);
+                KeyDown(Keys.space_key);
                 notMove = 0;
             } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
@@ -346,9 +348,10 @@ public class KeyOperates
         // (y<<16) | x
         //int lparam = (y << 16) + x + 31 * 2;
         //int lparam = (y << 16) | x;
-        IntPtr lparam = new IntPtr((y << 16) | x);
-        SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, lparam);
-        //mouse_event(Keys.MOUSEEVENTF_MOVE, 50, 50, 0, 0);
+        //IntPtr lparam = new IntPtr((y << 16) | x);
+        //SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, lparam);
+        Thread.Sleep(3000);
+        mouse_event(Keys.MOUSEEVENTF_MOVE, x, y, 0, 0);
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {

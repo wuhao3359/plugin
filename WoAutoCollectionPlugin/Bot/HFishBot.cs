@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.SeFunctions;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -30,6 +31,10 @@ namespace WoAutoCollectionPlugin.Bot
 
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
+        }
+
+        public void StopScript() {
+            closed = true;
         }
 
         public void Script()
@@ -142,7 +147,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (stackCount >= 3)
                     {
-                        KeyOperates.KeyMethod(Keys.n0_key);
+                        Game.ExecuteMessage("/ac 沙利亚克的恩宠");
                         gp += 150;
                         Thread.Sleep(1000);
                     }
@@ -156,14 +161,14 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (gp > 560)
                     {
-                        KeyOperates.KeyMethod(Keys.F4_key);
+                        Game.ExecuteMessage("/ac 耐心II");
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 560;
                     }
                     else if (gp > 200)
                     {
-                        KeyOperates.KeyMethod(Keys.F3_key);
+                        Game.ExecuteMessage("/ac 耐心");
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 200;
