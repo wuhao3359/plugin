@@ -45,7 +45,7 @@ namespace WoAutoCollectionPlugin
 
         public Configuration Configuration { get; private set; }
 
-        public static SeTime Time { get; private set; } = null!;
+        public SeTime Time { get; private set; } = null!;
 
         private PluginUI PluginUi { get; init; }
 
@@ -146,7 +146,7 @@ namespace WoAutoCollectionPlugin
 
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
-                DailyBot = new DailyBot(GameData);
+                DailyBot = new DailyBot(GameData, Time);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -361,11 +361,6 @@ namespace WoAutoCollectionPlugin
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
 
-            // 时间测试
-            //var hour = Time.ServerTime.CurrentEorzeaHour();
-            //var minute = Time.ServerTime.CurrentEorzeaMinute();
-            //PluginLog.Log($"{hour} {minute}");
-
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -440,8 +435,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                
-                DailyBot.DailyScript(args);
+                DailyBot.DailyScript();
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });

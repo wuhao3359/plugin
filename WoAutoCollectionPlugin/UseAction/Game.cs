@@ -38,6 +38,7 @@ namespace WoAutoCollectionPlugin.UseAction
             //ActionManager.Instance()->UseAction(ActionType.Mount, 1);    // 召唤坐骑
             //ActionManager.Instance()->UseAction(ActionType.General, 4); // 疾跑
             ActionManager.Instance()->UseAction(ActionType.Spell, 19700);
+            ActionManager.Instance()->GetActionStatus(ActionType.Spell, 19700);
         }
 
         // 19700-以太钻孔机

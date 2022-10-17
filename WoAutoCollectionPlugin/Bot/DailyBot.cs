@@ -1,7 +1,14 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Logging;
 using System;
+using System.Collections.Generic;
+using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.SeFunctions;
+using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
 
@@ -9,7 +16,8 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        //private GameData GameData { get; init; }
+        private GameData GameData { get; init; }
+        public SeTime Time { get; private set; } = null!;
         private KeyOperates KeyOperates { get; init; }
 
         private CommonBot? CommonBot;
@@ -17,15 +25,16 @@ namespace WoAutoCollectionPlugin.Bot
 
         private static bool closed = false;
 
-        // 0-默认(换生产白票 换天穹黄票)
+        // 0-默认
         private int current = 0;
         private int next = 0;
-        public DailyBot(GameData GameData)
+        public DailyBot(GameData GameData, SeTime Time)
         {
-            //this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
             CraftBot = new CraftBot(GameData);
             CommonBot = new CommonBot(KeyOperates);
+            this.GameData = GameData;
+            this.Time = Time;
         }
 
         public void Init()
@@ -46,48 +55,206 @@ namespace WoAutoCollectionPlugin.Bot
         // 1.生产白票
         // 2.自动采集缺少的材料
         // 3.中间自动采集限时材料
-        public void DailyScript(string args)
+        public void DailyScript()
         {
             closed = false;
-
             TimePlan();
-            while (!closed)
-            {
-                try
-                {
-                    if (next == 0)
-                    {
-                        DefaultTask();
-                    }
-                    // 默认
-                }
-                catch (Exception e)
-                {
-                    PluginLog.Error($"error!!!\n{e}");
-                }
-            }
         }
 
         public void TimePlan()
         {
-            Task task = new(() =>
+            int n = 0;
+            while (!closed && n < 8000)
             {
-                int n = 0;
-                while (!closed && n < 8000)
-                {
-                    // 判断时间段 不同时间干不同事情
+                // 每24个et内单个任务只允许被执行一遍
+                List<int> finishIds = new List<int>();
+                // 判断时间段 不同时间干不同事情
+                int hour = Time.ServerTime.CurrentEorzeaHour();
+                int minute = Time.ServerTime.CurrentEorzeaMinute();
+                PluginLog.Log($"{hour} {minute}");
+
+                int et = hour + 1;
+                if (et == 24) {
+                    PluginLog.Log($"重置统计技术, 总共 {finishIds.Count}..");
+                    finishIds.Clear();
                 }
-            });
-            task.Start();
+                PluginLog.Log($"start begin {et}");
+                List<int> ids = DailyTask.GetMaterialIdsByEt(et);
+
+                while (ids.Count == 0) {
+                    PluginLog.Log($"当前et没事干, skip et {et} ..");
+                    et++;
+                    ids = DailyTask.GetMaterialIdsByEt(et);
+                }
+                
+                // TODO 修理装备
+
+
+                int num = 0;
+                foreach (int id in ids) {
+                    if (finishIds.Exists(t => t == id)) {
+                        PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
+                        Thread.Sleep(3000);
+                        continue;
+                    }
+                    (string Name, string Job, int GatherIndex, uint tp, Vector3[] path) = DailyTask.GetMaterialById(id);
+
+                    if (hour > et) {
+                        PluginLog.Log($"当前et已经结束, finish et {et} ..");
+                        Thread.Sleep(3000);
+                        break;
+                    }
+
+                    if (tp == 0) {
+                        PluginLog.Log($"数据异常, skip {id}..");
+                        Thread.Sleep(3);
+                        continue;
+                    }
+                    Teleporter.Teleport(tp);
+                    Thread.Sleep(15000);
+
+                    while (hour < et)
+                    {
+                        PluginLog.Log($"未到时间, 等待执行任务, wait {et}..");
+                        Thread.Sleep(10000);
+                        hour = Time.ServerTime.CurrentEorzeaHour();
+                    }
+                    // 切换职业 TODO
+                    Thread.Sleep(1000);
+                    Vector3 position = MovePositions(path, true);
+                    // 找最近的采集点
+                    ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                    ushort SizeFactor = GameData.GetSizeFactor(territoryType);
+                    GameObject? go = Util.CurrentPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+
+                    if (go != null)
+                    {
+                        float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
+                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
+                        float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                        Vector3 GatherPoint = new Vector3(x, y, z);
+                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+
+                        var targetMgr = DalamudApi.TargetManager;
+                        targetMgr.SetTarget(go);
+
+                        int tt = 0;
+                        while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 7)
+                        {
+                            if (tt >= 2)
+                            {
+                                KeyOperates.KeyMethod(Keys.w_key, 200);
+                            }
+                            KeyOperates.KeyMethod(Keys.q_key);
+                            Thread.Sleep(1000);
+                            tt++;
+
+                            if (closed)
+                            {
+                                PluginLog.Log($"dailyTask stopping");
+                                return;
+                            }
+                        }
+
+                        tt = 0;
+                        while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
+                        {
+                            KeyOperates.KeyMethod(Keys.num0_key);
+                            Thread.Sleep(500);
+                            if (closed)
+                            {
+                                PluginLog.Log($"dailyTask stopping");
+                                return;
+                            }
+                            tt++;
+                        }
+                        if (tt >= 7)
+                        {
+                            PluginLog.Log($"未打开采集面板, skip {id}..");
+                            Thread.Sleep(3000);
+                            continue;
+                        }
+                        Thread.Sleep(1000);
+                        if (CommonUi.AddonGatheringIsOpen())
+                        {
+                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                            uint gp = player.CurrentGp;
+                            int level = player.Level;
+                            if (level >= 50)
+                            {
+                                if (gp >= 500)
+                                {
+                                    KeyOperates.KeyMethod(Keys.F3_key);
+                                    Thread.Sleep(2000);
+                                }
+                            }
+                            else
+                            {
+                                if (gp >= 400)
+                                {
+                                    KeyOperates.KeyMethod(Keys.F2_key);
+                                    Thread.Sleep(2000);
+                                }
+                            }
+                            tt = 0;
+                            while (CommonUi.AddonGatheringIsOpen() && tt < 9) {
+                                CommonUi.GatheringButton(GatherIndex);
+                                Thread.Sleep(1000);
+                                tt++;
+                                if (tt == 3) {
+                                    gp = player.CurrentGp;
+                                    level = player.Level;
+                                    if (gp >= 300)
+                                    {
+                                        if (level >= 25)
+                                        {
+                                            KeyOperates.KeyMethod(Keys.n4_key);
+                                            Thread.Sleep(1500);
+                                            if (level >= 90)
+                                            {
+                                                KeyOperates.KeyMethod(Keys.n5_key);
+                                                Thread.Sleep(1000);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        PluginLog.Log($"未知原因未找到数据, skip {id}..");
+                        Thread.Sleep(3000);
+                        continue;
+                    }
+                    // finish work
+                    finishIds.Add(id);
+                    num++;
+                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    Thread.Sleep(3000);
+
+                    // TODO魔晶石精制
+                }
+                PluginLog.Log($"当前et成功执行{num}个任务..");
+            }
         }
 
-        public void DefaultTask()
+        private Vector3 MovePositions(Vector3[] Path, bool UseMount)
         {
-            int pressKey = 1;
-            string recipeName = "";
-            int exchangeItem = 10;
-            // TODO 移动到商店旁边
-            CraftBot.RunCraftScript(pressKey, recipeName, exchangeItem);
+            ushort territoryType = DalamudApi.ClientState.TerritoryType;
+            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            for (int i = 0; i < Path.Length; i++)
+            {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return KeyOperates.GetUserPosition(SizeFactor);
+                }
+                position = KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
+                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                Thread.Sleep(800);
+            }
+            return position;
         }
     }
 }

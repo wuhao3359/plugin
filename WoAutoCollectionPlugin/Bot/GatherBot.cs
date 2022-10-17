@@ -452,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 500)
                                 {
-                                    Game.ExecuteMessage("/ac 莫非王土II");
+                                    KeyOperates.KeyMethod(Keys.F3_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -460,7 +460,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 400)
                                 {
-                                    Game.ExecuteMessage("/ac 莫非王土");
+                                    KeyOperates.KeyMethod(Keys.F2_key);
                                     Thread.Sleep(2000);
                                 }
                             }
