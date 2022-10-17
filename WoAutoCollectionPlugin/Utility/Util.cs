@@ -59,6 +59,50 @@ namespace WoAutoCollectionPlugin.Utility
             }
         }
 
+        public static GameObject LimitTimePosCanGather(Vector3[] positions, ushort SizeFactor)
+        {
+            GameObject nearestGo = null;
+            double distance = 1000000000f;
+            int index = 0;
+            int length = DalamudApi.ObjectTable.Length;
+            for (int i = 0; i < length; i++)
+            {
+                GameObject? gameObject = DalamudApi.ObjectTable[i];
+                if (gameObject != null && CanGather(gameObject))
+                {
+                    if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                    {
+                        if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场") {
+                            Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                            double d = 100000f;
+                            foreach (Vector3 pos in positions)
+                            {
+                                d = Maths.Distance(pos, v);
+                                if (d < distance)
+                                {
+                                    distance = d;
+                                    nearestGo = gameObject;
+                                    index = i;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (nearestGo != null)
+            {
+                PluginLog.Log($"最近 {index}, {nearestGo.DataId}");
+                return nearestGo;
+            }
+            else
+            {
+                PluginLog.Log($"没有找到最近的point");
+                return null;
+            }
+        }
+
         public static bool CanGather(GameObject go) {
             FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject* obj = (FFXIVClientStructs.FFXIV.Client.Game.Object.GameObject*)go.Address;
             if (obj->RenderFlags == 0) { 

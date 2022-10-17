@@ -67,7 +67,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunCraftScript(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
-            while (!closed)
+            while (!closed && BagManager.InventoryRemaining() >= 10)
             {
                 Thread.Sleep(1000);
                 if (closed)
@@ -131,7 +131,7 @@ namespace WoAutoCollectionPlugin.Bot
                 i++;
                 Thread.Sleep(1000);
 
-                if (BagManager.InventoryRemaining() <= 20)
+                if (BagManager.InventoryRemaining() <= 10)
                 {
                     Thread.Sleep(1000);
                     if (RecipeNoteUi.RecipeNoteIsOpen())

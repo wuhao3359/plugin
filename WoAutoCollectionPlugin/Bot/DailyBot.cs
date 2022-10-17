@@ -17,7 +17,6 @@ namespace WoAutoCollectionPlugin.Bot
     public class DailyBot
     {
         private GameData GameData { get; init; }
-        public SeTime Time { get; private set; } = null!;
         private KeyOperates KeyOperates { get; init; }
 
         private CommonBot? CommonBot;
@@ -28,13 +27,12 @@ namespace WoAutoCollectionPlugin.Bot
         // 0-默认
         private int current = 0;
         private int next = 0;
-        public DailyBot(GameData GameData, SeTime Time)
+        public DailyBot(GameData GameData)
         {
             KeyOperates = new KeyOperates(GameData);
             CraftBot = new CraftBot(GameData);
             CommonBot = new CommonBot(KeyOperates);
             this.GameData = GameData;
-            this.Time = Time;
         }
 
         public void Init()
@@ -61,11 +59,13 @@ namespace WoAutoCollectionPlugin.Bot
         public void TimePlan()
         {
             int n = 0;
+            SeTime Time = new SeTime();
             while (!closed && n < 8000)
             {
                 // 每24个et内单个任务只允许被执行一遍
                 List<int> finishIds = new List<int>();
                 // 判断时间段 不同时间干不同事情
+                Time.Update();
                 int hour = Time.ServerTime.CurrentEorzeaHour();
                 int minute = Time.ServerTime.CurrentEorzeaMinute();
                 PluginLog.Log($"{hour} {minute}");
@@ -94,7 +94,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(3000);
                         continue;
                     }
-                    (string Name, string Job, int GatherIndex, uint tp, Vector3[] path) = DailyTask.GetMaterialById(id);
+                    (string Name, string Job, int GatherIndex, uint tp, Vector3[] path, Vector3[] points) = DailyTask.GetMaterialById(id);
 
                     if (hour > et) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
@@ -114,6 +114,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         PluginLog.Log($"未到时间, 等待执行任务, wait {et}..");
                         Thread.Sleep(10000);
+                        Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
                     }
                     // 切换职业 TODO
@@ -226,6 +227,7 @@ namespace WoAutoCollectionPlugin.Bot
                     // finish work
                     finishIds.Add(id);
                     num++;
+                    Time.Update();
                     hour = Time.ServerTime.CurrentEorzeaHour();
                     Thread.Sleep(3000);
 

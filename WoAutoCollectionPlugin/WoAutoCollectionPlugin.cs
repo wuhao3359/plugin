@@ -1,6 +1,8 @@
-﻿using Dalamud.Game.Command;
+﻿using Dalamud.Game.ClientState.Objects.Types;
+using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using FFXIVClientStructs.FFXIV.Client.Game;
 using System;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -78,7 +80,6 @@ namespace WoAutoCollectionPlugin
             ClickLib.Click.Initialize();
             //DalamudApi.ChatManager = new ChatManager();
             Time = new SeTime();
-
             try
             {
                 //Game.Initialize();
@@ -146,7 +147,7 @@ namespace WoAutoCollectionPlugin
 
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
-                DailyBot = new DailyBot(GameData, Time);
+                DailyBot = new DailyBot(GameData);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -171,7 +172,6 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
 
-            Time.Dispose();
             //DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
@@ -353,14 +353,18 @@ namespace WoAutoCollectionPlugin
         private void OnWoTestCommand(string command, string args)
         {
             // 使用技能
-            string message = "/ac 随机坐骑";
-            bool flag = DalamudApi.CommandManager.ProcessCommand(message);
-            PluginLog.Log($"{flag}");
+            //string message = "/ac 随机坐骑";
+            //bool flag = DalamudApi.CommandManager.ProcessCommand(message);
+            //PluginLog.Log($"{flag}");
 
             // 鼠标点击测试
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
-
+            //Time.Update();
+            //int hour = Time.ServerTime.CurrentEorzeaHour();
+            //int minute = Time.ServerTime.CurrentEorzeaMinute();
+            //PluginLog.Log($"{hour} {minute}");
+            Game.Test();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -368,7 +372,7 @@ namespace WoAutoCollectionPlugin
             // 技能 测试
             Game.Initialize();
             Game.Test();
-            Game.DisAble();
+            //Game.DisAble();
         }
 
         private void OnCloseTestCommand(string command, string args)

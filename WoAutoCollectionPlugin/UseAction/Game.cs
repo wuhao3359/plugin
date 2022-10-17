@@ -37,8 +37,15 @@ namespace WoAutoCollectionPlugin.UseAction
             // actionManager, actionType, actionID, targetObjectID, param, useType, pvp, isGroundTarget
             //ActionManager.Instance()->UseAction(ActionType.Mount, 1);    // 召唤坐骑
             //ActionManager.Instance()->UseAction(ActionType.General, 4); // 疾跑
-            ActionManager.Instance()->UseAction(ActionType.Spell, 19700);
-            ActionManager.Instance()->GetActionStatus(ActionType.Spell, 19700);
+            //ActionManager.Instance()->UseAction(ActionType.Spell, 19700);
+            //ActionManager.Instance()->GetActionStatus(ActionType.Spell, 19700);
+            float t = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, 26522); // 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
+            PluginLog.Log($"{t}");
+            bool tt = ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, 26522);
+            PluginLog.Log($"{tt}");
+            uint ttt = ActionManager.Instance()->GetActionStatus(ActionType.Spell, 26522);
+            PluginLog.Log($"{ttt}");
+            // 26521-采矿 理智同兴
         }
 
         // 19700-以太钻孔机

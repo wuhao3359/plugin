@@ -18,18 +18,15 @@ public class SeTime
     public byte      EorzeaHourOfDay    { get; private set; }
     public byte      EorzeaMinuteOfHour { get; private set; }
 
-    public event Action? Updated;
-    public event Action? HourChanged;
-    public event Action? WeatherChanged;
+    //public event Action? Updated;
+
 
     public SeTime()
     {
-        Update(null!);
-        DalamudApi.Framework.Update += Update;
     }
 
-    public void Dispose()
-        => DalamudApi.Framework.Update -= Update;
+    public void Dispose() { 
+    }
 
     private unsafe TimeStamp GetEorzeaTime()
     {
@@ -42,37 +39,37 @@ public class SeTime
             : ServerTime.ConvertToEorzea();
     }
 
-    private void Update(global::Dalamud.Game.Framework _)
+    public unsafe void Update()
     {
         ServerTime = GetServerTime();
         EorzeaTime = GetEorzeaTime();
-        var minute = EorzeaTime.TotalMinutes;
-        if (minute != EorzeaTotalMinute)
-        {
-            EorzeaTotalMinute  = minute;
-            EorzeaMinuteOfDay  = (short)(EorzeaTotalMinute % RealTime.MinutesPerDay);
-            EorzeaMinuteOfHour = (byte)(EorzeaMinuteOfDay % RealTime.MinutesPerHour);
-        }
+        //var minute = EorzeaTime.TotalMinutes;
+        //if (minute != EorzeaTotalMinute)
+        //{
+        //    EorzeaTotalMinute  = minute;
+        //    EorzeaMinuteOfDay  = (short)(EorzeaTotalMinute % RealTime.MinutesPerDay);
+        //    EorzeaMinuteOfHour = (byte)(EorzeaMinuteOfDay % RealTime.MinutesPerHour);
+        //}
 
-        var hour = EorzeaTotalMinute / RealTime.MinutesPerHour;
-        if (hour != EorzeaTotalHour)
-        {
-            // Sometimes the Eorzea time gets seemingly rounded up and triggers before the ServerTime.
-            //ServerTime      = ServerTime.AddEorzeaMinutes(30).SyncToEorzeaHour();
-            EorzeaTotalHour = hour;
-            EorzeaHourOfDay = (byte)(EorzeaMinuteOfDay / RealTime.MinutesPerHour);
-            HourChanged?.Invoke();
-            if ((EorzeaHourOfDay & 0b111) == 0)
-            {
-                PluginLog.Log("Eorzea Hour and Weather Change triggered. {ServerTime} {EorzeaTime}", (long)ServerTime, (long)EorzeaTime);
-                WeatherChanged?.Invoke();
-            }
-            else
-            {
-                PluginLog.Log("Eorzea Hour Change triggered. {ServerTime} {EorzeaTime}", (long)ServerTime, (long)EorzeaTime);
-            }
-        }
+        //var hour = EorzeaTotalMinute / RealTime.MinutesPerHour;
+        //if (hour != EorzeaTotalHour)
+        //{
+        //    // Sometimes the Eorzea time gets seemingly rounded up and triggers before the ServerTime.
+        //    //ServerTime      = ServerTime.AddEorzeaMinutes(30).SyncToEorzeaHour();
+        //    EorzeaTotalHour = hour;
+        //    EorzeaHourOfDay = (byte)(EorzeaMinuteOfDay / RealTime.MinutesPerHour);
+        //    HourChanged?.Invoke();
+        //    if ((EorzeaHourOfDay & 0b111) == 0)
+        //    {
+        //        PluginLog.Log("Eorzea Hour and Weather Change triggered. {ServerTime} {EorzeaTime}", (long)ServerTime, (long)EorzeaTime);
+        //        WeatherChanged?.Invoke();
+        //    }
+        //    else
+        //    {
+        //        PluginLog.Log("Eorzea Hour Change triggered. {ServerTime} {EorzeaTime}", (long)ServerTime, (long)EorzeaTime);
+        //    }
+        //}
 
-        Updated?.Invoke();
+        //Updated?.Invoke();
     }
 }
