@@ -52,9 +52,6 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // TODO 日常使用
-        // 1.生产白票
-        // 2.自动采集缺少的材料
-        // 3.中间自动采集限时材料
         public void DailyScript()
         {
             closed = false;
@@ -75,7 +72,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 int et = hour + 1;
                 if (et == 24) {
-                    PluginLog.Log($"重置统计技术, 总共 {finishIds.Count}..");
+                    PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin {et}");
