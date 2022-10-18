@@ -104,11 +104,12 @@ namespace WoAutoCollectionPlugin.Ui
         }
 
         public static unsafe void test() {
-            var ptr = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
-            var AtkUnitBase = (AtkUnitBase*)ptr;
-            var Addon = (AddonGathering*)ptr;
-            AtkComponentCheckBox* QuickGatheringComponentCheckBox = Addon->QuickGatheringComponentCheckBox;
-            PluginLog.Log($"{QuickGatheringComponentCheckBox->AtkComponentButton.Flags}");
+            //var ptr = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
+            //var AtkUnitBase = (AtkUnitBase*)ptr;
+            //var Addon = (AddonGathering*)ptr;
+            //AtkComponentCheckBox* QuickGatheringComponentCheckBox = Addon->QuickGatheringComponentCheckBox;
+            //PluginLog.Log($"{QuickGatheringComponentCheckBox->AtkComponentButton.Flags}");
+            Click.TrySendClick("quick_synthesis");
         }
 
         public static unsafe (int, string) GetGatheringIndex(List<string> ItemNames, GameData GameData) {
@@ -119,35 +120,64 @@ namespace WoAutoCollectionPlugin.Ui
             {
                 var AtkUnitBase = (AtkUnitBase*)ptr;
                 var Addon = (AddonGathering*)ptr;
-                //var GatheredItemComponentCheckBox2 = Addon->GatheredItemComponentCheckBox2;
-                //var AtkComponentButton = GatheredItemComponentCheckBox2->AtkComponentButton;
-                //var AtkTextNode1 = (Addon->GatheredItemComponentCheckBox1)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode2 = (Addon->GatheredItemComponentCheckBox2)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode3 = (Addon->GatheredItemComponentCheckBox3)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode4 = (Addon->GatheredItemComponentCheckBox4)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode5 = (Addon->GatheredItemComponentCheckBox5)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode6 = (Addon->GatheredItemComponentCheckBox6)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode7 = (Addon->GatheredItemComponentCheckBox7)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode8 = (Addon->GatheredItemComponentCheckBox8)->AtkComponentButton.ButtonTextNode;
-                //var AtkTextNode = AtkComponentButton.ButtonTextNode;
-                //PluginLog.Log($"{Addon->GatheredItemId2} ");
-
                 uint itemId1 = Addon->GatheredItemId1;
-                GameData.Gatherables.TryGetValue(itemId1, out var item1);
+                uint itemId2 = Addon->GatheredItemId2;
+                uint itemId3 = Addon->GatheredItemId3;
+                uint itemId4 = Addon->GatheredItemId4;
+                uint itemId5 = Addon->GatheredItemId5;
+                uint itemId6 = Addon->GatheredItemId6;
+                uint itemId7 = Addon->GatheredItemId7;
+                uint itemId8 = Addon->GatheredItemId8;
 
-                uint itemId2 = Addon->GatheredItemId1;
-                GameData.Gatherables.TryGetValue(itemId2, out var item2);
+                string n1 = "";
+                string n2 = "";
+                string n3 = "";
+                string n4 = "";
+                string n5 = "";
+                string n6 = "";
+                string n7 = "";
+                string n8 = "";
 
-                string n1 = item1 != null ? item1.Name.ToString() : "";
-                string n2 = item1 != null ? item2.Name.ToString() : "";
-                //string n3 = GetNodeText(AtkTextNode3);
-                //string n4 = GetNodeText(AtkTextNode4);
-                //string n5 = GetNodeText(AtkTextNode5);
-                //string n6 = GetNodeText(AtkTextNode6);
-                //string n7 = GetNodeText(AtkTextNode7);
-                //string n8 = GetNodeText(AtkTextNode8);
-                //PluginLog.Log($"{n1} {n2} {n3} {n4} {n5} {n6} {n7} {n8}");
-                PluginLog.Log($"{n1} {n2}");
+                if (itemId1 != 0) {
+                    GameData.Gatherables.TryGetValue(itemId1, out var item1);
+                    n1 = item1 != null ? item1.Name.ToString() : "";
+                }
+                if (itemId2 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId2, out var item2);
+                    n2 = item2 != null ? item2.Name.ToString() : "";
+                }
+                if (itemId3 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId3, out var item3);
+                    n3 = item3 != null ? item3.Name.ToString() : "";
+                }
+                if (itemId4 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId4, out var item4);
+                    n4 = item4 != null ? item4.Name.ToString() : "";
+                }
+                if (itemId5 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId5, out var item5);
+                    n5 = item5 != null ? item5.Name.ToString() : "";
+                }
+                if (itemId6 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId6, out var item6);
+                    n6 = item6 != null ? item6.Name.ToString() : "";
+                }
+                if (itemId7 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId7, out var item7);
+                    n7 = item7 != null ? item7.Name.ToString() : "";
+                }
+                if (itemId8 != 0)
+                {
+                    GameData.Gatherables.TryGetValue(itemId8, out var item8);
+                    n8 = item8 != null ? item8.Name.ToString() : "";
+                }
+
                 foreach (string name in ItemNames)
                 {
                     na = name;
@@ -162,36 +192,36 @@ namespace WoAutoCollectionPlugin.Ui
                         index = 2;
                         break;
                     }
-                    //else if (name == n3)
-                    //{
-                    //    index = 3;
-                    //    break;
-                    //}
-                    //else if (name == n4)
-                    //{
-                    //    index = 4;
-                    //    break;
-                    //}
-                    //else if (name == n5)
-                    //{
-                    //    index = 5;
-                    //    break;
-                    //}
-                    //else if (name == n6)
-                    //{
-                    //    index = 6;
-                    //    break;
-                    //}
-                    //else if (name == n7)
-                    //{
-                    //    index = 7;
-                    //    break;
-                    //}
-                    //else if (name == n8)
-                    //{
-                    //    index = 8;
-                    //    break;
-                    //}
+                    else if (name == n3)
+                    {
+                        index = 3;
+                        break;
+                    }
+                    else if (name == n4)
+                    {
+                        index = 4;
+                        break;
+                    }
+                    else if (name == n5)
+                    {
+                        index = 5;
+                        break;
+                    }
+                    else if (name == n6)
+                    {
+                        index = 6;
+                        break;
+                    }
+                    else if (name == n7)
+                    {
+                        index = 7;
+                        break;
+                    }
+                    else if (name == n8)
+                    {
+                        index = 8;
+                        break;
+                    }
                 }
             }
             return (index, na);

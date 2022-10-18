@@ -23,13 +23,10 @@ namespace WoAutoCollectionPlugin.Bot
 
         private static bool closed = false;
 
-        // 0-默认
-        private int current = 0;
-        private int next = 0;
         public DailyBot(GameData GameData)
         {
             KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(KeyOperates);
+            CommonBot = new CommonBot(KeyOperates, GameData);
             this.GameData = GameData;
         }
 
@@ -50,7 +47,28 @@ namespace WoAutoCollectionPlugin.Bot
         {
             closed = false;
             try {
-                TimePlan();
+                //TimePlan();
+
+                Vector3[] path0 = LimitMaterials.path11;
+                KeyOperates KeyOperates = new KeyOperates(GameData);
+                Task task = new(() =>
+                {
+                    ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                    ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                    Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                    for (int i = 0; i < path0.Length; i++)
+                    {
+                        if (closed)
+                        {
+                            PluginLog.Log($"中途结束");
+                            break;
+                        }
+                        position = KeyOperates.MoveToPoint(position, path0[i], territoryType, true, false);
+                        PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                        Thread.Sleep(500);
+                    }
+                });
+                task.Start();
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }

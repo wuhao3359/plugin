@@ -103,7 +103,7 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
-            if (height < -2)
+            if (height < -1)
             {
                 if (flying <= 0)
                 {
@@ -118,7 +118,7 @@ public class KeyOperates
                     flying = 1;
                 }
             }
-            else if (height > 3)
+            else if (height > 2)
             {
                 if (flying >= 0)
                 {
@@ -209,18 +209,18 @@ public class KeyOperates
                 }
                 moving = 1;
             }
-            if (height <= 3 && height >= -2)
+            if (height <= 2 && height >= -1)
             {
                 FlyStop();
             }
             else if (beforeHeight == height)
             {
-                if (height < -2)
+                if (height < -1)
                 {
                     KeyDown(Keys.space_key);
                     flying = 1;
                 }
-                else if (height > 3)
+                else if (height > 2)
                 {
                     if (DalamudApi.Condition[ConditionFlag.InFlight]) {
                         KeyDown(Keys.num_sub_key);

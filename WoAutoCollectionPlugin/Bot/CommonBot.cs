@@ -16,6 +16,7 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CommonBot
     {
+        private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
 
         private bool closed = false;
@@ -23,6 +24,13 @@ namespace WoAutoCollectionPlugin.Bot
         public CommonBot(KeyOperates KeyOperates)
         {
             this.KeyOperates = KeyOperates;
+            Init();
+        }
+
+        public CommonBot(KeyOperates KeyOperates, GameData GameData)
+        {
+            this.KeyOperates = KeyOperates;
+            this.GameData = GameData;
             Init();
         }
 
@@ -321,9 +329,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
 
-            int GatherIndex = 0;
-            string name = "";
-            //(int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
 
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)

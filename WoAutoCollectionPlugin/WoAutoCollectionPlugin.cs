@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Managers;
@@ -365,14 +366,8 @@ namespace WoAutoCollectionPlugin
 
             //Game.Test();
 
-            // 
-            List<string> list = new();
-            list.Add("椰子");
-            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
-            PluginLog.Log($"{GatherIndex} {name}");
-
             // 快速采集
-            CommonUi.test();
+            //CommonUi.test();
 
             // 限时点
             //int length = DalamudApi.ObjectTable.Length;
@@ -391,6 +386,37 @@ namespace WoAutoCollectionPlugin
             //        }
             //    }
             //}
+
+            string[] str = args.Split(' ');
+            PluginLog.Log($"daily: {args} length: {args.Length}");
+
+            if (args.Length <= 0)
+            {
+                PluginLog.Log($"stop");
+                // stop
+                DailyBot.StopScript();
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+
+            Task task = new(() =>
+            {
+                PluginLog.Log($"start...");
+                DailyBot.DailyScript();
+                PluginLog.Log($"end...");
+                taskRunning = false;
+            });
+            task.Start();
+
+            
         }
 
         private void OnActionTestCommand(string command, string args)

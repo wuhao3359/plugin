@@ -15,7 +15,7 @@ public readonly struct MultiString
         => Name(lang);
 
     public override string ToString()
-        => Name(ClientLanguage.English);
+        => Name(ClientLanguage.ChineseSimplified);
 
     public string ToWholeString()
         => $"{ChineseSimplified}";
