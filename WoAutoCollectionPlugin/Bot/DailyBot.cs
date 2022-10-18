@@ -76,16 +76,15 @@ namespace WoAutoCollectionPlugin.Bot
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin {et}");
-                List<int> ids = DailyTask.GetMaterialIdsByEt(et);
+                List<int> ids = LimitMaterials.GetMaterialIdsByEt(et);
 
                 while (ids.Count == 0) {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
                     et++;
-                    ids = DailyTask.GetMaterialIdsByEt(et);
+                    ids = LimitMaterials.GetMaterialIdsByEt(et);
                 }
                 
                 // TODO 修理装备
-
 
                 int num = 0;
                 foreach (int id in ids) {
@@ -94,7 +93,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(3000);
                         continue;
                     }
-                    (string Name, string Job, int GatherIndex, uint tp, Vector3[] path, Vector3[] points) = DailyTask.GetMaterialById(id);
+                    (string Names, string Job, uint tp, Vector3[] path, Vector3[] points) = LimitMaterials.GetMaterialById(id);
 
                     if (hour > et) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
@@ -123,7 +122,7 @@ namespace WoAutoCollectionPlugin.Bot
                     // 找最近的采集点
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
                     ushort SizeFactor = GameData.GetSizeFactor(territoryType);
-                    GameObject? go = Util.CurrentPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+                    (GameObject go, Vector3 point) = Util.LimitTimePosCanGather(points, SizeFactor);
 
                     if (go != null)
                     {
@@ -131,6 +130,7 @@ namespace WoAutoCollectionPlugin.Bot
                         float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         Vector3 GatherPoint = new Vector3(x, y, z);
+                        position = KeyOperates.MoveToPoint(position, point, territoryType, true, false);
                         position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
                         var targetMgr = DalamudApi.TargetManager;
@@ -175,48 +175,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(1000);
                         if (CommonUi.AddonGatheringIsOpen())
                         {
-                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                            uint gp = player.CurrentGp;
-                            int level = player.Level;
-                            if (level >= 50)
-                            {
-                                if (gp >= 500)
-                                {
-                                    KeyOperates.KeyMethod(Keys.F3_key);
-                                    Thread.Sleep(2000);
-                                }
-                            }
-                            else
-                            {
-                                if (gp >= 400)
-                                {
-                                    KeyOperates.KeyMethod(Keys.F2_key);
-                                    Thread.Sleep(2000);
-                                }
-                            }
-                            tt = 0;
-                            while (CommonUi.AddonGatheringIsOpen() && tt < 9) {
-                                CommonUi.GatheringButton(GatherIndex);
-                                Thread.Sleep(1000);
-                                tt++;
-                                if (tt == 3) {
-                                    gp = player.CurrentGp;
-                                    level = player.Level;
-                                    if (gp >= 300)
-                                    {
-                                        if (level >= 25)
-                                        {
-                                            KeyOperates.KeyMethod(Keys.n4_key);
-                                            Thread.Sleep(1500);
-                                            if (level >= 90)
-                                            {
-                                                KeyOperates.KeyMethod(Keys.n5_key);
-                                                Thread.Sleep(1000);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
+                            CommonBot.LimitMaterialsMethod(Names, Job);
                         }
                     }
                     else {

@@ -48,6 +48,19 @@ namespace WoAutoCollectionPlugin.UseAction
             // 26521-采矿 理智同兴
         }
 
+        public static float GetSpellActionRecastTimeElapsed(uint id) {
+            float b = 1;
+            try
+            {
+                b = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, id);
+            }
+            catch (Exception e)
+            {
+                PluginLog.Error($"error!!!\n{e}");
+            }
+            return b;
+        }
+
         // 19700-以太钻孔机
         public static bool UseSpellActionById(uint id)
         {

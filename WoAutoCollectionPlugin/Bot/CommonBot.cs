@@ -1,5 +1,9 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Resolvers;
 using Dalamud.Logging;
+using Lumina.Excel.GeneratedSheets;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
@@ -286,6 +290,94 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(200);
             KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(800);
+            return true;
+        }
+
+        // 限时材料采集手法
+        public bool LimitMaterialsMethod(string Names, string job) {
+            // lv.74 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
+            uint GivingLandActionId = 4589;
+            if (job == "园艺工")
+            {
+                GivingLandActionId = 4590;
+            }
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
+            int level = player.Level;
+
+            List<string> list = new List<string>();
+            string[] names = Names.Split('|');
+            foreach (string na in names) {
+                if (na.Contains("雷之") || na.Contains("火之") || na.Contains("风之") || na.Contains("水之") || na.Contains("冰之") || na.Contains("土之"))
+                {
+                    if (level >= 74 && Game.GetSpellActionRecastTimeElapsed(GivingLandActionId) == 0 && gp >= 200)
+                    {
+                        list.Insert(0, na);
+                        PluginLog.Log($"{na}优先...");
+                    }
+                }
+                else {
+                    list.Add(na);
+                }
+            }
+
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
+            
+            if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
+                if (gp >= 200)
+                {
+                    KeyOperates.KeyMethod(Keys.F5_key);
+                }
+                else if(gp >= 150) {
+                    KeyOperates.KeyMethod(Keys.F4_key);
+                }
+            } else {
+                if (level >= 50)
+                {
+                    if (gp >= 500)
+                    {
+                        KeyOperates.KeyMethod(Keys.F3_key);
+                        Thread.Sleep(2000);
+                    }
+                }
+                else
+                {
+                    if (gp >= 400)
+                    {
+                        KeyOperates.KeyMethod(Keys.F2_key);
+                        Thread.Sleep(2000);
+                    }
+                }
+            }
+
+            PluginLog.Log($"将采集{name}...");
+
+            int tt = 0;
+            while (CommonUi.AddonGatheringIsOpen() && tt < 10)
+            {
+                CommonUi.GatheringButton(GatherIndex);
+                Thread.Sleep(1500);
+                tt++;
+                if (tt == 3)
+                {
+                    gp = player.CurrentGp;
+                    level = player.Level;
+                    if (gp >= 300)
+                    {
+                        if (level >= 25)
+                        {
+                            KeyOperates.KeyMethod(Keys.n4_key);
+                            Thread.Sleep(1500);
+                            if (level >= 90)
+                            {
+                                KeyOperates.KeyMethod(Keys.n5_key);
+                                Thread.Sleep(1000);
+                            }
+                        }
+                    }
+                }
+            }
+
             return true;
         }
     }
