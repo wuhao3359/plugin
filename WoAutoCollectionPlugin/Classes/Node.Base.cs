@@ -44,45 +44,6 @@ public partial class GatheringNode : IComparable<GatheringNode>, ILocation
 
     public GatheringNode(GameData data, GatheringPointBase node)
     {
-        BaseNodeData = node;
-
-        // Obtain the territory from the first node that has this as a base.
-        var nodes = DalamudApi.DataManager.GetExcelSheet<GatheringPoint>();
-        var nodeRow = nodes?.FirstOrDefault(n => n.GatheringPointBase.Row == node.RowId && n.PlaceName.Row > 0);
-        Territory = data.FindOrAddTerritory(nodeRow?.TerritoryType.Value) ?? Territory.Invalid;
-        Name = MultiString.ParseSeStringLumina(nodeRow?.PlaceName.Value?.Name);
-        // Obtain the center of the coordinates. We do not care for the radius.
-        var coords = DalamudApi.DataManager.GetExcelSheet<ExportedGatheringPoint>();
-        var coordRow = coords?.GetRow(node.RowId);
-        IntegralXCoord = coordRow != null ? Maps.NodeToMap(coordRow.X, Territory.SizeFactor) : 100;
-        IntegralYCoord = coordRow != null ? Maps.NodeToMap(coordRow.Y, Territory.SizeFactor) : 100;
-
-        ClosestAetheryte = Territory.Aetherytes.Count > 0
-            ? Territory.Aetherytes.ArgMin(a => a.WorldDistance(Territory.Id, IntegralXCoord, IntegralYCoord))
-            : null;
-
-        DefaultXCoord = IntegralXCoord;
-        DefaultYCoord = IntegralYCoord;
-        DefaultAetheryte = ClosestAetheryte;
-
-        // Obtain additional information.
-        Folklore = MultiString.ParseSeStringLumina(nodeRow?.GatheringSubCategory.Value?.FolkloreBook);
-        var extendedRow = nodeRow == null ? null : DalamudApi.DataManager.GetExcelSheet<GatheringPointTransient>()?.GetRow(nodeRow.RowId);
-        (Times, NodeType) = GetTimes(extendedRow);
-        if (Folklore.Any() && NodeType == NodeType.Unspoiled && nodeRow!.GatheringSubCategory.Value!.Item.Row != 0)
-            NodeType = NodeType.Legendary;
-
-        // Obtain the items and add the node to their individual lists.
-        Items = node.Item
-            .Select(i => data.GatherablesByGatherId.TryGetValue((uint)i, out var gatherable) ? gatherable : null)
-            .Where(g => g != null)
-            .Cast<Gatherable>()
-            .ToList();
-        if (Territory.Id <= 0)
-            return;
-
-        foreach (var item in Items)
-            AddNodeToItem(item);
     }
 
     public int CompareTo(GatheringNode? obj)

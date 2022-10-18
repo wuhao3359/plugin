@@ -321,8 +321,10 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
 
-            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
-            
+            int GatherIndex = 0;
+            string name = "";
+            //(int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
+
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {

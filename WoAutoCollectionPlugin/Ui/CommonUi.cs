@@ -111,7 +111,7 @@ namespace WoAutoCollectionPlugin.Ui
             PluginLog.Log($"{QuickGatheringComponentCheckBox->AtkComponentButton.Flags}");
         }
 
-        public static unsafe (int, string) GetGatheringIndex(List<string> ItemNames) {
+        public static unsafe (int, string) GetGatheringIndex(List<string> ItemNames, GameData GameData) {
             int index = 0;
             string na = "";
             var ptr = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
@@ -119,67 +119,79 @@ namespace WoAutoCollectionPlugin.Ui
             {
                 var AtkUnitBase = (AtkUnitBase*)ptr;
                 var Addon = (AddonGathering*)ptr;
-                var AtkTextNode1 = (Addon->GatheredItemComponentCheckBox1)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode2 = (Addon->GatheredItemComponentCheckBox2)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode3 = (Addon->GatheredItemComponentCheckBox3)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode4 = (Addon->GatheredItemComponentCheckBox4)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode5 = (Addon->GatheredItemComponentCheckBox5)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode6 = (Addon->GatheredItemComponentCheckBox6)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode7 = (Addon->GatheredItemComponentCheckBox7)->AtkComponentButton.ButtonTextNode;
-                var AtkTextNode8 = (Addon->GatheredItemComponentCheckBox8)->AtkComponentButton.ButtonTextNode;
+                //var GatheredItemComponentCheckBox2 = Addon->GatheredItemComponentCheckBox2;
+                //var AtkComponentButton = GatheredItemComponentCheckBox2->AtkComponentButton;
+                //var AtkTextNode1 = (Addon->GatheredItemComponentCheckBox1)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode2 = (Addon->GatheredItemComponentCheckBox2)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode3 = (Addon->GatheredItemComponentCheckBox3)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode4 = (Addon->GatheredItemComponentCheckBox4)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode5 = (Addon->GatheredItemComponentCheckBox5)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode6 = (Addon->GatheredItemComponentCheckBox6)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode7 = (Addon->GatheredItemComponentCheckBox7)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode8 = (Addon->GatheredItemComponentCheckBox8)->AtkComponentButton.ButtonTextNode;
+                //var AtkTextNode = AtkComponentButton.ButtonTextNode;
+                //PluginLog.Log($"{Addon->GatheredItemId2} ");
 
-                string n1 = GetNodeText(AtkTextNode1);
-                string n2 = GetNodeText(AtkTextNode2);
-                string n3 = GetNodeText(AtkTextNode3);
-                string n4 = GetNodeText(AtkTextNode4);
-                string n5 = GetNodeText(AtkTextNode5);
-                string n6 = GetNodeText(AtkTextNode6);
-                string n7 = GetNodeText(AtkTextNode7);
-                string n8 = GetNodeText(AtkTextNode8);
-                PluginLog.Log($"{n1} {n2} {n3} {n4} {n5} {n6} {n7} {n8}");
+                uint itemId1 = Addon->GatheredItemId1;
+                GameData.Gatherables.TryGetValue(itemId1, out var item1);
+
+                uint itemId2 = Addon->GatheredItemId1;
+                GameData.Gatherables.TryGetValue(itemId2, out var item2);
+
+                string n1 = item1 != null ? item1.Name.ToString() : "";
+                string n2 = item1 != null ? item2.Name.ToString() : "";
+                //string n3 = GetNodeText(AtkTextNode3);
+                //string n4 = GetNodeText(AtkTextNode4);
+                //string n5 = GetNodeText(AtkTextNode5);
+                //string n6 = GetNodeText(AtkTextNode6);
+                //string n7 = GetNodeText(AtkTextNode7);
+                //string n8 = GetNodeText(AtkTextNode8);
+                //PluginLog.Log($"{n1} {n2} {n3} {n4} {n5} {n6} {n7} {n8}");
+                PluginLog.Log($"{n1} {n2}");
                 foreach (string name in ItemNames)
                 {
                     na = name;
+
                     if (name == n1) 
                     {
                         index = 1;
                         break;
-                    } 
+                    }
                     else if (name == n2)
                     {
                         index = 2;
                         break;
                     }
-                    else if (name == n3)
-                    {
-                        index = 3;
-                        break;
-                    }
-                    else if (name == n4)
-                    {
-                        index = 4;
-                        break;
-                    }
-                    else if (name == n5)
-                    {
-                        index = 5;
-                        break;
-                    }
-                    else if (name == n6)
-                    {
-                        index = 6;
-                        break;
-                    }
-                    else if (name == n7)
-                    {
-                        index = 7;
-                        break;
-                    }
-                    else if (name == n8)
-                    {
-                        index = 8;
-                        break;
-                    }
+                    //else if (name == n3)
+                    //{
+                    //    index = 3;
+                    //    break;
+                    //}
+                    //else if (name == n4)
+                    //{
+                    //    index = 4;
+                    //    break;
+                    //}
+                    //else if (name == n5)
+                    //{
+                    //    index = 5;
+                    //    break;
+                    //}
+                    //else if (name == n6)
+                    //{
+                    //    index = 6;
+                    //    break;
+                    //}
+                    //else if (name == n7)
+                    //{
+                    //    index = 7;
+                    //    break;
+                    //}
+                    //else if (name == n8)
+                    //{
+                    //    index = 8;
+                    //    break;
+                    //}
                 }
             }
             return (index, na);

@@ -367,30 +367,30 @@ namespace WoAutoCollectionPlugin
 
             // 
             List<string> list = new();
-            list.Add("");
-            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
+            list.Add("椰子");
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
             PluginLog.Log($"{GatherIndex} {name}");
 
-            //
+            // 快速采集
             CommonUi.test();
 
-            //
-            int length = DalamudApi.ObjectTable.Length;
-            for (int i = 0; i < length; i++)
-            {
-                GameObject? gameObject = DalamudApi.ObjectTable[i];
-                if (gameObject != null)
-                {
-                    if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
-                    {
-                        if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场")
-                        {
-                            PluginLog.Log($"{gameObject.Name}");
-                        }
-                    }
-                }
-            }
+            // 限时点
+            //int length = DalamudApi.ObjectTable.Length;
+            //for (int i = 0; i < length; i++)
+            //{
+            //    GameObject? gameObject = DalamudApi.ObjectTable[i];
+            //    if (gameObject != null)
+            //    {
+            //        if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+            //        {
+            //            if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
+            //                || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场")
+            //            {
+            //                PluginLog.Log($"{gameObject.Name}");
+            //            }
+            //        }
+            //    }
+            //}
         }
 
         private void OnActionTestCommand(string command, string args)

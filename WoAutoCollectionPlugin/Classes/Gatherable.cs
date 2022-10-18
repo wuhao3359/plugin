@@ -38,14 +38,14 @@ public class Gatherable : IComparable<Gatherable>, IGatherable
     public Gatherable(GameData gameData, GatheringItem gatheringData)
     {
         GatheringData = gatheringData;
-        var itemSheet = DalamudApi.DataManager.GetExcelSheet<Item>();
+        var itemSheet = gameData.DataManager.GetExcelSheet<Item>();
         ItemData = itemSheet?.GetRow((uint)gatheringData.Item) ?? new Item();
         if (ItemData.RowId == 0)
             PluginLog.Error("Invalid item.");
 
         var levelData = gatheringData.GatheringItemLevel?.Value;
         _levelStars = levelData == null ? 0 : (levelData.GatheringItemLevel << 3) + levelData.Stars;
-        Name = MultiString.FromItem(DalamudApi.DataManager, (uint)gatheringData.Item);
+        Name = MultiString.FromItem(gameData.DataManager, (uint)gatheringData.Item);
     }
 
     public int Level

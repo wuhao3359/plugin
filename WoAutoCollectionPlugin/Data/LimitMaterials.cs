@@ -51,12 +51,12 @@ namespace WoAutoCollectionPlugin.Utility
         // 限时点
         public static readonly (int Id, string Name, int MinEt, int MaxEt, string Job, uint tp, Vector3[] path, Vector3[] points)[] Materials =
         {
-            (0, "暗物质晶簇", 1, 1, "园艺工", 24, path0, points0),    // 摩杜纳
+            (0, "暗物质晶簇|火之晶簇", 1, 1, "园艺工", 24, path0, points0),    // 摩杜纳
             (1, "暗物质晶簇|火之晶簇", 5, 5, "园艺工", 24, path1, points0),   // 摩杜纳
-            (2, "暗物质晶簇", 9, 9, "园艺工", 24, path2, points0),   // 摩杜纳
-            (3, "暗物质晶簇", 13, 13, "采矿工", 24, path3, points0),    // 摩杜纳
-            (4, "暗物质晶簇", 17, 17, "采矿工",24, path4, points0),    // 摩杜纳
-            (5, "暗物质晶簇", 21, 21, "采矿工",24, path5, points0),   // 摩杜纳
+            (2, "暗物质晶簇|水之晶簇", 9, 9, "园艺工", 24, path2, points0),   // 摩杜纳
+            (3, "暗物质晶簇|雷之晶簇", 13, 13, "采矿工", 24, path3, points0),    // 摩杜纳
+            (4, "暗物质晶簇|雷之晶簇", 17, 17, "采矿工",24, path4, points0),    // 摩杜纳
+            (5, "暗物质晶簇|雷之晶簇", 21, 21, "采矿工",24, path5, points0),   // 摩杜纳
 
             (6, "暗物质晶簇|云杉原木", 9, 9, "园艺工", 23, path1, points0), // 库尔札斯中央高地
             //(7, "暗物质晶簇", 9, 9, "园艺工", 11, path1, points0),  // 东拉诺西亚 x
