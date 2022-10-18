@@ -81,7 +81,7 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"Repair stopping");
                 return flag;
             }
-            Game.ExecuteMessage("/ac 修理");
+            KeyOperates.KeyMethod(Keys.F12_key);
             Thread.Sleep(1000);
             if (RepairUi.AllRepairButton())
             {
@@ -165,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"ExtractMateria stopping");
                 return true;
             }
-            Game.ExecuteMessage("/ac 精制魔晶石");
+            KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1000);
             for (int i = 0; i < count; i++) {
                 KeyOperates.KeyMethod(Keys.num0_key);
@@ -326,17 +326,17 @@ namespace WoAutoCollectionPlugin.Bot
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {
-                    KeyOperates.KeyMethod(Keys.F5_key);
+                    KeyOperates.KeyMethod(Keys.F4_key);
                 }
                 else if(gp >= 150) {
-                    KeyOperates.KeyMethod(Keys.F4_key);
+                    KeyOperates.KeyMethod(Keys.F3_key);
                 }
             } else {
                 if (level >= 50)
                 {
                     if (gp >= 500)
                     {
-                        KeyOperates.KeyMethod(Keys.F3_key);
+                        KeyOperates.KeyMethod(Keys.F2_key);
                         Thread.Sleep(2000);
                     }
                 }
@@ -344,7 +344,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (gp >= 400)
                     {
-                        KeyOperates.KeyMethod(Keys.F2_key);
+                        KeyOperates.KeyMethod(Keys.F1_key);
                         Thread.Sleep(2000);
                     }
                 }
@@ -366,11 +366,11 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (level >= 25)
                         {
-                            KeyOperates.KeyMethod(Keys.n4_key);
+                            KeyOperates.KeyMethod(Keys.n3_key);
                             Thread.Sleep(1500);
                             if (level >= 90)
                             {
-                                KeyOperates.KeyMethod(Keys.n5_key);
+                                KeyOperates.KeyMethod(Keys.n4_key);
                                 Thread.Sleep(1000);
                             }
                         }

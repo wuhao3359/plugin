@@ -303,7 +303,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (stackCount >= 3)
                         {
-                            Game.ExecuteMessage("/ac 沙利亚克的恩宠");
+                            KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
                             Thread.Sleep(1000);
                         }
@@ -318,7 +318,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(3000);
                         if (gp > 560)
                         {
-                            Game.ExecuteMessage("/ac 耐心II");
+                            KeyOperates.KeyMethod(Keys.F4_key);
                             Thread.Sleep(1000);
                             existStatus = true;
                             gp -= 560;
@@ -326,7 +326,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (LastFish && gp > 350)
                     {
-                        Game.ExecuteMessage("/ac 专一垂钓");
+                        KeyOperates.KeyMethod(Keys.F5_key);
                         Thread.Sleep(1000);
                     }
                     LastFish = false;

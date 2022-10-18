@@ -1,5 +1,4 @@
-﻿using ClickLib;
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
@@ -11,7 +10,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
-using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -325,7 +323,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                     uint maxGp = player.MaxGp;
                     if (maxGp >= 700) {
-                        Game.ExecuteMessage("/ac 三重提钩");
+                        KeyOperates.KeyMethod(Keys.n7_key);
                     }
                 }
                 KeyOperates.KeyMethod(Keys.n1_key);
@@ -360,7 +358,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (stackCount >= 3)
                         {
-                            Game.ExecuteMessage("/ac 沙利亚克的恩宠");
+                            KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
                             Thread.Sleep(1000);
                         }

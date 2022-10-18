@@ -80,45 +80,45 @@ namespace WoAutoCollectionPlugin.UseAction
             bool flag = DalamudApi.CommandManager.ProcessCommand(message);
 
             if (!flag) {
-                ExecuteMessage(message);
+                //ExecuteMessage(message);
             }
         }
 
-        public static void ExecuteMessage(string message) {
-            try {
-                var (text, length) = PrepareString(message);
-                var payload = PrepareContainer(text, length);
-                ProcessChatBox _processChatBox = new ProcessChatBox(DalamudApi.SigScanner);
-                IntPtr _uiModulePtr = DalamudApi.GameGui.GetUIModule();
+        //public static void ExecuteMessage(string message) {
+        //    try {
+        //        var (text, length) = PrepareString(message);
+        //        var payload = PrepareContainer(text, length);
+        //        ProcessChatBox _processChatBox = new ProcessChatBox(DalamudApi.SigScanner);
+        //        IntPtr _uiModulePtr = DalamudApi.GameGui.GetUIModule();
 
-                _processChatBox.Invoke(_uiModulePtr, payload, IntPtr.Zero, (byte)0);
+        //        _processChatBox.Invoke(_uiModulePtr, payload, IntPtr.Zero, (byte)0);
 
-                Marshal.FreeHGlobal(payload);
-                Marshal.FreeHGlobal(text);
-            }
-            catch (Exception e) {
-                PluginLog.Error($"error!!!\n{e}");
-            }
-        }
+        //        Marshal.FreeHGlobal(payload);
+        //        Marshal.FreeHGlobal(text);
+        //    }
+        //    catch (Exception e) {
+        //        PluginLog.Error($"error!!!\n{e}");
+        //    }
+        //}
 
-        private static (IntPtr, long) PrepareString(string message)
-        {
-            var bytes = Encoding.UTF8.GetBytes(message);
-            var mem = Marshal.AllocHGlobal(bytes.Length + 30);
-            Marshal.Copy(bytes, 0, mem, bytes.Length);
-            Marshal.WriteByte(mem + bytes.Length, 0);
-            return (mem, bytes.Length + 1);
-        }
+        //private static (IntPtr, long) PrepareString(string message)
+        //{
+        //    var bytes = Encoding.UTF8.GetBytes(message);
+        //    var mem = Marshal.AllocHGlobal(bytes.Length + 30);
+        //    Marshal.Copy(bytes, 0, mem, bytes.Length);
+        //    Marshal.WriteByte(mem + bytes.Length, 0);
+        //    return (mem, bytes.Length + 1);
+        //}
 
-        private static IntPtr PrepareContainer(IntPtr message, long length)
-        {
-            var mem = Marshal.AllocHGlobal(400);
-            Marshal.WriteInt64(mem, message.ToInt64());
-            Marshal.WriteInt64(mem + 0x8, 64);
-            Marshal.WriteInt64(mem + 0x10, length);
-            Marshal.WriteInt64(mem + 0x18, 0);
-            return mem;
-        }
+        //private static IntPtr PrepareContainer(IntPtr message, long length)
+        //{
+        //    var mem = Marshal.AllocHGlobal(400);
+        //    Marshal.WriteInt64(mem, message.ToInt64());
+        //    Marshal.WriteInt64(mem + 0x8, 64);
+        //    Marshal.WriteInt64(mem + 0x10, length);
+        //    Marshal.WriteInt64(mem + 0x18, 0);
+        //    return mem;
+        //}
 
         public static void DisAble()
         {

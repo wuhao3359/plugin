@@ -410,7 +410,7 @@ namespace WoAutoCollectionPlugin.Bot
                         targetMgr.SetTarget(go);
 
                         int n = 0;
-                        while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 10)
+                        while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 7)
                         {
                             if (n >= 3) {
                                 KeyOperates.KeyMethod(Keys.w_key, 200);
@@ -427,7 +427,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
 
                         int t = 0;
-                        while (!CommonUi.AddonGatheringIsOpen() && t < 10)
+                        while (!CommonUi.AddonGatheringIsOpen() && t < 5)
                         {
                             KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
@@ -438,7 +438,7 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                             t++;
                         }
-                        if (t >= 10) {
+                        if (t >= 5) {
                             k--;
                             continue;
                         }
@@ -452,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 500)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F3_key);
+                                    KeyOperates.KeyMethod(Keys.F2_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -460,7 +460,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 400)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F2_key);
+                                    KeyOperates.KeyMethod(Keys.F1_key);
                                     Thread.Sleep(2000);
                                 }
                             }

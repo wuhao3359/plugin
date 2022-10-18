@@ -83,8 +83,6 @@ namespace WoAutoCollectionPlugin.Bot
                     et++;
                     ids = LimitMaterials.GetMaterialIdsByEt(et);
                 }
-                
-                // TODO 修理装备
 
                 int num = 0;
                 foreach (int id in ids) {
@@ -155,7 +153,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
 
                         tt = 0;
-                        while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
+                        while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                         {
                             KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
@@ -166,7 +164,7 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                             tt++;
                         }
-                        if (tt >= 7)
+                        if (tt >= 5)
                         {
                             PluginLog.Log($"未打开采集面板, skip {id}..");
                             Thread.Sleep(3000);
@@ -190,6 +188,7 @@ namespace WoAutoCollectionPlugin.Bot
                     hour = Time.ServerTime.CurrentEorzeaHour();
                     Thread.Sleep(3000);
 
+                    // TODO 修理装备
                     // TODO魔晶石精制
                 }
                 PluginLog.Log($"当前et成功执行{num}个任务..");
