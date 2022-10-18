@@ -20,7 +20,6 @@ namespace WoAutoCollectionPlugin.Bot
         private KeyOperates KeyOperates { get; init; }
 
         private CommonBot? CommonBot;
-        private CraftBot? CraftBot;
 
         private static bool closed = false;
 
@@ -30,7 +29,6 @@ namespace WoAutoCollectionPlugin.Bot
         public DailyBot(GameData GameData)
         {
             KeyOperates = new KeyOperates(GameData);
-            CraftBot = new CraftBot(GameData);
             CommonBot = new CommonBot(KeyOperates);
             this.GameData = GameData;
         }
@@ -38,14 +36,12 @@ namespace WoAutoCollectionPlugin.Bot
         public void Init()
         {
             closed = false;
-            CraftBot.Init();
             CommonBot.Init();
         }
 
         public void StopScript()
         {
             closed = true;
-            CraftBot.StopScript();
             CommonBot.StopScript();
         }
 
@@ -53,22 +49,25 @@ namespace WoAutoCollectionPlugin.Bot
         public void DailyScript()
         {
             closed = false;
-            TimePlan();
+            try {
+                TimePlan();
+            } catch (Exception ex) {
+                PluginLog.Error($"error!!!\n{ex}");
+            }
         }
 
         public void TimePlan()
         {
             int n = 0;
             SeTime Time = new SeTime();
-            while (!closed && n < 8000)
+            while (!closed && n < 1000)
             {
                 // 每24个et内单个任务只允许被执行一遍
                 List<int> finishIds = new List<int>();
-                // 判断时间段 不同时间干不同事情
+                
                 Time.Update();
                 int hour = Time.ServerTime.CurrentEorzeaHour();
                 int minute = Time.ServerTime.CurrentEorzeaMinute();
-                PluginLog.Log($"{hour} {minute}");
 
                 int et = hour + 1;
                 if (et == 24) {
@@ -127,7 +126,7 @@ namespace WoAutoCollectionPlugin.Bot
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
                         float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
-                        Vector3 GatherPoint = new Vector3(x, y, z);
+                        Vector3 GatherPoint = new(x, y, z);
                         position = KeyOperates.MoveToPoint(position, point, territoryType, true, false);
                         position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 

@@ -63,7 +63,6 @@ namespace WoAutoCollectionPlugin.Utility
         {
             GameObject nearestGo = null;
             double distance = 1000000000f;
-            int index = 0;
             Vector3 position = positions[0];
             int length = DalamudApi.ObjectTable.Length;
             for (int i = 0; i < length; i++)
@@ -84,7 +83,6 @@ namespace WoAutoCollectionPlugin.Utility
                                 {
                                     distance = d;
                                     nearestGo = gameObject;
-                                    index = i;
                                     position = pos;
                                 }
                             }
@@ -95,7 +93,7 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (nearestGo != null)
             {
-                PluginLog.Log($"最近 {index}, {nearestGo.DataId}");
+                PluginLog.Log($"最近, {nearestGo.DataId}");
                 return (nearestGo, position);
             }
             else

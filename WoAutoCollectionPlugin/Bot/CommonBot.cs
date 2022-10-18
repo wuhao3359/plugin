@@ -305,7 +305,7 @@ namespace WoAutoCollectionPlugin.Bot
             uint gp = player.CurrentGp;
             int level = player.Level;
 
-            List<string> list = new List<string>();
+            List<string> list = new();
             string[] names = Names.Split('|');
             foreach (string na in names) {
                 if (na.Contains("雷之") || na.Contains("火之") || na.Contains("风之") || na.Contains("水之") || na.Contains("冰之") || na.Contains("土之"))
@@ -327,9 +327,11 @@ namespace WoAutoCollectionPlugin.Bot
                 if (gp >= 200)
                 {
                     KeyOperates.KeyMethod(Keys.F4_key);
+                    gp -= 200;
                 }
                 else if(gp >= 150) {
                     KeyOperates.KeyMethod(Keys.F3_key);
+                    gp -= 150;
                 }
             } else {
                 if (level >= 50)
@@ -337,6 +339,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (gp >= 500)
                     {
                         KeyOperates.KeyMethod(Keys.F2_key);
+                        gp -= 500;
                         Thread.Sleep(2000);
                     }
                 }
@@ -345,6 +348,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (gp >= 400)
                     {
                         KeyOperates.KeyMethod(Keys.F1_key);
+                        gp -= 400;
                         Thread.Sleep(2000);
                     }
                 }

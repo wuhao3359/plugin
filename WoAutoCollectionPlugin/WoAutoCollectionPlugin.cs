@@ -4,6 +4,7 @@ using Dalamud.Logging;
 using Dalamud.Plugin;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using System;
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -12,6 +13,7 @@ using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
+using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
@@ -360,11 +362,35 @@ namespace WoAutoCollectionPlugin
             // 鼠标点击测试
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
-            //Time.Update();
-            //int hour = Time.ServerTime.CurrentEorzeaHour();
-            //int minute = Time.ServerTime.CurrentEorzeaMinute();
-            //PluginLog.Log($"{hour} {minute}");
-            Game.Test();
+
+            //Game.Test();
+
+            // 
+            List<string> list = new();
+            list.Add("");
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
+            PluginLog.Log($"{GatherIndex} {name}");
+
+            //
+            CommonUi.test();
+
+            //
+            int length = DalamudApi.ObjectTable.Length;
+            for (int i = 0; i < length; i++)
+            {
+                GameObject? gameObject = DalamudApi.ObjectTable[i];
+                if (gameObject != null)
+                {
+                    if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                    {
+                        if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场")
+                        {
+                            PluginLog.Log($"{gameObject.Name}");
+                        }
+                    }
+                }
+            }
         }
 
         private void OnActionTestCommand(string command, string args)
