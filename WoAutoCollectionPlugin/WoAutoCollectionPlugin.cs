@@ -146,7 +146,7 @@ namespace WoAutoCollectionPlugin
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
-
+                Executor = new Executor();
                 WeatherManager = new WeatherManager(GameData);
 
                 FishBot = new FishBot(GameData);
@@ -362,7 +362,7 @@ namespace WoAutoCollectionPlugin
         private void OnWoTestCommand(string command, string args)
         {
             // 使用技能
-            // WoAutoCollectionPlugin.Executor.DoGearChange("");
+            WoAutoCollectionPlugin.Executor.DoGearChange("采矿工");
 
             //Game.Test();
 
@@ -370,8 +370,8 @@ namespace WoAutoCollectionPlugin
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
 
-            (Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
-            PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
+            //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
+            //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
             //string[] str = args.Split(' ');
             //PluginLog.Log($"daily: {args} length: {args.Length}");
@@ -456,7 +456,7 @@ namespace WoAutoCollectionPlugin
             string[] str = args.Split(' ');
             PluginLog.Log($"daily: {args} length: {args.Length}");
 
-            if (args.Length <= 1)
+            if (args.Length < 1)
             {
                 PluginLog.Log($"stop");
                 // stop

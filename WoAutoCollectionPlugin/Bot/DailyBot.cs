@@ -40,6 +40,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             closed = true;
             CommonBot.StopScript();
+            KeyOperates.ForceStop();
         }
 
         // TODO 日常使用
@@ -47,28 +48,28 @@ namespace WoAutoCollectionPlugin.Bot
         {
             closed = false;
             try {
-                //TimePlan();
+                TimePlan();
 
-                Vector3[] path0 = LimitMaterials.path11;
-                KeyOperates KeyOperates = new KeyOperates(GameData);
-                Task task = new(() =>
-                {
-                    ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                    ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                    Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-                    for (int i = 0; i < path0.Length; i++)
-                    {
-                        if (closed)
-                        {
-                            PluginLog.Log($"中途结束");
-                            break;
-                        }
-                        position = KeyOperates.MoveToPoint(position, path0[i], territoryType, true, false);
-                        PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                        Thread.Sleep(500);
-                    }
-                });
-                task.Start();
+                //Vector3[] path0 = LimitMaterials.path11;
+                //KeyOperates KeyOperates = new KeyOperates(GameData);
+                //Task task = new(() =>
+                //{
+                //    ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                //    ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                //    Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                //    for (int i = 0; i < path0.Length; i++)
+                //    {
+                //        if (closed)
+                //        {
+                //            PluginLog.Log($"中途结束");
+                //            break;
+                //        }
+                //        position = KeyOperates.MoveToPoint(position, path0[i], territoryType, true, false);
+                //        PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                //        Thread.Sleep(500);
+                //    }
+                //});
+                //task.Start();
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }
@@ -92,12 +93,21 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
-                PluginLog.Log($"start begin {et}");
+                PluginLog.Log($"start begin et: {et}");
                 List<int> ids = LimitMaterials.GetMaterialIdsByEt(et);
 
                 while (ids.Count == 0) {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
                     et++;
+                    if(et >= 24) {
+                        et = 0;
+                        while (hour > et) {
+                            PluginLog.Log($"当前时间{hour} wait to {et} ..");
+                            Thread.Sleep(10000);
+                            Time.Update();
+                            hour = Time.ServerTime.CurrentEorzeaHour();
+                        }
+                    }
                     ids = LimitMaterials.GetMaterialIdsByEt(et);
                 }
 
@@ -109,7 +119,8 @@ namespace WoAutoCollectionPlugin.Bot
                         continue;
                     }
                     (string Names, string Job, uint tp, Vector3[] path, Vector3[] points) = LimitMaterials.GetMaterialById(id);
-
+                    PluginLog.Log($"下个任务: id: {id} {Names}, Job: {Job}, et: {et}..");
+                    
                     if (hour > et) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
                         Thread.Sleep(3000);
@@ -126,12 +137,19 @@ namespace WoAutoCollectionPlugin.Bot
 
                     while (hour < et)
                     {
-                        PluginLog.Log($"未到时间, 等待执行任务, wait {et}..");
+                        if (closed)
+                        {
+                            PluginLog.Log($"中途结束");
+                            return;
+                        }
+                        PluginLog.Log($"当前et: {hour}, 未到时间, 等待执行任务, wait et {et}..");
                         Thread.Sleep(10000);
                         Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
                     }
-                    // 切换职业 TODO
+                    PluginLog.Log($"正在执行任务, id: {id} ");
+                    // 切换职业
+                    WoAutoCollectionPlugin.Executor.DoGearChange(Job);
                     Thread.Sleep(1000);
                     Vector3 position = MovePositions(path, true);
                     // 找最近的采集点
@@ -154,7 +172,7 @@ namespace WoAutoCollectionPlugin.Bot
                         int tt = 0;
                         while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 7)
                         {
-                            if (tt >= 2)
+                            if (tt >= 3)
                             {
                                 KeyOperates.KeyMethod(Keys.w_key, 200);
                             }
@@ -168,7 +186,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                         }
-
+                        KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                         {
@@ -208,7 +226,7 @@ namespace WoAutoCollectionPlugin.Bot
                     // TODO 修理装备
                     // TODO魔晶石精制
                 }
-                PluginLog.Log($"当前et成功执行{num}个任务..");
+                PluginLog.Log($"当前et: {et}总共{ids.Count}, 成功执行{num}个任务..");
             }
         }
 
@@ -226,7 +244,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 position = KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(800);
+                Thread.Sleep(200);
             }
             return position;
         }

@@ -330,7 +330,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
-
+            PluginLog.Log($"开始采集: {name}");
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {
@@ -362,15 +362,13 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
 
-            PluginLog.Log($"将采集{name}...");
-
             int tt = 0;
-            while (CommonUi.AddonGatheringIsOpen() && tt < 10)
+            while (CommonUi.AddonGatheringIsOpen() && tt < 12)
             {
                 CommonUi.GatheringButton(GatherIndex);
-                Thread.Sleep(1500);
+                Thread.Sleep(2000);
                 tt++;
-                if (tt == 3)
+                if (tt == 4)
                 {
                     gp = player.CurrentGp;
                     level = player.Level;
