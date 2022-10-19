@@ -59,6 +59,8 @@ namespace WoAutoCollectionPlugin
 
         public static WeatherManager WeatherManager { get; private set; } = null!;
 
+        public static Executor Executor;
+
         public bool taskRunning = false;
 
         public FishBot FishBot;
@@ -88,7 +90,6 @@ namespace WoAutoCollectionPlugin
             Time = new SeTime();
             try
             {
-                //Game.Initialize();
                 DalamudApi.CommandManager.AddHandler(collect, new CommandInfo(OnCommand)
                 {
                     HelpMessage = "当前坐标信息"
@@ -361,9 +362,7 @@ namespace WoAutoCollectionPlugin
         private void OnWoTestCommand(string command, string args)
         {
             // 使用技能
-            //string message = "/ac 随机坐骑";
-            //bool flag = DalamudApi.CommandManager.ProcessCommand(message);
-            //PluginLog.Log($"{flag}");
+            // WoAutoCollectionPlugin.Executor.DoGearChange("");
 
             //Game.Test();
 

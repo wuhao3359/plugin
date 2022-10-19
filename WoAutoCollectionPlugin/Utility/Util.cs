@@ -119,5 +119,31 @@ namespace WoAutoCollectionPlugin.Utility
 
             DalamudApi.TargetManager.SetTarget(target);
         }
+
+        public static (int, Vector3[]) GetNulHunmanPos(List<Vector3[]> FishList) {
+            Vector3[] vectors = { };
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            int index = 1;
+            foreach (Vector3[] vector in FishList) {
+                bool flag = true;
+                int length = DalamudApi.ObjectTable.Length;
+                for (int i = 0; i < length; i++) {
+                    GameObject? gameObject = DalamudApi.ObjectTable[i];
+                    if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) {
+                        Vector3 play = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                        Vector3 v = vector[vector.Length - 1];
+                        if (Maths.Distance(play, v) < 10) {
+                            flag = false;
+                        }
+                    }
+                }
+                if (flag) {
+                    return (index, vector);
+                }
+                index++;
+            }
+                
+            return (-1, vectors);
+        }
     }
 }
