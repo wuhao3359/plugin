@@ -13,6 +13,7 @@ public class Territory : IComparable<Territory>, IEquatable<Territory>
     public TerritoryType Data { get; } = new();
     public string Name { get; } = string.Empty;
     public HashSet<Aetheryte> Aetherytes { get; } = new();
+    public CumulativeWeatherRates WeatherRates { get; init; } = CumulativeWeatherRates.InvalidWeather;
     public float SizeFactor { get; init; }
     public ushort XStream { get; init; }
     public ushort YStream { get; init; }

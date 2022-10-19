@@ -103,15 +103,6 @@ namespace WoAutoCollectionPlugin.Ui
             return false;
         }
 
-        public static unsafe void test() {
-            //var ptr = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
-            //var AtkUnitBase = (AtkUnitBase*)ptr;
-            //var Addon = (AddonGathering*)ptr;
-            //AtkComponentCheckBox* QuickGatheringComponentCheckBox = Addon->QuickGatheringComponentCheckBox;
-            //PluginLog.Log($"{QuickGatheringComponentCheckBox->AtkComponentButton.Flags}");
-            Click.TrySendClick("quick_synthesis");
-        }
-
         public static unsafe (int, string) GetGatheringIndex(List<string> ItemNames, GameData GameData) {
             int index = 0;
             string na = "";

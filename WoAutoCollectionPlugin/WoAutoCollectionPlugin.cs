@@ -17,6 +17,7 @@ using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
+using WoAutoCollectionPlugin.Weather;
 
 namespace WoAutoCollectionPlugin
 {
@@ -50,11 +51,13 @@ namespace WoAutoCollectionPlugin
 
         public Configuration Configuration { get; private set; }
 
-        public SeTime Time { get; private set; } = null!;
+        public static SeTime Time { get; private set; } = null!;
 
         private PluginUI PluginUi { get; init; }
 
-        public GameData GameData { get; init; }
+        public static GameData GameData { get; private set; } = null!;
+
+        public static WeatherManager WeatherManager { get; private set; } = null!;
 
         public bool taskRunning = false;
 
@@ -142,6 +145,8 @@ namespace WoAutoCollectionPlugin
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
+
+                WeatherManager = new WeatherManager(GameData);
 
                 FishBot = new FishBot(GameData);
                 HFishBot = new HFishBot(GameData);
@@ -360,63 +365,43 @@ namespace WoAutoCollectionPlugin
             //bool flag = DalamudApi.CommandManager.ProcessCommand(message);
             //PluginLog.Log($"{flag}");
 
+            //Game.Test();
+
             // 鼠标点击测试
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
 
-            //Game.Test();
+            (Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
+            PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
-            // 快速采集
-            //CommonUi.test();
+            //string[] str = args.Split(' ');
+            //PluginLog.Log($"daily: {args} length: {args.Length}");
 
-            // 限时点
-            //int length = DalamudApi.ObjectTable.Length;
-            //for (int i = 0; i < length; i++)
+            //if (args.Length <= 0)
             //{
-            //    GameObject? gameObject = DalamudApi.ObjectTable[i];
-            //    if (gameObject != null)
-            //    {
-            //        if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
-            //        {
-            //            if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-            //                || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场")
-            //            {
-            //                PluginLog.Log($"{gameObject.Name}");
-            //            }
-            //        }
-            //    }
+            //    PluginLog.Log($"stop");
+            //    // stop
+            //    DailyBot.StopScript();
+            //    taskRunning = false;
+            //    return;
             //}
 
-            string[] str = args.Split(' ');
-            PluginLog.Log($"daily: {args} length: {args.Length}");
+            //if (taskRunning)
+            //{
+            //    PluginLog.Log($"stop first");
+            //    return;
+            //}
 
-            if (args.Length <= 0)
-            {
-                PluginLog.Log($"stop");
-                // stop
-                DailyBot.StopScript();
-                taskRunning = false;
-                return;
-            }
+            //taskRunning = true;
 
-            if (taskRunning)
-            {
-                PluginLog.Log($"stop first");
-                return;
-            }
-
-            taskRunning = true;
-
-            Task task = new(() =>
-            {
-                PluginLog.Log($"start...");
-                DailyBot.DailyScript();
-                PluginLog.Log($"end...");
-                taskRunning = false;
-            });
-            task.Start();
-
-            
+            //Task task = new(() =>
+            //{
+            //    PluginLog.Log($"start...");
+            //    DailyBot.DailyScript();
+            //    PluginLog.Log($"end...");
+            //    taskRunning = false;
+            //});
+            //task.Start();
         }
 
         private void OnActionTestCommand(string command, string args)

@@ -5,13 +5,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using WoAutoCollectionPlugin.Classes;
-using Aetheryte = WoAutoCollectionPlugin.Classes.Aetheryte;
 
 namespace WoAutoCollectionPlugin;
 
 public class GameData
 {
     internal DataManager DataManager { get; init; }
+    public Dictionary<uint, Weather.Weather> Weathers { get; init; } = new();
+    internal Dictionary<byte, CumulativeWeatherRates> CumulativeWeatherRates = new();
+    public Territory[] WeatherTerritories { get; init; } = Array.Empty<Territory>();
     public Dictionary<uint, Territory> Territories { get; init; } = new();
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
@@ -21,6 +23,25 @@ public class GameData
         DataManager = gameData;
         try
         {
+            Weathers = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Weather>()!
+                .ToDictionary(w => w.RowId, w => new Weather.Weather(w));
+            PluginLog.Verbose("Collected {NumWeathers} different Weathers.", Weathers.Count);
+
+            CumulativeWeatherRates = DataManager.GetExcelSheet<WeatherRate>()!
+                .ToDictionary(w => (byte)w.RowId, w => new CumulativeWeatherRates(this, w));
+
+            WeatherTerritories = DataManager.GetExcelSheet<TerritoryType>()?
+                    .Where(t => t.PCSearch && t.WeatherRate != 0)
+                    .Select(FindOrAddTerritory)
+                    .Where(t => t != null && t.WeatherRates.Rates.Length > 1)
+                    .Cast<Territory>()
+                    .GroupBy(t => t.Name)
+                    .Select(group => group.First())
+                    .OrderBy(t => t.Name)
+                    .ToArray()
+             ?? Array.Empty<Territory>();
+            PluginLog.Verbose("Collected {NumWeatherTerritories} different territories with dynamic weather.", WeatherTerritories.Length);
+
             TerritoryType = DalamudApi.DataManager.GetExcelSheet<TerritoryType>()?
                     .Where(a => a.RowId > 1)
                     .ToDictionary(a => a.RowId, a => a)

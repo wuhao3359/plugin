@@ -55,7 +55,7 @@ namespace WoAutoCollectionPlugin.SeFunctions
 
         //public FishingSpot? FishingSpot
         //{
-        //    get => HasSpot ? GatherBuddy.GameData.FishingSpots.TryGetValue(_fishingSpot, out var s) ? s : null : null;
+        //    get => HasSpot ? WoAutoCollectionPlugin.GameData.FishingSpots.TryGetValue(_fishingSpot, out var s) ? s : null : null;
         //    set => _fishingSpot = (ushort)(value?.Id ?? 0);
         //}
 
@@ -65,8 +65,8 @@ namespace WoAutoCollectionPlugin.SeFunctions
         //public Bait Bait
         //{
         //    get => HasBait
-        //        ? GatherBuddy.GameData.Bait.TryGetValue(_bait, out var b) ? b :
-        //        GatherBuddy.GameData.Fishes.TryGetValue(_bait, out var f) ? new Bait(f.ItemData) : Bait.Unknown
+        //        ? WoAutoCollectionPlugin.GameData.Bait.TryGetValue(_bait, out var b) ? b :
+        //        WoAutoCollectionPlugin.GameData.Fishes.TryGetValue(_bait, out var f) ? new Bait(f.ItemData) : Bait.Unknown
         //        : Bait.Unknown;
         //    set => _bait = value.Id;
         //}
@@ -76,7 +76,7 @@ namespace WoAutoCollectionPlugin.SeFunctions
 
         //public Fish? Catch
         //{
-        //    get => HasCatch ? GatherBuddy.GameData.Fishes.TryGetValue(_catch, out var f) ? f : null : null;
+        //    get => HasCatch ? WoAutoCollectionPlugin.GameData.Fishes.TryGetValue(_catch, out var f) ? f : null : null;
         //    set => _catch = value?.ItemId ?? 0;
         //}
 
@@ -223,7 +223,7 @@ namespace WoAutoCollectionPlugin.SeFunctions
         //private bool VerifyData()
         //{
         //    var ts = TimeStamp;
-        //    if (ts < TimeStamp.Epoch || ts > GatherBuddy.Time.ServerTime)
+        //    if (ts < TimeStamp.Epoch || ts > WoAutoCollectionPlugin.Time.ServerTime)
         //        return false;
 
         //    if (_bait != 0 && Bait.Equals(Bait.Unknown))
@@ -251,7 +251,7 @@ namespace WoAutoCollectionPlugin.SeFunctions
 
         //    if (_bait == 0
         //     || TimeStamp <= TimeStamp.Epoch
-        //     || TimeStamp > GatherBuddy.Time.ServerTime
+        //     || TimeStamp > WoAutoCollectionPlugin.Time.ServerTime
         //     || Bite is < MinBiteTime or > MaxBiteTime
         //     || Perception == 0
         //     || Gathering == 0
