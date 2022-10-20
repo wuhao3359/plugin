@@ -1,4 +1,5 @@
-﻿using System.Numerics;
+﻿using System.Collections.Generic;
+using System.Numerics;
 
 namespace WoAutoCollectionPlugin.Utility
 {
@@ -299,6 +300,77 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1091f, 1093f, 1406f),
         };
         public static Vector3 YunGuanRepairNPC = new(869f, 2720f, 1876f);
+
+        // 中心点
+        public static Vector3 Center = new(0, 0, 0);
+
+        // 中心点去四个钓场路径+两个限时采集点路径
+        public static Vector3[] ToFishA = {
+        };
+        public static Vector3[] ToFishB = {
+        };
+        public static Vector3[] ToFishC = {
+        };
+        public static Vector3[] ToFishD = {
+        };
+        public static Vector3[] ToMiner = {
+        };
+        public static Vector3[] ToBotanist = {
+        };
+
+        // 去作业点路径
+        public static Vector3[] ToFishA1 = {
+        };
+        public static Vector3[] ToFishA2 = {
+        };
+
+        public static List<Vector3[]> FishAList = new() { 
+            ToFishA1, 
+            ToFishA2 
+        };
+
+        public static Vector3[] ToFishB1 = {
+        };
+        public static Vector3[] ToFishB2 = {
+        };
+
+        public static List<Vector3[]> FishBList = new() {
+            ToFishB1,
+            ToFishB2
+        };
+
+        public static Vector3[] ToFishC1 = {
+        };
+        public static Vector3[] ToFishC2 = {
+        };
+
+        public static List<Vector3[]> FishCList = new()
+        {
+            ToFishC1,
+            ToFishC2
+        };
+
+        public static Vector3[] ToFishD1 = {
+        };
+        public static Vector3[] ToFishD2 = {
+        };
+
+        public static List<Vector3[]> FishDList = new()
+        {
+            ToFishD1,
+            ToFishD2
+        };
+
+        public static Vector3[] ToMiner1 = {
+        };
+        public static Vector3[] ToMiner2 = {
+        };
+
+        public static Vector3[] ToBotanist1 = {
+        };
+        public static Vector3[] ToBotanist2 = {
+        };
+
         // 去区域的路径 TerritoryType: 930 0-钓鱼点A1 1-钓鱼点A1 ... 
         public static Vector3[] ToArea1 = {
             new Vector3 (869f, 2720f, 1876f),
@@ -380,9 +452,9 @@ namespace WoAutoCollectionPlugin.Utility
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] WhiteFishArea = {
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
+            new Vector3 (2287f, 2193f, 3119f),
+            new Vector3 (2253f, 2192f, 3126f),
+            new Vector3 (2264f, 2194f, 3107f),
         };
         public static int WhiteFishTime = 11;
 

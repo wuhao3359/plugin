@@ -22,7 +22,6 @@ namespace WoAutoCollectionPlugin.Bot
         private CommonBot? CommonBot;
 
         private static bool closed = false;
-        private int count = 0;
         private int gatherCount = 0;
 
         public GatherBot(GameData GameData)
@@ -40,7 +39,6 @@ namespace WoAutoCollectionPlugin.Bot
         public void Init()
         {
             closed = false;
-            count = 0;
         }
 
         public void NormalScript(int area) {
@@ -227,12 +225,12 @@ namespace WoAutoCollectionPlugin.Bot
                     if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
                     {
                         RunIntoYunGuanScript();
+                        gatherCount = 0;
                     }
 
                     if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
                     {
                         RunYGatherScript(args);
-                        gatherCount = 0;
                     }
                     else
                     {
@@ -278,9 +276,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
                 {
-                    // CommonBot.SetTarget(""); TODO
-                    KeyOperates.KeyMethod(Keys.num1_key);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    CommonBot.SetTarget("奥瓦埃尔");
                     Thread.Sleep(500);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
@@ -414,7 +410,7 @@ namespace WoAutoCollectionPlugin.Bot
                         targetMgr.SetTarget(go);
 
                         int n = 0;
-                        while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 10)
+                        while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 7)
                         {
                             if (n >= 3) {
                                 KeyOperates.KeyMethod(Keys.w_key, 200);
@@ -431,7 +427,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
 
                         int t = 0;
-                        while (!CommonUi.AddonGatheringIsOpen() && t < 10)
+                        while (!CommonUi.AddonGatheringIsOpen() && t < 5)
                         {
                             KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
@@ -442,7 +438,7 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                             t++;
                         }
-                        if (t >= 10) {
+                        if (t >= 5) {
                             k--;
                             continue;
                         }
@@ -456,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 500)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F3_key);
+                                    KeyOperates.KeyMethod(Keys.F2_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -464,7 +460,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 400)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F2_key);
+                                    KeyOperates.KeyMethod(Keys.F1_key);
                                     Thread.Sleep(2000);
                                 }
                             }

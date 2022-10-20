@@ -1,5 +1,4 @@
-﻿using ClickLib;
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
@@ -45,6 +44,12 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
         }
 
+        public void MoveInit()
+        {
+            canMove = false;
+            readyMove = false;
+        }
+
         // 进入空岛
         public bool RunIntoYunGuanScript()
         {
@@ -72,9 +77,8 @@ namespace WoAutoCollectionPlugin.Bot
                 MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
-                    KeyOperates.KeyMethod(Keys.num1_key);
-                    KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(500);
+                    CommonBot.SetTarget("奥瓦埃尔");
+                    Thread.Sleep(800);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
@@ -152,7 +156,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             yfishsw = new();
-            Init();
+            MoveInit();
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
@@ -180,52 +184,46 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"不需要修理装备...");
             }
 
-            // 通过路径到达固定区域位置
-            position = MovePositions(ToArea, true);
+            int weather = 0;
+            int pos = 0;
+            int work = 0;
+            for (int i = 0; i <= 20; i++) {
+                // 到达中心点
+                KeyOperates.MoveToPoint(position, Position.Center, territoryType, true, false);
 
-            if (DalamudApi.Condition[ConditionFlag.Mounted])
-            {
-                KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000);
-            }
-            if (DalamudApi.Condition[ConditionFlag.Mounted])
-            {
-                KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(500);
-            }
+                // 根据天气去对应钓场
+                (pos, Vector3[] posVector) = GetPosByWeather();
+                position = MovePositions(posVector, true);
 
-            Stopwatch sw = new();
-            // 在固定区域到达作业点 作业循环 40min切换
-            int currentPoint = 0;
-            for (int i = 0; i <= 9; i++)
-            {
-                sw.Reset();
-                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                // 找寻无人点
+                (work, Vector3[] workVector) = GetWorkPos(pos);
+                if (work > 0)
                 {
-                    PluginLog.Log($"中途结束");
-                    return false;
+                    MovePositions(workVector, true);
                 }
-                sw.Start();
-
-                position = KeyOperates.MoveToPoint(position, YFishArea[2], territoryType, false);
-                position = KeyOperates.MoveToPoint(position, YFishArea[currentPoint], territoryType, false);
-                if (currentPoint > 0)
+                else
                 {
-                    currentPoint = 0;
-                }
-                else {
-                    currentPoint = 1;
+                    continue;
                 }
 
+                if (DalamudApi.Condition[ConditionFlag.Mounted])
+                {
+                    KeyOperates.KeyMethod(Keys.q_key);
+                    Thread.Sleep(1000);
+                }
+                if (DalamudApi.Condition[ConditionFlag.Mounted])
+                {
+                    KeyOperates.KeyMethod(Keys.q_key);
+                    Thread.Sleep(500);
+                }
 
-                // 开始作业
-                readyMove = false;
                 KeyOperates.KeyMethod(Keys.w_key, 200);
+                // 切换鱼饵 TODO
                 KeyOperates.KeyMethod(Keys.n2_key);
-
+                Stopwatch sw = new();
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(5000);
                     if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                     {
                         PluginLog.Log($"中途结束");
@@ -235,23 +233,12 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         break;
                     }
-                }
 
-                readyMove = true;
-                while (!canMove)
-                {
-                    Thread.Sleep(1000);
-                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
-                    {
-                        PluginLog.Log($"中途结束");
-                        return false;
-                    }
-                    if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
-                    {
-                        break;
-                    }
+                    // 获取当前天气
                 }
+                position = MovePositions(workVector, true);
             }
+
             PluginLog.Log($"任务结束");
             return true;
         }
@@ -316,7 +303,11 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"yfish time: {yfishsw.ElapsedMilliseconds / 1000}");
                 if (yfishsw.ElapsedMilliseconds / 1000 > 13)
                 {
-                    KeyOperates.KeyMethod(Keys.n8_key);
+                    PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                    uint maxGp = player.MaxGp;
+                    if (maxGp >= 700) {
+                        KeyOperates.KeyMethod(Keys.n7_key);
+                    }
                 }
                 KeyOperates.KeyMethod(Keys.n1_key);
             });
@@ -366,6 +357,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else
                     {
+                        KeyOperates.KeyMethod(Keys.F2_key);
                         KeyOperates.KeyMethod(Keys.n2_key);
                     }
                 }
@@ -418,6 +410,29 @@ namespace WoAutoCollectionPlugin.Bot
                 YFishArea = Position.YFishArea100;
             }
             return (ToArea, YFishArea);
+        }
+
+        // TODO
+        private (int, Vector3[]) GetPosByWeather() {
+            Vector3[] v = { };
+            return (0, v);
+        }
+
+        private (int, Vector3[]) GetWorkPos(int pos) {
+            List<Vector3[]> FishList = Position.FishAList;
+            if (pos == 1) 
+            {
+                FishList = Position.FishBList;
+            } else if (pos == 2) 
+            {
+                FishList = Position.FishCList;
+            }
+            else if (pos == 3)
+            {
+                FishList = Position.FishDList;
+            }
+
+            return Util.GetNulHunmanPos(FishList);
         }
     }
 }

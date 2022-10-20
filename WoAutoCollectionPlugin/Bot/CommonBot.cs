@@ -1,15 +1,22 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Resolvers;
 using Dalamud.Logging;
+using Lumina.Excel.GeneratedSheets;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
 {
     public class CommonBot
     {
+        private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
 
         private bool closed = false;
@@ -17,6 +24,13 @@ namespace WoAutoCollectionPlugin.Bot
         public CommonBot(KeyOperates KeyOperates)
         {
             this.KeyOperates = KeyOperates;
+            Init();
+        }
+
+        public CommonBot(KeyOperates KeyOperates, GameData GameData)
+        {
+            this.KeyOperates = KeyOperates;
+            this.GameData = GameData;
             Init();
         }
 
@@ -75,7 +89,6 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"Repair stopping");
                 return flag;
             }
-
             KeyOperates.KeyMethod(Keys.F12_key);
             Thread.Sleep(1000);
             if (RepairUi.AllRepairButton())
@@ -114,7 +127,7 @@ namespace WoAutoCollectionPlugin.Bot
             bool flag = true;
             SetTarget("修理工");
             Thread.Sleep(1200);
-            if (CommonUi.AddonSelectStringIsOpen())
+            if (CommonUi.AddonSelectIconStringIsOpen())
             {
                 CommonUi.SelectIconString2Button();
                 Thread.Sleep(1500);
@@ -175,34 +188,32 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool CraftUploadAndExchange(string craftName, int exchangeItem)
         {
-            if (closed)
-            {
-                PluginLog.Log($"CraftUploadAndExchange stopping");
-                return true;
+            (uint Category, uint Sub, uint ItemId) = Items.UploadApply(craftName);
+            while (BagManager.GetInventoryItemCount(ItemId) > 0) {
+                if (closed)
+                {
+                    PluginLog.Log($"CraftUploadAndExchange stopping");
+                    return true;
+                }
+                CraftUpload(Category, Sub, ItemId);
+                CraftExchange(exchangeItem);
             }
-            if (CraftUpload(craftName) && CraftExchange(exchangeItem)) {
-                return true;
-            }
-            return false;
+            return true;
         }
 
         // TODO 关闭界面
         // 交收藏品
-        public bool CraftUpload(string craftName)
+        public bool CraftUpload(uint Category, uint Sub, uint ItemId)
         {
             PluginLog.Log($"CraftUploading");
-            (uint Category, uint Sub) = Items.UploadApply(craftName);
             if (Category == 0 && Sub == 0) {
                 return false;
             }
 
             Thread.Sleep(1000);
             SetTarget("收藏品交易员");
-            //KeyOperates.KeyMethod(Keys.num1_key);
-            Thread.Sleep(500);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(3000);
-            for (int i = 0; i < Category; i++) {
+            Thread.Sleep(2500);
+            for (int i = 1; i < Category; i++) {
                 KeyOperates.KeyMethod(Keys.num2_key);
             }
 
@@ -212,7 +223,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             int n = 0;
-            while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 15)
+            while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 10 && BagManager.GetInventoryItemCount(ItemId) > 0)
             {
                 KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(500);
@@ -243,7 +254,6 @@ namespace WoAutoCollectionPlugin.Bot
 
             Thread.Sleep(2000);
             SetTarget("工票交易员");
-            //KeyOperates.KeyMethod(Keys.num3_key);
             Thread.Sleep(500);
             KeyOperates.KeyMethod(Keys.num0_key);
             KeyOperates.KeyMethod(Keys.num0_key);
@@ -287,8 +297,95 @@ namespace WoAutoCollectionPlugin.Bot
             DalamudApi.TargetManager.SetTarget(target);
             Thread.Sleep(200);
             KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(200);
-            KeyOperates.KeyMethod(Keys.num0_key);
+            Thread.Sleep(800);
+            return true;
+        }
+
+        // 限时材料采集手法
+        public bool LimitMaterialsMethod(string Names, string job) {
+            // lv.74 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
+            uint GivingLandActionId = 4589;
+            if (job == "园艺工")
+            {
+                GivingLandActionId = 4590;
+            }
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
+            if (gp < player.MaxGp * 0.3) {
+                KeyOperates.KeyMethod(Keys.plus_key);
+            }
+            int level = player.Level;
+
+            List<string> list = new();
+            string[] names = Names.Split('|');
+            foreach (string na in names) {
+                list.Add(na);
+            }
+
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
+            PluginLog.Log($"开始采集: {name}");
+            int action = 0;
+            if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
+                if (gp >= 200)
+                {
+                    KeyOperates.KeyMethod(Keys.F4_key);
+                    gp -= 200;
+                    action++;
+                }
+                else if(gp >= 150) {
+                    KeyOperates.KeyMethod(Keys.F3_key);
+                    gp -= 150;
+                    action++;
+                }
+            } else {
+                if (level >= 50)
+                {
+                    if (gp >= 500)
+                    {
+                        KeyOperates.KeyMethod(Keys.F2_key);
+                        gp -= 500;
+                        action++;
+                        Thread.Sleep(2000);
+                    }
+                }
+                else
+                {
+                    if (gp >= 400)
+                    {
+                        KeyOperates.KeyMethod(Keys.F1_key);
+                        gp -= 400;
+                        action++;
+                        Thread.Sleep(2000);
+                    }
+                }
+            }
+
+            int tt = 0;
+            while (CommonUi.AddonGatheringIsOpen() && tt < 15)
+            {
+                CommonUi.GatheringButton(GatherIndex);
+                Thread.Sleep(2000);
+                tt++;
+                if (tt == 4)
+                {
+                    gp = player.CurrentGp;
+                    level = player.Level;
+                    if (gp >= 300 && action > 0)
+                    {
+                        if (level >= 25)
+                        {
+                            KeyOperates.KeyMethod(Keys.n3_key);
+                            Thread.Sleep(1500);
+                            if (level >= 90)
+                            {
+                                KeyOperates.KeyMethod(Keys.n4_key);
+                                Thread.Sleep(1000);
+                            }
+                        }
+                    }
+                }
+            }
+
             return true;
         }
     }

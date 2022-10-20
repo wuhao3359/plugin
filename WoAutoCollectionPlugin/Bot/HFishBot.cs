@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.SeFunctions;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -30,6 +31,10 @@ namespace WoAutoCollectionPlugin.Bot
 
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
+        }
+
+        public void StopScript() {
+            closed = true;
         }
 
         public void Script()
