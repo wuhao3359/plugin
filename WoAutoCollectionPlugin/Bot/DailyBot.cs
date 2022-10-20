@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -44,38 +45,28 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // TODO 日常使用
-        public void DailyScript()
+        public void DailyScript(string args)
         {
             closed = false;
             try {
-                TimePlan();
+                string[] str = args.Split(' ');
+                PluginLog.Log($"daily: {args} length: {args.Length}");
 
-                //Vector3[] path0 = LimitMaterials.path11;
-                //KeyOperates KeyOperates = new KeyOperates(GameData);
-                //Task task = new(() =>
-                //{
-                //    ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                //    ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                //    Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-                //    for (int i = 0; i < path0.Length; i++)
-                //    {
-                //        if (closed)
-                //        {
-                //            PluginLog.Log($"中途结束");
-                //            break;
-                //        }
-                //        position = KeyOperates.MoveToPoint(position, path0[i], territoryType, true, false);
-                //        PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                //        Thread.Sleep(500);
-                //    }
-                //});
-                //task.Start();
+                uint lv = 80;
+                if (str.Length >= 1) {
+                    lv = uint.Parse(str[1]);
+                }
+                if (lv < 80) {
+                    lv = 80;
+                }
+                TimePlan(lv);
+
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }
         }
 
-        public void TimePlan()
+        public void TimePlan(uint lv)
         {
             int n = 0;
             SeTime Time = new SeTime();
@@ -94,7 +85,7 @@ namespace WoAutoCollectionPlugin.Bot
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin et: {et}");
-                List<int> ids = LimitMaterials.GetMaterialIdsByEt(et);
+                List<int> ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
 
                 while (ids.Count == 0) {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
@@ -108,7 +99,7 @@ namespace WoAutoCollectionPlugin.Bot
                             hour = Time.ServerTime.CurrentEorzeaHour();
                         }
                     }
-                    ids = LimitMaterials.GetMaterialIdsByEt(et);
+                    ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
                 }
 
                 int num = 0;
@@ -118,21 +109,25 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(3000);
                         continue;
                     }
-                    (string Names, string Job, uint tp, Vector3[] path, Vector3[] points) = LimitMaterials.GetMaterialById(id);
-                    PluginLog.Log($"下个任务: id: {id} {Names}, Job: {Job}, et: {et}..");
-                    
+                    (string Names, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                    PluginLog.Log($"下个任务: id: {id} Name: {Names}, Job: {Job}, et: {et}..");
+
+                    if (EvaluateTask(Names, Job)) {
+                        PluginLog.Log($"预计收益低, 丢弃, id: {id} Name: {Names}..");
+                    }
+
                     if (hour > et) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
                         Thread.Sleep(3000);
                         break;
                     }
 
-                    if (tp == 0) {
+                    if (Tp == 0) {
                         PluginLog.Log($"数据异常, skip {id}..");
                         Thread.Sleep(3);
                         continue;
                     }
-                    Teleporter.Teleport(tp);
+                    Teleporter.Teleport(Tp);
                     Thread.Sleep(15000);
 
                     while (hour < et)
@@ -151,11 +146,11 @@ namespace WoAutoCollectionPlugin.Bot
                     // 切换职业
                     WoAutoCollectionPlugin.Executor.DoGearChange(Job);
                     Thread.Sleep(1000);
-                    Vector3 position = MovePositions(path, true);
+                    Vector3 position = MovePositions(Path, true);
                     // 找最近的采集点
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
                     ushort SizeFactor = GameData.GetSizeFactor(territoryType);
-                    (GameObject go, Vector3 point) = Util.LimitTimePosCanGather(points, SizeFactor);
+                    (GameObject go, Vector3 point) = Util.LimitTimePosCanGather(Points, SizeFactor);
 
                     if (go != null)
                     {
@@ -226,7 +221,7 @@ namespace WoAutoCollectionPlugin.Bot
                     // TODO 修理装备
                     // TODO魔晶石精制
                 }
-                PluginLog.Log($"当前et: {et}总共{ids.Count}, 成功执行{num}个任务..");
+                PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
             }
         }
 
@@ -247,6 +242,26 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(200);
             }
             return position;
+        }
+
+        private bool EvaluateTask(string Name, string Job) {
+            uint GivingLandActionId = 4589;
+            if (Job == "园艺工")
+            {
+                GivingLandActionId = 4590;
+            }
+            bool r = true;
+            if (Name.Contains("雷之") || Name.Contains("火之") || Name.Contains("风之") || Name.Contains("水之") || Name.Contains("冰之") || Name.Contains("土之"))
+            {
+                PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                uint gp = player.CurrentGp;
+                int level = player.Level;
+                if (level < 74 || Game.GetSpellActionRecastTimeElapsed(GivingLandActionId) != 0 || gp < 200)
+                {
+                    r = false;
+                }
+            }
+            return r;
         }
     }
 }

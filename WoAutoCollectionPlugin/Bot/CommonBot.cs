@@ -311,35 +311,31 @@ namespace WoAutoCollectionPlugin.Bot
             }
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
+            if (gp < player.MaxGp * 0.3) {
+                KeyOperates.KeyMethod(Keys.plus_key);
+            }
             int level = player.Level;
 
             List<string> list = new();
             string[] names = Names.Split('|');
             foreach (string na in names) {
-                if (na.Contains("雷之") || na.Contains("火之") || na.Contains("风之") || na.Contains("水之") || na.Contains("冰之") || na.Contains("土之"))
-                {
-                    if (level >= 74 && Game.GetSpellActionRecastTimeElapsed(GivingLandActionId) == 0 && gp >= 200)
-                    {
-                        list.Insert(0, na);
-                        PluginLog.Log($"{na}优先...");
-                    }
-                }
-                else {
-                    list.Add(na);
-                }
+                list.Add(na);
             }
 
             (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
             PluginLog.Log($"开始采集: {name}");
+            int action = 0;
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {
                     KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
+                    action++;
                 }
                 else if(gp >= 150) {
                     KeyOperates.KeyMethod(Keys.F3_key);
                     gp -= 150;
+                    action++;
                 }
             } else {
                 if (level >= 50)
@@ -348,6 +344,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         KeyOperates.KeyMethod(Keys.F2_key);
                         gp -= 500;
+                        action++;
                         Thread.Sleep(2000);
                     }
                 }
@@ -357,13 +354,14 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         KeyOperates.KeyMethod(Keys.F1_key);
                         gp -= 400;
+                        action++;
                         Thread.Sleep(2000);
                     }
                 }
             }
 
             int tt = 0;
-            while (CommonUi.AddonGatheringIsOpen() && tt < 12)
+            while (CommonUi.AddonGatheringIsOpen() && tt < 15)
             {
                 CommonUi.GatheringButton(GatherIndex);
                 Thread.Sleep(2000);
@@ -372,7 +370,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     gp = player.CurrentGp;
                     level = player.Level;
-                    if (gp >= 300)
+                    if (gp >= 300 && action > 0)
                     {
                         if (level >= 25)
                         {

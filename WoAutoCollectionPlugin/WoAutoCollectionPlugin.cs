@@ -86,8 +86,7 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
-            //DalamudApi.ChatManager = new ChatManager();
-            Time = new SeTime();
+            
             try
             {
                 DalamudApi.CommandManager.AddHandler(collect, new CommandInfo(OnCommand)
@@ -146,14 +145,13 @@ namespace WoAutoCollectionPlugin
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
+                Time = new SeTime();
                 Executor = new Executor();
-                WeatherManager = new WeatherManager(GameData);
+                //WeatherManager = new WeatherManager(GameData);
 
                 FishBot = new FishBot(GameData);
                 HFishBot = new HFishBot(GameData);
-
                 CollectionFishBot = new CollectionFishBot(GameData);
-
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
                 DailyBot = new DailyBot(GameData);
@@ -181,7 +179,6 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
 
-            //DalamudApi.ChatManager?.Dispose();
             // Game.DisAble();
         }
 
@@ -475,7 +472,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                DailyBot.DailyScript();
+                DailyBot.DailyScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
