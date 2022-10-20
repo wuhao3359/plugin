@@ -305,9 +305,6 @@ namespace WoAutoCollectionPlugin.Bot
         public bool LimitMaterialsMethod(string Names, string job) {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
-            if (gp < player.MaxGp * 0.45) {
-                KeyOperates.KeyMethod(Keys.plus_key);
-            }
             int level = player.Level;
 
             List<string> list = new();
@@ -331,7 +328,7 @@ namespace WoAutoCollectionPlugin.Bot
                     gp -= 150;
                     action++;
                 }
-            } else if (name.EndsWith("土壤")) {
+            } else if (name.Contains("土壤")) {
                 action++;
                 // 不用技能
             } else {
@@ -380,8 +377,8 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                     }
-                } else if (tt == 4) {
-                    if (name.EndsWith("土壤"))
+                } else if (tt == 2) {
+                    if (name.Contains("土壤"))
                     {
                         (GatherIndex, name) = CommonUi.GetGatheringIndex(list, GameData);
                     }

@@ -27,7 +27,7 @@ public sealed unsafe class ClickGathering : ClickBase<ClickGathering, AddonGathe
     /// </summary>
     [ClickName("quick_gathering")]
     public void QuickGatheringComponentCheckBox()
-    => this.ClickAddonCheckBox(this.Addon->QuickGatheringComponentCheckBox, 0);
+    => this.ClickAddonCheckBox(this.Addon->QuickGatheringComponentCheckBox, 9);
 
     /// <summary>
     /// Click the desynthesize checkbox button.

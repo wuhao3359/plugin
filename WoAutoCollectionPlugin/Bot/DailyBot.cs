@@ -200,6 +200,15 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                         }
+
+                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                        uint gp = player.CurrentGp;
+                        if (gp < player.MaxGp * 0.45)
+                        {
+                            KeyOperates.KeyMethod(Keys.plus_key);
+                            Thread.Sleep(2000);
+                        }
+
                         KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
@@ -220,6 +229,7 @@ namespace WoAutoCollectionPlugin.Bot
                             continue;
                         }
                         Thread.Sleep(1000);
+
                         if (CommonUi.AddonGatheringIsOpen())
                         {
                             CommonBot.LimitMaterialsMethod(Names, Job);
@@ -259,7 +269,6 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 position = KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(200);
             }
             return position;
         }
