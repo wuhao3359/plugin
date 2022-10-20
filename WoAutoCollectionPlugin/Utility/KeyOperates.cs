@@ -236,7 +236,7 @@ public class KeyOperates
                 errorDisntance = 3;
             }
         }
-        PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");
+        //PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");
         Stop();
         return GetUserPosition(SizeFactor);
     }

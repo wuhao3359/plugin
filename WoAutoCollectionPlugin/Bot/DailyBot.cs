@@ -54,7 +54,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 uint lv = 80;
                 if (str.Length >= 1) {
-                    lv = uint.Parse(str[1]);
+                    lv = uint.Parse(str[0]);
                 }
                 if (lv < 80) {
                     lv = 80;
@@ -69,23 +69,31 @@ namespace WoAutoCollectionPlugin.Bot
         public void TimePlan(uint lv)
         {
             int n = 0;
+            bool first = true;
             SeTime Time = new SeTime();
+            // 每24个et内单个任务只允许被执行一遍
+            List<int> finishIds = new();
+
+            Time.Update();
+            int hour = Time.ServerTime.CurrentEorzeaHour();
+            int minute = Time.ServerTime.CurrentEorzeaMinute();
+            int et = hour;
             while (!closed && n < 1000)
             {
-                // 每24个et内单个任务只允许被执行一遍
-                List<int> finishIds = new List<int>();
-                
-                Time.Update();
-                int hour = Time.ServerTime.CurrentEorzeaHour();
-                int minute = Time.ServerTime.CurrentEorzeaMinute();
+                if (first)
+                {
+                    et--;
+                    first = false;
+                }
 
-                int et = hour + 1;
-                if (et == 24) {
+                et++;
+                if (et>= 24 || et == 0) {
                     PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin et: {et}");
                 List<int> ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                PluginLog.Log($"当前et总共有 {ids.Count}  ..");
 
                 while (ids.Count == 0) {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
@@ -93,6 +101,11 @@ namespace WoAutoCollectionPlugin.Bot
                     if(et >= 24) {
                         et = 0;
                         while (hour > et) {
+                            if (closed)
+                            {
+                                PluginLog.Log($"中途结束");
+                                return;
+                            }
                             PluginLog.Log($"当前时间{hour} wait to {et} ..");
                             Thread.Sleep(10000);
                             Time.Update();
@@ -104,31 +117,37 @@ namespace WoAutoCollectionPlugin.Bot
 
                 int num = 0;
                 foreach (int id in ids) {
-                    if (finishIds.Exists(t => t == id)) {
+                    if (closed)
+                    {
+                        PluginLog.Log($"中途结束");
+                        return;
+                    }
+                    if (finishIds.Exists(t => t == id))
+                    {
                         PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
-                        Thread.Sleep(3000);
                         continue;
                     }
                     (string Names, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
-                    PluginLog.Log($"下个任务: id: {id} Name: {Names}, Job: {Job}, et: {et}..");
+                    PluginLog.Log($"{finishIds.Count}下个任务: id: {id} Name: {Names}, Job: {Job}, et: {et}..");
 
-                    if (EvaluateTask(Names, Job)) {
-                        PluginLog.Log($"预计收益低, 丢弃, id: {id} Name: {Names}..");
-                    }
+                    //if (EvaluateTask(Names, Job)) {
+                    //    PluginLog.Log($"预计收益低, 丢弃, id: {id} Name: {Names}..");
+                    //    finishIds.Add(id);
+                    //    continue;
+                    //}
 
-                    if (hour > et) {
+                    if (hour > et || (et >= 20 && hour < 10)) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
-                        Thread.Sleep(3000);
                         break;
                     }
 
                     if (Tp == 0) {
                         PluginLog.Log($"数据异常, skip {id}..");
-                        Thread.Sleep(3);
+                        finishIds.Add(id);
                         continue;
                     }
                     Teleporter.Teleport(Tp);
-                    Thread.Sleep(15000);
+                    Thread.Sleep(12000);
 
                     while (hour < et)
                     {
@@ -142,7 +161,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
                     }
-                    PluginLog.Log($"正在执行任务, id: {id} ");
+                    PluginLog.Log($"开始执行任务, id: {id} ");
                     // 切换职业
                     WoAutoCollectionPlugin.Executor.DoGearChange(Job);
                     Thread.Sleep(1000);
@@ -197,7 +216,7 @@ namespace WoAutoCollectionPlugin.Bot
                         if (tt >= 5)
                         {
                             PluginLog.Log($"未打开采集面板, skip {id}..");
-                            Thread.Sleep(3000);
+                            finishIds.Add(id);
                             continue;
                         }
                         Thread.Sleep(1000);
@@ -208,7 +227,8 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else {
                         PluginLog.Log($"未知原因未找到数据, skip {id}..");
-                        Thread.Sleep(3000);
+                        finishIds.Add(id);
+                        Thread.Sleep(1000);
                         continue;
                     }
                     // finish work
@@ -216,7 +236,7 @@ namespace WoAutoCollectionPlugin.Bot
                     num++;
                     Time.Update();
                     hour = Time.ServerTime.CurrentEorzeaHour();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
 
                     // TODO 修理装备
                     // TODO魔晶石精制
@@ -250,7 +270,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 GivingLandActionId = 4590;
             }
-            bool r = true;
+            bool r = false;
             if (Name.Contains("雷之") || Name.Contains("火之") || Name.Contains("风之") || Name.Contains("水之") || Name.Contains("冰之") || Name.Contains("土之"))
             {
                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
@@ -258,7 +278,7 @@ namespace WoAutoCollectionPlugin.Bot
                 int level = player.Level;
                 if (level < 74 || Game.GetSpellActionRecastTimeElapsed(GivingLandActionId) != 0 || gp < 200)
                 {
-                    r = false;
+                    r = true;
                 }
             }
             return r;

@@ -456,7 +456,6 @@ namespace WoAutoCollectionPlugin
             if (args.Length < 1)
             {
                 PluginLog.Log($"stop");
-                // stop
                 DailyBot.StopScript();
                 taskRunning = false;
                 return;

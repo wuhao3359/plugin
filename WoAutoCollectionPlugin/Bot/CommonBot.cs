@@ -303,15 +303,9 @@ namespace WoAutoCollectionPlugin.Bot
 
         // 限时材料采集手法
         public bool LimitMaterialsMethod(string Names, string job) {
-            // lv.74 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
-            uint GivingLandActionId = 4589;
-            if (job == "园艺工")
-            {
-                GivingLandActionId = 4590;
-            }
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
-            if (gp < player.MaxGp * 0.3) {
+            if (gp < player.MaxGp * 0.45) {
                 KeyOperates.KeyMethod(Keys.plus_key);
             }
             int level = player.Level;
@@ -332,11 +326,14 @@ namespace WoAutoCollectionPlugin.Bot
                     gp -= 200;
                     action++;
                 }
-                else if(gp >= 150) {
+                else if (gp >= 150) {
                     KeyOperates.KeyMethod(Keys.F3_key);
                     gp -= 150;
                     action++;
                 }
+            } else if (name.EndsWith("土壤")) {
+                action++;
+                // 不用技能
             } else {
                 if (level >= 50)
                 {
@@ -383,7 +380,13 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                     }
+                } else if (tt == 4) {
+                    if (name.EndsWith("土壤"))
+                    {
+                        (GatherIndex, name) = CommonUi.GetGatheringIndex(list, GameData);
+                    }
                 }
+                
             }
 
             return true;
