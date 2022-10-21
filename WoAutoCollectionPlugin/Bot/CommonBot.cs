@@ -1,15 +1,13 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Resolvers;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
-using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
-using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -304,6 +302,7 @@ namespace WoAutoCollectionPlugin.Bot
         // 限时材料采集手法
         public bool LimitMaterialsMethod(string Names, string job) {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+
             uint gp = player.CurrentGp;
             int level = player.Level;
 

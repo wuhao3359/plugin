@@ -66,9 +66,17 @@ namespace WoAutoCollectionPlugin.Bot
             Init();
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             
-            (Vector3[] Area, int[] index, int[] indexNum, int[] ABC) = GetArea(area);
-            // TODO 传送
+            (Vector3[] Area, int[] index, int[] indexNum, int[] ABC, string job, uint tp, Vector3[] path, string itemName) = GetArea(area);
+            if (tp != 0)
+            {
+                Teleporter.Teleport(tp);
+                Thread.Sleep(12000);
+                if (job != "") {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(job);
+                }
+            }
             // 去起始点O
+            MovePositions(path, true);
 
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"采集 {position.X} {position.Y} {position.Z}");
@@ -78,9 +86,15 @@ namespace WoAutoCollectionPlugin.Bot
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             List< GameObject > gameObjects = new();
             List< int > gameObjectsIndex = new();
+
+            List<string> list = new() { itemName };
+            (int GathingButton, string name) = CommonUi.GetGatheringIndex(list, GameData);
+            if (GathingButton == 0) {
+                closed = true;
+                PluginLog.Log($"采集点不存在: {name}");
+            }
             for (int i = 0, j = 0, k = 0 ; i < Area.Length; i++)
             {
-                int GathingButton = GetGathingButton(area);
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
@@ -319,7 +333,6 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(1000);
             }
             return position;
         }
@@ -521,11 +534,15 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.ForceStop();
         }
 
-        public (Vector3[], int[], int[], int[]) GetArea(int area) {
+        public (Vector3[], int[], int[], int[], string, uint, Vector3[], string) GetArea(int area) {
             Vector3[] Area = Array.Empty<Vector3>();
             int[] index = Array.Empty<int>();
             int[] indexNum = Array.Empty<int>();
             int[] ABC = Array.Empty<int>();
+            string job = "";
+            uint tp = 0;
+            Vector3[] paths = Array.Empty<Vector3>();
+            string name = "";
 
             if (area == 1)
             {   // 1-稻槎草(园:68)
@@ -533,6 +550,7 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
+                name = "稻槎草";
             }
             else if (area == 2)
             {
@@ -541,6 +559,7 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
+                name = "繁缕";
             }
             else if (area == 3)
             {
@@ -549,6 +568,7 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
+                name = "棕榈糖浆";
             }
             else if (area == 4)
             {
@@ -557,18 +577,13 @@ namespace WoAutoCollectionPlugin.Bot
                 index = Position.Index4;
                 indexNum = Position.IndexNum4;
                 ABC = Position.ABC4;
+                name = "葛根";
             }
-            else if (area == 100)
-            {
-                // 100-火水晶(lv.68)
-                Area = Position.Area3;
-                index = Position.Index3;
-                indexNum = Position.IndexNum3;
-                ABC = Position.ABC3;
-            }
-            // TODO 5-大蜜蜂的巢(园:75) 6-巨人新薯(园:87) 7-山地小麦(园:73) 灵银矿(矿:53) 灵银沙(矿:51)
+            // TOOD 血红奇异果(园:36) 芦荟(园:32)
+            // 萨维奈紫苏(园:82)
+            // 大蜜蜂的巢(园:75)  巨人新薯(园:87)  山地小麦(园:73) 灵银矿(矿:53) 灵银沙(矿:51)
 
-            return (Area, index, indexNum, ABC);
+            return (Area, index, indexNum, ABC, job, tp, paths, name);
         }
 
         public (Vector3[], int[], int[], int) GetAreaByType(int type) {

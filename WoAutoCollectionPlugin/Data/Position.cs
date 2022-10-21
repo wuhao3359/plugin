@@ -588,6 +588,10 @@ namespace WoAutoCollectionPlugin.Utility
             1, 6, 13,
         };
         public static int Gatheing4Button = 3;
+
+        // 血红奇异果 TODO
+
+        // 芦荟 TODO
     }
 
 
