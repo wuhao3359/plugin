@@ -107,7 +107,6 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Error($"{ex}");
                 return "";
             }
-            
         }
 
         private unsafe static string GetNodeTextAsString(AtkTextNode* node, string error)

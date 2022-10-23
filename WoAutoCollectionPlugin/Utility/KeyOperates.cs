@@ -231,7 +231,7 @@ public class KeyOperates
 
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 4.5;
+                errorDisntance = 4.3;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
                 errorDisntance = 3;
             }

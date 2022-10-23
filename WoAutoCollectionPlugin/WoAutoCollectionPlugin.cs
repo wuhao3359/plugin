@@ -159,7 +159,7 @@ namespace WoAutoCollectionPlugin
                 CollectionFishBot = new CollectionFishBot(GameData);
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
-                DailyBot = new DailyBot();
+                DailyBot = new DailyBot(GameData);
                 KeyOperates = new KeyOperates(GameData);
                 CommonBot = new CommonBot(KeyOperates, GameData);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -365,10 +365,6 @@ namespace WoAutoCollectionPlugin
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
-            // Job
-            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-            FFXIVClientStructs.FFXIV.Client.Game.Character.Character c = CharactManager.GetBattleCharaByObjectId((int)player.ObjectId);
-            PluginLog.Log($"Job: {c.ClassJob}");
 
             //Game.Test();
 

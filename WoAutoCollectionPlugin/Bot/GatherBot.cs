@@ -33,7 +33,6 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void test() {
             KeyOperates.MouseMove(653, 311);
-            //KeyOperates.ClickMouseLeft(653, 311);
         }
 
         public void Init()
@@ -61,166 +60,148 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 普通采集点
-        public bool RunNormalScript(int area)
+        public bool RunNormalScript(int id)
         {
             Init();
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            
-            (Vector3[] Area, int[] index, int[] indexNum, int[] ABC, string job, uint tp, Vector3[] path, string itemName) = GetArea(area);
-            if (tp != 0)
+
+            (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id);
+            if (Id <= 0) {
+                PluginLog.Log($"param error");
+                return false;
+            }
+            if (Tp != 0)
             {
-                Teleporter.Teleport(tp);
+                Teleporter.Teleport(Tp);
                 Thread.Sleep(12000);
-                if (job != "") {
-                    WoAutoCollectionPlugin.Executor.DoGearChange(job);
+                if (!CommonUi.CurrentJob(Job))
+                {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                    Thread.Sleep(500);
                 }
+                // 去起始点O
+                MovePositions(Path, true);
             }
-            // 去起始点O
-            MovePositions(path, true);
-
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-            PluginLog.Log($"采集 {position.X} {position.Y} {position.Z}");
-
-            Thread.Sleep(500);
-
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            List< GameObject > gameObjects = new();
-            List< int > gameObjectsIndex = new();
-
-            List<string> list = new() { itemName };
-            (int GathingButton, string name) = CommonUi.GetGatheringIndex(list, GameData);
-            if (GathingButton == 0) {
-                closed = true;
-                PluginLog.Log($"采集点不存在: {name}");
-            }
-            for (int i = 0, j = 0, k = 0 ; i < Area.Length; i++)
+            int n = 0;
+            while (!closed & n < 1000)
             {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return false;
-                }
+                Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                List<GameObject> gameObjects = new();
+                List<int> gameObjectsIndex = new();
 
-                if (ABC[k] == i && gameObjects.ToArray().Length == 0 && j < index.Length) {
-                    (gameObjects, gameObjectsIndex) = Util.GetCanGatherPosition(Area, index, j, SizeFactor);
-                    j += indexNum[k];
-                    k++;
-
-                    if (k > 2) {
-                        k = 2;
-                    }
-                }
-                if (gameObjectsIndex.ToArray().Length > 0)
+                for (int i = 0, j = 0, k = 0; i < Points.Length; i++)
                 {
-                    PluginLog.Log($"采集点 {gameObjectsIndex[0]}");
-                }
-
-                if (Array.IndexOf(index, i) != -1)
-                {
-                    if (gameObjectsIndex.ToArray().Length > 0 && gameObjectsIndex[0] != i)
+                    if (closed)
                     {
-                        PluginLog.Log($"skip point {i}");
-                        continue;
+                        PluginLog.Log($"中途结束");
+                        return false;
                     }
-                    
-                    if (gameObjects.ToArray().Length > 0)
+                    if (gameObjects.ToArray().Length == 0 && Area[k] == i && j < CanCollectPoints.Length)
                     {
-                        GameObject go = gameObjects[0];
-                        if (go != null)
+                        (gameObjects, gameObjectsIndex) = Util.GetCanGatherPosition(Points, CanCollectPoints, j, UnknownPointsNum[k], SizeFactor);
+                        if (k < UnknownPointsNum.Length - 1)
                         {
-                            KeyOperates.KeyMethod(Keys.e_key);
-                            position = KeyOperates.MoveToPoint(position, Area[i], territoryType, false, false);
-                            PluginLog.Log($"到达到达点{i} {position.X} {position.Y} {position.Z}");
-                            var targetMgr = DalamudApi.TargetManager;
-                            if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                            j += UnknownPointsNum[k];
+                            k++;
+                        }
+                    }
+
+                    if (Array.IndexOf(CanCollectPoints, i) != -1)
+                    {
+                        if (gameObjectsIndex.ToArray().Length > 0 && gameObjectsIndex[0] != i)
+                        {
+                            PluginLog.Log($"skip point {i}");
+                            continue;
+                        }
+
+                        if (gameObjects.ToArray().Length > 0)
+                        {
+                            GameObject go = gameObjects[0];
+                            if (go != null)
                             {
-                                if (DalamudApi.Condition[ConditionFlag.Mounted])
+                                if (!DalamudApi.Condition[ConditionFlag.Mounted])
                                 {
-                                    KeyOperates.KeyMethod(Keys.q_key);
-                                    Thread.Sleep(500);
+                                    KeyOperates.KeyMethod(Keys.e_key);
                                 }
-                                PluginLog.Log($"work: {go.ObjectId} type: {go.ObjectKind}");
-                                targetMgr.SetTarget(go);
+                                float x = Maths.GetCoordinate(go.Position.X, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float y = Maths.GetCoordinate(go.Position.Y, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float z = Maths.GetCoordinate(go.Position.Z, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                Vector3 GatherPoint = new(x, y, z);
+                                //PluginLog.Log($"去可采集点{i} {Points[i].X} {Points[i].Y} {Points[i].Z}");
+                                position = KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
+                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                                {
+                                    var targetMgr = DalamudApi.TargetManager;
+                                    targetMgr.SetTarget(go);
 
-                                int t = 0;
-                                while (CommonUi.AddonGatheringIsOpen() && t < 10)
-                                {
-                                    KeyOperates.KeyMethod(Keys.num0_key);
-                                    Thread.Sleep(500);
-                                    t++;
-                                }
-                                if (t >= 10)
-                                {
-                                    i--;
-                                    continue;
-                                }
-
-                                PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                                uint gp = player.CurrentGp;
-                                if (area < 100)
-                                {
-                                    if (gp > 501)
+                                    int tt = 0;
+                                    while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 5)
                                     {
-                                        KeyOperates.KeyMethod(Keys.F3_key);
-                                        Thread.Sleep(2000);
+                                        if (tt >= 2)
+                                        {
+                                            KeyOperates.KeyMethod(Keys.w_key, 200);
+                                        }
+                                        KeyOperates.KeyMethod(Keys.q_key);
+                                        Thread.Sleep(1000);
+                                        tt++;
+
+                                        if (closed)
+                                        {
+                                            PluginLog.Log($"task stopping");
+                                            return true;
+                                        }
                                     }
-                                }
-                                else {
-                                    if (gp > 351)
+
+                                    KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                    tt = 0;
+                                    while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                                     {
-                                        KeyOperates.KeyMethod(Keys.F4_key);
-                                        Thread.Sleep(2000);
-                                        KeyOperates.KeyMethod(Keys.F5_key);
-                                        Thread.Sleep(2000);
+                                        KeyOperates.KeyMethod(Keys.num0_key);
+                                        Thread.Sleep(500);
+                                        tt++;
                                     }
-                                    else {
-                                        GathingButton = Position.Gatheing3Button;
+                                    if (tt >= 5)
+                                    {
+                                        PluginLog.Log($"未打开采集面板, skip {i}..");
+                                        if (gameObjects.ToArray().Length > 0)
+                                        {
+                                            gameObjects.RemoveAt(0);
+                                            gameObjectsIndex.RemoveAt(0);
+                                        }
+                                        continue;
                                     }
-                                }
+                                    Thread.Sleep(1000);
 
-                                if (CommonUi.AddonGatheringIsOpen()) {
-                                    CommonUi.GatheringButton(GathingButton);
-                                }
+                                    if (CommonUi.AddonGatheringIsOpen())
+                                    {
+                                        CommonBot.LimitMaterialsMethod(Name);
+                                    }
 
-                                if (!DalamudApi.Condition[ConditionFlag.Gathering42]) {
-                                    KeyOperates.KeyMethod(Keys.num0_key);
-                                }
-                                if (!DalamudApi.Condition[ConditionFlag.Gathering42])
-                                {
-                                    PluginLog.Log($"未知原因 skip...");
                                     if (gameObjects.ToArray().Length > 0)
                                     {
                                         gameObjects.RemoveAt(0);
                                         gameObjectsIndex.RemoveAt(0);
                                     }
-                                    continue;
-                                }
-                                while (DalamudApi.Condition[ConditionFlag.Gathering42])
-                                {
-                                    Thread.Sleep(1000);
-                                }
-                                
-                                if (gameObjects.ToArray().Length > 0)
-                                {
-                                    gameObjects.RemoveAt(0);
-                                    gameObjectsIndex.RemoveAt(0);
+                                    KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                                 }
                             }
-                        }
-                        else {
-                            PluginLog.Log($"从 点{j} 开始");
+                            else
+                            {
+                                PluginLog.Log($"从 点{j} 开始");
+                            }
                         }
                     }
-                }
-                else
-                {
-                    PluginLog.Log($"去点{i} { Area[i].X} { Area[i].Y} { Area[i].Z}");
-                    CommonBot.RepairAndExtractMateria();
+                    else
+                    {
+                        CommonBot.RepairAndExtractMateria();
 
-                    position = KeyOperates.MoveToPoint(position, Area[i], territoryType, true, false);
-                    PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                    PluginLog.Log($"not work point {i}");
+                        position = KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
+                        PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
+                    }
                 }
+                n++;
             }
             return true;
         }
@@ -534,7 +515,7 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.ForceStop();
         }
 
-        public (Vector3[], int[], int[], int[], string, uint, Vector3[], string) GetArea(int area) {
+        public (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetData(int id) {
             Vector3[] Area = Array.Empty<Vector3>();
             int[] index = Array.Empty<int>();
             int[] indexNum = Array.Empty<int>();
@@ -544,46 +525,93 @@ namespace WoAutoCollectionPlugin.Bot
             Vector3[] paths = Array.Empty<Vector3>();
             string name = "";
 
-            if (area == 1)
-            {   // 1-稻槎草(园:68)
+            if (id == 0) {
+                List<int> list = Position.GetMateriaId();
+                Random rd = new();
+                int r = rd.Next(list.Count);
+                id = list[r];
+                PluginLog.Log($"随机采集ID: {r} {id}");
+            }
+
+            if (id == 1)
+            {   // 1-
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
                 name = "稻槎草";
             }
-            else if (area == 2)
+            else if (id == 2)
             {
-                // 2-繁缕(园:68)
+                // 2-
                 Area = Position.TestArea;
                 index = Position.TestIndex;
                 indexNum = Position.TestIndexNum3;
                 ABC = Position.TestABC;
                 name = "繁缕";
             }
-            else if (area == 3)
+            else if (id == 3)
             {
-                // 3-棕榈糖浆(园:82)
+                // 3-
                 Area = Position.Area3;
                 index = Position.Index3;
                 indexNum = Position.IndexNum3;
                 ABC = Position.ABC3;
                 name = "棕榈糖浆";
             }
-            else if (area == 4)
+            else if (id == 4)
             {
-                // 4-葛根(园:65)
+                // 4-
                 Area = Position.Area4;
                 index = Position.Index4;
                 indexNum = Position.IndexNum4;
                 ABC = Position.ABC4;
                 name = "葛根";
             }
-            // TOOD 血红奇异果(园:36) 芦荟(园:32)
-            // 萨维奈紫苏(园:82)
-            // 大蜜蜂的巢(园:75)  巨人新薯(园:87)  山地小麦(园:73) 灵银矿(矿:53) 灵银沙(矿:51)
-
-            return (Area, index, indexNum, ABC, job, tp, paths, name);
+            if (id == 10)   // 血红奇异果(园:36)
+            {
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 11)
+            {    // 芦荟(园:32)
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 12) {
+                // 石间清水(矿:64)
+                return Position.GetMaterialById(id);
+            }  
+            else if (id == 13) { }  // 繁缕(园:68) //稻槎草(园:68)
+            else if (id == 14) { }  // 葛根(园:65)
+            else if (id == 15) { }  // 大蜜蜂的巢(园:75)
+            else if (id == 20)
+            {
+                // 皇家葡萄(园:75)
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 21)
+            {
+                // 野园甜菜(园:72)
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 22)
+            {
+                // 山地小麦(园:73) 
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 23)
+            {
+                // 愈疮木原木(园: 80)
+                return Position.GetMaterialById(id);
+            }
+            else if (id == 24)
+            {
+                // 暗银沙(矿: 80)
+                return Position.GetMaterialById(id);
+            }
+            // 
+            //  灵银矿(矿:53)   灵银沙(矿:51)   暗银沙(矿: 79)   矮人棉(园:79)
+            //  萨维奈紫苏(园: 82) 棕榈糖浆(园:82) 巨人新薯(园:87)
+            return (0, null, 0, null, 0, 0, null, null, null, null, null);
         }
 
         public (Vector3[], int[], int[], int) GetAreaByType(int type) {

@@ -300,7 +300,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 限时材料采集手法
-        public bool LimitMaterialsMethod(string Names, string job) {
+        public bool LimitMaterialsMethod(string Names) {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
 
             uint gp = player.CurrentGp;
@@ -308,12 +308,11 @@ namespace WoAutoCollectionPlugin.Bot
 
             List<string> list = new();
             string[] names = Names.Split('|');
+            PluginLog.Log($"开始采集: {Names}");
             foreach (string na in names) {
                 list.Add(na);
             }
-
-            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
-            PluginLog.Log($"开始采集: {name}");
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
             int action = 0;
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
@@ -379,7 +378,7 @@ namespace WoAutoCollectionPlugin.Bot
                 } else if (tt == 2) {
                     if (name.Contains("土壤"))
                     {
-                        (GatherIndex, name) = CommonUi.GetGatheringIndex(list, GameData);
+                        (GatherIndex, name) = CommonUi.GetGatheringIndex(list);
                     }
                 }
                 

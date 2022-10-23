@@ -5,6 +5,10 @@ namespace WoAutoCollectionPlugin.Utility
 {
     public static class Position
     {
+        // 16-采矿工 17-园艺工 18-捕鱼人
+        // 8-刻木匠 9-锻铁匠 10-铸甲匠 11-雕金匠 12-制革匠 13-裁衣匠
+        // 14-炼金术士 15-烹调师
+
         // 天穹街
         public static ushort TianQiongJieTerritoryType = 886;
         //
@@ -589,9 +593,322 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static int Gatheing4Button = 3;
 
-        // 血红奇异果 TODO
+        // ---------------------------------------------------------------------------------------------------
+        // ---------------------------------------------------------------------------------------------------
 
+        public static Vector3[] path10 = {
+            new Vector3 (1792, 2219, 2860),
+            new Vector3 (2001, 2156, 2933),
+        };
+        public static Vector3[] Points10 = {
+            new Vector3 (2064, 2154, 2980), // 进入A
+            new Vector3 (2065, 2152, 2999),
+            new Vector3 (2074, 2152, 3015),
+            new Vector3 (2111, 2151, 3005),
+            new Vector3 (2127, 2155, 2982), // 离开A
+            new Vector3 (2151, 2156, 2949), // 进入B
+            new Vector3 (2175, 2156, 2949),
+            new Vector3 (2163, 2151, 2891),
+            new Vector3 (2159, 2150, 2850),
+            new Vector3 (2178, 2150, 2841), // 离开B
+            new Vector3 (2178, 2150, 2841), // 进入C
+            new Vector3 (2207, 2152, 2826),
+            new Vector3 (2188, 2154, 2820),
+            new Vector3 (2196, 2154, 2767),
+            new Vector3 (2171, 2152, 2775), // 离开C
+            new Vector3 (2156, 2152, 2765), // 进入D
+            new Vector3 (2153, 2152, 2751),
+            new Vector3 (2140, 2152, 2747),
+            new Vector3 (2134, 2152, 2752),
+            new Vector3 (2136, 2158, 2808), // 离开D
+        };
+        public static int[] CanCollectPoints10 = {
+            1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
+        };
+        public static int[] UnknownPointsNum10 = {
+            3, 3, 3, 3
+        };
+        public static int[] Area10 = {
+            1, 6, 11, 16
+        };
+
+        public static Vector3[] path11 = {
+            new Vector3 (1853, 2242, 1287),
+            new Vector3 (1861, 2248, 1217),
+            new Vector3 (1991, 2173, 975),
+        };
+        public static Vector3[] Points11 = {
+            new Vector3 (1996, 2163, 888), // 进入A
+            new Vector3 (1976, 2166, 909),
+            new Vector3 (2023, 2159, 961),
+            new Vector3 (2077, 2158, 942),
+            new Vector3 (2075, 2169, 924), // 离开A
+            new Vector3 (2067, 2056, 890), // 进入B
+            new Vector3 (2085, 2158, 885),
+            new Vector3 (2092, 2159, 879),
+            new Vector3 (2107, 2158, 837),
+            new Vector3 (2108, 2155, 810), // 离开B
+            new Vector3 (2108, 2155, 810), // 进入C
+            new Vector3 (2103, 2157, 793),
+            new Vector3 (2112, 2158, 788),
+            new Vector3 (2051, 2171, 773),
+            new Vector3 (2036, 2163, 799), // 离开C
+            new Vector3 (2022, 2164, 818), // 进入D
+            new Vector3 (2003, 2167, 834),
+            new Vector3 (2017, 2162, 852),
+            new Vector3 (1972, 2172, 855),
+            new Vector3 (1982, 2169, 871), // 离开D
+        };
+        public static int[] CanCollectPoints11 = {
+            1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
+        };
+        public static int[] UnknownPointsNum11 = {
+            3, 3, 3, 3
+        };
+        public static int[] Area11 = {
+            1, 6, 11, 16
+        };
+
+        public static Vector3[] path12 = {
+            new Vector3 (3103, 2295, 1985),
+        };
+        public static Vector3[] Points12 = {
+            new Vector3 (3180, 2230, 1991), // 进入A
+            new Vector3 (3213, 2231, 1978),
+            new Vector3 (3184, 2236, 2003), //
+            new Vector3 (3188, 2236, 2008),
+            new Vector3 (3186, 2237, 2016),
+            new Vector3 (3187, 2241, 2031),
+            new Vector3 (3204, 2294, 2082), // 离开A
+            new Vector3 (3303, 2313, 2233), // 进入B
+            new Vector3 (3337, 2321, 2253),
+            new Vector3 (3361, 2326, 2309),
+            new Vector3 (3361, 2334, 2320),
+            new Vector3 (3296, 2336, 2346), //
+            new Vector3 (3301, 2332, 2378),
+            new Vector3 (3148, 2332, 2202), // 离开B
+            new Vector3 (3028, 2288, 2164), // 进入C
+            new Vector3 (3032, 2295, 2184),
+            new Vector3 (2985, 2282, 2187),
+            new Vector3 (2963, 2280, 2186),
+            new Vector3 (2961, 2282, 2167), //
+            new Vector3 (2911, 2265, 2158),
+            new Vector3 (3125, 2305, 2071), // 离开C
+        };
+        public static int[] CanCollectPoints12 = {
+            1, 3, 4, 5, 8, 9, 10, 12, 15, 16, 17, 19
+        };
+        public static int[] UnknownPointsNum12 = {
+            4, 4, 4
+        };
+        public static int[] Area12 = {
+            1, 8, 15
+        };
+
+        public static Vector3[] path20 = {
+            new Vector3 (1735, 2280, 2821),
+            new Vector3 (1684, 2220, 2823),
+        };
+        public static Vector3[] Points20 = {
+            new Vector3 (1631, 2158, 2893), // 进入A
+            new Vector3 (1636, 2155, 2913),
+            new Vector3 (1617, 2154, 2899),
+            new Vector3 (1578, 2160, 2919),
+            new Vector3 (1586, 2158, 2887),
+            new Vector3 (1354, 2192, 2750), // 离开A
+            new Vector3 (1300, 2168, 2711), // 进入B
+            new Vector3 (1251, 2162, 2678),
+            new Vector3 (1278, 2162, 2676),
+            new Vector3 (1288, 2171, 2665), //
+            new Vector3 (1298, 2169, 2654),
+            new Vector3 (1317, 2170, 2647),
+            new Vector3 (1442, 2191, 2618), // 离开B
+            new Vector3 (1548, 2181, 2584), // 进入C
+            new Vector3 (1559, 2180, 2566),
+            new Vector3 (1607, 2190, 2563),
+            new Vector3 (1619, 2188, 2599),
+            new Vector3 (1590, 2186, 2592),
+            new Vector3 (1602, 2198, 2712), // 离开C
+        };
+        public static int[] CanCollectPoints20 = {
+            1, 2, 3, 4, 7, 8, 10, 11, 14, 15, 16, 17
+        };
+        public static int[] UnknownPointsNum20 = {
+            4, 4, 4
+        };
+        public static int[] Area20 = {
+            1, 7, 14
+        };
+
+        public static Vector3[] path21 = {
+            new Vector3 (1304, 2269, 2477),
+            new Vector3 (1309, 2229, 2379),
+        };
+        public static Vector3[] Points21 = {
+            new Vector3 (1414, 2159, 2336), // 进入A
+            new Vector3 (1442, 2153, 2332),
+            new Vector3 (1419, 2153, 2299),
+            new Vector3 (1406, 2153, 2276),
+            new Vector3 (1411, 2153, 2268),
+            new Vector3 (1351, 2171, 2208), // 离开A
+            new Vector3 (1212, 2165, 2069), // 进入B
+            new Vector3 (1184, 2159, 2042),
+            new Vector3 (1155, 2162, 2039),
+            new Vector3 (1146, 2211, 2192), // 离开B
+            new Vector3 (1126, 2225, 2386), // 进入C
+            new Vector3 (1121, 2226, 2405),
+            new Vector3 (1148, 2228, 2437),
+            new Vector3 (1163, 2216, 2393),
+            new Vector3 (1188, 2210, 2428),
+            new Vector3 (1262, 2201, 2392), // 离开C
+        };
+        public static int[] CanCollectPoints21 = {
+            1, 2, 3, 4, 7, 8, 11, 12, 13, 14
+        };
+        public static int[] UnknownPointsNum21 = {
+            4, 2, 4
+        };
+        public static int[] Area21 = {
+            1, 7, 11
+        };
+
+        public static Vector3[] path22 = {
+            new Vector3 (1747, 2198, 3583),
+        };
+        public static Vector3[] Points22 = {
+            new Vector3 (1770, 2176, 3644), // 进入A
+            new Vector3 (1788, 2174, 3655),
+            new Vector3 (1776, 2172, 3672),
+            new Vector3 (1792, 2168, 3710),
+            new Vector3 (1781, 2168, 3727),
+            new Vector3 (1755, 2183, 3667), // 离开A
+            new Vector3 (1581, 2190, 3751), // 进入B
+            new Vector3 (1565, 2191, 3766),
+            new Vector3 (1545, 2193, 3750),
+            new Vector3 (1529, 2193, 3737),
+            new Vector3 (1497, 2194, 3728),
+            new Vector3 (1533, 2202, 3646), // 离开B
+            new Vector3 (1588, 2188, 3460), // 进入C
+            new Vector3 (1595, 2186, 3440),
+            new Vector3 (1614, 2186, 3401),
+            new Vector3 (1617, 2183, 3429),
+            new Vector3 (1633, 2183, 3429),
+            new Vector3 (1686, 2197, 3511), // 离开C
+        };
+        public static int[] CanCollectPoints22 = {
+            1, 2, 3, 4, 7, 8, 9, 10, 13, 14, 15, 16
+        };
+        public static int[] UnknownPointsNum22 = {
+            4, 4, 4
+        };
+        public static int[] Area22 = {
+            1, 7, 13
+        };
+
+        public static Vector3[] path23 = {
+            new Vector3 (1167, 2375, 1069),
+        };
+        public static Vector3[] Points23 = {
+            new Vector3 (1241, 2328, 922), // 进入A
+            new Vector3 (1269, 2354, 903),
+            new Vector3 (1255, 2356, 871),
+            new Vector3 (1304, 2355, 880),
+            new Vector3 (1344, 2349, 873),
+            new Vector3 (1301, 2367, 906), // 离开A
+            new Vector3 (1398, 2359, 1045), // 进入B
+            new Vector3 (1420, 2358, 1054),
+            new Vector3 (1440, 2351, 1110),
+            new Vector3 (1367, 2357, 1078),
+            new Vector3 (1343, 2349, 1100),
+            new Vector3 (1222, 2352, 1120), // 离开B
+            new Vector3 (1050, 2305, 1172), // 进入C
+            new Vector3 (1027, 2298, 1179),
+            new Vector3 (1066, 2310, 1116),
+            new Vector3 (1018, 2317, 1083),
+            new Vector3 (1083, 2319, 1048),
+            new Vector3 (1175, 2366, 983), // 离开C
+        };
+        public static int[] CanCollectPoints23 = {
+            1, 2, 3, 4, 7, 8, 9, 10, 13, 14, 15, 16
+        };
+        public static int[] UnknownPointsNum23 = {
+            4, 4, 4
+        };
+        public static int[] Area23 = {
+            1, 7, 13
+        };
+
+        public static Vector3[] path24 = {
+            new Vector3 (3599, 2270, 1660),
+        };
+        public static Vector3[] Points24 = {
+            new Vector3 (3541, 2210, 1597), // 进入A
+            new Vector3 (3519, 2215, 1628),
+            new Vector3 (3553, 2217, 1628),  //
+            new Vector3 (3571, 2205, 1643),
+            new Vector3 (3598, 2215, 1654),
+            new Vector3 (3608, 2212, 1628),
+            new Vector3 (3699, 2261, 1476), // 离开A
+            new Vector3 (3711, 2252, 1388), // 进入B
+            new Vector3 (3753, 2251, 1399), 
+            new Vector3 (3716, 2250, 1381), //
+            new Vector3 (3739, 2260, 1369),
+            new Vector3 (3732, 2258, 1360),
+            new Vector3 (3714, 2256, 1362),
+            new Vector3 (3595, 2287, 1301), // 离开B
+            new Vector3 (3562, 2267, 1299), // 进入C
+            new Vector3 (3552, 2269, 1283),
+            new Vector3 (3525, 2276, 1268),
+            new Vector3 (3495, 2273, 1267), // 
+            new Vector3 (3500, 2273, 1265),
+            new Vector3 (3493, 2283, 1240),
+            new Vector3 (3573, 2265, 1520), // 离开C
+        };
+        public static int[] CanCollectPoints24 = {
+            1, 3, 4, 5, 8, 10, 11, 12, 15, 16, 18, 19
+        };
+        public static int[] UnknownPointsNum24 = {
+            4, 4, 4
+        };
+        public static int[] Area24 = {
+            1, 8, 15
+        };
+
+
+        // 血红奇异果
+        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
+            (10, "血红奇异果", 17, "园艺工", 50, 6, path10, Points10, CanCollectPoints10, UnknownPointsNum10, Area10),    // 摩杜纳
+            (11, "芦荟", 17, "园艺工", 50, 19, path11, Points11, CanCollectPoints11, UnknownPointsNum11, Area11),    // 南萨纳兰
+            (12, "石间清水", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
+            (20, "皇家葡萄", 17, "园艺工", 80, 142, path20, Points20, CanCollectPoints20, UnknownPointsNum20, Area20), // 拉凯提卡大森林
+            (21, "野园甜菜", 17, "园艺工", 80, 144, path21, Points21, CanCollectPoints21, UnknownPointsNum21, Area21), // 伊尔美格
+            (22, "山地小麦", 17, "园艺工", 80, 138, path22, Points22, CanCollectPoints22, UnknownPointsNum22, Area22), // 珂露西亚岛
+            (23, "愈疮木原木", 17, "园艺工", 80, 136, path23, Points23, CanCollectPoints23, UnknownPointsNum23, Area23), // 雷克兰德 
+            //(24, "暗银矿", 16, "采矿工", 80, 132, path24, Points24, CanCollectPoints24, UnknownPointsNum24, Area24), // 雷克兰德 
+        };
         // 芦荟 TODO
+
+        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetMaterialById(int id)
+        {
+            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
+            {
+                if (id == Id)
+                {
+                    return (Id, Name, Job, JobName, Lv, Tp, Path, Points, CanCollectPoints, UnknownPointsNum, Area);
+                }
+            }
+            return (0, null, 0, null, 0, 0,  null, null, null, null, null);
+        }
+
+        public static List<int> GetMateriaId()
+        {
+            List<int> list = new();
+            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
+            {
+                list.Add(Id);
+            }
+            return list;
+        }
     }
 
 

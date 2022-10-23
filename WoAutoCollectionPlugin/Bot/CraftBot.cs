@@ -67,7 +67,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunCraftScript(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
-            while (!closed && BagManager.InventoryRemaining() >= 10)
+            while (!closed && BagManager.InventoryRemaining() > 10)
             {
                 Thread.Sleep(1000);
                 if (closed)
@@ -143,7 +143,7 @@ namespace WoAutoCollectionPlugin.Bot
                         continue;
                     }
 
-                    CommonBot.RepairAndExtractMateria();
+                    //CommonBot.RepairAndExtractMateria();
 
                     // 上交收藏品和交换道具
                     if (recipeName.Contains("收藏用") && exchangeItem > 0)

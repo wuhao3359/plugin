@@ -9,16 +9,16 @@ namespace WoAutoCollectionPlugin.Utility
 {
     public static unsafe class Util
     {
-        public static (List<GameObject>, List<int>) GetCanGatherPosition(Vector3[] Area, int[] index, int j, ushort SizeFactor)
+        public static (List<GameObject>, List<int>) GetCanGatherPosition(Vector3[] Points, int[] CanCollectPoint, int j, int UnknownPoints, ushort SizeFactor)
         {
             List<GameObject> gameObjects = new();
             List<int> gameObjectsIndex = new();
-            for (int i = 0; i < 4; i++, j++)
+            for (int i = 0; i < UnknownPoints; i++, j++)
             {
-                GameObject go = CurrentPositionCanGather(Area[index[j]], SizeFactor);
-                if (go != null ) {
+                GameObject go = CurrentPositionCanGather(Points[CanCollectPoint[j]], SizeFactor);
+                if (go != null) {
                     gameObjects.Add(go);
-                    gameObjectsIndex.Add(index[j]);
+                    gameObjectsIndex.Add(CanCollectPoint[j]);
                 }
             }
             return (gameObjects, gameObjectsIndex);
@@ -33,28 +33,26 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < length; i++)
             {
                 GameObject? gameObject = DalamudApi.ObjectTable[i];
-                if (gameObject != null && CanGather(gameObject))
+                if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                 {
-                    if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                    Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                    double d = Maths.Distance(position, v);
+                    if (d < distance)
                     {
-                        Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
-                        double d = Maths.Distance(position, v);
-                        if (d < distance) {
-                            distance = d;
-                            nearestGo = gameObject;
-                            index = i;
-                        }
+                        distance = d;
+                        nearestGo = gameObject;
+                        index = i;
                     }
                 }
             }
 
-            if (nearestGo != null)
+            if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近 {index}, {nearestGo.DataId}");
+                //PluginLog.Log($"最近: {index}");
                 return nearestGo;
             }
             else {
-                PluginLog.Log($"没有找到最近的point");
+                //PluginLog.Log($"没有找到最近的point");
                 return null;
             }
         }
@@ -73,8 +71,7 @@ namespace WoAutoCollectionPlugin.Utility
                     if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                     {
                         if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场"
-                            || gameObject.Name.ToString() == "限时的石场") {
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场") {
                             Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
                             double d = 100000f;
                             foreach (Vector3 pos in positions)
@@ -94,7 +91,7 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (nearestGo != null)
             {
-                PluginLog.Log($"最近, {nearestGo.DataId}");
+                //PluginLog.Log($"最近, {nearestGo.DataId}");
                 return (nearestGo, position);
             }
             else
