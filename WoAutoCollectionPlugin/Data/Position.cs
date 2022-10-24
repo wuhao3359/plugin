@@ -6,8 +6,6 @@ namespace WoAutoCollectionPlugin.Utility
     public static class Position
     {
         // 16-采矿工 17-园艺工 18-捕鱼人
-        // 8-刻木匠 9-锻铁匠 10-铸甲匠 11-雕金匠 12-制革匠 13-裁衣匠
-        // 14-炼金术士 15-烹调师
 
         // 天穹街
         public static ushort TianQiongJieTerritoryType = 886;
@@ -596,11 +594,11 @@ namespace WoAutoCollectionPlugin.Utility
         // ---------------------------------------------------------------------------------------------------
         // ---------------------------------------------------------------------------------------------------
 
-        public static Vector3[] path10 = {
+        public static Vector3[] path4814 = {
             new Vector3 (1792, 2219, 2860),
             new Vector3 (2001, 2156, 2933),
         };
-        public static Vector3[] Points10 = {
+        public static Vector3[] Points4814 = {
             new Vector3 (2064, 2154, 2980), // 进入A
             new Vector3 (2065, 2152, 2999),
             new Vector3 (2074, 2152, 3015),
@@ -622,22 +620,22 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2134, 2152, 2752),
             new Vector3 (2136, 2158, 2808), // 离开D
         };
-        public static int[] CanCollectPoints10 = {
+        public static int[] CanCollectPoints4814 = {
             1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
         };
-        public static int[] UnknownPointsNum10 = {
+        public static int[] UnknownPointsNum4814 = {
             3, 3, 3, 3
         };
-        public static int[] Area10 = {
+        public static int[] Area4814 = {
             1, 6, 11, 16
         };
 
-        public static Vector3[] path11 = {
+        public static Vector3[] path4790 = {
             new Vector3 (1853, 2242, 1287),
             new Vector3 (1861, 2248, 1217),
             new Vector3 (1991, 2173, 975),
         };
-        public static Vector3[] Points11 = {
+        public static Vector3[] Points4790 = {
             new Vector3 (1996, 2163, 888), // 进入A
             new Vector3 (1976, 2166, 909),
             new Vector3 (2023, 2159, 961),
@@ -659,20 +657,20 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1972, 2172, 855),
             new Vector3 (1982, 2169, 871), // 离开D
         };
-        public static int[] CanCollectPoints11 = {
+        public static int[] CanCollectPoints4790 = {
             1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
         };
-        public static int[] UnknownPointsNum11 = {
+        public static int[] UnknownPointsNum4790 = {
             3, 3, 3, 3
         };
-        public static int[] Area11 = {
+        public static int[] Area4790 = {
             1, 6, 11, 16
         };
 
-        public static Vector3[] path12 = {
+        public static Vector3[] path19872 = {
             new Vector3 (3103, 2295, 1985),
         };
-        public static Vector3[] Points12 = {
+        public static Vector3[] Points19872 = {
             new Vector3 (3180, 2230, 1991), // 进入A
             new Vector3 (3213, 2231, 1978),
             new Vector3 (3184, 2236, 2003), //
@@ -695,21 +693,21 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (2911, 2265, 2158),
             new Vector3 (3125, 2305, 2071), // 离开C
         };
-        public static int[] CanCollectPoints12 = {
+        public static int[] CanCollectPoints19872 = {
             1, 3, 4, 5, 8, 9, 10, 12, 15, 16, 17, 19
         };
-        public static int[] UnknownPointsNum12 = {
+        public static int[] UnknownPointsNum19872 = {
             4, 4, 4
         };
-        public static int[] Area12 = {
+        public static int[] Area19872 = {
             1, 8, 15
         };
 
-        public static Vector3[] path20 = {
+        public static Vector3[] path27826 = {
             new Vector3 (1735, 2280, 2821),
             new Vector3 (1684, 2220, 2823),
         };
-        public static Vector3[] Points20 = {
+        public static Vector3[] Points27826 = {
             new Vector3 (1631, 2158, 2893), // 进入A
             new Vector3 (1636, 2155, 2913),
             new Vector3 (1617, 2154, 2899),
@@ -730,21 +728,21 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1590, 2186, 2592),
             new Vector3 (1602, 2198, 2712), // 离开C
         };
-        public static int[] CanCollectPoints20 = {
+        public static int[] CanCollectPoints27826 = {
             1, 2, 3, 4, 7, 8, 10, 11, 14, 15, 16, 17
         };
-        public static int[] UnknownPointsNum20 = {
+        public static int[] UnknownPointsNum27826 = {
             4, 4, 4
         };
-        public static int[] Area20 = {
+        public static int[] Area27826 = {
             1, 7, 14
         };
 
-        public static Vector3[] path21 = {
+        public static Vector3[] path27824 = {
             new Vector3 (1304, 2269, 2477),
             new Vector3 (1309, 2229, 2379),
         };
-        public static Vector3[] Points21 = {
+        public static Vector3[] Points27824 = {
             new Vector3 (1414, 2159, 2336), // 进入A
             new Vector3 (1442, 2153, 2332),
             new Vector3 (1419, 2153, 2299),
@@ -762,20 +760,20 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1188, 2210, 2428),
             new Vector3 (1262, 2201, 2392), // 离开C
         };
-        public static int[] CanCollectPoints21 = {
+        public static int[] CanCollectPoints27824 = {
             1, 2, 3, 4, 7, 8, 11, 12, 13, 14
         };
-        public static int[] UnknownPointsNum21 = {
+        public static int[] UnknownPointsNum27824 = {
             4, 2, 4
         };
-        public static int[] Area21 = {
+        public static int[] Area27824 = {
             1, 7, 11
         };
 
-        public static Vector3[] path22 = {
+        public static Vector3[] path27832 = {
             new Vector3 (1747, 2198, 3583),
         };
-        public static Vector3[] Points22 = {
+        public static Vector3[] Points27832 = {
             new Vector3 (1770, 2176, 3644), // 进入A
             new Vector3 (1788, 2174, 3655),
             new Vector3 (1776, 2172, 3672),
@@ -795,21 +793,21 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1633, 2183, 3429),
             new Vector3 (1686, 2197, 3511), // 离开C
         };
-        public static int[] CanCollectPoints22 = {
+        public static int[] CanCollectPoints27832 = {
             1, 2, 3, 4, 7, 8, 9, 10, 13, 14, 15, 16
         };
-        public static int[] UnknownPointsNum22 = {
+        public static int[] UnknownPointsNum27832 = {
             4, 4, 4
         };
-        public static int[] Area22 = {
+        public static int[] Area27832 = {
             1, 7, 13
         };
 
-        public static Vector3[] path23 = {
+        public static Vector3[] path27687 = {
             new Vector3 (1167, 2375, 1069),
         };
-        public static Vector3[] Points23 = {
-            new Vector3 (1241, 2350, 922), // 进入A
+        public static Vector3[] Points27687 = {
+            new Vector3 (1241, 2328, 922), // 进入A
             new Vector3 (1269, 2354, 903),
             new Vector3 (1255, 2356, 871),
             new Vector3 (1304, 2355, 880),
@@ -828,20 +826,20 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1083, 2319, 1048),
             new Vector3 (1175, 2366, 983), // 离开C
         };
-        public static int[] CanCollectPoints23 = {
+        public static int[] CanCollectPoints27687 = {
             1, 2, 3, 4, 7, 8, 9, 10, 13, 14, 15, 16
         };
-        public static int[] UnknownPointsNum23 = {
+        public static int[] UnknownPointsNum27687 = {
             4, 4, 4
         };
-        public static int[] Area23 = {
+        public static int[] Area27687 = {
             1, 7, 13
         };
 
-        public static Vector3[] path24 = {
+        public static Vector3[] path27703 = {
             new Vector3 (3599, 2270, 1660),
         };
-        public static Vector3[] Points24 = {
+        public static Vector3[] Points27703 = {
             new Vector3 (3541, 2210, 1597), // 进入A
             new Vector3 (3519, 2215, 1628),
             new Vector3 (3553, 2217, 1628),  //
@@ -864,46 +862,55 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3493, 2283, 1240),
             new Vector3 (3573, 2265, 1520), // 离开C
         };
-        public static int[] CanCollectPoints24 = {
+        public static int[] CanCollectPoints27703 = {
             1, 3, 4, 5, 8, 10, 11, 12, 15, 16, 18, 19
         };
-        public static int[] UnknownPointsNum24 = {
+        public static int[] UnknownPointsNum27703 = {
             4, 4, 4
         };
-        public static int[] Area24 = {
+        public static int[] Area27703 = {
             1, 8, 15
         };
 
 
         // 血红奇异果
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
-            (10, "血红奇异果", 17, "园艺工", 50, 6, path10, Points10, CanCollectPoints10, UnknownPointsNum10, Area10),    // 摩杜纳
-            (11, "芦荟", 17, "园艺工", 50, 19, path11, Points11, CanCollectPoints11, UnknownPointsNum11, Area11),    // 南萨纳兰
-            (12, "石间清水", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
-            (20, "皇家葡萄", 17, "园艺工", 80, 142, path20, Points20, CanCollectPoints20, UnknownPointsNum20, Area20), // 拉凯提卡大森林
-            (21, "野园甜菜", 17, "园艺工", 80, 144, path21, Points21, CanCollectPoints21, UnknownPointsNum21, Area21), // 伊尔美格
-            (22, "山地小麦", 17, "园艺工", 80, 138, path22, Points22, CanCollectPoints22, UnknownPointsNum22, Area22), // 珂露西亚岛
-            (23, "愈疮木原木", 17, "园艺工", 80, 136, path23, Points23, CanCollectPoints23, UnknownPointsNum23, Area23), // 雷克兰德 
-            (24, "暗银矿", 16, "采矿工", 80, 132, path24, Points24, CanCollectPoints24, UnknownPointsNum24, Area24), // 雷克兰德 
-        };
-        // 芦荟 TODO
+        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
+            (4814, 2, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
+            (4790, 2, "芦荟", 17, "园艺工", 50, 19, path4790, Points4790, CanCollectPoints4790, UnknownPointsNum4790, Area4790),    // 南萨纳兰
+            //(12534, 2, "灵银矿", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), //
+            (19872, 2, "石间清水", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), // 延夏
+            //(19853, 8, "葛根", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            // (19914, 2, "繁缕", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
+            // (19915, 2, "稻槎草", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
+            // (27803, 3, "凝灰岩", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
+            (27824, 12, "野园甜菜", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
+            (27826, 15, "皇家葡萄", 17, "园艺工", 80, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
+            (27832, 15, "山地小麦", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
+            //(27834, 12, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
+            (27687, 10, "愈疮木原木", 17, "园艺工", 80, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
+            //(27703, 10, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德 tt
 
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetMaterialById(int id)
+            //(36085, 10, "萨维奈紫苏", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36086, 10, "棕榈糖浆", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36089, 10, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+        };
+
+        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetMaterialById(int id)
         {
-            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
+            foreach ((int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
             {
                 if (id == Id)
                 {
-                    return (Id, Name, Job, JobName, Lv, Tp, Path, Points, CanCollectPoints, UnknownPointsNum, Area);
+                    return (Id, MaxBackPack, Name, Job, JobName, Lv, Tp, Path, Points, CanCollectPoints, UnknownPointsNum, Area);
                 }
             }
-            return (0, null, 0, null, 0, 0,  null, null, null, null, null);
+            return (0, 0, null, 0, null, 0, 0,  null, null, null, null, null);
         }
 
         public static List<int> GetMateriaId()
         {
             List<int> list = new();
-            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
+            foreach ((int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
             {
                 list.Add(Id);
             }

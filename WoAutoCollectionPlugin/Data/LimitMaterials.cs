@@ -198,42 +198,43 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(2044, 2172, 2774),
         };
 
+        // 16-采矿工 17-园艺工 18-捕鱼人
         // 优先级排序 TODO
         // 限时点 Lv以下
-        public static (int Id, string Name, int MinEt, int MaxEt, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points)[] Materials =
+        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points)[] Materials =
         {
-            (0, "暗物质晶簇|火之晶簇", 1, 2, "园艺工", 50, 24, path0, points0),    // 摩杜纳
-            (1, "暗物质晶簇|火之晶簇", 5, 6, "园艺工", 50, 24, path0, points0),   // 摩杜纳
-            (2, "暗物质晶簇|水之晶簇", 9, 10, "园艺工", 50, 24, path0, points0),   // 摩杜纳
-            (3, "暗物质晶簇|雷之晶簇", 13, 14, "采矿工", 50, 24, path3, points3),    // 摩杜纳
-            (4, "暗物质晶簇|雷之晶簇", 17, 18, "采矿工", 50,24, path3, points3),    // 摩杜纳
-            (5, "暗物质晶簇|雷之晶簇", 21, 22, "采矿工", 50, 24, path3, points3),   // 摩杜纳
-            (6, "暗物质晶簇|云杉原木", 9, 10, "园艺工", 50, 23, path6, points6), // 库尔札斯中央高地
-            (11, "暗物质晶簇|绯红树汁", 3, 4, "园艺工", 50, 7, path11, points11),   // 黑衣森林北部林区
-            (17, "暗物质晶簇|黑衣香木", 2, 4, "园艺工", 50, 6, path17, points17),  // 黑衣森林南部林区
-            (18, "暗物质晶簇|高级黑衣香木", 6, 7, "园艺工", 50, 3, path18, points18),  // 黑衣森林中央林区
-            (19, "暗物质晶簇|白金矿", 4, 5, "采矿工", 50, 19, path19, points19), // 南萨纳兰
-            (20, "暗物质晶簇", 2, 3, "园艺工", 50, 76, path20, points20), // 龙堡参天高地
-            (21, "暗物质晶簇", 14, 15, "园艺工", 50, 76, path20, points20),   // 龙堡参天高地
-            (22, "暗物质晶簇|玄铁矿", 1, 2, "采矿工", 50, 23, path22, points22), // 库尔札斯中央高地
-            (23, "暗物质晶簇|金矿", 9, 10, "采矿工", 50, 18, path23, points23), // 东萨纳兰
-            (24, "拉诺西亚岩盐|暗物质晶簇", 17, 18, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚
-            (26, "强灵性岩", 2, 3, "采矿工", 50, 18, path26, points26), // 东萨纳兰
-            (30, "暗物质晶簇|火之晶簇", 19, 21, "采矿工", 50, 52, path30, points30),   // 中拉诺西亚
-            (31, "暗物质晶簇|3级黑衣森林土壤|灵性岩", 6, 8, "采矿工", 50, 6, path31, points31),  // 黑衣森林南部林区
-            (32, "暗物质晶簇|3级萨纳兰土壤|水之晶簇", 5, 7, "采矿工", 50, 17, path32, points32), // 西萨纳兰
-            (33, "迷迭香", 17, 18, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
-            (34, "延龄花", 5, 6, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
-            (35, "黄杏", 9, 10, "园艺工", 50, 52, path35, points35),     // 中拉诺西亚
-            (36, "小柠檬", 6, 7, "园艺工", 80, 138, path36, points36),     // 珂露西亚岛
-            (37, "小柠檬", 18, 19, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
+            (0, "暗物质晶簇|火之晶簇", 1, 2, 17, "园艺工", 50, 24, path0, points0),    // 摩杜纳
+            (1, "暗物质晶簇|火之晶簇", 5, 6, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
+            (2, "暗物质晶簇|水之晶簇", 9, 10, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
+            (3, "暗物质晶簇|雷之晶簇", 13, 14, 16, "采矿工", 50, 24, path3, points3),    // 摩杜纳
+            (4, "暗物质晶簇|雷之晶簇", 17, 18, 16, "采矿工", 50,24, path3, points3),    // 摩杜纳
+            (5, "暗物质晶簇|雷之晶簇", 21, 22, 16, "采矿工", 50, 24, path3, points3),   // 摩杜纳
+            (6, "暗物质晶簇|云杉原木", 9, 10, 17, "园艺工", 50, 23, path6, points6), // 库尔札斯中央高地
+            (11, "暗物质晶簇|绯红树汁", 3, 4, 17, "园艺工", 50, 7, path11, points11),   // 黑衣森林北部林区
+            (17, "暗物质晶簇|黑衣香木", 2, 4, 17, "园艺工", 50, 6, path17, points17),  // 黑衣森林南部林区
+            (18, "暗物质晶簇|高级黑衣香木", 6, 7, 16, "园艺工", 50, 3, path18, points18),  // 黑衣森林中央林区
+            (19, "暗物质晶簇|白金矿", 4, 5, 16, "采矿工", 50, 19, path19, points19), // 南萨纳兰
+            (20, "暗物质晶簇", 2, 3, 17, "园艺工", 50, 76, path20, points20), // 龙堡参天高地
+            (21, "暗物质晶簇", 14, 15, 17, "园艺工", 50, 76, path20, points20),   // 龙堡参天高地
+            (22, "暗物质晶簇|玄铁矿", 1, 2, 16, "采矿工", 50, 23, path22, points22), // 库尔札斯中央高地
+            (23, "暗物质晶簇|金矿", 9, 10, 16, "采矿工", 50, 18, path23, points23), // 东萨纳兰
+            (24, "拉诺西亚岩盐|暗物质晶簇", 17, 18, 16, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚
+            (26, "强灵性岩", 2, 3, 16, "采矿工", 50, 18, path26, points26), // 东萨纳兰
+            (30, "暗物质晶簇|火之晶簇", 19, 21, 16, "采矿工", 50, 52, path30, points30),   // 中拉诺西亚
+            (31, "暗物质晶簇|3级黑衣森林土壤|灵性岩", 6, 8, 16, "采矿工", 50, 6, path31, points31),  // 黑衣森林南部林区
+            (32, "暗物质晶簇|3级萨纳兰土壤|水之晶簇", 5, 7, 16, "采矿工", 50, 17, path32, points32), // 西萨纳兰
+            (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
+            (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
+            (35, "黄杏", 9, 10, 17, "园艺工", 50, 52, path35, points35),     // 中拉诺西亚
+            (36, "小柠檬", 6, 7, 17, "园艺工", 80, 138, path36, points36),     // 珂露西亚岛
+            (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
         };
 
         public static List<int> GetMaterialIdsByEt(int et, uint lv)
         {
             List<int> list = new List<int>();
             //Dictionary<int, int> sort = new();
-            foreach ((int Id, string Name, int MinEt, int MaxEt, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
             {
                 if (et >= MinEt && et <= MaxEt && Lv <= lv)
                 {
@@ -244,16 +245,16 @@ namespace WoAutoCollectionPlugin.Utility
             return list;
         }
 
-        public static (string, string, uint, uint, Vector3[], Vector3[]) GetMaterialById(int id)
+        public static (string, uint, string, uint, uint, Vector3[], Vector3[]) GetMaterialById(int id)
         {
-            foreach ((int Id, string Name, int MinEt, int MaxEt, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
             {
                 if (id == Id)
                 {
-                    return (Name, Job, Lv, Tp, Path, Points);
+                    return (Name, Job, JobName, Lv, Tp, Path, Points);
                 }
             }
-            return (null, null, 0, 0, null, null);
+            return (null, 0, null, 0, 0, null, null);
         }
     }
 }

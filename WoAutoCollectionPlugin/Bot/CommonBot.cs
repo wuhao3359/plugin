@@ -186,7 +186,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool CraftUploadAndExchange(string craftName, int exchangeItem)
         {
-            (uint Category, uint Sub, uint ItemId) = Items.UploadApply(craftName);
+            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(craftName);
             while (BagManager.GetInventoryItemCount(ItemId) > 0) {
                 if (closed)
                 {
@@ -244,7 +244,7 @@ namespace WoAutoCollectionPlugin.Bot
         public bool CraftExchange(int item)
         {
             PluginLog.Log($"CraftExchanging");
-            (uint Category, uint Sub) = Items.ExchangeApply(item);
+            (uint Category, uint Sub) = RecipeItems.ExchangeApply(item);
             if (Category == 0 && Sub == 0)
             {
                 return false;

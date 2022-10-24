@@ -1,7 +1,9 @@
 ﻿using Dalamud.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
@@ -54,8 +56,17 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         exchangeItem = int.Parse(str[2]);
                     }
-
-                    RunCraftScript(pressKey, recipeName, exchangeItem);
+                    bool result = int.TryParse(recipeName, out var id);
+                    if (result)
+                    {
+                        PluginLog.Log($"根据配方制作...");
+                        RunCraftScript(pressKey, id, exchangeItem);
+                    }
+                    else {
+                        PluginLog.Log($"根据名称制作...");
+                        RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -64,7 +75,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void RunCraftScript(int pressKey, string recipeName, int exchangeItem)
+        public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
             while (!closed && BagManager.InventoryRemaining() > 10)
@@ -157,9 +168,38 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"CraftUploadAndExchange End.");
                         }
                     }
+                    // 上交重建品和交换道具 TODO
                 }
                 Thread.Sleep(1000);
             }
         }
+
+        public void RunCraftScript(int pressKey, int id, int exchangeItem) {
+            string recipeName = "";
+            (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
+
+            bool flag = CraftPreCheck(LowCraft);
+
+            if (CraftPreCheck(LowCraft)) {
+                // 切换职业 
+                if (!CommonUi.CurrentJob(Job))
+                {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                    Thread.Sleep(500);
+                }
+                RunCraftScriptByName(pressKey, Name, exchangeItem);
+            }
+        }
+
+        public bool CraftPreCheck((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+        {
+            foreach ((int Id, string Name, int Quantity, bool Craft) in LowCraft)
+            {
+                // name的数量小于一定数量
+                return false;
+            }
+            return true;
+        }
+
     }
 }
