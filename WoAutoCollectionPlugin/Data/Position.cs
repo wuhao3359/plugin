@@ -809,7 +809,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1167, 2375, 1069),
         };
         public static Vector3[] Points23 = {
-            new Vector3 (1241, 2328, 922), // 进入A
+            new Vector3 (1241, 2350, 922), // 进入A
             new Vector3 (1269, 2354, 903),
             new Vector3 (1255, 2356, 871),
             new Vector3 (1304, 2355, 880),
@@ -884,7 +884,7 @@ namespace WoAutoCollectionPlugin.Utility
             (21, "野园甜菜", 17, "园艺工", 80, 144, path21, Points21, CanCollectPoints21, UnknownPointsNum21, Area21), // 伊尔美格
             (22, "山地小麦", 17, "园艺工", 80, 138, path22, Points22, CanCollectPoints22, UnknownPointsNum22, Area22), // 珂露西亚岛
             (23, "愈疮木原木", 17, "园艺工", 80, 136, path23, Points23, CanCollectPoints23, UnknownPointsNum23, Area23), // 雷克兰德 
-            //(24, "暗银矿", 16, "采矿工", 80, 132, path24, Points24, CanCollectPoints24, UnknownPointsNum24, Area24), // 雷克兰德 
+            (24, "暗银矿", 16, "采矿工", 80, 132, path24, Points24, CanCollectPoints24, UnknownPointsNum24, Area24), // 雷克兰德 
         };
         // 芦荟 TODO
 

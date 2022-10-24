@@ -195,7 +195,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else
                     {
-                        CommonBot.RepairAndExtractMateria();
+                        //CommonBot.RepairAndExtractMateria();
 
                         position = KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                         PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
