@@ -143,7 +143,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
                         continue;
                     }
-                    (string Names, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                    (string Names, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
                     PluginLog.Log($"当前完成任务: {finishIds.Count} 下个任务, id: {id} Name: {Names}, Job: {Job}, et: {et}..");
 
                     if (hour > et || (et >= 20 && hour < 10)) {
@@ -161,9 +161,10 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(12000);
                     PluginLog.Log($"开始执行任务, id: {id} ");
                     // 切换职业 
-                    if (currentJob != Job) {
-                        WoAutoCollectionPlugin.Executor.DoGearChange(Job);
-                        currentJob = Job;
+                    if (!CommonUi.CurrentJob(Job))
+                    {
+                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                        Thread.Sleep(500);
                     }
                     Thread.Sleep(1000);
                     Vector3 position = MovePositions(Path, true);

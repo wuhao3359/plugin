@@ -7,7 +7,6 @@ namespace WoAutoCollectionPlugin.Utility
     {
         // 16-采矿工 17-园艺工 18-捕鱼人
 
-
         // 天穹街
         public static ushort TianQiongJieTerritoryType = 886;
         //

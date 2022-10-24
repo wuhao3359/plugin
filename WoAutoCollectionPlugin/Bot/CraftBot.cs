@@ -168,6 +168,7 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"CraftUploadAndExchange End.");
                         }
                     }
+                    // 上交重建品和交换道具 TODO
                 }
                 Thread.Sleep(1000);
             }
@@ -177,24 +178,17 @@ namespace WoAutoCollectionPlugin.Bot
             string recipeName = "";
             (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
 
-            bool flag = ReadyToCraft(LowCraft);
-
-            // 制作成品
-
-        }
-
-        public bool ReadyToCraft((int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
-
-            // 先检查
             bool flag = CraftPreCheck(LowCraft);
 
-            if (!flag) { 
-                return false;
+            if (CraftPreCheck(LowCraft)) {
+                // 切换职业 
+                if (!CommonUi.CurrentJob(Job))
+                {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                    Thread.Sleep(500);
+                }
+                RunCraftScriptByName(pressKey, Name, exchangeItem);
             }
-
-            // 制作半成品
-            CraftMidProduct(LowCraft);
-            return true;
         }
 
         public bool CraftPreCheck((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
@@ -202,28 +196,10 @@ namespace WoAutoCollectionPlugin.Bot
             foreach ((int Id, string Name, int Quantity, bool Craft) in LowCraft)
             {
                 // name的数量小于一定数量
-                if (Craft)
-                {
-                    (int id, string name, uint job, string jobName, uint lv, (int Id, string Name, int Quantity, bool Craft)[] lowCraft) = RecipeItems.GetMidCraftItems(Id);
-                    return this.ReadyToCraft(lowCraft);
-                }
-                else {
-                    return false;
-                }
+                return false;
             }
             return true;
         }
 
-        public bool CraftMidProduct((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
-        {
-            
-            return true;
-        }
-
-        public bool Craft(string Name)
-        {
-
-            return true;
-        }
     }
 }
