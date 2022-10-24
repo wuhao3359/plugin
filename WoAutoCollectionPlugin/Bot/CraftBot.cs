@@ -1,7 +1,9 @@
 ﻿using Dalamud.Logging;
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
@@ -54,8 +56,17 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         exchangeItem = int.Parse(str[2]);
                     }
-
-                    RunCraftScript(pressKey, recipeName, exchangeItem);
+                    bool result = int.TryParse(recipeName, out var id);
+                    if (result)
+                    {
+                        PluginLog.Log($"根据配方制作...");
+                        RunCraftScript(pressKey, id, exchangeItem);
+                    }
+                    else {
+                        PluginLog.Log($"根据名称制作...");
+                        RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                    }
+                    
                 }
                 catch (Exception e)
                 {
@@ -64,7 +75,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void RunCraftScript(int pressKey, string recipeName, int exchangeItem)
+        public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
             while (!closed && BagManager.InventoryRemaining() > 10)
@@ -160,6 +171,59 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Thread.Sleep(1000);
             }
+        }
+
+        public void RunCraftScript(int pressKey, int id, int exchangeItem) {
+            string recipeName = "";
+            (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
+
+            bool flag = ReadyToCraft(LowCraft);
+
+            // 制作成品
+
+        }
+
+        public bool ReadyToCraft((int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
+
+            // 先检查
+            bool flag = CraftPreCheck(LowCraft);
+
+            if (!flag) { 
+                return false;
+            }
+
+            // 制作半成品
+            CraftMidProduct(LowCraft);
+            return true;
+        }
+
+        public bool CraftPreCheck((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+        {
+            foreach ((int Id, string Name, int Quantity, bool Craft) in LowCraft)
+            {
+                // name的数量小于一定数量
+                if (Craft)
+                {
+                    (int id, string name, uint job, string jobName, uint lv, (int Id, string Name, int Quantity, bool Craft)[] lowCraft) = RecipeItems.GetMidCraftItems(Id);
+                    return this.ReadyToCraft(lowCraft);
+                }
+                else {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        public bool CraftMidProduct((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+        {
+            
+            return true;
+        }
+
+        public bool Craft(string Name)
+        {
+
+            return true;
         }
     }
 }
