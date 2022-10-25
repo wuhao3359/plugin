@@ -175,10 +175,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void RunCraftScript(int pressKey, int id, int exchangeItem) {
-            string recipeName = "";
-            (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
-
-            bool flag = CraftPreCheck(LowCraft);
+            (int Id, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
 
             if (CraftPreCheck(LowCraft)) {
                 // 切换职业 

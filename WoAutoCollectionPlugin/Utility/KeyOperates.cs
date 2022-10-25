@@ -154,6 +154,7 @@ public class KeyOperates
                 notMove = 0;
             } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
+                KeyMethod(Keys.space_key);
                 notMove = 0;
             }
 

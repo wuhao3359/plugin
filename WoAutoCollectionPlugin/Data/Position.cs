@@ -167,7 +167,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (688f, 2693f, 2014f), // 
             new Vector3 (720f, 2692f, 2050f), // 3
             new Vector3 (698f, 2691f, 2080f), // 4 tp
-            new Vector3 (1177f, 2831f, 2911f), // 5
+            new Vector3 (1177f, 2855f, 2911f), // 5
             new Vector3 (956f, 2837f, 3037f), // 6
             new Vector3 (1265f, 2827f, 2990f), // 7
             new Vector3 (1386f, 2791f, 3118f), // 8
@@ -883,17 +883,21 @@ namespace WoAutoCollectionPlugin.Utility
             // (19914, 2, "繁缕", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
             // (19915, 2, "稻槎草", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
 
+            // (27759, 10, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
             // (27803, 3, "凝灰岩", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
-            (27824, 12, "野园甜菜", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
-            (27826, 15, "皇家葡萄", 17, "园艺工", 80, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
-            (27832, 15, "山地小麦", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
+            (27824, 10, "野园甜菜", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
+            (27826, 12, "皇家葡萄", 17, "园艺工", 80, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
+            (27832, 12, "山地小麦", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
             //(27834, 12, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
             (27687, 10, "愈疮木原木", 17, "园艺工", 80, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
             //(27703, 10, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德 tt
 
+            //(36083, 10, "裸麦", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36084, 10, "北洋岩盐", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
             //(36085, 10, "萨维奈紫苏", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
             //(36086, 10, "棕榈糖浆", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36089, 10, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36087, 10, "椰子", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36089, 10, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
         };
 
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetMaterialById(int id)

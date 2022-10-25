@@ -126,7 +126,7 @@ namespace WoAutoCollectionPlugin.Bot
                                     KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
-                                float y = Maths.GetCoordinate(go.Position.Y, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float y = Maths.GetCoordinate(go.Position.Y, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType)) - 5;
                                 float z = Maths.GetCoordinate(go.Position.Z, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 Vector3 GatherPoint = new(x, y, z);
                                 //PluginLog.Log($"去可采集点{i} {Points[i].X} {Points[i].Y} {Points[i].Z}");
@@ -562,36 +562,6 @@ namespace WoAutoCollectionPlugin.Bot
                 GathingButton = type - 10;
             }
             return (AreaPosition, Tp, GatherPosition, GathingButton);
-        }
-
-        public int GetGathingButton(int area) {
-            int GathingButton = 0;
-
-            if (area == 1)
-            {   // 1-稻槎草
-                GathingButton = Position.Gatheing1Button;
-            }
-            else if (area == 2)
-            {
-                // 2-繁缕
-                GathingButton = Position.Gatheing2Button;
-            }
-            else if (area == 3)
-            {
-                // 3-棕榈糖浆
-                GathingButton = Position.Gatheing3Button;
-            }
-            else if (area == 4)
-            {
-                // 4-葛根
-                GathingButton = Position.Gatheing4Button;
-            }
-            else if (area == 100)
-            {
-                // 100-火水晶
-                GathingButton = Position.Gatheing100Button;
-            }
-            return GathingButton;
         }
     }
 }

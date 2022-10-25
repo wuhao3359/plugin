@@ -230,6 +230,14 @@ namespace WoAutoCollectionPlugin.Utility
             (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
         };
 
+        // 收藏品 需要分解或者上交
+        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = { 
+            // (36285, "月石英", 0, 3, 16, "采矿工", 80, 138, path36, points36, index1),    //
+            // (36286, "暗性岩", 20, 23, 16, "采矿工", 80, 138, path36, points36, index1),    //
+            // (36287, "水瓶土", 8, 11, 17, "园艺工", 80, 138, path36, points36, index1),    // 
+            // (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 80, 138, path36, points36),    //
+        };
+
         public static List<int> GetMaterialIdsByEt(int et, uint lv)
         {
             List<int> list = new List<int>();
@@ -255,6 +263,31 @@ namespace WoAutoCollectionPlugin.Utility
                 }
             }
             return (null, 0, null, 0, 0, null, null);
+        }
+
+        public static int GetCollecMaterialIdByEt(int et, uint lv)
+        {
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) in CollecMaterials)
+            {
+                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                {
+                    return Id;
+                }
+
+            }
+            return 0;
+        }
+
+        public static (int, string, int, int, uint, string, uint, uint, Vector3[], Vector3[], int[]) GetCollecMaterialById(int id)
+        {
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) in CollecMaterials)
+            {
+                if (id == Id)
+                {
+                    return (Id, Name, MinEt, MaxEt, Job, JobName, Lv, Tp, Path, Points, CanGatherIndex);
+                }
+            }
+            return (0, null, 0, 0, 0, null, 0, 0, null, null, null);
         }
     }
 }

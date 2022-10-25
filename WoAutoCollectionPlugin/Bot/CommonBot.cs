@@ -386,5 +386,22 @@ namespace WoAutoCollectionPlugin.Bot
 
             return true;
         }
+
+        public bool LimitMultiMaterialsMethod(string Name)
+        {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            List<string> list = new();
+            list.Add(Name);
+            PluginLog.Log($"开始采集: {Name}");
+           
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
+            CommonUi.GatheringButton(GatherIndex);
+
+            uint gp = player.CurrentGp;
+            // TODO
+
+
+            return true;
+        }
     }
 }
