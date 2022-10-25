@@ -873,6 +873,41 @@ namespace WoAutoCollectionPlugin.Utility
             1, 8, 15
         };
 
+        public static Vector3[] path19915 = {
+            new Vector3 (2007, 2483, 2488),
+            new Vector3 (1712, 2184, 2827),
+        };
+        public static Vector3[] Points19915 = {
+            new Vector3 (1753, 2158, 2853), // 进入A
+            new Vector3 (1768, 2157, 2859),
+            new Vector3 (1815, 2156, 2872),
+            new Vector3 (1824, 2155, 2876),
+            new Vector3 (1814, 2154, 2904),
+            new Vector3 (1775, 2176, 2923), // 离开A
+            new Vector3 (1653, 2160, 2945), // 进入B
+            new Vector3 (1608, 2155, 2953),
+            new Vector3 (1552, 2160, 2978), 
+            new Vector3 (1516, 2160, 2945),
+            new Vector3 (1452, 2172, 2907),
+            new Vector3 (1467, 2201, 2803), // 离开B
+            new Vector3 (1472, 2195, 2657), // 进入C
+            new Vector3 (1460, 2193, 2610),
+            new Vector3 (1449, 2193, 2611),
+            new Vector3 (1431, 2198, 2604), // 
+            new Vector3 (1396, 2192, 2592),
+            new Vector3 (1442, 2196, 2558),
+            new Vector3 (1658, 2213, 2763), // 离开C
+        };
+        public static int[] CanCollectPoints19915 = {
+            1, 2, 3, 4, 7, 8, 9, 10, 13, 14, 16, 17
+        };
+        public static int[] UnknownPointsNum19915 = {
+            4, 4, 4
+        };
+        public static int[] Area19915 = {
+            1, 7, 13
+        };
+
 
         // 血红奇异果
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
@@ -881,8 +916,8 @@ namespace WoAutoCollectionPlugin.Utility
             //(12534, 2, "灵银矿", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), //
             (19872, 2, "石间清水", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), // 延夏
             //(19853, 8, "葛根", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            // (19914, 2, "繁缕", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
-            // (19915, 2, "稻槎草", 16, "采矿工", 70, 107, path12, Points12, CanCollectPoints12, UnknownPointsNum12, Area12), // 延夏
+            (19914, 2, "繁缕", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
+            (19915, 2, "稻槎草", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
 
             // (27759, 10, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
             // (27803, 3, "凝灰岩", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //

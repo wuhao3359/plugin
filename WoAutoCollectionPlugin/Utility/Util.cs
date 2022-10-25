@@ -16,7 +16,7 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < UnknownPoints; i++, j++)
             {
                 GameObject go = CurrentPositionCanGather(Points[CanCollectPoint[j]], SizeFactor);
-                if (go != null) {
+                if (go != null && CanGather(go)) {
                     gameObjects.Add(go);
                     gameObjectsIndex.Add(CanCollectPoint[j]);
                 }
@@ -46,13 +46,13 @@ namespace WoAutoCollectionPlugin.Utility
                 }
             }
 
-            if (nearestGo != null)
+            if (nearestGo != null && CanGather(nearestGo))
             {
-                //PluginLog.Log($"最近: {index}");
+                PluginLog.Log($"最近: {index}");
                 return nearestGo;
             }
             else {
-                //PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point");
                 return null;
             }
         }
@@ -71,9 +71,7 @@ namespace WoAutoCollectionPlugin.Utility
                     if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                     {
                         if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场"
-                            || gameObject.Name.ToString() == "良材" || gameObject.Name.ToString() == "草场"
-                            || gameObject.Name.ToString() == "矿脉" || gameObject.Name.ToString() == "石场") {
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场") {
                             Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
                             double d = 100000f;
                             foreach (Vector3 pos in positions)
