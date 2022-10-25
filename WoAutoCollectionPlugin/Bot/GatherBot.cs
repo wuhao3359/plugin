@@ -196,7 +196,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else
                     {
-                        CommonBot.RepairAndExtractMateria();
+                        //CommonBot.RepairAndExtractMateria();
 
                         position = KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                         PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
@@ -516,14 +516,15 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.ForceStop();
         }
 
-        public (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetData(int id) {
+        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id) {
             if (id == 0)
             {
                 List<int> list = Position.GetMateriaId();
                 List<int> li = new();
                 foreach (int i in list)
                 {
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(id);
+                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
+                    int iii = BagManager.GetInventoryItemCount((uint)i);
                     if (MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
                     {
                         li.Add(i);
@@ -534,6 +535,7 @@ namespace WoAutoCollectionPlugin.Bot
                 int r = rd.Next(li.Count);
                 id = li[r];
                 PluginLog.Log($"随机采集ID: {r} {id}");
+                return Position.GetMaterialById(id);
             }
             else {
                 return Position.GetMaterialById(id);

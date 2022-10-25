@@ -70,7 +70,6 @@ namespace WoAutoCollectionPlugin.Utility
         public static Vector3[] path19 = {
             new Vector3 (1853, 2242, 1287),
             new Vector3 (1861, 2248, 1217),
-            new Vector3 (1991, 2173, 975),
             new Vector3(1741, 2253, 1092),
         };
         public static Vector3[] points19 = {
@@ -218,7 +217,7 @@ namespace WoAutoCollectionPlugin.Utility
             (21, "暗物质晶簇", 14, 15, 17, "园艺工", 50, 76, path20, points20),   // 龙堡参天高地
             (22, "暗物质晶簇|玄铁矿", 1, 2, 16, "采矿工", 50, 23, path22, points22), // 库尔札斯中央高地
             (23, "暗物质晶簇|金矿", 9, 10, 16, "采矿工", 50, 18, path23, points23), // 东萨纳兰
-            (24, "拉诺西亚岩盐|暗物质晶簇", 17, 18, 16, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚
+            (24, "暗物质晶簇|拉诺西亚岩盐", 17, 18, 16, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚
             (26, "强灵性岩", 2, 3, 16, "采矿工", 50, 18, path26, points26), // 东萨纳兰
             (30, "暗物质晶簇|火之晶簇", 19, 21, 16, "采矿工", 50, 52, path30, points30),   // 中拉诺西亚
             (31, "暗物质晶簇|3级黑衣森林土壤|灵性岩", 6, 8, 16, "采矿工", 50, 6, path31, points31),  // 黑衣森林南部林区
