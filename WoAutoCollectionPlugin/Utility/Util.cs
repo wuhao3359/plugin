@@ -33,7 +33,7 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < length; i++)
             {
                 GameObject? gameObject = DalamudApi.ObjectTable[i];
-                if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint && CanGather(gameObject))
                 {
                     Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
                     double d = Maths.Distance(position, v);
@@ -46,7 +46,7 @@ namespace WoAutoCollectionPlugin.Utility
                 }
             }
 
-            if (nearestGo != null && CanGather(nearestGo))
+            if (nearestGo != null)
             {
                 //PluginLog.Log($"最近: {index}");
                 return nearestGo;

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Dalamud.Logging;
+using System.Collections.Generic;
 using System.Numerics;
 
 namespace WoAutoCollectionPlugin.Utility
@@ -807,7 +808,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1167, 2375, 1069),
         };
         public static Vector3[] Points27687 = {
-            new Vector3 (1241, 2328, 922), // 进入A
+            new Vector3 (1241, 2358, 922), // 进入A
             new Vector3 (1269, 2354, 903),
             new Vector3 (1255, 2356, 871),
             new Vector3 (1304, 2355, 880),
@@ -895,7 +896,7 @@ namespace WoAutoCollectionPlugin.Utility
             //(36089, 10, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
         };
 
-        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetMaterialById(int id)
+        public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetMaterialById(int id)
         {
             foreach ((int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
             {
