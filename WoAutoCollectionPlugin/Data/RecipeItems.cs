@@ -1,4 +1,6 @@
 ﻿
+using System.Collections.Generic;
+
 namespace WoAutoCollectionPlugin.Data
 {
     public class RecipeItems
@@ -80,23 +82,23 @@ namespace WoAutoCollectionPlugin.Data
             (27826, "皇家葡萄", 5, false),
         };
 
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[])[] CraftItems = {
-            (0, "", 0, "", 0, false, Craft0),
-            (31652, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, Craft31652),
-            (27693, "愈疮木木材", 8, "刻木匠", 80, true, Craft27693),
-            (27714, "矮人银锭", 10, "铸甲匠", 80, true, Craft27714),
-            (27804, "凝灰岩磨刀石", 11, "雕金匠", 80, true, Craft27804),
+        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[])[] CraftItems = {
+            (0, 0, "", 0, "", 0, false, Craft0),
+            (31652, 0, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, Craft31652),
+            (27693, 4, "愈疮木木材", 8, "刻木匠", 80, true, Craft27693),
+            (27714, 2, "矮人银锭", 10, "铸甲匠", 80, true, Craft27714),
+            (27804, 2, "凝灰岩磨刀石", 11, "雕金匠", 80, true, Craft27804),
 
-            (31945, "第四期重建用的睡床", 8, "刻木匠", 80, false, Craft31945),
-            (27757, "矮人棉布", 13, "裁衣匠", 80, true, Craft27757),
-            (27758, "矮人棉线", 13, "裁衣匠", 80, true, Craft27758),
+            (31945, 0, "第四期重建用的睡床", 8, "刻木匠", 80, false, Craft31945),
+            (27757, 2, "矮人棉布", 13, "裁衣匠", 80, true, Craft27757),
+            (27758, 4, "矮人棉线", 13, "裁衣匠", 80, true, Craft27758),
 
-            (31950, "第四期重建用的遮蓬", 13, "裁衣匠", 80, false, Craft31950),
+            (31950, 0, "第四期重建用的遮蓬", 13, "裁衣匠", 80, false, Craft31950),
 
-            (27843, "黑夜醋", 15, "烹调师", 80, true, Craft27843),
+            (27843, 3, "黑夜醋", 15, "烹调师", 80, true, Craft27843),
         };
 
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[]) GetCraftItems(int Id)
+        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[]) GetCraftItems(int Id)
         {
             for (int i = 1; i < CraftItems.Length; i ++) {
                 if (CraftItems[i].Id == Id) {
@@ -106,7 +108,17 @@ namespace WoAutoCollectionPlugin.Data
             return CraftItems[0];
         }
 
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[]) GetMidCraftItems(int Id)
+        public static List<int> GetCraftItemIds()
+        {
+            List<int> list = new List<int>();
+            for (int i = 1; i < CraftItems.Length; i++)
+            {
+                list.Add(CraftItems[i].Id);
+            }
+            return list;
+        }
+
+        public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[]) GetMidCraftItems(int Id)
         {
             for (int i = 1; i < CraftItems.Length; i++)
             {
@@ -117,5 +129,6 @@ namespace WoAutoCollectionPlugin.Data
             }
             return CraftItems[0];
         }
+
     }
 }

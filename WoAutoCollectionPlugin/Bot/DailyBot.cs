@@ -61,19 +61,18 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"daily: {args} length: {args.Length}");
 
                 uint lv = 80;
-                if (str.Length >= 1) {
-                    lv = uint.Parse(str[0]);
-                }
-                if (lv <= 80)
+                if (str.Length == 1)
                 {
-                    lv = 80;
+                    lv = uint.Parse(str[0]);
                     LimitTimeSinglePlan(lv);
                 }
-                else {
+                else if (str.Length == 2)
+                {
                     LimitTimeMultiPlan(lv);
                 }
-                
-
+                else {
+                    PluginLog.Error($"check params");
+                }
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }

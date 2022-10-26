@@ -175,7 +175,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void RunCraftScript(int pressKey, int id, int exchangeItem) {
-            (int Id, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
+            (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
 
             if (CraftPreCheck(LowCraft)) {
                 // 切换职业 
@@ -198,5 +198,34 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        public (int, int, string, uint, string, uint, bool, (int, string, int, bool)[]) GetData(int id)
+        {
+            if (id == 0)
+            {
+                List<int> list = RecipeItems.GetCraftItemIds();
+                List<int> li = new();
+                foreach (int i in list)
+                {
+                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] Craft) = RecipeItems.GetMidCraftItems(i);
+                    if (QuickCraft && MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
+                    {
+                        li.Add(i);
+                    }
+                }
+
+                Random rd = new();
+                int r = rd.Next(li.Count);
+                id = li[r];
+                PluginLog.Log($"随机生产中间物ID: {id}");
+                return RecipeItems.GetMidCraftItems(id);
+            }
+            else
+            {
+                return RecipeItems.GetMidCraftItems(id);
+            }
+
+            (int Id, string Name, int Quantity, bool Craft)[] Craft0 = {};
+            return (0, 0, "", 0, "", 0, false, Craft0);
+        }
     }
 }

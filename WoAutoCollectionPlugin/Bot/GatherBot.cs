@@ -388,7 +388,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 // 采集点
                 if (Array.IndexOf(GatherPosition, k) != -1) {
-                    GameObject? go = Util.CurrentPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+                    GameObject? go = Util.CurrentYPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
@@ -524,7 +524,6 @@ namespace WoAutoCollectionPlugin.Bot
                 foreach (int i in list)
                 {
                     (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
-                    int iii = BagManager.GetInventoryItemCount((uint)i);
                     if (MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
                     {
                         li.Add(i);
