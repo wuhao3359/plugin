@@ -30,6 +30,19 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public static unsafe bool QuickSynthesizeButton()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("quick_synthesis");
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         public static unsafe bool SynthesizeButton() {
             var ptr = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
             if (ptr != IntPtr.Zero)
@@ -39,7 +52,6 @@ namespace WoAutoCollectionPlugin.Ui
             else {
                 return false;
             }
-            return true;
         }
 
         public static unsafe void OpenRecipeNote(uint recipeID)

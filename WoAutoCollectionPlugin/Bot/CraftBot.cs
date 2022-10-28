@@ -75,6 +75,63 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
+        public void QuickCraftByName(string Name, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
+            int n = 0;
+            while (!closed && n < 10) {
+                n++;
+                if (ItemQuantityEnough(LowCraft))
+                {
+                    closed = false;
+                    break;
+                }
+                RunQuickCraftcriptByName(Name);
+                Thread.Sleep(5000);
+            }
+        }
+
+        public void RunQuickCraftcriptByName(string Name) {
+            int n = 0; 
+            while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 3)
+            {
+                uint recipeId = RecipeNoteUi.SearchRecipeId(Name);
+                PluginLog.Log($"{Name}, {recipeId}");
+                RecipeNoteUi.OpenRecipeNote(recipeId);
+
+                Thread.Sleep(1000);
+                if (closed)
+                {
+                    PluginLog.Log($"quick craft stopping");
+                    return;
+                }
+                n++;
+            }
+
+            Thread.Sleep(500);
+            if (RecipeNoteUi.RecipeNoteIsOpen())
+            {
+                RecipeNoteUi.QuickSynthesizeButton();
+                n = 0;
+                // TODO 快速生产
+                while (RecipeNoteUi.RecipeNoteIsOpen() && n < 3)
+                {
+                    n++;
+                    Thread.Sleep(500);
+                    if (closed)
+                    {
+                        PluginLog.Log($"craft stopping");
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                PluginLog.Log($"RecipeNote not open, continue");
+                return;
+            }
+
+            //  0 9 0 2 0 TODO
+        }
+
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
@@ -174,6 +231,18 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
+        public bool ItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
+            for (int i = 0; i < LowCraft.Length; i++)
+            {
+                int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
+                if (quantity < LowCraft[i].Quantity)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         public void RunCraftScript(int pressKey, int id, int exchangeItem) {
             (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
 
@@ -184,7 +253,14 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }
-                RunCraftScriptByName(pressKey, Name, exchangeItem);
+                if (QuickCraft)
+                {
+                    RunQuickCraftScriptByName(Name, LowCraft);
+                }
+                else {
+                    RunCraftScriptByName(pressKey, Name, exchangeItem);
+                }
+                
             }
         }
 
