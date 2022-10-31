@@ -48,11 +48,11 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近: {index}");
+                PluginLog.Log($"最近1: {index}");
                 return nearestGo;
             }
             else {
-                PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point1");
                 return null;
             }
         }
@@ -81,12 +81,12 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近: {index}");
+                PluginLog.Log($"最近2: {index}");
                 return nearestGo;
             }
             else
             {
-                PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point2");
                 return null;
             }
         }
@@ -130,7 +130,7 @@ namespace WoAutoCollectionPlugin.Utility
             }
             else
             {
-                PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point3");
                 return (null, position);
             }
         }

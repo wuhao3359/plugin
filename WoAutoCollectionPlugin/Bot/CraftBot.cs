@@ -84,12 +84,12 @@ namespace WoAutoCollectionPlugin.Bot
                     closed = false;
                     break;
                 }
-                RunQuickCraftcriptByName(Name);
+                RunQuickCraftScriptByName(Name);
                 Thread.Sleep(5000);
             }
         }
 
-        public void RunQuickCraftcriptByName(string Name) {
+        public void RunQuickCraftScriptByName(string Name) {
             int n = 0; 
             while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 3)
             {
@@ -143,10 +143,11 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"craft stopping");
                     return;
                 }
-                while (!RecipeNoteUi.RecipeNoteIsOpen())
+                int n = 0;
+                while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
                 {
                     uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-                    PluginLog.Log($"{recipeName}, {recipeId}");
+                    PluginLog.Log($"--- {recipeName}, {recipeId}");
                     RecipeNoteUi.OpenRecipeNote(recipeId);
 
                     Thread.Sleep(1000);
@@ -155,6 +156,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"craft stopping");
                         return;
                     }
+                    n++;
                 }
 
                 // TODO Select Item
@@ -185,7 +187,7 @@ namespace WoAutoCollectionPlugin.Bot
                 if (recipeName == "")
                     recipeName = RecipeNoteUi.GetItemName();
 
-                int n = 0;
+                n = 0;
                 while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                 {
                     Thread.Sleep(500);
@@ -255,7 +257,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 if (QuickCraft)
                 {
-                    RunQuickCraftScriptByName(Name, LowCraft);
+                    QuickCraftByName(Name, LowCraft);
                 }
                 else {
                     RunCraftScriptByName(pressKey, Name, exchangeItem);
