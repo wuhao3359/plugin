@@ -41,37 +41,34 @@ namespace WoAutoCollectionPlugin.Bot
         public void CraftScript(string args)
         {
             closed = false;
-            while (!closed)
+            try
             {
-                try
+                Init();
+                string[] str = args.Split(' ');
+                int pressKey = int.Parse(str[0]) + 48;
+                string recipeName = str[1];
+                int exchangeItem = 10;
+                PluginLog.Log($"{pressKey} {recipeName}");
+                if (str.Length > 2)
                 {
-                    Init();
-
-                    string[] str = args.Split(' ');
-                    int pressKey = int.Parse(str[0]) + 48;
-                    string recipeName = str[1];
-                    int exchangeItem = 10;
-                    PluginLog.Log($"{pressKey} {recipeName}");
-                    if (str.Length > 2)
-                    {
-                        exchangeItem = int.Parse(str[2]);
-                    }
-                    bool result = int.TryParse(recipeName, out var id);
-                    if (result)
-                    {
-                        PluginLog.Log($"根据配方制作...");
-                        RunCraftScript(pressKey, id, exchangeItem);
-                    }
-                    else {
-                        PluginLog.Log($"根据名称制作...");
-                        RunCraftScriptByName(pressKey, recipeName, exchangeItem);
-                    }
+                    exchangeItem = int.Parse(str[2]);
+                }
+                bool result = int.TryParse(recipeName, out var id);
+                if (result)
+                {
+                    PluginLog.Log($"根据配方制作...");
+                    RunCraftScript(pressKey, id, exchangeItem);
+                }
+                else
+                {
+                    PluginLog.Log($"根据名称制作...");
+                    RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                }
                     
-                }
-                catch (Exception e)
-                {
-                    PluginLog.Error($"error!!!\n{e}");
-                }
+            }
+            catch (Exception e)
+            {
+                PluginLog.Error($"error!!!\n{e}");
             }
         }
 
