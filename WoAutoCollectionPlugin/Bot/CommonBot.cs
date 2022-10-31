@@ -376,7 +376,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                     }
                 } else if (tt == 2) {
-                    if (name.Contains("土壤"))
+                    if (name.Contains("土壤") || name.Contains("地图"))
                     {
                         (GatherIndex, name) = CommonUi.GetGatheringIndex(list);
                     }

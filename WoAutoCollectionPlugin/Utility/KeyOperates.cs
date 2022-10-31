@@ -88,7 +88,7 @@ public class KeyOperates
             {
                 PluginLog.Log($"移动中途结束 {closed} {territoryType} {DalamudApi.ClientState.TerritoryType}");
                 Stop();
-                return GetUserPosition(SizeFactor);
+                break;
             }
             Thread.Sleep(50);
 

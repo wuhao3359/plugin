@@ -135,7 +135,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
-            while (!closed && BagManager.InventoryRemaining() > 10)
+            while (!closed)
             {
                 Thread.Sleep(1000);
                 if (closed)
@@ -143,29 +143,55 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"craft stopping");
                     return;
                 }
-                int n = 0;
-                while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
-                {
-                    uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-                    PluginLog.Log($"--- {recipeName}, {recipeId}");
-                    RecipeNoteUi.OpenRecipeNote(recipeId);
 
-                    Thread.Sleep(1000);
-                    if (closed)
+                if (BagManager.InventoryRemaining() > 5)
+                {
+                    int n = 0;
+                    while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
                     {
-                        PluginLog.Log($"craft stopping");
-                        return;
+                        uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+                        PluginLog.Log($"--- {recipeName}, {recipeId}");
+                        RecipeNoteUi.OpenRecipeNote(recipeId);
+
+                        Thread.Sleep(1000);
+                        if (closed)
+                        {
+                            PluginLog.Log($"craft stopping");
+                            return;
+                        }
+                        n++;
                     }
-                    n++;
-                }
 
-                // TODO Select Item
+                    // TODO Select Item
 
-                Thread.Sleep(500);
-                if (RecipeNoteUi.RecipeNoteIsOpen())
-                {
-                    RecipeNoteUi.SynthesizeButton();
-                    while (RecipeNoteUi.RecipeNoteIsOpen())
+                    Thread.Sleep(500);
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        RecipeNoteUi.SynthesizeButton();
+                        while (RecipeNoteUi.RecipeNoteIsOpen())
+                        {
+                            Thread.Sleep(500);
+                            if (closed)
+                            {
+                                PluginLog.Log($"craft stopping");
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        PluginLog.Log($"RecipeNote not open, continue");
+                        continue;
+                    }
+
+                    Thread.Sleep(1800);
+                    KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
+
+                    if (recipeName == "")
+                        recipeName = RecipeNoteUi.GetItemName();
+
+                    n = 0;
+                    while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                     {
                         Thread.Sleep(500);
                         if (closed)
@@ -174,62 +200,42 @@ namespace WoAutoCollectionPlugin.Bot
                             return;
                         }
                     }
-                }
-                else
-                {
-                    PluginLog.Log($"RecipeNote not open, continue");
-                    continue;
-                }
-
-                Thread.Sleep(1800);
-                KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
-
-                if (recipeName == "")
-                    recipeName = RecipeNoteUi.GetItemName();
-
-                n = 0;
-                while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
-                {
-                    Thread.Sleep(500);
-                    if (closed)
-                    {
-                        PluginLog.Log($"craft stopping");
-                        return;
-                    }
-                }
-                PluginLog.Log($"Finish: {i} Item: {recipeName}");
-                i++;
-                Thread.Sleep(1000);
-
-                if (BagManager.InventoryRemaining() <= 10)
-                {
+                    PluginLog.Log($"Finish: {i} Item: {recipeName}");
+                    i++;
                     Thread.Sleep(1000);
-                    if (RecipeNoteUi.RecipeNoteIsOpen())
-                    {
-                        KeyOperates.KeyMethod(Keys.esc_key);
-                    }
-                    else
-                    {
-                        continue;
-                    }
 
-                    //CommonBot.RepairAndExtractMateria();
-
-                    // 上交收藏品和交换道具
-                    if (recipeName.Contains("收藏用") && exchangeItem > 0)
+                    if (BagManager.InventoryRemaining() <= 5)
                     {
-                        if (!CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
+                        Thread.Sleep(1000);
+                        if (RecipeNoteUi.RecipeNoteIsOpen())
                         {
-                            PluginLog.Log($"params error... plz check");
-                            return;
+                            KeyOperates.KeyMethod(Keys.esc_key);
                         }
-                        else {
-                            PluginLog.Log($"CraftUploadAndExchange End.");
+
+                        // TODO 添加精制 修理参数
+                        //CommonBot.RepairAndExtractMateria();
+
+                        // 上交收藏品和交换道具
+                        if (recipeName.Contains("收藏用") && exchangeItem > 0)
+                        {
+                            if (!CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
+                            {
+                                PluginLog.Log($"params error... plz check");
+                                return;
+                            }
+                            else
+                            {
+                                PluginLog.Log($"CraftUploadAndExchange End.");
+                            }
                         }
+                        // 上交重建品和交换道具 TODO
                     }
-                    // 上交重建品和交换道具 TODO
+                    Thread.Sleep(1000);
                 }
-                Thread.Sleep(1000);
+                else {
+                    PluginLog.Log($"背包容量不足, 任务停止...");
+                    closed = true;
+                }
             }
         }
 

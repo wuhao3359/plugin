@@ -84,7 +84,7 @@ namespace WoAutoCollectionPlugin.Data
 
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[])[] CraftItems = {
             (0, 0, "", 0, "", 0, false, Craft0),
-            (31652, 0, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, Craft31652),
+            (31652, 0, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, Craft31652),   // lv.80以下 
             (27693, 4, "愈疮木木材", 8, "刻木匠", 80, true, Craft27693),
             (27714, 2, "矮人银锭", 10, "铸甲匠", 80, true, Craft27714),
             (27804, 2, "凝灰岩磨刀石", 11, "雕金匠", 80, true, Craft27804),

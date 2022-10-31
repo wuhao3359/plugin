@@ -64,10 +64,11 @@ namespace WoAutoCollectionPlugin.Bot
                 if (str.Length == 1)
                 {
                     lv = uint.Parse(str[0]);
+                    // 限时单次采集
                     LimitTimeSinglePlan(lv);
                 }
                 else if (str.Length == 2)
-                {
+                {   // 限时多次采集
                     LimitTimeMultiPlan(lv);
                 }
                 else {
@@ -207,14 +208,6 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
 
-                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                        uint gp = player.CurrentGp;
-                        if (gp < player.MaxGp * 0.45)
-                        {
-                            KeyOperates.KeyMethod(Keys.plus_key);
-                            Thread.Sleep(2000);
-                        }
-
                         KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
@@ -239,6 +232,15 @@ namespace WoAutoCollectionPlugin.Bot
                         if (CommonUi.AddonGatheringIsOpen())
                         {
                             CommonBot.LimitMaterialsMethod(Name);
+
+                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                            uint gp = player.CurrentGp;
+                            if (gp < player.MaxGp * 0.5)
+                            {
+                                Thread.Sleep(1000);
+                                KeyOperates.KeyMethod(Keys.plus_key);
+                                Thread.Sleep(2000);
+                            }
                         }
                         KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
@@ -390,14 +392,6 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                 }
 
-                                PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                                uint gp = player.CurrentGp;
-                                if (gp < player.MaxGp * 0.6)
-                                {
-                                    KeyOperates.KeyMethod(Keys.plus_key);
-                                    Thread.Sleep(2000);
-                                }
-
                                 KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                 tt = 0;
                                 while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
@@ -421,6 +415,15 @@ namespace WoAutoCollectionPlugin.Bot
                                 if (CommonUi.AddonGatheringIsOpen())
                                 {
                                     CommonBot.LimitMultiMaterialsMethod(Name);
+                                    
+                                    PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                                    uint gp = player.CurrentGp;
+                                    if (gp < player.MaxGp * 0.6)
+                                    {
+                                        Thread.Sleep(1000);
+                                        KeyOperates.KeyMethod(Keys.plus_key);
+                                        Thread.Sleep(2000);
+                                    }
                                 }
                                 KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             }
