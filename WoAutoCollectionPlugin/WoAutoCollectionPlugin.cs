@@ -432,7 +432,7 @@ namespace WoAutoCollectionPlugin
             string[] str = args.Split(' ');
             PluginLog.Log($"daily: {args} length: {args.Length}");
 
-            if (args.Length < 1)
+            if (args.Length == 1)
             {
                 PluginLog.Log($"stop");
                 DailyBot.StopScript();

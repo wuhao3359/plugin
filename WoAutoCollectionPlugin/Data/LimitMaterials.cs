@@ -251,11 +251,10 @@ namespace WoAutoCollectionPlugin.Utility
             //Dictionary<int, int> sort = new();
             foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
             {
-                if (et >= MinEt && et <= MaxEt && Lv <= lv)
+                if (et >= MinEt && et <= MaxEt && lv >= Lv)
                 {
                     list.Add(Id);
                 }
-                
             }
             return list;
         }

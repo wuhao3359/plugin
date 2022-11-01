@@ -177,5 +177,63 @@ namespace WoAutoCollectionPlugin.Utility
                 
             return (-1, vectors);
         }
+
+        /*
+         * 命令解析
+         * params   
+         *  command:Daily    主要用途(Daily-限时采集)
+         *  duration:1       持续次数(1次或多次)
+         *  level:50         等级(lv<50)
+         *  bagLimit:1       背包限制(1-有)
+         *  
+         *  example:    Daily duration:1 level:50 bagLimit:1
+         * return int 
+         * 
+         */
+        public static Dictionary<string, string> CommandParse(string args) {
+            string[] str = args.Split(" ");
+            PluginLog.Log($"daily: {args} length: {args.Length}");
+
+            Dictionary<string, string> dictionary = new();
+            if (str.Length > 1) {
+                string first = str[0];
+                if (first == "daily")
+                {
+                    for (int i = 1; i < str.Length; i++)
+                    {
+                        string s = str[i];
+                        string[] ss = s.Split(":");
+                        if (ss.Length == 2)
+                        {
+                            dictionary.Add(ss[0], ss[1]);
+                        }
+                    }
+                    CommandParams.TryGetValue(first, out var list);
+                    foreach (string s in list)
+                    {
+                        if (!dictionary.TryGetValue(s, out var v))
+                        {
+                            DefaultValues.TryGetValue(s, out var dv);
+                            dictionary.Add(s, dv);
+                        };
+                    }
+                }
+                else { 
+                    // TODO
+                }
+            }
+            return dictionary;
+        }
+
+        public static Dictionary<string, List<string>> CommandParams = new() {
+            { "daily", new() { "duration", "level", "bagLimit" } }
+        };
+
+        public static Dictionary<string, string> DefaultValues = new()
+        {
+            { "duration", "1" },
+            { "level", "50" },
+            { "bagLimit", "1" },
+        };
     }
 }

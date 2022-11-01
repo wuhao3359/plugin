@@ -25,6 +25,8 @@ namespace WoAutoCollectionPlugin.Bot
         private static bool closed = false;
         private int gatherCount = 0;
 
+        public Dictionary<string, string> param;
+
         public GatherBot(GameData GameData)
         {
             this.GameData = GameData;
@@ -48,7 +50,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 try
                 {
-                    RunNormalScript(area);
+                    RunNormalScript(area, 200);
                 }
                 catch (Exception e)
                 {
@@ -61,12 +63,12 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 普通采集点
-        public bool RunNormalScript(int id)
+        public bool RunNormalScript(int id, uint lv)
         {
             Init();
             ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
-            (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id);
+            (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id, lv);
             if (Id <= 0) {
                 PluginLog.Log($"param error");
                 return false;
@@ -516,10 +518,10 @@ namespace WoAutoCollectionPlugin.Bot
             KeyOperates.ForceStop();
         }
 
-        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id) {
+        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, uint lv) {
             if (id == 0)
             {
-                List<int> list = Position.GetMateriaId();
+                List<int> list = Position.GetMateriaId(lv);
                 List<int> li = new();
                 foreach (int i in list)
                 {

@@ -948,12 +948,15 @@ namespace WoAutoCollectionPlugin.Utility
             return (0, 0, null, 0, null, 0, 0,  null, null, null, null, null);
         }
 
-        public static List<int> GetMateriaId()
+        public static List<int> GetMateriaId(uint lv)
         {
             List<int> list = new();
             foreach ((int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in NormalMaterials)
             {
-                list.Add(Id);
+                if (lv >= Lv)
+                {
+                    list.Add(Id);
+                }
             }
             return list;
         }

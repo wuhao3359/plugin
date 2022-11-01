@@ -26,9 +26,9 @@ namespace WoAutoCollectionPlugin.Bot
 
         private static bool closed = false;
 
-        private string currentJob = "";
-
         private bool othetRun = false;
+
+        public Dictionary<string, string> param;
 
         public DailyBot(GameData GameData)
         {
@@ -52,24 +52,30 @@ namespace WoAutoCollectionPlugin.Bot
             GatherBot.StopScript();
         }
 
-        // TODO 日常使用
+        // TODO
         public void DailyScript(string args)
         {
             closed = false;
             try {
-                string[] str = args.Split(' ');
-                PluginLog.Log($"daily: {args} length: {args.Length}");
+                // 参数解析
+                param = Util.CommandParse(args);
 
-                uint lv = 80;
-                if (str.Length == 1)
-                {
-                    lv = uint.Parse(str[0]);
-                    // 限时单次采集
-                    LimitTimeSinglePlan(lv);
+                uint lv = 50;
+                if (param.TryGetValue("level", out var l)) {
+                    lv = uint.Parse(l);
                 }
-                else if (str.Length == 2)
-                {   // 限时多次采集
-                    LimitTimeMultiPlan(lv);
+
+                if (param.TryGetValue("duration", out var d))
+                {
+                    if (d == "1")
+                    {
+                        // 限时单次采集
+                        LimitTimeSinglePlan(lv);
+                    }
+                    else {
+                        // 限时多次采集
+                        LimitTimeMultiPlan(lv);
+                    }
                 }
                 else {
                     PluginLog.Error($"check params");
@@ -124,7 +130,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    RunWaitTask();
+                    RunWaitTask(lv);
                     while (othetRun) {
                         Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
@@ -308,7 +314,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    RunWaitTask();
+                    RunWaitTask(lv);
                     while (othetRun)
                     {
                         Time.Update();
@@ -443,14 +449,15 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        private void RunWaitTask() {
+        private void RunWaitTask(uint lv) {
             othetRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"执行等待任务...");
                 try
                 {
-                    GatherBot.RunNormalScript(0);
+                    GatherBot.param = param;
+                    GatherBot.RunNormalScript(0, lv);
                 }
                 catch (Exception e)
                 {
