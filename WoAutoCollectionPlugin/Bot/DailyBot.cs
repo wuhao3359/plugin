@@ -17,7 +17,7 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        private GameData GameData { get; init; }
+        //private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
 
         private CommonBot? CommonBot;
@@ -33,7 +33,7 @@ namespace WoAutoCollectionPlugin.Bot
         public DailyBot(GameData GameData)
         {
 
-            this.GameData = GameData;
+            //this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
             CommonBot = new CommonBot(KeyOperates);
             GatherBot = new GatherBot(GameData);
@@ -181,7 +181,7 @@ namespace WoAutoCollectionPlugin.Bot
                     Vector3 position = MovePositions(Path, true);
                     // 找最近的采集点
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                    ushort SizeFactor = GameData.GetSizeFactor(territoryType);
+                    ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
                     (GameObject go, Vector3 point) = Util.LimitTimePosCanGather(Points, SizeFactor);
 
                     if (go != null)
@@ -358,7 +358,7 @@ namespace WoAutoCollectionPlugin.Bot
                     Vector3 position = MovePositions(Path, true);
 
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                    ushort SizeFactor = GameData.GetSizeFactor(territoryType);
+                    ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
 
                     for (int t = 0; t < Points.Length; t++) {
                         if (closed)
@@ -477,7 +477,7 @@ namespace WoAutoCollectionPlugin.Bot
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)
         {
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < Path.Length; i++)
             {

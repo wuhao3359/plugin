@@ -74,7 +74,7 @@ namespace WoAutoCollectionPlugin
 
         public CraftBot CraftBot;
 
-        public DailyBot DailyBot;
+        //public DailyBot DailyBot;
 
         public static KeyOperates KeyOperates;
 
@@ -159,7 +159,7 @@ namespace WoAutoCollectionPlugin
                 CollectionFishBot = new CollectionFishBot(GameData);
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
-                DailyBot = new DailyBot(GameData);
+                //DailyBot = new DailyBot(GameData);
                 KeyOperates = new KeyOperates(GameData);
                 CommonBot = new CommonBot(KeyOperates, GameData);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -435,7 +435,7 @@ namespace WoAutoCollectionPlugin
             if (args.Length == 1)
             {
                 PluginLog.Log($"stop");
-                DailyBot.StopScript();
+                GameData.DailyBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -450,7 +450,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                DailyBot.DailyScript(args);
+                GameData.DailyBot.DailyScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
