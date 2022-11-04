@@ -88,7 +88,7 @@ public class KeyOperates
             {
                 PluginLog.Log($"移动中途结束 {closed} {territoryType} {DalamudApi.ClientState.TerritoryType}");
                 Stop();
-                return GetUserPosition(SizeFactor);
+                break;
             }
             Thread.Sleep(50);
 
@@ -154,6 +154,7 @@ public class KeyOperates
                 notMove = 0;
             } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
+                KeyMethod(Keys.space_key);
                 notMove = 0;
             }
 
@@ -231,12 +232,12 @@ public class KeyOperates
 
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 4.5;
+                errorDisntance = 4.3;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
                 errorDisntance = 3;
             }
         }
-        PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");
+        //PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");
         Stop();
         return GetUserPosition(SizeFactor);
     }

@@ -4,6 +4,7 @@ using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Classes;
 
 namespace WoAutoCollectionPlugin;
@@ -17,6 +18,15 @@ public class GameData
     public Dictionary<uint, Territory> Territories { get; init; } = new();
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
+
+    public DailyBot DailyBot { get; init; } = null!;
+
+
+    public bool closed = false;
+
+    public bool othetRun = false;
+
+    public Dictionary<string, string> param = new();
 
     public GameData(DataManager gameData)
     {
@@ -55,6 +65,8 @@ public class GameData
                     .ToDictionary(g => (uint)g.Item, g => new Gatherable(this, g))
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
+
+            DailyBot = new(this);
         }
         catch (Exception e)
         {

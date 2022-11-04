@@ -17,18 +17,26 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        private GameData GameData { get; init; }
+        //private GameData GameData { get; init; }
         private KeyOperates KeyOperates { get; init; }
 
         private CommonBot? CommonBot;
 
+        private GatherBot? GatherBot;
+
         private static bool closed = false;
+
+        private bool othetRun = false;
+
+        public Dictionary<string, string> param;
 
         public DailyBot(GameData GameData)
         {
+
+            //this.GameData = GameData;
             KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(KeyOperates, GameData);
-            this.GameData = GameData;
+            CommonBot = new CommonBot(KeyOperates);
+            GatherBot = new GatherBot(GameData);
         }
 
         public void Init()
@@ -41,121 +49,145 @@ namespace WoAutoCollectionPlugin.Bot
         {
             closed = true;
             CommonBot.StopScript();
-            KeyOperates.ForceStop();
+            GatherBot.StopScript();
         }
 
-        // TODO 日常使用
+        // TODO
         public void DailyScript(string args)
         {
             closed = false;
             try {
-                string[] str = args.Split(' ');
-                PluginLog.Log($"daily: {args} length: {args.Length}");
+                // 参数解析
+                param = Util.CommandParse(args);
 
-                uint lv = 80;
-                if (str.Length >= 1) {
-                    lv = uint.Parse(str[1]);
+                uint lv = 50;
+                if (param.TryGetValue("level", out var l)) {
+                    lv = uint.Parse(l);
                 }
-                if (lv < 80) {
-                    lv = 80;
-                }
-                TimePlan(lv);
 
+                if (param.TryGetValue("duration", out var d))
+                {
+                    if (d == "1")
+                    {
+                        // 限时单次采集
+                        LimitTimeSinglePlan(lv);
+                    }
+                    else {
+                        // 限时多次采集
+                        LimitTimeMultiPlan(lv);
+                    }
+                }
+                else {
+                    PluginLog.Error($"check params");
+                }
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }
         }
 
-        public void TimePlan(uint lv)
+        public void LimitTimeSinglePlan(uint lv)
         {
             int n = 0;
+            bool first = true;
             SeTime Time = new SeTime();
+            // 每24个et内单个任务只允许被执行一遍
+            List<int> finishIds = new();
+
+            Time.Update();
+            int hour = Time.ServerTime.CurrentEorzeaHour();
+            int minute = Time.ServerTime.CurrentEorzeaMinute();
+            int et = hour;
             while (!closed && n < 1000)
             {
-                // 每24个et内单个任务只允许被执行一遍
-                List<int> finishIds = new List<int>();
-                
-                Time.Update();
-                int hour = Time.ServerTime.CurrentEorzeaHour();
-                int minute = Time.ServerTime.CurrentEorzeaMinute();
-
-                int et = hour + 1;
-                if (et == 24) {
+                if (first)
+                {
+                    et--;
+                    first = false;
+                }
+                et++;
+                if (et >= 24) {
+                    et = 0;
                     PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin et: {et}");
                 List<int> ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                PluginLog.Log($"当前et总共有 {ids.Count}  ..");
 
-                while (ids.Count == 0) {
+                while (ids.Count == 0 && et < 24)
+                {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
                     et++;
-                    if(et >= 24) {
-                        et = 0;
-                        while (hour > et) {
-                            PluginLog.Log($"当前时间{hour} wait to {et} ..");
-                            Thread.Sleep(10000);
-                            Time.Update();
-                            hour = Time.ServerTime.CurrentEorzeaHour();
+                    ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                }
+                if (et >= 24) {
+                    continue;
+                }
+
+                while (hour != et) {
+                    if (closed)
+                    {
+                        PluginLog.Log($"中途结束");
+                        return;
+                    }
+                    RunWaitTask(lv);
+                    while (othetRun) {
+                        Time.Update();
+                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        PluginLog.Log($"当前时间{hour} wait to {et} ..");
+                        Thread.Sleep(5000);
+                        if (hour == et) {
+                           StopWaitTask();
                         }
                     }
-                    ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
                 }
 
                 int num = 0;
                 foreach (int id in ids) {
-                    if (finishIds.Exists(t => t == id)) {
+                    if (closed)
+                    {
+                        PluginLog.Log($"中途结束");
+                        return;
+                    }
+                    if (finishIds.Exists(t => t == id))
+                    {
                         PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
-                        Thread.Sleep(3000);
                         continue;
                     }
-                    (string Names, string Job, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
-                    PluginLog.Log($"下个任务: id: {id} Name: {Names}, Job: {Job}, et: {et}..");
+                    (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                    PluginLog.Log($"当前完成任务: {finishIds.Count} 下个任务, id: {id} Name: {Name}, Job: {Job}, et: {et}..");
 
-                    if (EvaluateTask(Names, Job)) {
-                        PluginLog.Log($"预计收益低, 丢弃, id: {id} Name: {Names}..");
-                    }
-
-                    if (hour > et) {
+                    if (hour > et || (et >= 20 && hour < 10)) {
                         PluginLog.Log($"当前et已经结束, finish et {et} ..");
-                        Thread.Sleep(3000);
                         break;
                     }
 
                     if (Tp == 0) {
                         PluginLog.Log($"数据异常, skip {id}..");
-                        Thread.Sleep(3);
+                        finishIds.Add(id);
                         continue;
                     }
-                    Teleporter.Teleport(Tp);
-                    Thread.Sleep(15000);
 
-                    while (hour < et)
+                    Teleporter.Teleport(Tp);
+                    Thread.Sleep(12000);
+                    PluginLog.Log($"开始执行任务, id: {id} ");
+                    // 切换职业 
+                    if (!CommonUi.CurrentJob(Job))
                     {
-                        if (closed)
-                        {
-                            PluginLog.Log($"中途结束");
-                            return;
-                        }
-                        PluginLog.Log($"当前et: {hour}, 未到时间, 等待执行任务, wait et {et}..");
-                        Thread.Sleep(10000);
-                        Time.Update();
-                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                        Thread.Sleep(500);
                     }
-                    PluginLog.Log($"正在执行任务, id: {id} ");
-                    // 切换职业
-                    WoAutoCollectionPlugin.Executor.DoGearChange(Job);
                     Thread.Sleep(1000);
                     Vector3 position = MovePositions(Path, true);
                     // 找最近的采集点
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                    ushort SizeFactor = GameData.GetSizeFactor(territoryType);
+                    ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
                     (GameObject go, Vector3 point) = Util.LimitTimePosCanGather(Points, SizeFactor);
 
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
+                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         Vector3 GatherPoint = new(x, y, z);
                         position = KeyOperates.MoveToPoint(position, point, territoryType, true, false);
@@ -181,6 +213,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                         }
+
                         KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
@@ -197,18 +230,30 @@ namespace WoAutoCollectionPlugin.Bot
                         if (tt >= 5)
                         {
                             PluginLog.Log($"未打开采集面板, skip {id}..");
-                            Thread.Sleep(3000);
+                            finishIds.Add(id);
                             continue;
                         }
                         Thread.Sleep(1000);
+
                         if (CommonUi.AddonGatheringIsOpen())
                         {
-                            CommonBot.LimitMaterialsMethod(Names, Job);
+                            CommonBot.LimitMaterialsMethod(Name);
+
+                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                            uint gp = player.CurrentGp;
+                            if (gp < player.MaxGp * 0.5)
+                            {
+                                Thread.Sleep(1000);
+                                KeyOperates.KeyMethod(Keys.plus_key);
+                                Thread.Sleep(2000);
+                            }
                         }
+                        KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
                         PluginLog.Log($"未知原因未找到数据, skip {id}..");
-                        Thread.Sleep(3000);
+                        finishIds.Add(id);
+                        Thread.Sleep(1000);
                         continue;
                     }
                     // finish work
@@ -216,7 +261,7 @@ namespace WoAutoCollectionPlugin.Bot
                     num++;
                     Time.Update();
                     hour = Time.ServerTime.CurrentEorzeaHour();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(1000);
 
                     // TODO 修理装备
                     // TODO魔晶石精制
@@ -225,10 +270,204 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
+        public void LimitTimeMultiPlan(uint lv)
+        {
+            int n = 0;
+            bool first = true;
+            SeTime Time = new SeTime();
+
+            Time.Update();
+            int hour = Time.ServerTime.CurrentEorzeaHour();
+            int minute = Time.ServerTime.CurrentEorzeaMinute();
+            int et = hour;
+            while (!closed && n < 1000)
+            {
+                if (first)
+                {
+                    et--;
+                    first = false;
+                }
+                et++;
+                if (et >= 24)
+                {
+                    et = 0;
+                }
+                PluginLog.Log($"start begin et: {et}");
+                int id = LimitMaterials.GetCollecMaterialIdByEt(et, lv);
+                PluginLog.Log($"当前et任务Id {id}  ..");
+
+                while (id == 0 && et < 24)
+                {
+                    PluginLog.Log($"当前et没事干, skip et {et} ..");
+                    et++;
+                    id = LimitMaterials.GetCollecMaterialIdByEt(et, lv);
+                }
+                if (et >= 24)
+                {
+                    continue;
+                }
+                
+                while (hour != et)
+                {
+                    if (closed)
+                    {
+                        PluginLog.Log($"中途结束");
+                        return;
+                    }
+                    RunWaitTask(lv);
+                    while (othetRun)
+                    {
+                        Time.Update();
+                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        PluginLog.Log($"当前时间{hour} wait to {et} ..");
+                        Thread.Sleep(5000);
+                        if (hour == et)
+                        {
+                            StopWaitTask();
+                        }
+                    }
+                }
+
+                (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) = LimitMaterials.GetCollecMaterialById(id);
+                Time.Update();
+                hour = Time.ServerTime.CurrentEorzeaHour();
+                PluginLog.Log($"开始执行任务, id: {id} Name: {Name}, Job: {Job}, MinEt: {MinEt}, MaxEt: {MaxEt}..");
+                if (Tp == 0)
+                {
+                    PluginLog.Log($"数据异常, skip {id}..");
+                    break;
+                }
+                Teleporter.Teleport(Tp);
+                Thread.Sleep(12000);
+                ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
+                // 切换职业 
+                if (!CommonUi.CurrentJob(Job))
+                {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                    Thread.Sleep(500);
+                }
+                Thread.Sleep(500);
+                Vector3 position = MovePositions(Path, true);
+                while (hour >= MinEt && hour <= MaxEt) {
+                    for (int t = 0; t < Points.Length; t++) {
+                        if (closed)
+                        {
+                            PluginLog.Log($"中途结束");
+                            return;
+                        }
+                        if (Array.IndexOf(CanGatherIndex, t) != -1)
+                        {
+                            GameObject go = Util.CurrentPositionCanGather(Points[t], SizeFactor);
+                            if (go != null)
+                            {
+                                float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
+                                float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
+                                float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                                Vector3 GatherPoint = new(x, y, z);
+                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+
+                                var targetMgr = DalamudApi.TargetManager;
+                                targetMgr.SetTarget(go);
+
+                                int tt = 0;
+                                while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 7)
+                                {
+                                    if (tt >= 3)
+                                    {
+                                        KeyOperates.KeyMethod(Keys.w_key, 200);
+                                    }
+                                    KeyOperates.KeyMethod(Keys.q_key);
+                                    Thread.Sleep(1000);
+                                    tt++;
+
+                                    if (closed)
+                                    {
+                                        PluginLog.Log($"stopping");
+                                        return;
+                                    }
+                                }
+
+                                KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                tt = 0;
+                                while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
+                                {
+                                    KeyOperates.KeyMethod(Keys.num0_key);
+                                    Thread.Sleep(300);
+                                    if (closed)
+                                    {
+                                        PluginLog.Log($"stopping");
+                                        return;
+                                    }
+                                    tt++;
+                                }
+                                if (tt >= 5)
+                                {
+                                    PluginLog.Log($"未打开采集面板, skip {id}..");
+                                    continue;
+                                }
+                                Thread.Sleep(1000);
+
+                                if (CommonUi.AddonGatheringIsOpen())
+                                {
+                                    CommonBot.LimitMultiMaterialsMethod(Name);
+                                    
+                                    PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                                    uint gp = player.CurrentGp;
+                                    if (gp < player.MaxGp * 0.6)
+                                    {
+                                        Thread.Sleep(1000);
+                                        KeyOperates.KeyMethod(Keys.plus_key);
+                                        Thread.Sleep(2000);
+                                    }
+                                }
+                                KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                            }
+                            else
+                            {
+                                PluginLog.Log($"未知原因未找到数据, skip {id}..");
+                                Thread.Sleep(1000);
+                                continue;
+                            }
+                            Time.Update();
+                            hour = Time.ServerTime.CurrentEorzeaHour();
+                            Thread.Sleep(1000);
+                        }
+                    }
+                }
+                PluginLog.Log($"当前ET结束...");
+            }
+        }
+
+        private void RunWaitTask(uint lv) {
+            othetRun = true;
+            Task task = new(() =>
+            {
+                PluginLog.Log($"执行等待任务...");
+                try
+                {
+                    GatherBot.param = param;
+                    GatherBot.RunNormalScript(0, lv);
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"其他任务, error!!!\n{e}");
+                }
+                PluginLog.Log($"其他任务结束...");
+                othetRun = false;
+            });
+            task.Start();
+        }
+
+        private void StopWaitTask()
+        {
+            GatherBot.StopScript();
+        }
+
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)
         {
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < Path.Length; i++)
             {
@@ -239,29 +478,9 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 position = KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(200);
             }
             return position;
         }
 
-        private bool EvaluateTask(string Name, string Job) {
-            uint GivingLandActionId = 4589;
-            if (Job == "园艺工")
-            {
-                GivingLandActionId = 4590;
-            }
-            bool r = true;
-            if (Name.Contains("雷之") || Name.Contains("火之") || Name.Contains("风之") || Name.Contains("水之") || Name.Contains("冰之") || Name.Contains("土之"))
-            {
-                PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                uint gp = player.CurrentGp;
-                int level = player.Level;
-                if (level < 74 || Game.GetSpellActionRecastTimeElapsed(GivingLandActionId) != 0 || gp < 200)
-                {
-                    r = false;
-                }
-            }
-            return r;
-        }
     }
 }

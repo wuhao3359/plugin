@@ -88,4 +88,38 @@ internal class BagManager
         int Inventory4 = InventoryManager.Instance()->GetItemCountInContainer(ItemId, InventoryType.Inventory4);
         return (Inventory1, Inventory2, Inventory3, Inventory4);
     }
+
+    public static unsafe int GetItemQuantityInContainer(uint ItemId) {
+        var bag0 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory1);
+        var bag1 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory2);
+        var bag2 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory3);
+        var bag3 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory4);
+
+        uint quantity = 0;
+        if (bag0 != null && bag1 != null && bag2 != null && bag3 != null)
+        {
+
+            for (int i = 0; i < 35; i++)
+            {
+                if (bag0->Items[i].ItemID == 0)
+                {
+                    quantity += bag0->Items[i].Quantity;
+                }
+                if (bag1->Items[i].ItemID == 0)
+                {
+                    quantity += bag1->Items[i].Quantity;
+                }
+                if (bag2->Items[i].ItemID == 0)
+                {
+                    quantity += bag2->Items[i].Quantity;
+                }
+                if (bag3->Items[i].ItemID == 0)
+                {
+                    quantity += bag3->Items[i].Quantity;
+                }
+            }
+        }
+
+        return (int)quantity;
+    }
 }

@@ -9,16 +9,16 @@ namespace WoAutoCollectionPlugin.Utility
 {
     public static unsafe class Util
     {
-        public static (List<GameObject>, List<int>) GetCanGatherPosition(Vector3[] Area, int[] index, int j, ushort SizeFactor)
+        public static (List<GameObject>, List<int>) GetCanGatherPosition(Vector3[] Points, int[] CanCollectPoint, int j, int UnknownPoints, ushort SizeFactor)
         {
             List<GameObject> gameObjects = new();
             List<int> gameObjectsIndex = new();
-            for (int i = 0; i < 4; i++, j++)
+            for (int i = 0; i < UnknownPoints; i++, j++)
             {
-                GameObject go = CurrentPositionCanGather(Area[index[j]], SizeFactor);
-                if (go != null ) {
+                GameObject go = CurrentPositionCanGather(Points[CanCollectPoint[j]], SizeFactor);
+                if (go != null) {
                     gameObjects.Add(go);
-                    gameObjectsIndex.Add(index[j]);
+                    gameObjectsIndex.Add(CanCollectPoint[j]);
                 }
             }
             return (gameObjects, gameObjectsIndex);
@@ -33,28 +33,60 @@ namespace WoAutoCollectionPlugin.Utility
             for (int i = 0; i < length; i++)
             {
                 GameObject? gameObject = DalamudApi.ObjectTable[i];
-                if (gameObject != null && CanGather(gameObject))
+                if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                 {
-                    if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                    Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                    double d = Maths.Distance(position, v);
+                    if (d < distance)
                     {
-                        Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
-                        double d = Maths.Distance(position, v);
-                        if (d < distance) {
-                            distance = d;
-                            nearestGo = gameObject;
-                            index = i;
-                        }
+                        distance = d;
+                        nearestGo = gameObject;
+                        index = i;
                     }
                 }
             }
 
-            if (nearestGo != null)
+            if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近 {index}, {nearestGo.DataId}");
+                PluginLog.Log($"最近1: {index}");
                 return nearestGo;
             }
             else {
-                PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point1");
+                return null;
+            }
+        }
+
+        public static GameObject CurrentYPositionCanGather(Vector3 position, ushort SizeFactor)
+        {
+            GameObject nearestGo = null;
+            double distance = 1000000000f;
+            int index = 0;
+            int length = DalamudApi.ObjectTable.Length;
+            for (int i = 0; i < length; i++)
+            {
+                GameObject? gameObject = DalamudApi.ObjectTable[i];
+                if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint && CanGather(gameObject))
+                {
+                    Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                    double d = Maths.Distance(position, v);
+                    if (d < distance)
+                    {
+                        distance = d;
+                        nearestGo = gameObject;
+                        index = i;
+                    }
+                }
+            }
+
+            if (nearestGo != null && CanGather(nearestGo))
+            {
+                PluginLog.Log($"最近2: {index}");
+                return nearestGo;
+            }
+            else
+            {
+                PluginLog.Log($"没有找到最近的point2");
                 return null;
             }
         }
@@ -93,12 +125,12 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (nearestGo != null)
             {
-                PluginLog.Log($"最近, {nearestGo.DataId}");
+                //PluginLog.Log($"最近, {nearestGo.DataId}");
                 return (nearestGo, position);
             }
             else
             {
-                PluginLog.Log($"没有找到最近的point");
+                PluginLog.Log($"没有找到最近的point3");
                 return (null, position);
             }
         }
@@ -145,5 +177,63 @@ namespace WoAutoCollectionPlugin.Utility
                 
             return (-1, vectors);
         }
+
+        /*
+         * 命令解析
+         * params   
+         *  command:Daily    主要用途(Daily-限时采集)
+         *  duration:1       持续次数(1次或多次)
+         *  level:50         等级(lv<50)
+         *  bagLimit:1       背包限制(1-有)
+         *  
+         *  example:    Daily duration:1 level:50 bagLimit:1
+         * return int 
+         * 
+         */
+        public static Dictionary<string, string> CommandParse(string args) {
+            string[] str = args.Split(" ");
+            PluginLog.Log($"daily: {args} length: {args.Length}");
+
+            Dictionary<string, string> dictionary = new();
+            if (str.Length > 1) {
+                string first = str[0];
+                if (first == "daily")
+                {
+                    for (int i = 1; i < str.Length; i++)
+                    {
+                        string s = str[i];
+                        string[] ss = s.Split(":");
+                        if (ss.Length == 2)
+                        {
+                            dictionary.Add(ss[0], ss[1]);
+                        }
+                    }
+                    CommandParams.TryGetValue(first, out var list);
+                    foreach (string s in list)
+                    {
+                        if (!dictionary.TryGetValue(s, out var v))
+                        {
+                            DefaultValues.TryGetValue(s, out var dv);
+                            dictionary.Add(s, dv);
+                        };
+                    }
+                }
+                else { 
+                    // TODO
+                }
+            }
+            return dictionary;
+        }
+
+        public static Dictionary<string, List<string>> CommandParams = new() {
+            { "daily", new() { "duration", "level", "bagLimit" } }
+        };
+
+        public static Dictionary<string, string> DefaultValues = new()
+        {
+            { "duration", "1" },
+            { "level", "50" },
+            { "bagLimit", "1" },
+        };
     }
 }

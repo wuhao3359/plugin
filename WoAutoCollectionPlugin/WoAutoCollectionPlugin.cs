@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.ClientState.Objects.Types;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
@@ -57,7 +58,7 @@ namespace WoAutoCollectionPlugin
 
         public static GameData GameData { get; private set; } = null!;
 
-        public static WeatherManager WeatherManager { get; private set; } = null!;
+        public WeatherManager WeatherManager { get; private set; } = null!;
 
         public static Executor Executor;
 
@@ -69,11 +70,15 @@ namespace WoAutoCollectionPlugin
 
         public CollectionFishBot CollectionFishBot;
 
-        public GatherBot GatherBot;
+        public static GatherBot GatherBot;
 
         public CraftBot CraftBot;
 
-        public DailyBot DailyBot;
+        //public DailyBot DailyBot;
+
+        public static KeyOperates KeyOperates;
+
+        public static CommonBot CommonBot;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
         {
@@ -154,7 +159,9 @@ namespace WoAutoCollectionPlugin
                 CollectionFishBot = new CollectionFishBot(GameData);
                 GatherBot = new GatherBot(GameData);
                 CraftBot = new CraftBot(GameData);
-                DailyBot = new DailyBot(GameData);
+                //DailyBot = new DailyBot(GameData);
+                KeyOperates = new KeyOperates(GameData);
+                CommonBot = new CommonBot(KeyOperates, GameData);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -358,8 +365,6 @@ namespace WoAutoCollectionPlugin
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
-            // 使用技能
-            WoAutoCollectionPlugin.Executor.DoGearChange("采矿工");
 
             //Game.Test();
 
@@ -372,32 +377,6 @@ namespace WoAutoCollectionPlugin
 
             //string[] str = args.Split(' ');
             //PluginLog.Log($"daily: {args} length: {args.Length}");
-
-            //if (args.Length <= 0)
-            //{
-            //    PluginLog.Log($"stop");
-            //    // stop
-            //    DailyBot.StopScript();
-            //    taskRunning = false;
-            //    return;
-            //}
-
-            //if (taskRunning)
-            //{
-            //    PluginLog.Log($"stop first");
-            //    return;
-            //}
-
-            //taskRunning = true;
-
-            //Task task = new(() =>
-            //{
-            //    PluginLog.Log($"start...");
-            //    DailyBot.DailyScript();
-            //    PluginLog.Log($"end...");
-            //    taskRunning = false;
-            //});
-            //task.Start();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -453,11 +432,10 @@ namespace WoAutoCollectionPlugin
             string[] str = args.Split(' ');
             PluginLog.Log($"daily: {args} length: {args.Length}");
 
-            if (args.Length < 1)
+            if (args.Length == 1)
             {
                 PluginLog.Log($"stop");
-                // stop
-                DailyBot.StopScript();
+                GameData.DailyBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -472,7 +450,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                DailyBot.DailyScript(args);
+                GameData.DailyBot.DailyScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });

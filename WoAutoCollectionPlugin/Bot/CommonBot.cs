@@ -1,15 +1,13 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Resolvers;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
-using Lumina.Excel.GeneratedSheets;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
-using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -188,7 +186,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool CraftUploadAndExchange(string craftName, int exchangeItem)
         {
-            (uint Category, uint Sub, uint ItemId) = Items.UploadApply(craftName);
+            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(craftName);
             while (BagManager.GetInventoryItemCount(ItemId) > 0) {
                 if (closed)
                 {
@@ -246,7 +244,7 @@ namespace WoAutoCollectionPlugin.Bot
         public bool CraftExchange(int item)
         {
             PluginLog.Log($"CraftExchanging");
-            (uint Category, uint Sub) = Items.ExchangeApply(item);
+            (uint Category, uint Sub) = RecipeItems.ExchangeApply(item);
             if (Category == 0 && Sub == 0)
             {
                 return false;
@@ -302,28 +300,19 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 限时材料采集手法
-        public bool LimitMaterialsMethod(string Names, string job) {
-            // lv.74 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
-            uint GivingLandActionId = 4589;
-            if (job == "园艺工")
-            {
-                GivingLandActionId = 4590;
-            }
+        public bool LimitMaterialsMethod(string Names) {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+
             uint gp = player.CurrentGp;
-            if (gp < player.MaxGp * 0.3) {
-                KeyOperates.KeyMethod(Keys.plus_key);
-            }
             int level = player.Level;
 
             List<string> list = new();
             string[] names = Names.Split('|');
+            PluginLog.Log($"开始采集: {Names}");
             foreach (string na in names) {
                 list.Add(na);
             }
-
-            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list, GameData);
-            PluginLog.Log($"开始采集: {name}");
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
             int action = 0;
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
@@ -332,11 +321,14 @@ namespace WoAutoCollectionPlugin.Bot
                     gp -= 200;
                     action++;
                 }
-                else if(gp >= 150) {
+                else if (gp >= 150) {
                     KeyOperates.KeyMethod(Keys.F3_key);
                     gp -= 150;
                     action++;
                 }
+            } else if (name.Contains("土壤")) {
+                action++;
+                // 不用技能
             } else {
                 if (level >= 50)
                 {
@@ -383,8 +375,32 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                     }
+                } else if (tt == 2) {
+                    if (name.Contains("土壤") || name.Contains("地图"))
+                    {
+                        (GatherIndex, name) = CommonUi.GetGatheringIndex(list);
+                    }
                 }
+                
             }
+
+            return true;
+        }
+
+        // 限时收藏品采集手法
+        public bool LimitMultiMaterialsMethod(string Name)
+        {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            List<string> list = new();
+            list.Add(Name);
+            PluginLog.Log($"开始采集: {Name}");
+           
+            (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
+            CommonUi.GatheringButton(GatherIndex);
+
+            uint gp = player.CurrentGp;
+            // TODO
+
 
             return true;
         }
