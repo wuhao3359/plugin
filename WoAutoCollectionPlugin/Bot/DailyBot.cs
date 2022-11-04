@@ -331,35 +331,25 @@ namespace WoAutoCollectionPlugin.Bot
                 (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) = LimitMaterials.GetCollecMaterialById(id);
                 Time.Update();
                 hour = Time.ServerTime.CurrentEorzeaHour();
-                PluginLog.Log($"当前任务任务, id: {id} Name: {Name}, Job: {Job}, MinEt: {MinEt}, MaxEt: {MaxEt}..");
-                while (hour >= MinEt && hour <= MaxEt) {
-                    if (closed)
-                    {
-                        PluginLog.Log($"中途结束");
-                        return;
-                    }
-
-                    if (Tp == 0)
-                    {
-                        PluginLog.Log($"数据异常, skip {id}..");
-                        break;
-                    }
-
-                    Teleporter.Teleport(Tp);
-                    Thread.Sleep(12000);
-                    PluginLog.Log($"开始执行任务, id: {id} ");
-                    // 切换职业 
-                    if (!CommonUi.CurrentJob(Job))
-                    {
-                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
-                        Thread.Sleep(500);
-                    }
+                PluginLog.Log($"开始执行任务, id: {id} Name: {Name}, Job: {Job}, MinEt: {MinEt}, MaxEt: {MaxEt}..");
+                if (Tp == 0)
+                {
+                    PluginLog.Log($"数据异常, skip {id}..");
+                    break;
+                }
+                Teleporter.Teleport(Tp);
+                Thread.Sleep(12000);
+                ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
+                // 切换职业 
+                if (!CommonUi.CurrentJob(Job))
+                {
+                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
-                    Vector3 position = MovePositions(Path, true);
-
-                    ushort territoryType = DalamudApi.ClientState.TerritoryType;
-                    ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
-
+                }
+                Thread.Sleep(500);
+                Vector3 position = MovePositions(Path, true);
+                while (hour >= MinEt && hour <= MaxEt) {
                     for (int t = 0; t < Points.Length; t++) {
                         if (closed)
                         {

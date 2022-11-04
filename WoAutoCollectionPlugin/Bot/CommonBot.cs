@@ -387,6 +387,7 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        // 限时收藏品采集手法
         public bool LimitMultiMaterialsMethod(string Name)
         {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
