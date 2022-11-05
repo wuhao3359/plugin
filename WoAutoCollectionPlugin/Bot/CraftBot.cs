@@ -12,30 +12,22 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CraftBot
     {
-        //private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
-
-        private CommonBot? CommonBot;
-
         private static bool closed = false;
 
-        public CraftBot(GameData GameData)
+        public CraftBot()
         {
-            //this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void Init()
         {
             closed = false;
-            CommonBot.Init();
+            WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
         public void StopScript()
         {
             closed = true;
-            CommonBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
         }
 
         public void CraftScript(string args)
@@ -182,7 +174,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
 
                     Thread.Sleep(1800);
-                    KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
                     if (recipeName == "")
                         recipeName = RecipeNoteUi.GetItemName();
@@ -206,7 +198,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(1000);
                         if (RecipeNoteUi.RecipeNoteIsOpen())
                         {
-                            KeyOperates.KeyMethod(Keys.esc_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                         }
 
                         // TODO 添加精制 修理参数
@@ -215,7 +207,7 @@ namespace WoAutoCollectionPlugin.Bot
                         // 上交收藏品和交换道具
                         if (recipeName.Contains("收藏用") && exchangeItem > 0)
                         {
-                            if (!CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
+                            if (!WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
                             {
                                 PluginLog.Log($"params error... plz check");
                                 return;

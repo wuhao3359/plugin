@@ -14,7 +14,6 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class HFishBot
     {
-        private KeyOperates KeyOperates { get; init; }
         private EventFramework EventFramework { get; init; }
         private static SeTugType TugType { get; set; } = null!;
 
@@ -24,11 +23,9 @@ namespace WoAutoCollectionPlugin.Bot
         private FishingState FishingState = FishingState.None;
         private bool closed = false;
 
-        public HFishBot(GameData GameData)
+        public HFishBot()
         {
-            KeyOperates = new KeyOperates(GameData);
             EventFramework = new EventFramework(DalamudApi.SigScanner);
-
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
         }
@@ -62,7 +59,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunScript() {
             if (!DalamudApi.Condition[ConditionFlag.OccupiedInCutSceneEvent] && !DalamudApi.Condition[ConditionFlag.Fishing])
             {
-                KeyOperates.KeyMethod(Keys.n2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
             }
         }
 
@@ -100,18 +97,18 @@ namespace WoAutoCollectionPlugin.Bot
                 switch (Record.Tug.ToString())
                 {
                     case "Weak":
-                        KeyOperates.KeyMethod(Keys.n3_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n3_key);
                         break;
                     case "Strong":
-                        KeyOperates.KeyMethod(Keys.n4_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                         break;
                     case "Legendary":
-                        KeyOperates.KeyMethod(Keys.n4_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                         break;
                     default:
                         break;
                 }
-                KeyOperates.KeyMethod(Keys.n1_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n1_key);
             });
             task.Start();
         }
@@ -147,35 +144,35 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (stackCount >= 3)
                     {
-                        KeyOperates.KeyMethod(Keys.n0_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
                         gp += 150;
                         Thread.Sleep(1000);
                     }
                 }
                 if (gp < maxGp * 0.5)
                 {
-                    KeyOperates.KeyMethod(Keys.minus_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
                     Thread.Sleep(1500);
                 }
                 if (!existStatus)
                 {
                     if (gp > 560)
                     {
-                        KeyOperates.KeyMethod(Keys.F4_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 560;
                     }
                     else if (gp > 200)
                     {
-                        KeyOperates.KeyMethod(Keys.F3_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F3_key);
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 200;
                     }
                 }
                 Thread.Sleep(500);
-                KeyOperates.KeyMethod(Keys.n2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
             });
             task.Start();
         }

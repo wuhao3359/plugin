@@ -17,25 +17,17 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class GatherBot
     {
-        private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
-
-        private CommonBot? CommonBot;
-
         private static bool closed = false;
         private int gatherCount = 0;
 
         public Dictionary<string, string> param;
 
-        public GatherBot(GameData GameData)
+        public GatherBot()
         {
-            this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void test() {
-            KeyOperates.MouseMove(653, 311);
+            WoAutoCollectionPlugin.GameData.KeyOperates.MouseMove(653, 311);
         }
 
         public void Init()
@@ -66,7 +58,7 @@ namespace WoAutoCollectionPlugin.Bot
         public bool RunNormalScript(int id, uint lv)
         {
             Init();
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id, lv);
             if (Id <= 0) {
@@ -88,7 +80,7 @@ namespace WoAutoCollectionPlugin.Bot
             int n = 0;
             while (!closed & n < 1000)
             {
-                Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+                Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 List<GameObject> gameObjects = new();
                 List<int> gameObjectsIndex = new();
@@ -125,15 +117,15 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (!DalamudApi.Condition[ConditionFlag.Mounted])
                                 {
-                                    KeyOperates.KeyMethod(Keys.e_key);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 }
-                                float x = Maths.GetCoordinate(go.Position.X, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
-                                float y = Maths.GetCoordinate(go.Position.Y, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType)) - 5;
-                                float z = Maths.GetCoordinate(go.Position.Z, GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float y = Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType)) - 5;
+                                float z = Maths.GetCoordinate(go.Position.Z, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 Vector3 GatherPoint = new(x, y, z);
                                 //PluginLog.Log($"去可采集点{i} {Points[i].X} {Points[i].Y} {Points[i].Z}");
-                                position = KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
-                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
+                                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                                 if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                                 {
                                     var targetMgr = DalamudApi.TargetManager;
@@ -144,9 +136,9 @@ namespace WoAutoCollectionPlugin.Bot
                                     {
                                         if (tt >= 2)
                                         {
-                                            KeyOperates.KeyMethod(Keys.w_key, 200);
+                                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                                         }
-                                        KeyOperates.KeyMethod(Keys.q_key);
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                                         Thread.Sleep(1000);
                                         tt++;
 
@@ -157,11 +149,11 @@ namespace WoAutoCollectionPlugin.Bot
                                         }
                                     }
 
-                                    KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                     tt = 0;
                                     while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                                     {
-                                        KeyOperates.KeyMethod(Keys.num0_key);
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                                         Thread.Sleep(500);
                                         tt++;
                                     }
@@ -179,7 +171,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                                     if (CommonUi.AddonGatheringIsOpen())
                                     {
-                                        CommonBot.LimitMaterialsMethod(Name);
+                                        WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
                                     }
 
                                     if (gameObjects.ToArray().Length > 0)
@@ -187,7 +179,7 @@ namespace WoAutoCollectionPlugin.Bot
                                         gameObjects.RemoveAt(0);
                                         gameObjectsIndex.RemoveAt(0);
                                     }
-                                    KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                                 }
                             }
                             else
@@ -200,7 +192,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         //CommonBot.RepairAndExtractMateria();
 
-                        position = KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
+                        position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                         PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
                     }
                 }
@@ -216,7 +208,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 try
                 {
-                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                    if (WoAutoCollectionPlugin.GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
                     {
                         PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
                     }
@@ -260,7 +252,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
-                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
                 //double d = Maths.Distance(position, ToArea[1]);
                 //if (Maths.Distance(position, ToArea[1]) > 5)
@@ -274,9 +266,9 @@ namespace WoAutoCollectionPlugin.Bot
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
                 {
-                    CommonBot.SetTarget("奥瓦埃尔");
+                    WoAutoCollectionPlugin.GameData.CommonBot.SetTarget("奥瓦埃尔");
                     Thread.Sleep(500);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
 
@@ -306,16 +298,16 @@ namespace WoAutoCollectionPlugin.Bot
         private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
         {
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < ToArea.Length; i++)
             {
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
-                    return KeyOperates.GetUserPosition(SizeFactor);
+                    return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
             }
             return position;
@@ -331,22 +323,22 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             Init();
-            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
 
             if (RepairUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
                 if (repair > 0)
                 {
-                    CommonBot.Repair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
                 else
                 {
-                    CommonBot.NpcRepair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair();
                 }
             }
             else
@@ -358,7 +350,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (count >= 5)
             {
                 PluginLog.Log($"开始精制魔晶石...");
-                CommonBot.ExtractMateria(count);
+                WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
             }
 
             (Vector3[] AreaPosition, int[] Tp, int[] GatherPosition, int GathingButton) = GetAreaByType(area);
@@ -369,13 +361,13 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"YGathing stopping");
                     return;
                 }
-                position = KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
                 PluginLog.Log($"到达{k} TP点{Array.IndexOf(Tp, k) != -1} 采集点{Array.IndexOf(GatherPosition, k) != -1}");
                 // 默认为移动点
                 // 传送点
                 if (Array.IndexOf(Tp, k) != -1) {
                     if (!DalamudApi.Condition[ConditionFlag.Jumping]) {
-                        KeyOperates.KeyMethod(Keys.w_key, 1000);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
                     }
                     if (DalamudApi.Condition[ConditionFlag.Jumping])
                     {
@@ -390,7 +382,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 // 采集点
                 if (Array.IndexOf(GatherPosition, k) != -1) {
-                    GameObject? go = Util.CurrentYPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+                    GameObject? go = Util.CurrentYPositionCanGather(WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
@@ -401,7 +393,7 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"可采集点太远");
                             continue;
                         }
-                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                        position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                         PluginLog.Log($"到达可采集点: {position.X} {position.Y} {position.Z}");
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
@@ -410,9 +402,9 @@ namespace WoAutoCollectionPlugin.Bot
                         while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 7)
                         {
                             if (n >= 3) {
-                                KeyOperates.KeyMethod(Keys.w_key, 200);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                             }
-                            KeyOperates.KeyMethod(Keys.q_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                             Thread.Sleep(1000);
                             n++;
 
@@ -426,7 +418,7 @@ namespace WoAutoCollectionPlugin.Bot
                         int t = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && t < 5)
                         {
-                            KeyOperates.KeyMethod(Keys.num0_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
                             if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                             {
@@ -449,7 +441,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 500)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F2_key);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -457,7 +449,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (gp >= 400)
                                 {
-                                    KeyOperates.KeyMethod(Keys.F1_key);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -483,7 +475,7 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                         if (gatherCount >= 40) {
-                            KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             Thread.Sleep(500);
                             try
                             {
@@ -497,7 +489,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 gatherCount -= 40;
                                 Thread.Sleep(6800);
                             }
-                            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
                         }
                     }
                     else {
@@ -515,7 +507,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void StopScript()
         {
             closed = true;
-            KeyOperates.ForceStop();
+            WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
         public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, uint lv) {

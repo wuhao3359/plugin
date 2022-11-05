@@ -17,39 +17,24 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        //private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
-
-        private CommonBot? CommonBot;
-
-        private GatherBot? GatherBot;
-
         private static bool closed = false;
 
         private bool othetRun = false;
 
-        public Dictionary<string, string> param;
-
-        public DailyBot(GameData GameData)
-        {
-
-            //this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
-            CommonBot = new CommonBot(KeyOperates);
-            GatherBot = new GatherBot(GameData);
-        }
+        public DailyBot()
+        {}
 
         public void Init()
         {
             closed = false;
-            CommonBot.Init();
+            WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
         public void StopScript()
         {
             closed = true;
-            CommonBot.StopScript();
-            GatherBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
+            WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
         }
 
         // TODO
@@ -58,15 +43,17 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
             try {
                 // 参数解析
-                param = Util.CommandParse(args);
+                string command = "daily";
+                WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
 
                 uint lv = 50;
-                if (param.TryGetValue("level", out var l)) {
+                if (WoAutoCollectionPlugin.GameData.param.TryGetValue("level", out var l)) {
                     lv = uint.Parse(l);
                 }
 
-                if (param.TryGetValue("duration", out var d))
+                if (WoAutoCollectionPlugin.GameData.param.TryGetValue("duration", out var d))
                 {
+                    PluginLog.Log($"d: {d} ss[1]: {d}");
                     if (d == "1")
                     {
                         // 限时单次采集
@@ -190,8 +177,8 @@ namespace WoAutoCollectionPlugin.Bot
                         float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         Vector3 GatherPoint = new(x, y, z);
-                        position = KeyOperates.MoveToPoint(position, point, territoryType, true, false);
-                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                        position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, point, territoryType, true, false);
+                        position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
@@ -201,9 +188,9 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             if (tt >= 3)
                             {
-                                KeyOperates.KeyMethod(Keys.w_key, 200);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                             }
-                            KeyOperates.KeyMethod(Keys.q_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                             Thread.Sleep(1000);
                             tt++;
 
@@ -214,11 +201,11 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
 
-                        KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                         {
-                            KeyOperates.KeyMethod(Keys.num0_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
                             if (closed)
                             {
@@ -237,18 +224,18 @@ namespace WoAutoCollectionPlugin.Bot
 
                         if (CommonUi.AddonGatheringIsOpen())
                         {
-                            CommonBot.LimitMaterialsMethod(Name);
+                            WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
 
                             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                             uint gp = player.CurrentGp;
                             if (gp < player.MaxGp * 0.5)
                             {
                                 Thread.Sleep(1000);
-                                KeyOperates.KeyMethod(Keys.plus_key);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                                 Thread.Sleep(2000);
                             }
                         }
-                        KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
                         PluginLog.Log($"未知原因未找到数据, skip {id}..");
@@ -365,7 +352,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
                                 float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                                 Vector3 GatherPoint = new(x, y, z);
-                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
                                 var targetMgr = DalamudApi.TargetManager;
                                 targetMgr.SetTarget(go);
@@ -375,9 +362,9 @@ namespace WoAutoCollectionPlugin.Bot
                                 {
                                     if (tt >= 3)
                                     {
-                                        KeyOperates.KeyMethod(Keys.w_key, 200);
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                                     }
-                                    KeyOperates.KeyMethod(Keys.q_key);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                                     Thread.Sleep(1000);
                                     tt++;
 
@@ -388,11 +375,11 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                 }
 
-                                KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                 tt = 0;
                                 while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                                 {
-                                    KeyOperates.KeyMethod(Keys.num0_key);
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                                     Thread.Sleep(300);
                                     if (closed)
                                     {
@@ -410,18 +397,18 @@ namespace WoAutoCollectionPlugin.Bot
 
                                 if (CommonUi.AddonGatheringIsOpen())
                                 {
-                                    CommonBot.LimitMultiMaterialsMethod(Name);
+                                    WoAutoCollectionPlugin.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
                                     
                                     PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                                     uint gp = player.CurrentGp;
                                     if (gp < player.MaxGp * 0.6)
                                     {
                                         Thread.Sleep(1000);
-                                        KeyOperates.KeyMethod(Keys.plus_key);
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                                         Thread.Sleep(2000);
                                     }
                                 }
-                                KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             }
                             else
                             {
@@ -446,8 +433,8 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"执行等待任务...");
                 try
                 {
-                    GatherBot.param = param;
-                    GatherBot.RunNormalScript(0, lv);
+                    WoAutoCollectionPlugin.GameData.GatherBot.param = param;
+                    WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
                 }
                 catch (Exception e)
                 {
@@ -461,22 +448,22 @@ namespace WoAutoCollectionPlugin.Bot
 
         private void StopWaitTask()
         {
-            GatherBot.StopScript();
+            WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)
         {
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < Path.Length; i++)
             {
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
-                    return KeyOperates.GetUserPosition(SizeFactor);
+                    return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
             }
             return position;

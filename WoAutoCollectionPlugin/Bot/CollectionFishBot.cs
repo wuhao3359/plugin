@@ -18,15 +18,11 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CollectionFishBot
     {
-        private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
         private EventFramework EventFramework { get; init; }
 
         private static SeTugType TugType { get; set; } = null!;
 
         private FishRecord Record;
-
-        private CommonBot? CommonBot;
 
         private FishingState LastState = FishingState.None;
         private FishingState FishingState = FishingState.None;
@@ -40,13 +36,9 @@ namespace WoAutoCollectionPlugin.Bot
         private int num = 0;
         private int fishTime = 12;
 
-        public CollectionFishBot(GameData GameData)
+        public CollectionFishBot()
         {
-            this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
             EventFramework = new EventFramework(DalamudApi.SigScanner);
-            CommonBot = new CommonBot(KeyOperates);
-
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
         }
@@ -96,7 +88,7 @@ namespace WoAutoCollectionPlugin.Bot
             fishsw = new();
             Init();
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             // 划分区域
             Vector3[] ToArea = Array.Empty<Vector3>();
@@ -112,7 +104,7 @@ namespace WoAutoCollectionPlugin.Bot
                 fishTime = Position.WhiteFishTime;
             }
 
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
             //KeyOperates.KeyMethod(Keys.q_key);
             //Thread.Sleep(3000);
@@ -137,8 +129,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 sw.Start();
 
-                position = KeyOperates.MoveToPoint(position, FishArea[2], territoryType, false);
-                position = KeyOperates.MoveToPoint(position, FishArea[currentPoint], territoryType, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[2], territoryType, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[currentPoint], territoryType, false);
                 if (currentPoint > 0)
                 {
                     currentPoint = 0;
@@ -149,8 +141,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 // 开始作业
                 readyMove = false;
-                KeyOperates.KeyMethod(Keys.w_key, 200);
-                KeyOperates.KeyMethod(Keys.n2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
                 {
@@ -168,7 +160,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (RepairUi.NeedsRepair())
                 {
-                    CommonBot.Repair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
 
                 readyMove = true;
@@ -185,14 +177,14 @@ namespace WoAutoCollectionPlugin.Bot
                 // 判断是否需要修理
                 if (RepairUi.NeedsRepair())
                 {
-                    CommonBot.Repair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
 
                 // 判断是否需要精制
                 int count = RepairUi.CanExtractMateria();
                 if (count >= 5)
                 {
-                    CommonBot.ExtractMateria(count);
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
                 }
 
                 if (BagManager.InventoryRemaining() <= 5) {
@@ -206,7 +198,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void StopCollectionFishScript()
         {
             closed = true;
-            KeyOperates.ForceStop();
+            WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
         public void OnCollectionFishUpdate(Framework _)
@@ -249,19 +241,19 @@ namespace WoAutoCollectionPlugin.Bot
                     switch (Record.Tug.ToString())
                     {
                         case "Weak":
-                            KeyOperates.KeyMethod(Keys.n3_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n3_key);
                             break;
                         case "Strong":
-                            KeyOperates.KeyMethod(Keys.n4_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                             break;
                         case "Legendary":
-                            KeyOperates.KeyMethod(Keys.n4_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                             break; 
                         default:
                             break;
                     }
                 }
-                KeyOperates.KeyMethod(Keys.n1_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n1_key);
             });
             task.Start();
         }
@@ -271,7 +263,7 @@ namespace WoAutoCollectionPlugin.Bot
             Task task = new(() =>
             {
                 if (BagManager.InventoryRemaining() <= 5) {
-                    KeyOperates.KeyMethod(Keys.F1_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                     return;
                 }
                 Thread.Sleep(2000);
@@ -303,14 +295,14 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (stackCount >= 3)
                         {
-                            KeyOperates.KeyMethod(Keys.n0_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
                             Thread.Sleep(1000);
                         }
                     }
                     if (gp < maxGp * 0.5)
                     {
-                        KeyOperates.KeyMethod(Keys.minus_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
                         Thread.Sleep(1000);
                     }
                     if (!existStatus)
@@ -318,7 +310,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(3000);
                         if (gp > 560)
                         {
-                            KeyOperates.KeyMethod(Keys.F4_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                             Thread.Sleep(1000);
                             existStatus = true;
                             gp -= 560;
@@ -326,15 +318,15 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (LastFish && gp > 350)
                     {
-                        KeyOperates.KeyMethod(Keys.F5_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F5_key);
                         Thread.Sleep(1000);
                     }
                     LastFish = false;
 
-                    KeyOperates.KeyMethod(Keys.n2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                 }
                 else {
-                    KeyOperates.KeyMethod(Keys.F1_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                 }
             });
             task.Start();
