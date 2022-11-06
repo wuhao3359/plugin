@@ -179,24 +179,25 @@ namespace WoAutoCollectionPlugin.Bot
             int weather = 0;
             int pos = 0;
             int work = 0;
+            MovePositions(ToArea, true);
             for (int i = 0; i <= 20; i++) {
                 // 到达中心点
-                WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.Center, territoryType, true, false);
+                //WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.Center, territoryType, true, false);
 
                 // 根据天气去对应钓场
-                (pos, Vector3[] posVector) = GetPosByWeather();
-                position = MovePositions(posVector, true);
+                //(pos, Vector3[] posVector) = GetPosByWeather();
+                //position = MovePositions(posVector, true);
 
                 // 找寻无人点
-                (work, Vector3[] workVector) = GetWorkPos(pos);
-                if (work > 0)
-                {
-                    MovePositions(workVector, true);
-                }
-                else
-                {
-                    continue;
-                }
+                //(work, Vector3[] workVector) = GetWorkPos(pos);
+                //if (work > 0)
+                //{
+                //    MovePositions(workVector, true);
+                //}
+                //else
+                //{
+                //    continue;
+                //}
 
                 if (DalamudApi.Condition[ConditionFlag.Mounted])
                 {
@@ -228,7 +229,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                     // 获取当前天气
                 }
-                position = MovePositions(workVector, true);
+                //position = MovePositions(workVector, true);
             }
 
             PluginLog.Log($"任务结束");

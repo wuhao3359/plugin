@@ -10,6 +10,7 @@ namespace WoAutoCollectionPlugin.Utility
         // 14-炼金术士 15-烹调师
 
         public static Vector3[] path0 = {
+            new Vector3(2268, 2217, 866),
             new Vector3(2311, 2223, 913),
             new Vector3(2889, 2236, 1252),
             new Vector3(3142, 2228, 1333),
@@ -20,6 +21,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(3172, 2130, 1460),
         };
         public static Vector3[] path3 = {
+            new Vector3(2268, 2217, 866),
             new Vector3(2311, 2223, 913),
             new Vector3(2692, 2210, 1110),
         };
@@ -151,7 +153,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         public static Vector3[] path32 = {
             new Vector3(2219, 2356, 2077),
-            new Vector3(1915, 2285, 2826),
+            new Vector3(1915, 2295, 2826),
         };
         public static Vector3[] points32 = {
             new Vector3(1924, 2249, 2789),
@@ -197,11 +199,55 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(2044, 2172, 2774),
         };
 
+        public static Vector3[] path362151 = {
+            new Vector3(1610, 2319, 3161),
+            new Vector3(2775, 2333, 3385),
+            new Vector3(3169, 2125, 3482)
+        };
+        public static Vector3[] points362151 = {
+            new Vector3(3218, 2115, 3506),
+            new Vector3(3206, 2118, 3487),
+            new Vector3(3221, 2118, 3470),
+        };
+
+        public static Vector3[] path362152 = {
+            new Vector3(1020, 2600, 2918),
+            new Vector3(963, 2526, 2424)
+        };
+        public static Vector3[] points362152 = {
+            new Vector3(927, 2443, 2358),
+            new Vector3(1003, 2433, 2374),
+            new Vector3(915, 2443, 2297),
+        };
+
+        public static Vector3[] path362153 = {
+            new Vector3(1252, 2765, 1089),
+            new Vector3(1354, 2815, 761)
+        };
+        public static Vector3[] points362153 = {
+            new Vector3(1349, 2805, 732),
+            new Vector3(1372, 2805, 723),
+            new Vector3(1353, 2815, 707),
+        };
+
         // 16-采矿工 17-园艺工 18-捕鱼人
         // 优先级排序 TODO
         // 限时点 Lv以下
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points)[] Materials =
         {
+            (3621511, "极硬水", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            (3621512, "极硬水", 12, 13, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            (3621521, "极硬水", 2, 3, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
+            (3621522, "极硬水", 14, 15, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
+            (3621531, "极硬水", 4, 5, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
+            (3621532, "极硬水", 16, 17, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
+
+            (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
+            (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
+            (35, "黄杏", 9, 10, 17, "园艺工", 50, 52, path35, points35),     // 中拉诺西亚
+            (36, "小柠檬", 6, 7, 17, "园艺工", 80, 138, path36, points36),     // 珂露西亚岛
+            (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
+
             (0, "暗物质晶簇|火之晶簇", 1, 2, 17, "园艺工", 50, 24, path0, points0),    // 摩杜纳
             (1, "暗物质晶簇|火之晶簇", 5, 6, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
             (2, "暗物质晶簇|水之晶簇", 9, 10, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
@@ -226,20 +272,32 @@ namespace WoAutoCollectionPlugin.Utility
             (30, "暗物质晶簇|火之晶簇", 19, 21, 16, "采矿工", 50, 52, path30, points30),   // 中拉诺西亚
             (31, "暗物质晶簇|3级黑衣森林土壤|灵性岩", 6, 8, 16, "采矿工", 50, 6, path31, points31),  // 黑衣森林南部林区
             (32, "暗物质晶簇|3级萨纳兰土壤|水之晶簇", 5, 7, 16, "采矿工", 50, 17, path32, points32), // 西萨纳兰
-            (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
-            (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
-            (35, "黄杏", 9, 10, 17, "园艺工", 50, 52, path35, points35),     // 中拉诺西亚
-            (36, "小柠檬", 6, 7, 17, "园艺工", 80, 138, path36, points36),     // 珂露西亚岛
-            (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
+
             // (38, "星极花", 4, 5, 17, "园艺工", 60, 18, path26, points26), // 翻云雾海
             // (39, "星极花", 16, 17, 17, "园艺工", 60, 18, path26, points26), // 翻云雾海
             // (40, "星砂砾", 0, 1, 17, "采矿工", 60, 18, path26, points26), // 库尔札斯西部高地 
             // (41, "星砂砾|青紫石英", 12, 13, 17, "采矿工", 60, 18, path26, points26), // 库尔札斯西部高地 
         };
 
+        public static Vector3[] path36285 = {
+            new Vector3(1318, 2482, 3452),
+            new Vector3(1916, 2397, 3301),
+        };
+        public static Vector3[] points36285 = {
+            new Vector3(2094, 2321, 3440),
+            new Vector3(2000, 2325, 3466),
+            new Vector3(2129, 2386, 3575),
+            new Vector3(2187, 2369, 3622),
+            new Vector3(2233, 2383, 3501),
+            new Vector3(2312, 2290, 3330),
+        };
+        public static int[] gatherIndex36285 = {
+            1, 3, 5
+        };
+
         // 收藏品 需要分解或者上交
-        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = { 
-            // (36285, "月石英", 0, 3, 16, "采矿工", 80, 138, path36, points36, index1),    //
+        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = {
+             (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
             // (36286, "暗性岩", 20, 23, 16, "采矿工", 80, 138, path36, points36, index1),    //
             // (36287, "水瓶土", 8, 11, 17, "园艺工", 80, 138, path36, points36, index1),    // 
             // (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 80, 138, path36, points36),    //

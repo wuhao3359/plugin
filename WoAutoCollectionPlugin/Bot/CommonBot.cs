@@ -138,6 +138,8 @@ namespace WoAutoCollectionPlugin.Bot
         // 精制
         public bool ExtractMateria(int count)
         {
+            Init();
+
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
@@ -165,8 +167,11 @@ namespace WoAutoCollectionPlugin.Bot
             for (int i = 0; i < count; i++) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
-                CommonUi.SelectMaterializeDialogYesButton();
-                Thread.Sleep(3500);
+                if (CommonUi.AddonMaterializeDialogIsOpen()) {
+                    CommonUi.SelectMaterializeDialogYesButton();
+                    Thread.Sleep(3000);
+                }
+                Thread.Sleep(500);
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
@@ -272,6 +277,17 @@ namespace WoAutoCollectionPlugin.Bot
 
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
+            return true;
+        }
+
+        public bool UseItem() {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
+            if (gp < player.MaxGp * 0.6)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+                Thread.Sleep(2000);
+            }
             return true;
         }
 

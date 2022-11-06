@@ -157,6 +157,8 @@ namespace WoAutoCollectionPlugin.Bot
 
                     Teleporter.Teleport(Tp);
                     Thread.Sleep(12000);
+                    WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
+
                     PluginLog.Log($"开始执行任务, id: {id} ");
                     // 切换职业 
                     if (!CommonUi.CurrentJob(Job))
@@ -174,7 +176,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
+                        float y = go.Position.Y - 5;
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         Vector3 GatherPoint = new(x, y, z);
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, point, territoryType, true, false);
@@ -225,15 +227,6 @@ namespace WoAutoCollectionPlugin.Bot
                         if (CommonUi.AddonGatheringIsOpen())
                         {
                             WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
-
-                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                            uint gp = player.CurrentGp;
-                            if (gp < player.MaxGp * 0.5)
-                            {
-                                Thread.Sleep(1000);
-                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
-                                Thread.Sleep(2000);
-                            }
                         }
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
@@ -261,7 +254,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            SeTime Time = new SeTime();
+            SeTime Time = new();
 
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
@@ -326,6 +319,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Teleporter.Teleport(Tp);
                 Thread.Sleep(12000);
+                WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
                 // 切换职业 
@@ -349,7 +343,7 @@ namespace WoAutoCollectionPlugin.Bot
                             if (go != null)
                             {
                                 float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                                float y = Maths.GetCoordinate(go.Position.Y, SizeFactor) - 5;
+                                float y = go.Position.Y - 5;
                                 float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
@@ -398,15 +392,6 @@ namespace WoAutoCollectionPlugin.Bot
                                 if (CommonUi.AddonGatheringIsOpen())
                                 {
                                     WoAutoCollectionPlugin.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
-                                    
-                                    PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                                    uint gp = player.CurrentGp;
-                                    if (gp < player.MaxGp * 0.6)
-                                    {
-                                        Thread.Sleep(1000);
-                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
-                                        Thread.Sleep(2000);
-                                    }
                                 }
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             }
@@ -433,8 +418,12 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"执行等待任务...");
                 try
                 {
-                    WoAutoCollectionPlugin.GameData.GatherBot.param = param;
                     WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
+                    int count = RepairUi.CanExtractMateria();
+                    if (count >= 2)
+                    {
+                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
+                    }
                 }
                 catch (Exception e)
                 {

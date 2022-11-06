@@ -131,6 +131,7 @@ namespace WoAutoCollectionPlugin.Ui
                     count++;
                 }
             }
+            PluginLog.Log($"总共有 {count}, 可以精制魔晶石 ");
             return count;
         }
     }

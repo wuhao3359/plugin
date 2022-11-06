@@ -105,7 +105,9 @@ namespace WoAutoCollectionPlugin.Utility
                     if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                     {
                         if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场") {
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场"
+                            || gameObject.Name.ToString() == "传说的良材" || gameObject.Name.ToString() == "传说的草场"
+                            || gameObject.Name.ToString() == "传说的矿脉" || gameObject.Name.ToString() == "传说的石场") {
                             Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
                             double d = 100000f;
                             foreach (Vector3 pos in positions)
