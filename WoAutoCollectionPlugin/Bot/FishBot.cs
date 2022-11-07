@@ -16,11 +16,7 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class FishBot
     {
-        private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
         private EventFramework EventFramework { get; init; }
-
-        private CommonBot? CommonBot;
 
         private FishingState LastState = FishingState.None;
         private FishingState FishingState = FishingState.None;
@@ -29,12 +25,8 @@ namespace WoAutoCollectionPlugin.Bot
         private bool readyMove = false;
         private bool closed = false;
 
-        public FishBot(GameData GameData)
+        public FishBot()
         {
-            this.GameData = GameData;
-            KeyOperates = new KeyOperates(GameData);
-            EventFramework = new EventFramework(DalamudApi.SigScanner);
-            CommonBot = new CommonBot(KeyOperates);
         }
 
         public void Init()
@@ -64,7 +56,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
-                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
                 //double d = Maths.Distance(position, ToArea[1]);
                 //if (Maths.Distance(position, ToArea[1]) > 5)
@@ -77,9 +69,9 @@ namespace WoAutoCollectionPlugin.Bot
                 MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
-                    CommonBot.SetTarget("奥瓦埃尔");
+                    WoAutoCollectionPlugin.GameData.CommonBot.SetTarget("奥瓦埃尔");
                     Thread.Sleep(800);
-                    KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
 
@@ -114,7 +106,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 try
                 {
-                    if (GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
+                    if (WoAutoCollectionPlugin.GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var territoryType))
                     {
                         PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
                     }
@@ -158,26 +150,26 @@ namespace WoAutoCollectionPlugin.Bot
             yfishsw = new();
             MoveInit();
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             // 划分区域
             (Vector3[] ToArea, Vector3[] YFishArea) = GetAreaPoint(area);
 
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
 
             // 修理
             if (RepairUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
                 if (repair > 0)
                 {
-                    CommonBot.Repair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
                 else
                 {
-                    CommonBot.NpcRepair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair();
                 }
             }
             else {
@@ -187,39 +179,40 @@ namespace WoAutoCollectionPlugin.Bot
             int weather = 0;
             int pos = 0;
             int work = 0;
+            MovePositions(ToArea, true);
             for (int i = 0; i <= 20; i++) {
                 // 到达中心点
-                KeyOperates.MoveToPoint(position, Position.Center, territoryType, true, false);
+                //WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.Center, territoryType, true, false);
 
                 // 根据天气去对应钓场
-                (pos, Vector3[] posVector) = GetPosByWeather();
-                position = MovePositions(posVector, true);
+                //(pos, Vector3[] posVector) = GetPosByWeather();
+                //position = MovePositions(posVector, true);
 
                 // 找寻无人点
-                (work, Vector3[] workVector) = GetWorkPos(pos);
-                if (work > 0)
-                {
-                    MovePositions(workVector, true);
-                }
-                else
-                {
-                    continue;
-                }
+                //(work, Vector3[] workVector) = GetWorkPos(pos);
+                //if (work > 0)
+                //{
+                //    MovePositions(workVector, true);
+                //}
+                //else
+                //{
+                //    continue;
+                //}
 
                 if (DalamudApi.Condition[ConditionFlag.Mounted])
                 {
-                    KeyOperates.KeyMethod(Keys.q_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                     Thread.Sleep(1000);
                 }
                 if (DalamudApi.Condition[ConditionFlag.Mounted])
                 {
-                    KeyOperates.KeyMethod(Keys.q_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                     Thread.Sleep(500);
                 }
 
-                KeyOperates.KeyMethod(Keys.w_key, 200);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                 // 切换鱼饵 TODO
-                KeyOperates.KeyMethod(Keys.n2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                 Stopwatch sw = new();
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
                 {
@@ -236,7 +229,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                     // 获取当前天气
                 }
-                position = MovePositions(workVector, true);
+                //position = MovePositions(workVector, true);
             }
 
             PluginLog.Log($"任务结束");
@@ -246,16 +239,16 @@ namespace WoAutoCollectionPlugin.Bot
         private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
         {
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < ToArea.Length; i++)
             {
                 if (closed)
                 {
                     PluginLog.Log($"中途结束");
-                    return KeyOperates.GetUserPosition(SizeFactor);
+                    return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
-                position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
                 PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
                 Thread.Sleep(1000);
             }
@@ -265,7 +258,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void StopYFishScript()
         {
             closed = true;
-            KeyOperates.ForceStop();
+            WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
         public void OnYFishUpdate(Framework _)
@@ -306,10 +299,10 @@ namespace WoAutoCollectionPlugin.Bot
                     PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                     uint maxGp = player.MaxGp;
                     if (maxGp >= 700) {
-                        KeyOperates.KeyMethod(Keys.n7_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n7_key);
                     }
                 }
-                KeyOperates.KeyMethod(Keys.n1_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n1_key);
             });
             task.Start();
         }
@@ -341,24 +334,24 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (stackCount >= 3)
                         {
-                            KeyOperates.KeyMethod(Keys.n0_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
                             Thread.Sleep(1000);
                         }
                     }
                     if (gp < maxGp * 0.5)
                     {
-                        KeyOperates.KeyMethod(Keys.minus_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
                         Thread.Sleep(1500);
                     }
                     if (readyMove)
                     {
-                        KeyOperates.KeyMethod(Keys.F1_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                     }
                     else
                     {
-                        KeyOperates.KeyMethod(Keys.F2_key);
-                        KeyOperates.KeyMethod(Keys.n2_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     }
                 }
             });

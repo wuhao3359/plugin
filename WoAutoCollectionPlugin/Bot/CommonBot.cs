@@ -14,21 +14,10 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CommonBot
     {
-        private GameData GameData { get; init; }
-        private KeyOperates KeyOperates { get; init; }
-
         private bool closed = false;
 
-        public CommonBot(KeyOperates KeyOperates)
+        public CommonBot()
         {
-            this.KeyOperates = KeyOperates;
-            Init();
-        }
-
-        public CommonBot(KeyOperates KeyOperates, GameData GameData)
-        {
-            this.KeyOperates = KeyOperates;
-            this.GameData = GameData;
             Init();
         }
 
@@ -58,7 +47,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             int n = 0;
             while (RepairUi.AddonRepairIsOpen() && n < 3) {
-                KeyOperates.KeyMethod(Keys.esc_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             }
         }
 
@@ -69,9 +58,9 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.w_key, 200);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                 }
-                KeyOperates.KeyMethod(Keys.q_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
                 n++;
 
@@ -87,7 +76,7 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"Repair stopping");
                 return flag;
             }
-            KeyOperates.KeyMethod(Keys.F12_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F12_key);
             Thread.Sleep(1000);
             if (RepairUi.AllRepairButton())
             {
@@ -98,7 +87,7 @@ namespace WoAutoCollectionPlugin.Bot
             else {
                 flag = false;
             }
-            KeyOperates.KeyMethod(Keys.esc_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
             return flag;
         }
@@ -110,9 +99,9 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.q_key, 200);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
-                KeyOperates.KeyMethod(Keys.q_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
                 n++;
 
@@ -141,7 +130,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 flag = false;
             }
-            KeyOperates.KeyMethod(Keys.esc_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
             return flag;
         }
@@ -149,14 +138,16 @@ namespace WoAutoCollectionPlugin.Bot
         // 精制
         public bool ExtractMateria(int count)
         {
+            Init();
+
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
                 if (n >= 3)
                 {
-                    KeyOperates.KeyMethod(Keys.q_key, 200);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
-                KeyOperates.KeyMethod(Keys.q_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000);
                 n++;
 
@@ -171,15 +162,18 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"ExtractMateria stopping");
                 return true;
             }
-            KeyOperates.KeyMethod(Keys.F11_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1000);
             for (int i = 0; i < count; i++) {
-                KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
-                CommonUi.SelectMaterializeDialogYesButton();
-                Thread.Sleep(3500);
+                if (CommonUi.AddonMaterializeDialogIsOpen()) {
+                    CommonUi.SelectMaterializeDialogYesButton();
+                    Thread.Sleep(3000);
+                }
+                Thread.Sleep(500);
             }
-            KeyOperates.KeyMethod(Keys.esc_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
             return true;
         }
@@ -212,18 +206,18 @@ namespace WoAutoCollectionPlugin.Bot
             SetTarget("收藏品交易员");
             Thread.Sleep(2500);
             for (int i = 1; i < Category; i++) {
-                KeyOperates.KeyMethod(Keys.num2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
             }
 
             for (int i = 0; i < Sub; i++)
             {
-                KeyOperates.KeyMethod(Keys.num2_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
             }
 
             int n = 0;
             while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 10 && BagManager.GetInventoryItemCount(ItemId) > 0)
             {
-                KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(500);
                 n++;
                 if (closed)
@@ -233,8 +227,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
 
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.esc_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
             return true;
         }
@@ -253,8 +247,8 @@ namespace WoAutoCollectionPlugin.Bot
             Thread.Sleep(2000);
             SetTarget("工票交易员");
             Thread.Sleep(500);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(2000);
 
             if (closed)
@@ -264,25 +258,36 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             if (item == 1) {
-                KeyOperates.KeyMethod(Keys.num0_key);
-                KeyOperates.KeyMethod(Keys.num8_key);
-                KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
 
                 for (int i = 0; i < Sub; i++)
                 {
-                    KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
             }
 
-            KeyOperates.KeyMethod(Keys.num6_key);
-            KeyOperates.KeyMethod(Keys.num9_key);
-            KeyOperates.KeyMethod(Keys.num4_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
-            KeyOperates.KeyMethod(Keys.num4_key);
-            KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num6_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num9_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
 
-            KeyOperates.KeyMethod(Keys.esc_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
+            return true;
+        }
+
+        public bool UseItem() {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
+            if (gp < player.MaxGp * 0.6)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+                Thread.Sleep(2000);
+            }
             return true;
         }
 
@@ -294,7 +299,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             DalamudApi.TargetManager.SetTarget(target);
             Thread.Sleep(200);
-            KeyOperates.KeyMethod(Keys.num0_key);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(800);
             return true;
         }
@@ -317,12 +322,12 @@ namespace WoAutoCollectionPlugin.Bot
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {
-                    KeyOperates.KeyMethod(Keys.F4_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
                     action++;
                 }
                 else if (gp >= 150) {
-                    KeyOperates.KeyMethod(Keys.F3_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F3_key);
                     gp -= 150;
                     action++;
                 }
@@ -334,7 +339,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (gp >= 500)
                     {
-                        KeyOperates.KeyMethod(Keys.F2_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
                         gp -= 500;
                         action++;
                         Thread.Sleep(2000);
@@ -344,7 +349,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (gp >= 400)
                     {
-                        KeyOperates.KeyMethod(Keys.F1_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                         gp -= 400;
                         action++;
                         Thread.Sleep(2000);
@@ -366,11 +371,11 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         if (level >= 25)
                         {
-                            KeyOperates.KeyMethod(Keys.n3_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n3_key);
                             Thread.Sleep(1500);
                             if (level >= 90)
                             {
-                                KeyOperates.KeyMethod(Keys.n4_key);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                                 Thread.Sleep(1000);
                             }
                         }

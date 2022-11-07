@@ -20,14 +20,19 @@ public class GameData
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
 
     public DailyBot DailyBot { get; init; } = null!;
-
+    public FishBot FishBot { get; init; } = null!;
+    public HFishBot HFishBot { get; init; } = null!;
+    public CollectionFishBot CollectionFishBot { get; init; } = null!;
+    public GatherBot GatherBot { get; init; } = null!;
+    public CraftBot CraftBot { get; init; } = null!;
+    public CommonBot CommonBot { get; init; } = null!;
+    public KeyOperates KeyOperates { get; init; } = null!;
 
     public bool closed = false;
 
     public bool othetRun = false;
 
     public Dictionary<string, string> param = new();
-
     public GameData(DataManager gameData)
     {
         DataManager = gameData;
@@ -66,7 +71,14 @@ public class GameData
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
 
-            DailyBot = new(this);
+            KeyOperates = new(this);
+            FishBot = new();
+            HFishBot = new();
+            CollectionFishBot = new();
+            GatherBot = new();
+            DailyBot = new();
+            CraftBot = new();
+            CommonBot = new();
         }
         catch (Exception e)
         {

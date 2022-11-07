@@ -1,18 +1,12 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
-using Dalamud.Game.Command;
+﻿using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using FFXIVClientStructs.FFXIV.Client.Game;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using WoAutoCollectionPlugin.Bot;
-using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
@@ -63,22 +57,6 @@ namespace WoAutoCollectionPlugin
         public static Executor Executor;
 
         public bool taskRunning = false;
-
-        public FishBot FishBot;
-
-        public HFishBot HFishBot;
-
-        public CollectionFishBot CollectionFishBot;
-
-        public static GatherBot GatherBot;
-
-        public CraftBot CraftBot;
-
-        //public DailyBot DailyBot;
-
-        public static KeyOperates KeyOperates;
-
-        public static CommonBot CommonBot;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
         {
@@ -154,14 +132,6 @@ namespace WoAutoCollectionPlugin
                 Executor = new Executor();
                 //WeatherManager = new WeatherManager(GameData);
 
-                FishBot = new FishBot(GameData);
-                HFishBot = new HFishBot(GameData);
-                CollectionFishBot = new CollectionFishBot(GameData);
-                GatherBot = new GatherBot(GameData);
-                CraftBot = new CraftBot(GameData);
-                //DailyBot = new DailyBot(GameData);
-                KeyOperates = new KeyOperates(GameData);
-                CommonBot = new CommonBot(KeyOperates, GameData);
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -218,9 +188,9 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"fish: {args} length: {str.Length}");
 
-            if (area <= 0)
+            if (area == 0)
             {
-                FishBot.StopYFishScript();
+                GameData.FishBot.StopYFishScript();
                 taskRunning = false;
                 return;
             }
@@ -235,10 +205,10 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                FishBot.YFishScript(args);
+                GameData.FishBot.YFishScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
-                FishBot.Init();
+                GameData.FishBot.Init();
             });
             task.Start();
         }
@@ -249,10 +219,10 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"Hfish: {args}");
 
-            if (area <= 0)
+            if (area == 0)
             {
                 taskRunning = false;
-                HFishBot.StopScript();
+                GameData.HFishBot.StopScript();
                 return;
             }
 
@@ -266,7 +236,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                HFishBot.Script();
+                GameData.HFishBot.Script();
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
@@ -278,9 +248,9 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"collectionfish: {args}");
 
-            if (area <= 0)
+            if (area == 0)
             {
-                CollectionFishBot.StopCollectionFishScript();
+                GameData.CollectionFishBot.StopCollectionFishScript();
                 taskRunning = false;
                 return;
             }
@@ -295,7 +265,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                CollectionFishBot.CollectionFishScript(args);
+                GameData.CollectionFishBot.CollectionFishScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
@@ -308,9 +278,9 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"gather: {area}");
 
-            if (area <= 0)
+            if (area == 0)
             {
-                GatherBot.StopScript();
+                GameData.GatherBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -325,7 +295,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                GatherBot.NormalScript(area);
+                GameData.GatherBot.NormalScript(area);
                 taskRunning = false;
                 PluginLog.Log($"end...");
             });
@@ -338,9 +308,9 @@ namespace WoAutoCollectionPlugin
             int area = int.Parse(str[0]);
             PluginLog.Log($"ygather: {area}");
 
-            if (area <= 0)
+            if (area == 0)
             {
-                GatherBot.StopScript();
+                GameData.GatherBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -355,7 +325,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                GatherBot.YGatherScript(args);
+                GameData.GatherBot.YGatherScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
@@ -405,7 +375,7 @@ namespace WoAutoCollectionPlugin
             if (args.Length <= 1)
             {
                 PluginLog.Log($"stop");
-                CraftBot.StopScript();
+                GameData.CraftBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -420,7 +390,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                CraftBot.CraftScript(args);
+                GameData.CraftBot.CraftScript(args);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
@@ -430,9 +400,8 @@ namespace WoAutoCollectionPlugin
         private void OnDailyCommand(string command, string args)
         {
             string[] str = args.Split(' ');
-            PluginLog.Log($"daily: {args} length: {args.Length}");
-
-            if (args.Length == 1)
+            PluginLog.Log($"daily: {args}");
+            if (args.Length == 0)
             {
                 PluginLog.Log($"stop");
                 GameData.DailyBot.StopScript();

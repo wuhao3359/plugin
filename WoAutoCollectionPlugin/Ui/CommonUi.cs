@@ -175,42 +175,42 @@ namespace WoAutoCollectionPlugin.Ui
                 {
                     na = name;
 
-                    if (name == n1) 
+                    if (name == n1 || n1.Contains("地图")) 
                     {
                         index = 1;
                         break;
                     }
-                    else if (name == n2)
+                    else if (name == n2 || n2.Contains("地图"))
                     {
                         index = 2;
                         break;
                     }
-                    else if (name == n3)
+                    else if (name == n3 || n3.Contains("地图"))
                     {
                         index = 3;
                         break;
                     }
-                    else if (name == n4)
+                    else if (name == n4 || n4.Contains("地图"))
                     {
                         index = 4;
                         break;
                     }
-                    else if (name == n5)
+                    else if (name == n5 || n5.Contains("地图"))
                     {
                         index = 5;
                         break;
                     }
-                    else if (name == n6)
+                    else if (name == n6 || n6.Contains("地图"))
                     {
                         index = 6;
                         break;
                     }
-                    else if (name == n7)
+                    else if (name == n7 || n7.Contains("地图"))
                     {
                         index = 7;
                         break;
                     }
-                    else if (name == n8)
+                    else if (name == n8 || n8.Contains("地图"))
                     {
                         index = 8;
                         break;
@@ -228,6 +228,12 @@ namespace WoAutoCollectionPlugin.Ui
                 return Click.TrySendClick("select_yes");
             }
             return false;
+        }
+
+        public unsafe static bool AddonMaterializeDialogIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("MaterializeDialog");
+            return success;
         }
 
         public static unsafe bool SelectMaterializeDialogYesButton()

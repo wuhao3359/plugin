@@ -105,7 +105,9 @@ namespace WoAutoCollectionPlugin.Utility
                     if (gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                     {
                         if (gameObject.Name.ToString() == "未知的良材" || gameObject.Name.ToString() == "未知的草场"
-                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场") {
+                            || gameObject.Name.ToString() == "未知的矿脉" || gameObject.Name.ToString() == "未知的石场"
+                            || gameObject.Name.ToString() == "传说的良材" || gameObject.Name.ToString() == "传说的草场"
+                            || gameObject.Name.ToString() == "传说的矿脉" || gameObject.Name.ToString() == "传说的石场") {
                             Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
                             double d = 100000f;
                             foreach (Vector3 pos in positions)
@@ -190,16 +192,14 @@ namespace WoAutoCollectionPlugin.Utility
          * return int 
          * 
          */
-        public static Dictionary<string, string> CommandParse(string args) {
+        public static Dictionary<string, string> CommandParse(string command, string args) {
             string[] str = args.Split(" ");
-            PluginLog.Log($"daily: {args} length: {args.Length}");
+            PluginLog.Log($"daily: {args} length: {str.Length}");
 
             Dictionary<string, string> dictionary = new();
-            if (str.Length > 1) {
-                string first = str[0];
-                if (first == "daily")
-                {
-                    for (int i = 1; i < str.Length; i++)
+            if (str.Length > 0) {
+                if (command == "daily") {
+                    for (int i = 0; i < str.Length; i++)
                     {
                         string s = str[i];
                         string[] ss = s.Split(":");
@@ -208,7 +208,7 @@ namespace WoAutoCollectionPlugin.Utility
                             dictionary.Add(ss[0], ss[1]);
                         }
                     }
-                    CommandParams.TryGetValue(first, out var list);
+                    CommandParams.TryGetValue(command, out var list);
                     foreach (string s in list)
                     {
                         if (!dictionary.TryGetValue(s, out var v))
@@ -217,9 +217,6 @@ namespace WoAutoCollectionPlugin.Utility
                             dictionary.Add(s, dv);
                         };
                     }
-                }
-                else { 
-                    // TODO
                 }
             }
             return dictionary;
