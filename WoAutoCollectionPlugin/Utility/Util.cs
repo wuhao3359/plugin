@@ -221,7 +221,7 @@ namespace WoAutoCollectionPlugin.Utility
          *  
          *  command:craft           主要用途 自动生产
          *  pressKey:1              宏按键
-         *  type:1                  1-普通制作 2-收藏品制作 3-快速制作
+         *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
          *  recipeName:上级以太药   生产物品名称
          *  exchangeItem:1          交换物品id 收藏品专业
          *  

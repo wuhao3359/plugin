@@ -31,23 +31,56 @@ namespace WoAutoCollectionPlugin.Bot
             closed = true;
         }
 
+        // TODO 关闭所有可能打开的ui
+        public void CloseAllIfOpen() {
+            if (RecipeNoteUi.RecipeNoteIsOpen())
+            {
+                Thread.Sleep(300);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                Thread.Sleep(300);
+            }
+            if (CommonUi.AddonMaterializeDialogIsOpen())
+            {
+                Thread.Sleep(300);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                Thread.Sleep(300);
+            }
+        }
+
+        public void RepairAndExtractMateriaInCraft() {
+            if (CommonUi.NeedsRepair())
+            {
+                if (RecipeNoteUi.RecipeNoteIsOpen()) {
+                    Thread.Sleep(300);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    Thread.Sleep(300);
+                }
+                Repair();
+            }
+
+            int count = CommonUi.CanExtractMateria();
+            if (count >= 2)
+            {
+                if (RecipeNoteUi.RecipeNoteIsOpen())
+                {
+                    Thread.Sleep(300);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    Thread.Sleep(300);
+                }
+                ExtractMateria(count);
+            }
+        }
+
         public void RepairAndExtractMateria() {
-            // 判断是否需要修理
             if (CommonUi.NeedsRepair())
             {
                 Repair();
             }
 
-            // 判断是否需要精制
             int count = CommonUi.CanExtractMateria();
-            if (count >= 5)
+            if (count >= 2)
             {
                 ExtractMateria(count);
-            }
-
-            int n = 0;
-            while (CommonUi.AddonRepairIsOpen() && n < 3) {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             }
         }
 
@@ -94,7 +127,12 @@ namespace WoAutoCollectionPlugin.Bot
             else {
                 flag = false;
             }
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+
+            n = 0;
+            while (CommonUi.AddonRepairIsOpen() && n < 3)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            }
             Thread.Sleep(500);
             return flag;
         }
@@ -185,14 +223,21 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Thread.Sleep(500);
             }
+
+            if (CommonUi.AddonMaterializeDialogIsOpen()) {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            }
+
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
             return true;
         }
 
-        public bool CraftUploadAndExchange(string craftName, int exchangeItem)
+        public bool CraftUploadAndExchange()
         {
-            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(craftName);
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
+            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
             while (BagManager.GetInventoryItemCount(ItemId) > 0) {
                 if (closed)
                 {
@@ -200,7 +245,7 @@ namespace WoAutoCollectionPlugin.Bot
                     return true;
                 }
                 CraftUpload(Category, Sub, ItemId);
-                CraftExchange(exchangeItem);
+                CraftExchange(int.Parse(e));
             }
             return true;
         }

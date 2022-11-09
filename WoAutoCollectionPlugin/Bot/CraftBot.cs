@@ -43,10 +43,10 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t);
                 WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
                 WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
+                PluginLog.Log($"craft params: pressKey: {p}, type: {t}, recipeName: {r}, exchangeItem: {e}");
                 int pressKey = int.Parse(p) + 48;
                 string recipeName = r;
                 int exchangeItem = int.Parse(e);
-                PluginLog.Log($"{pressKey} {recipeName}");
                 
                 bool result = int.TryParse(recipeName, out var id);
                 if (result)
@@ -179,9 +179,6 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
-                    if (recipeName == "")
-                        recipeName = RecipeNoteUi.GetItemName();
-
                     n = 0;
                     while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                     {
@@ -204,22 +201,23 @@ namespace WoAutoCollectionPlugin.Bot
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                         }
 
-                        // TODO 添加精制 修理参数
-                        //CommonBot.RepairAndExtractMateria();
+                        // 精制+修理
+                        WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
 
                         // 上交收藏品和交换道具
-                        if (recipeName.Contains("收藏用") && exchangeItem > 0)
-                        {
-                            if (!WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
-                            {
-                                PluginLog.Log($"params error... plz check");
-                                return;
+                        if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t)) {
+                            if (t == "2") {
+                                if (!WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange())
+                                {
+                                    PluginLog.Log($"params error... plz check");
+                                    return;
+                                }
+                                else
+                                {
+                                    PluginLog.Log($"CraftUploadAndExchange End.");
+                                }
                             }
-                            else
-                            {
-                                PluginLog.Log($"CraftUploadAndExchange End.");
-                            }
-                        }
+                        } 
                         // 上交重建品和交换道具 TODO
                     }
                     Thread.Sleep(1000);

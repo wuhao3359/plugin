@@ -363,10 +363,6 @@ namespace WoAutoCollectionPlugin
         }
 
         // 生产 
-        // {param0}-宏按键
-        // {param1}-周期 
-        // {param2}-兑换物品(id)
-        // TODO 
         private void OnCraftCommand(string command, string args)
         {
             string[] str = args.Split(' ');
