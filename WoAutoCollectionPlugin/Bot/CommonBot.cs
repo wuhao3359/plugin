@@ -33,26 +33,33 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void RepairAndExtractMateria() {
             // 判断是否需要修理
-            if (RepairUi.NeedsRepair())
+            if (CommonUi.NeedsRepair())
             {
                 Repair();
             }
 
             // 判断是否需要精制
-            int count = RepairUi.CanExtractMateria();
+            int count = CommonUi.CanExtractMateria();
             if (count >= 5)
             {
                 ExtractMateria(count);
             }
 
             int n = 0;
-            while (RepairUi.AddonRepairIsOpen() && n < 3) {
+            while (CommonUi.AddonRepairIsOpen() && n < 3) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             }
         }
 
         // 修理
         public bool Repair() {
+            bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
+            if (!b || v == null || v == "0")
+            {
+                PluginLog.Log($"修理配置: b: {b}, v: {v}");
+                return true;
+            }
+
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
@@ -66,7 +73,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (closed)
                 {
-                    PluginLog.Log($"YGathing stopping");
+                    PluginLog.Log($"Repair stopping");
                     return true;
                 }
             }
@@ -78,7 +85,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F12_key);
             Thread.Sleep(1000);
-            if (RepairUi.AllRepairButton())
+            if (CommonUi.AllRepairButton())
             {
                 Thread.Sleep(800);
                 CommonUi.SelectYesButton();
@@ -120,7 +127,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(1500);
             }
             
-            if (RepairUi.AddonRepairIsOpen() && RepairUi.AllRepairButton())
+            if (CommonUi.AddonRepairIsOpen() && CommonUi.AllRepairButton())
             {
                 Thread.Sleep(800);
                 CommonUi.SelectYesButton();
@@ -138,8 +145,13 @@ namespace WoAutoCollectionPlugin.Bot
         // 精制
         public bool ExtractMateria(int count)
         {
-            Init();
+            if (count < 2)
+            {
+                PluginLog.Log($"count: {count}, 不需要精制");
+                return true;
+            }
 
+            Init();
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
@@ -153,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (closed)
                 {
-                    PluginLog.Log($"YGathing stopping");
+                    PluginLog.Log($"ExtractMateria stopping");
                     return true;
                 }
             }

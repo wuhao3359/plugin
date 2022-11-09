@@ -14,9 +14,7 @@ namespace WoAutoCollectionPlugin.Bot
     {
         private static bool closed = false;
 
-        public CraftBot()
-        {
-        }
+        public CraftBot() {}
 
         public void Init()
         {
@@ -36,15 +34,20 @@ namespace WoAutoCollectionPlugin.Bot
             try
             {
                 Init();
-                string[] str = args.Split(' ');
-                int pressKey = int.Parse(str[0]) + 48;
-                string recipeName = str[1];
-                int exchangeItem = 10;
+
+                // 参数解析
+                string command = "craft";
+                WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("pressKey", out var p);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
+                int pressKey = int.Parse(p) + 48;
+                string recipeName = r;
+                int exchangeItem = int.Parse(e);
                 PluginLog.Log($"{pressKey} {recipeName}");
-                if (str.Length > 2)
-                {
-                    exchangeItem = int.Parse(str[2]);
-                }
+                
                 bool result = int.TryParse(recipeName, out var id);
                 if (result)
                 {
