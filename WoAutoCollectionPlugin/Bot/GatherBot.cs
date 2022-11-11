@@ -190,10 +190,8 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else
                     {
-                        //CommonBot.RepairAndExtractMateria();
-
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
-                        PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
+                        //PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
                     }
                 }
                 n++;
@@ -328,7 +326,7 @@ namespace WoAutoCollectionPlugin.Bot
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
 
-            if (RepairUi.CanRepair())
+            if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
@@ -346,7 +344,7 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"不需要修理装备...");
             }
             Thread.Sleep(500);
-            int count = RepairUi.CanExtractMateria();
+            int count = CommonUi.CanExtractMateria();
             if (count >= 5)
             {
                 PluginLog.Log($"开始精制魔晶石...");

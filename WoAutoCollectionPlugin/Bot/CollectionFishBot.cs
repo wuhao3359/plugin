@@ -158,7 +158,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
 
-                if (RepairUi.NeedsRepair())
+                if (CommonUi.NeedsRepair())
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
@@ -175,13 +175,13 @@ namespace WoAutoCollectionPlugin.Bot
                 }
 
                 // 判断是否需要修理
-                if (RepairUi.NeedsRepair())
+                if (CommonUi.NeedsRepair())
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
 
                 // 判断是否需要精制
-                int count = RepairUi.CanExtractMateria();
+                int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);

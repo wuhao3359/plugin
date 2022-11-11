@@ -76,7 +76,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            SeTime Time = new SeTime();
+            SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
@@ -228,6 +228,7 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
                         }
+                        // TODO close AddonGathering
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
@@ -243,8 +244,10 @@ namespace WoAutoCollectionPlugin.Bot
                     hour = Time.ServerTime.CurrentEorzeaHour();
                     Thread.Sleep(1000);
 
-                    // TODO 修理装备
-                    // TODO魔晶石精制
+                    // 修理装备
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
+                    // 魔晶石精制
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
             }
@@ -419,11 +422,6 @@ namespace WoAutoCollectionPlugin.Bot
                 try
                 {
                     WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
-                    int count = RepairUi.CanExtractMateria();
-                    if (count >= 2)
-                    {
-                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
-                    }
                 }
                 catch (Exception e)
                 {

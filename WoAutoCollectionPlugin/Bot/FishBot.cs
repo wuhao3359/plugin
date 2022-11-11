@@ -159,7 +159,7 @@ namespace WoAutoCollectionPlugin.Bot
             PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
 
             // 修理
-            if (RepairUi.CanRepair())
+            if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
