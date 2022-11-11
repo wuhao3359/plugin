@@ -219,13 +219,14 @@ namespace WoAutoCollectionPlugin.Utility
          *  
          *  example:    daily duration:1 level:50 bagLimit:1
          *  
+         *  
          *  command:craft           主要用途 自动生产
          *  pressKey:1              宏按键
          *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
          *  recipeName:上级以太药   生产物品名称
          *  exchangeItem:1          交换物品id 收藏品专业
          *  
-         *  example:    craft duration:1 level:50 bagLimit:1
+         *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
          */
         public static Dictionary<string, List<string>> CommandParams = new() {
             { "daily", new() { "duration", "level", "bagLimit", "repair", "extractMateria" } },

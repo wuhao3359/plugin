@@ -76,7 +76,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            SeTime Time = new SeTime();
+            SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
