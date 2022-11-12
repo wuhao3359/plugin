@@ -229,7 +229,7 @@ namespace WoAutoCollectionPlugin.Utility
          *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
          */
         public static Dictionary<string, List<string>> CommandParams = new() {
-            { "daily", new() { "duration", "level", "bagLimit", "repair", "extractMateria" } },
+            { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
             { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } }
         };
 
@@ -239,6 +239,7 @@ namespace WoAutoCollectionPlugin.Utility
             { "duration", "1" },
             { "level", "50" },
             { "bagLimit", "1" },
+            { "otherTask", "0" },
 
             // craft
             { "pressKey", "1" },

@@ -127,6 +127,9 @@ namespace WoAutoCollectionPlugin.Bot
                            StopWaitTask();
                         }
                     }
+                    Time.Update();
+                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    PluginLog.Log($"当前时间{hour} wait to {et} ..");
                 }
 
                 int num = 0;
@@ -415,22 +418,33 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
-            othetRun = true;
-            Task task = new(() =>
+            string otherTaskParam = "0";
+            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var l))
             {
-                PluginLog.Log($"执行等待任务...");
-                try
+                otherTaskParam = l;
+            }
+            if (otherTaskParam == "0") {
+                PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
+            } else if (otherTaskParam == "1") {
+                PluginLog.Log($"当前配置: {otherTaskParam}");
+                othetRun = true;
+                Task task = new(() =>
                 {
-                    WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
-                }
-                catch (Exception e)
-                {
-                    PluginLog.Error($"其他任务, error!!!\n{e}");
-                }
-                PluginLog.Log($"其他任务结束...");
-                othetRun = false;
-            });
-            task.Start();
+                    PluginLog.Log($"执行等待任务...");
+                    try
+                    {
+                        WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    PluginLog.Log($"其他任务结束...");
+                    othetRun = false;
+                });
+                task.Start();
+            }
+            
         }
 
         private void StopWaitTask()
