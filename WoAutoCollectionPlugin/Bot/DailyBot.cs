@@ -76,7 +76,8 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            SeTime Time = new SeTime();
+            bool needTp = true;
+            SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
@@ -117,6 +118,18 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
+                    foreach (int id in ids)
+                    {
+                        if (finishIds.Exists(t => t != id))
+                        {
+                            (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                            Teleporter.Teleport(Tp);
+                            needTp = false;
+                            Thread.Sleep(12000);
+                            break;
+                        }
+                    }
+                    
                     RunWaitTask(lv);
                     while (othetRun) {
                         Time.Update();
@@ -127,6 +140,9 @@ namespace WoAutoCollectionPlugin.Bot
                            StopWaitTask();
                         }
                     }
+                    Time.Update();
+                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    PluginLog.Log($"当前时间{hour} wait to {et} ..");
                 }
 
                 int num = 0;
@@ -155,8 +171,14 @@ namespace WoAutoCollectionPlugin.Bot
                         continue;
                     }
 
-                    Teleporter.Teleport(Tp);
-                    Thread.Sleep(12000);
+                    if (needTp)
+                    {
+                        Teleporter.Teleport(Tp);
+                        Thread.Sleep(12000);
+                    }
+                    else {
+                        needTp = true;
+                    }
                     WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
 
                     PluginLog.Log($"开始执行任务, id: {id} ");
@@ -228,6 +250,7 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
                         }
+                        // TODO close AddonGathering
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
@@ -243,8 +266,10 @@ namespace WoAutoCollectionPlugin.Bot
                     hour = Time.ServerTime.CurrentEorzeaHour();
                     Thread.Sleep(1000);
 
-                    // TODO 修理装备
-                    // TODO魔晶石精制
+                    // 修理装备
+                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
+                    // 魔晶石精制
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
             }
@@ -412,27 +437,51 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
-            othetRun = true;
-            Task task = new(() =>
+            string otherTaskParam = "0";
+            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var l))
             {
-                PluginLog.Log($"执行等待任务...");
-                try
+                otherTaskParam = l;
+            }
+            if (otherTaskParam == "0") {
+                PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
+            } else if (otherTaskParam == "1") {
+                PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
+                othetRun = true;
+                Task task = new(() =>
                 {
-                    WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
-                    int count = RepairUi.CanExtractMateria();
-                    if (count >= 2)
+                    PluginLog.Log($"执行等待采集任务...");
+                    try
                     {
-                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
+                        WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
                     }
-                }
-                catch (Exception e)
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    PluginLog.Log($"其他任务结束...");
+                    othetRun = false;
+                });
+                task.Start();
+            } else if (otherTaskParam == "2") {
+                PluginLog.Log($"当前配置: {otherTaskParam}, 快速制作任务");
+                othetRun = true;
+                Task task = new(() =>
                 {
-                    PluginLog.Error($"其他任务, error!!!\n{e}");
-                }
-                PluginLog.Log($"其他任务结束...");
-                othetRun = false;
-            });
-            task.Start();
+                    PluginLog.Log($"执行等待快速制作任务...");
+                    try
+                    {
+                        WoAutoCollectionPlugin.GameData.CraftBot.RunCraftScript();
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    PluginLog.Log($"其他任务结束...");
+                    othetRun = false;
+                });
+                task.Start();
+            }
+            
         }
 
         private void StopWaitTask()

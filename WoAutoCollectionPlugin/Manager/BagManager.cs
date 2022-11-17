@@ -119,7 +119,32 @@ internal class BagManager
                 }
             }
         }
-
         return (int)quantity;
+    }
+
+    public static bool ItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+    {
+        for (int i = 0; i < LowCraft.Length; i++)
+        {
+            int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
+            if (quantity < LowCraft[i].Quantity)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static bool QickItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+    {
+        for (int i = 0; i < LowCraft.Length; i++)
+        {
+            int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
+            if (quantity < LowCraft[i].Quantity * 50)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

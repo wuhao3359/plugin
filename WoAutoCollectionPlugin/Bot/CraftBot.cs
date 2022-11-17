@@ -14,9 +14,7 @@ namespace WoAutoCollectionPlugin.Bot
     {
         private static bool closed = false;
 
-        public CraftBot()
-        {
-        }
+        public CraftBot() {}
 
         public void Init()
         {
@@ -36,27 +34,32 @@ namespace WoAutoCollectionPlugin.Bot
             try
             {
                 Init();
-                string[] str = args.Split(' ');
-                int pressKey = int.Parse(str[0]) + 48;
-                string recipeName = str[1];
-                int exchangeItem = 10;
-                PluginLog.Log($"{pressKey} {recipeName}");
-                if (str.Length > 2)
+
+                // 参数解析
+                string command = "craft";
+                WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("pressKey", out var p);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
+                WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
+                PluginLog.Log($"craft params: pressKey: {p}, type: {t}, recipeName: {r}, exchangeItem: {e}");
+                int pressKey = int.Parse(p) + 48;
+                string recipeName = r;
+                int exchangeItem = int.Parse(e);
+
+                if (t == "1")
                 {
-                    exchangeItem = int.Parse(str[2]);
-                }
-                bool result = int.TryParse(recipeName, out var id);
-                if (result)
-                {
-                    PluginLog.Log($"根据配方制作...");
-                    RunCraftScript(pressKey, id, exchangeItem);
-                }
-                else
-                {
-                    PluginLog.Log($"根据名称制作...");
+                    PluginLog.Log($"根据名称普通制作...");
+                    RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                } else if (t == "3") {
+                    PluginLog.Log($"根据名称快速制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
                 }
-                    
+
+                //PluginLog.Log($"根据配方制作...");
+                //RunCraftScript(pressKey, id, exchangeItem);
+
             }
             catch (Exception e)
             {
@@ -68,9 +71,9 @@ namespace WoAutoCollectionPlugin.Bot
             int n = 0;
             while (!closed && n < 10) {
                 n++;
-                if (ItemQuantityEnough(LowCraft))
+                if (!BagManager.QickItemQuantityEnough(LowCraft))
                 {
-                    closed = false;
+                    closed = true;
                     break;
                 }
                 RunQuickCraftScriptByName(Name);
@@ -176,9 +179,6 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
-                    if (recipeName == "")
-                        recipeName = RecipeNoteUi.GetItemName();
-
                     n = 0;
                     while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                     {
@@ -201,22 +201,23 @@ namespace WoAutoCollectionPlugin.Bot
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                         }
 
-                        // TODO 添加精制 修理参数
-                        //CommonBot.RepairAndExtractMateria();
+                        // 精制+修理
+                        WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
 
                         // 上交收藏品和交换道具
-                        if (recipeName.Contains("收藏用") && exchangeItem > 0)
-                        {
-                            if (!WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange(recipeName, exchangeItem))
-                            {
-                                PluginLog.Log($"params error... plz check");
-                                return;
+                        if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t)) {
+                            if (t == "2") {
+                                if (!WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange())
+                                {
+                                    PluginLog.Log($"params error... plz check");
+                                    return;
+                                }
+                                else
+                                {
+                                    PluginLog.Log($"CraftUploadAndExchange End.");
+                                }
                             }
-                            else
-                            {
-                                PluginLog.Log($"CraftUploadAndExchange End.");
-                            }
-                        }
+                        } 
                         // 上交重建品和交换道具 TODO
                     }
                     Thread.Sleep(1000);
@@ -228,77 +229,41 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public bool ItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
-            for (int i = 0; i < LowCraft.Length; i++)
-            {
-                int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
-                if (quantity < LowCraft[i].Quantity)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        public void RunCraftScript() {
+            List<int> list = RecipeItems.GetAllQuickCraftItems();
+            
+            int id = 0;
+            (int Id, string Name, int Quantity, bool Craft)[] quickCraft;
 
-        public void RunCraftScript(int pressKey, int id, int exchangeItem) {
-            (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(31652);
-
-            if (CraftPreCheck(LowCraft)) {
-                // 切换职业 
-                if (!CommonUi.CurrentJob(Job))
+            if (list.Count > 0) { 
+                for (int i = 0; i < 5; i++)
                 {
-                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
-                    Thread.Sleep(500);
-                }
-                if (QuickCraft)
-                {
-                    QuickCraftByName(Name, LowCraft);
-                }
-                else {
-                    RunCraftScriptByName(pressKey, Name, exchangeItem);
-                }
-                
-            }
-        }
+                    Random rd = new();
+                    int r = rd.Next(list.Count);
+                    id = list[r];
+                    PluginLog.Log($"随机生产ID: {r} {id}");
+                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
 
-        public bool CraftPreCheck((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
-        {
-            foreach ((int Id, string Name, int Quantity, bool Craft) in LowCraft)
-            {
-                // name的数量小于一定数量
-                return false;
-            }
-            return true;
-        }
-
-        public (int, int, string, uint, string, uint, bool, (int, string, int, bool)[]) GetData(int id)
-        {
-            if (id == 0)
-            {
-                List<int> list = RecipeItems.GetCraftItemIds();
-                List<int> li = new();
-                foreach (int i in list)
-                {
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] Craft) = RecipeItems.GetMidCraftItems(i);
-                    if (QuickCraft && MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
+                    if (BagManager.QickItemQuantityEnough(LowCraft))
                     {
-                        li.Add(i);
+                        if (!CommonUi.CurrentJob(Job))
+                        {
+                            WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                            Thread.Sleep(500);
+                        }
+                        break;
                     }
                 }
-
-                Random rd = new();
-                int r = rd.Next(li.Count);
-                id = li[r];
-                PluginLog.Log($"随机生产中间物ID: {id}");
-                return RecipeItems.GetMidCraftItems(id);
             }
-            else
+
+            if (id > 0)
             {
-                return RecipeItems.GetMidCraftItems(id);
+                (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
+                QuickCraftByName(Name, LowCraft);
             }
-
-            (int Id, string Name, int Quantity, bool Craft)[] Craft0 = {};
-            return (0, 0, "", 0, "", 0, false, Craft0);
+            else {
+                PluginLog.Log($"未找到生产物品...");
+            }
         }
     }
 }

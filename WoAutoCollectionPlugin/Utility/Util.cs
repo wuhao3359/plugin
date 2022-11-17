@@ -180,57 +180,76 @@ namespace WoAutoCollectionPlugin.Utility
             return (-1, vectors);
         }
 
-        /*
-         * 命令解析
-         * params   
-         *  command:Daily    主要用途(Daily-限时采集)
-         *  duration:1       持续次数(1次或多次)
-         *  level:50         等级(lv<50)
-         *  bagLimit:1       背包限制(1-有)
-         *  
-         *  example:    Daily duration:1 level:50 bagLimit:1
-         * return int 
-         * 
-         */
         public static Dictionary<string, string> CommandParse(string command, string args) {
             string[] str = args.Split(" ");
             PluginLog.Log($"daily: {args} length: {str.Length}");
 
             Dictionary<string, string> dictionary = new();
             if (str.Length > 0) {
-                if (command == "daily") {
-                    for (int i = 0; i < str.Length; i++)
+                CommandParams.TryGetValue(command, out var list);
+
+                for (int i = 0; i < str.Length; i++)
+                {
+                    string s = str[i];
+                    string[] ss = s.Split(":");
+                    if (ss.Length == 2)
                     {
-                        string s = str[i];
-                        string[] ss = s.Split(":");
-                        if (ss.Length == 2)
-                        {
-                            dictionary.Add(ss[0], ss[1]);
-                        }
+                        dictionary.Add(ss[0], ss[1]);
                     }
-                    CommandParams.TryGetValue(command, out var list);
-                    foreach (string s in list)
+                }
+                foreach (string s in list)
+                {
+                    if (!dictionary.TryGetValue(s, out var v))
                     {
-                        if (!dictionary.TryGetValue(s, out var v))
-                        {
-                            DefaultValues.TryGetValue(s, out var dv);
-                            dictionary.Add(s, dv);
-                        };
-                    }
+                        DefaultValues.TryGetValue(s, out var dv);
+                        dictionary.Add(s, dv);
+                    };
                 }
             }
             return dictionary;
         }
 
+        /*
+         * 命令解析
+         * params   
+         *  command:daily    主要用途(Daily-限时采集)
+         *  duration:1       持续次数(1次或多次)
+         *  level:50         等级(lv<50)
+         *  bagLimit:1       背包限制(1-有)
+         *  
+         *  example:    daily duration:1 level:50 bagLimit:1
+         *  
+         *  
+         *  command:craft           主要用途 自动生产
+         *  pressKey:1              宏按键
+         *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
+         *  recipeName:上级以太药   生产物品名称
+         *  exchangeItem:1          交换物品id 收藏品专业
+         *  
+         *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
+         */
         public static Dictionary<string, List<string>> CommandParams = new() {
-            { "daily", new() { "duration", "level", "bagLimit" } }
+            { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
+            { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } }
         };
 
         public static Dictionary<string, string> DefaultValues = new()
         {
+            // daily
             { "duration", "1" },
             { "level", "50" },
             { "bagLimit", "1" },
+            { "otherTask", "0" },
+
+            // craft
+            { "pressKey", "1" },
+            { "type", "1" },
+            { "recipeName", "" },
+            { "exchangeItem", "0" },
+
+            // common
+            { "repair", "0" },
+            { "extractMateria", "0" },
         };
     }
 }
