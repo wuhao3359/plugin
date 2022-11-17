@@ -110,7 +110,7 @@ namespace WoAutoCollectionPlugin.Data
 
         public static List<int> GetCraftItemIds()
         {
-            List<int> list = new List<int>();
+            List<int> list = new();
             for (int i = 1; i < CraftItems.Length; i++)
             {
                 list.Add(CraftItems[i].Id);
@@ -128,6 +128,19 @@ namespace WoAutoCollectionPlugin.Data
                 }
             }
             return CraftItems[0];
+        }
+
+        public static List<int> GetAllQuickCraftItems()
+        {
+            List<int> list = new();
+            for (int i = 1; i < CraftItems.Length; i++)
+            {
+                if (CraftItems[i].QuickCraft)
+                {
+                    list.Add((int)CraftItems[i].Id);
+                }
+            }
+            return list;
         }
 
     }

@@ -74,7 +74,6 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }
-                // 去起始点O
                 MovePositions(Path, true);
             }
             int n = 0;
