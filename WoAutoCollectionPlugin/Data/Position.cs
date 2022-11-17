@@ -304,134 +304,31 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static Vector3 YunGuanRepairNPC = new(869f, 2720f, 1876f);
 
-        // 中心点
-        public static Vector3 Center = new(0, 0, 0);
-
-        // 中心点去四个钓场路径+两个限时采集点路径
-        public static Vector3[] ToFishA = {
-        };
-        public static Vector3[] ToFishB = {
-        };
-        public static Vector3[] ToFishC = {
-        };
-        public static Vector3[] ToFishD = {
-        };
-        public static Vector3[] ToMiner = {
-        };
-        public static Vector3[] ToBotanist = {
-        };
-
-        // 去作业点路径
-        public static Vector3[] ToFishA1 = {
-        };
-        public static Vector3[] ToFishA2 = {
-        };
-
-        public static List<Vector3[]> FishAList = new() { 
-            ToFishA1, 
-            ToFishA2 
-        };
-
-        public static Vector3[] ToFishB1 = {
-        };
-        public static Vector3[] ToFishB2 = {
-        };
-
-        public static List<Vector3[]> FishBList = new() {
-            ToFishB1,
-            ToFishB2
-        };
-
-        public static Vector3[] ToFishC1 = {
-        };
-        public static Vector3[] ToFishC2 = {
-        };
-
-        public static List<Vector3[]> FishCList = new()
-        {
-            ToFishC1,
-            ToFishC2
-        };
-
-        public static Vector3[] ToFishD1 = {
-        };
-        public static Vector3[] ToFishD2 = {
-        };
-
-        public static List<Vector3[]> FishDList = new()
-        {
-            ToFishD1,
-            ToFishD2
-        };
-
-        public static Vector3[] ToMiner1 = {
-        };
-        public static Vector3[] ToMiner2 = {
-        };
-
-        public static Vector3[] ToBotanist1 = {
-        };
-        public static Vector3[] ToBotanist2 = {
-        };
-
-        // 去区域的路径 TerritoryType: 930 0-钓鱼点A1 1-钓鱼点A1 ... 
-        public static Vector3[] ToArea1 = {
+        // 去开始点
+        public static Vector3[] ToStart = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3214f, 2545f, 854f),
         };
-        public static Vector3[] YFishArea1 = {
-            new Vector3 (3254f, 2540f, 873f),
-            new Vector3 (3248f, 2540f, 845f),
-        };
-        public static Vector3[] ToArea11 = {
+
+        // A 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提
+        // B 旋风云海 灵罡风  <12 双提 >12 单提
+        // C 摇风云海 灵飞电  <16 双提 >16单提
+
+        // 练级路线
+        public static Vector3[] Leveling = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
             new Vector3 (3157f, 2583f, 915f),
             new Vector3 (3214f, 2545f, 854f),
         };
-        public static Vector3[] YFishArea11 = {
-            new Vector3 (3254f, 2540f, 873f),
-            new Vector3 (3248f, 2540f, 845f),
-        };
-        public static Vector3[] ToAreaB = {
-            new Vector3 (866f, 2720f, 1873f),
-            new Vector3 (913f, 2742f, 1852f),
-            new Vector3 (3187f, 2571f, 1099f),
-            new Vector3 (3313f, 2551f, 1042f),
-            new Vector3 (3342f, 2522f, 988f),
-        };
-        public static Vector3[] YFishAreaB = {
-            new Vector3 (3310f, 2524f, 942f),
-            new Vector3 (3339f, 2524f, 968f),
-            new Vector3 (3326f, 2525f, 958f),
-        };
-        public static Vector3[] ToAreaC = {
+
+        public static Vector3[] LevelingPoints = {
             new Vector3 (869f, 2720f, 1876f),
             new Vector3 (913f, 2742f, 1852f),
-            new Vector3 (3094f, 2581f, 867f),
-            new Vector3 (3124f, 2533f, 800f),
-            new Vector3 (3150f, 2531f, 792f),
+            new Vector3 (3157f, 2583f, 915f),
         };
-        // 固定钓鱼区域C 0-钓鱼点B1 1-钓鱼点B2 2-移动中转点 TerritoryType: 930 
-        public static Vector3[] YFishAreaC = {
-            new Vector3 (3196f, 2526f, 822f),
-            new Vector3 (3165f, 2530f, 791f),
-            new Vector3 (3180f, 2531f, 809f),
-        };
-        public static Vector3[] ToArea100 = {
-            new Vector3 (866f, 2720f, 1873f),
-            new Vector3 (861f, 2721f, 1891f),
-            new Vector3 (1003f, 2831f, 2507f),
-            new Vector3 (1074f, 2785f, 2788f),
-        };
-        public static Vector3[] YFishArea100 = {
-            new Vector3 (1163f, 2785f, 2814f),
-            new Vector3 (1110f, 2785f, 2787f),
-            new Vector3 (1134f, 2785f, 2807f),
-        };
-
 
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化

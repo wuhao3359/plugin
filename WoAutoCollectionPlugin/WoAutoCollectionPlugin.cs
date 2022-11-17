@@ -185,10 +185,9 @@ namespace WoAutoCollectionPlugin
         private void OnFishCommand(string command, string args)
         {
             string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
             PluginLog.Log($"fish: {args} length: {str.Length}");
 
-            if (area == 0)
+            if (str.Length < 1)
             {
                 GameData.FishBot.StopYFishScript();
                 taskRunning = false;

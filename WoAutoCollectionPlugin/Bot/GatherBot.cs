@@ -314,10 +314,6 @@ namespace WoAutoCollectionPlugin.Bot
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
             int repair = 0;
-            if (str.Length >= 2)
-            {
-                repair = int.Parse(str[1]);
-            }
 
             Init();
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
