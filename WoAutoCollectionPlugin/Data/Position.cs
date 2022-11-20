@@ -306,10 +306,35 @@ namespace WoAutoCollectionPlugin.Utility
 
         // 去开始点
         public static Vector3[] ToStart = {
-            new Vector3 (869f, 2720f, 1876f),
-            new Vector3 (913f, 2742f, 1852f),
-            new Vector3 (3157f, 2583f, 915f),
-            new Vector3 (3214f, 2545f, 854f),
+            new Vector3 (951, 2764, 1902),
+        };
+
+        public static Vector3[] ToGroundA = {
+            new Vector3 (951, 2764, 1902),
+            new Vector3 (1112, 2381, 2049),
+            new Vector3 (1082, 1906, 2349),
+            new Vector3 (1251, 1725, 2327),
+        };
+        public static Vector3[] ToGroundB = {
+            new Vector3 (1491, 1917, 2280),
+            new Vector3 (2525, 1828, 1480),
+            new Vector3 (2576, 1774, 1385),
+        };
+        public static Vector3[] ToGroundC = {
+            new Vector3 (3174, 2580, 976),
+            new Vector3 (3077, 2563, 932),
+        };
+        public static Vector3[] GroundA = {
+            new Vector3 (1229, 1720, 2302),
+            new Vector3 (1289, 1731, 2311),
+        };
+        public static Vector3[] GroundB = {
+            new Vector3 (2594, 1774, 1385),
+            new Vector3 (2559, 1774, 1417),
+        };
+        public static Vector3[] GroundC = {
+            new Vector3 (3076, 2561, 956),
+            new Vector3 (3036, 2563, 909),
         };
 
         // A 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提

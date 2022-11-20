@@ -21,6 +21,8 @@ namespace WoAutoCollectionPlugin.Bot
 
         private bool othetRun = false;
 
+        private bool needTp = true;
+
         public DailyBot()
         {}
 
@@ -76,7 +78,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            bool needTp = true;
+
             SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
@@ -280,7 +282,6 @@ namespace WoAutoCollectionPlugin.Bot
             int n = 0;
             bool first = true;
             SeTime Time = new();
-
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
             int minute = Time.ServerTime.CurrentEorzeaMinute();
@@ -437,6 +438,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
+            
             string otherTaskParam = "0";
             if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var l))
             {
@@ -444,9 +446,11 @@ namespace WoAutoCollectionPlugin.Bot
             }
             if (otherTaskParam == "0") {
                 PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
+                Thread.Sleep(5000);
             } else if (otherTaskParam == "1") {
-                PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
                 othetRun = true;
+                PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
+                needTp = true;
                 Task task = new(() =>
                 {
                     PluginLog.Log($"执行等待采集任务...");
@@ -463,8 +467,9 @@ namespace WoAutoCollectionPlugin.Bot
                 });
                 task.Start();
             } else if (otherTaskParam == "2") {
-                PluginLog.Log($"当前配置: {otherTaskParam}, 快速制作任务");
                 othetRun = true;
+                PluginLog.Log($"当前配置: {otherTaskParam}, 快速制作任务");
+                needTp = true;
                 Task task = new(() =>
                 {
                     PluginLog.Log($"执行等待快速制作任务...");

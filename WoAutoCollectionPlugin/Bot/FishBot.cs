@@ -16,11 +16,10 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class FishBot
     {
-        private EventFramework EventFramework { get; init; }
-
         private FishingState LastState = FishingState.None;
         private FishingState FishingState = FishingState.None;
         Stopwatch yfishsw = new();
+        Stopwatch sw = new();
         private bool canMove = false;
         private bool readyMove = false;
         private bool closed = false;
@@ -36,12 +35,16 @@ namespace WoAutoCollectionPlugin.Bot
             canMove = false;
             readyMove = false;
             closed = false;
+            CurrentGround = 0;
+            CurrentPoint = 0;
         }
 
         public void MoveInit()
         {
             canMove = false;
             readyMove = false;
+            CurrentGround = 0;
+            CurrentPoint = 0;
         }
 
         // 进入空岛
@@ -137,7 +140,6 @@ namespace WoAutoCollectionPlugin.Bot
             int area = int.Parse(str[0]);
 
             yfishsw = new();
-            MoveInit();
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
@@ -158,16 +160,20 @@ namespace WoAutoCollectionPlugin.Bot
                 MovePositions(Position.Leveling, true);
                 for (int i = 0; i <= 20; i++)
                 {
-                    if (DalamudApi.Condition[ConditionFlag.Mounted])
+                    int tt = 0;
+                    while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 12)
                     {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                         Thread.Sleep(1000);
+                        tt++;
+
+                        if (closed)
+                        {
+                            PluginLog.Log($"task stopping");
+                            return true;
+                        }
                     }
-                    if (DalamudApi.Condition[ConditionFlag.Mounted])
-                    {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                        Thread.Sleep(500);
-                    }
+
                     position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.LevelingPoints[CurrentPoint], territoryType, false, false);
                     CurrentPoint++;
                     if (CurrentPoint > 1)
@@ -175,10 +181,11 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
-                    Stopwatch sw = new();
-                    while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
+                    sw.Restart();
+                    MoveInit();
+                    while (sw.ElapsedMilliseconds / 1000 / 60 < 45)
                     {
                         Thread.Sleep(5000);
                         if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
@@ -190,6 +197,12 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             break;
                         }
+                    }
+                    readyMove = true;
+                    while (!canMove)
+                    {
+                        Thread.Sleep(5000);
+                        PluginLog.Log($"等待停止...");
                     }
                 }
             }
@@ -203,16 +216,19 @@ namespace WoAutoCollectionPlugin.Bot
                     Vector3[] Ground = Array.Empty<Vector3>();
                     if (CurrentGround == 0)
                     {
+                        PluginLog.Log($"A点...");
                         ToGround = ToGroundA;
                         Ground = GroundA;
                     }
                     else if (CurrentGround == 1)
                     {
+                        PluginLog.Log($"B点...");
                         ToGround = ToGroundB;
                         Ground = GroundB;
                     }
                     else if (CurrentGround == 2)
                     {
+                        PluginLog.Log($"C点...");
                         ToGround = ToGroundC;
                         Ground = GroundC;
                     }
@@ -223,15 +239,18 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentGround = 0;
                     }
                     MovePositions(ToGround, true);
-                    if (DalamudApi.Condition[ConditionFlag.Mounted])
+                    int tt = 0;
+                    while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
                     {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                         Thread.Sleep(1000);
-                    }
-                    if (DalamudApi.Condition[ConditionFlag.Mounted])
-                    {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                        Thread.Sleep(500);
+                        tt++;
+
+                        if (closed)
+                        {
+                            PluginLog.Log($"task stopping");
+                            return true;
+                        }
                     }
                     position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Ground[CurrentPoint], territoryType, false, false);
                     CurrentPoint++;
@@ -240,10 +259,11 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
-                    Stopwatch sw = new();
-                    while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
+                    sw.Restart();
+                    MoveInit();
+                    while (sw.ElapsedMilliseconds / 1000 / 60 < 45)
                     {
                         Thread.Sleep(5000);
                         if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
@@ -255,6 +275,11 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             break;
                         }
+                    }
+                    readyMove = true;
+                    while (!canMove) {
+                        Thread.Sleep(5000);
+                        PluginLog.Log($"等待停止...");
                     }
                 }
             }
@@ -290,30 +315,38 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void OnYFishUpdate(Framework _)
         {
-            FishingState = EventFramework.FishingState;
-            if (LastState == FishingState)
-                return;
-            LastState = FishingState;
-            switch (FishingState)
+            if (WoAutoCollectionPlugin.GameData.EventFramework != null)
             {
-                case FishingState.PoleOut:
-                    canMove = false;
-                    yfishsw.Restart();
-                    break;
-                case FishingState.Bite:
-                    OnYBite();
-                    break;
-                case FishingState.Reeling:
-                    break;
-                case FishingState.PoleReady:
-                    YFishScript();
-                    break;
-                case FishingState.Waiting:
-                    break;
-                case FishingState.Quit:
-                    canMove = true;
-                    break;
+                FishingState = WoAutoCollectionPlugin.GameData.EventFramework.FishingState;
+                if (LastState == FishingState)
+                    return;
+                LastState = FishingState;
+                switch (FishingState)
+                {
+                    case FishingState.PoleOut:
+                        canMove = false;
+                        yfishsw.Restart();
+                        break;
+                    case FishingState.Bite:
+                        OnYBite();
+                        break;
+                    case FishingState.Reeling:
+                        break;
+                    case FishingState.PoleReady:
+                        YFishScript();
+                        break;
+                    case FishingState.Waiting:
+                        break;
+                    case FishingState.Quit:
+                        canMove = true;
+                        break;
+                }
             }
+            else {
+                PluginLog.Log($"EventFramework null");
+                DalamudApi.Framework.Update -= OnYFishUpdate;
+            }
+            
         }
 
         private void OnYBite()
@@ -323,9 +356,9 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"yfish time: {yfishsw.ElapsedMilliseconds / 1000}");
                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                 uint maxGp = player.MaxGp;
-                if (CurrentGround == 1) {
-                    // A 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 < 14)
+                if (CurrentGround == 0) {
+                    // C 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 14)
                     {
                         if (maxGp >= 400)
                         {
@@ -342,7 +375,7 @@ namespace WoAutoCollectionPlugin.Bot
                 } else if (CurrentGround == 2)
                 {
                     // B 旋风云海 灵罡风  <12 双提 >12 单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 < 12)
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 12)
                     {
                         if (maxGp >= 400)
                         {
@@ -350,10 +383,10 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                     }
                 }
-                else if (CurrentGround == 0)
+                else if (CurrentGround == 1)
                 {
-                    // C 摇风云海 灵飞电  <16 双提 >16单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 < 16)
+                    // A 摇风云海 灵飞电  <16 双提 >16单提
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 16)
                     {
                         if (maxGp >= 400)
                         {
@@ -409,7 +442,10 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     else
                     {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n8_key);
+                        if (gp > 100) {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                        }
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     }
                 }
@@ -425,11 +461,15 @@ namespace WoAutoCollectionPlugin.Bot
             Vector3[] GroundB = Array.Empty<Vector3>();
             Vector3[] GroundC = Array.Empty<Vector3>();
 
-            //if (area == 1)
-            //{
-            //    ToArea = Position.ToArea1;
-            //    YFishArea = Position.YFishArea1;
-            //}
+            if (area == 1)
+            {
+                ToGroundA = Position.ToGroundA;
+                ToGroundB = Position.ToGroundB;
+                ToGroundC = Position.ToGroundC;
+                GroundA = Position.GroundA;
+                GroundB = Position.GroundB;
+                GroundC = Position.GroundC;
+            }
             return (ToGroundA, ToGroundB, ToGroundC, GroundA, GroundB, GroundC);
         }
     }

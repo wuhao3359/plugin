@@ -142,7 +142,7 @@ namespace WoAutoCollectionPlugin.Bot
                     while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
                     {
                         uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-                        PluginLog.Log($"--- {recipeName}, {recipeId}");
+                        PluginLog.Log($"---> {recipeName}, {recipeId}");
                         RecipeNoteUi.OpenRecipeNote(recipeId);
 
                         Thread.Sleep(1000);
