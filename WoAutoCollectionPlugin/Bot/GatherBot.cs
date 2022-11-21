@@ -74,7 +74,6 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }
-                // 去起始点O
                 MovePositions(Path, true);
             }
             int n = 0;
@@ -315,10 +314,6 @@ namespace WoAutoCollectionPlugin.Bot
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
             int repair = 0;
-            if (str.Length >= 2)
-            {
-                repair = int.Parse(str[1]);
-            }
 
             Init();
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);

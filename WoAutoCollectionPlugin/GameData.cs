@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Classes;
+using WoAutoCollectionPlugin.SeFunctions;
 
 namespace WoAutoCollectionPlugin;
 
@@ -18,6 +19,8 @@ public class GameData
     public Dictionary<uint, Territory> Territories { get; init; } = new();
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
+
+    public EventFramework EventFramework { get; private set; } = null!;
 
     public DailyBot DailyBot { get; init; } = null!;
     public FishBot FishBot { get; init; } = null!;
@@ -70,6 +73,8 @@ public class GameData
                     .ToDictionary(g => (uint)g.Item, g => new Gatherable(this, g))
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
+
+            EventFramework = new EventFramework(DalamudApi.SigScanner);
 
             KeyOperates = new(this);
             FishBot = new();

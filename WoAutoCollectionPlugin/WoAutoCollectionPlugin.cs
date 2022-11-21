@@ -184,11 +184,8 @@ namespace WoAutoCollectionPlugin
         // 去空岛指定地方钓鱼
         private void OnFishCommand(string command, string args)
         {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
-            PluginLog.Log($"fish: {args} length: {str.Length}");
-
-            if (area == 0)
+            PluginLog.Log($"fish: {args}");
+            if (args.Length == 0)
             {
                 GameData.FishBot.StopYFishScript();
                 taskRunning = false;
@@ -215,11 +212,8 @@ namespace WoAutoCollectionPlugin
 
         private void OnHFishCommand(string command, string args)
         {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
             PluginLog.Log($"Hfish: {args}");
-
-            if (area == 0)
+            if (args.Length == 0)
             {
                 taskRunning = false;
                 GameData.HFishBot.StopScript();
@@ -244,11 +238,8 @@ namespace WoAutoCollectionPlugin
         }
 
         private void OnCollectionFishCommand(string command, string args) {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
             PluginLog.Log($"collectionfish: {args}");
-
-            if (area == 0)
+            if (args.Length == 0)
             {
                 GameData.CollectionFishBot.StopCollectionFishScript();
                 taskRunning = false;
@@ -274,11 +265,8 @@ namespace WoAutoCollectionPlugin
 
         private void OnGatherCommand(string command, string args)
         {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
-            PluginLog.Log($"gather: {area}");
-
-            if (area == 0)
+            PluginLog.Log($"gather: {args}");
+            if (args.Length == 0)
             {
                 GameData.GatherBot.StopScript();
                 taskRunning = false;
@@ -295,6 +283,8 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
+                string[] str = args.Split(' ');
+                int area = int.Parse(str[0]);
                 GameData.GatherBot.NormalScript(area);
                 taskRunning = false;
                 PluginLog.Log($"end...");
@@ -304,11 +294,8 @@ namespace WoAutoCollectionPlugin
 
         private void OnYGatherCommand(string command, string args)
         {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
-            PluginLog.Log($"ygather: {area}");
-
-            if (area == 0)
+            PluginLog.Log($"ygather: {args}");
+            if (args.Length == 0)
             {
                 GameData.GatherBot.StopScript();
                 taskRunning = false;

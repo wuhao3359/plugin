@@ -174,46 +174,52 @@ namespace WoAutoCollectionPlugin.Ui
                 
                 foreach (string name in ItemNames)
                 {
-                    na = name;
-
                     if (name == n1 || n1.Contains("地图")) 
                     {
                         index = 1;
+                        na = n1;
                         break;
                     }
                     else if (name == n2 || n2.Contains("地图"))
                     {
                         index = 2;
+                        na = n2;
                         break;
                     }
                     else if (name == n3 || n3.Contains("地图"))
                     {
                         index = 3;
+                        na = n3;
                         break;
                     }
                     else if (name == n4 || n4.Contains("地图"))
                     {
                         index = 4;
+                        na = n4;
                         break;
                     }
                     else if (name == n5 || n5.Contains("地图"))
                     {
                         index = 5;
+                        na = n5;
                         break;
                     }
                     else if (name == n6 || n6.Contains("地图"))
                     {
                         index = 6;
+                        na = n6;
                         break;
                     }
                     else if (name == n7 || n7.Contains("地图"))
                     {
                         index = 7;
+                        na = n7;
                         break;
                     }
                     else if (name == n8 || n8.Contains("地图"))
                     {
                         index = 8;
+                        na = n8;
                         break;
                     }
                 }
