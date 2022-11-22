@@ -43,8 +43,6 @@ namespace WoAutoCollectionPlugin.Bot
         {
             canMove = false;
             readyMove = false;
-            CurrentGround = 0;
-            CurrentPoint = 0;
         }
 
         // 进入空岛
@@ -232,12 +230,13 @@ namespace WoAutoCollectionPlugin.Bot
                         ToGround = ToGroundC;
                         Ground = GroundC;
                     }
-
+                    
                     CurrentGround++;
                     if (CurrentGround == 3)
                     {
                         CurrentGround = 0;
                     }
+                    Thread.Sleep(2000);
                     MovePositions(ToGround, true);
                     int tt = 0;
                     while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
