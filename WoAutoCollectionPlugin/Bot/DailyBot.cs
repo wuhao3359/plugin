@@ -23,6 +23,8 @@ namespace WoAutoCollectionPlugin.Bot
 
         private bool needTp = true;
 
+        private string otherTaskParam = "0";
+
         public DailyBot()
         {}
 
@@ -47,6 +49,11 @@ namespace WoAutoCollectionPlugin.Bot
                 // 参数解析
                 string command = "daily";
                 WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+                if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var ot))
+                {
+                    otherTaskParam = ot;
+                }
 
                 uint lv = 50;
                 if (WoAutoCollectionPlugin.GameData.param.TryGetValue("level", out var l)) {
@@ -85,7 +92,6 @@ namespace WoAutoCollectionPlugin.Bot
 
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
-            int minute = Time.ServerTime.CurrentEorzeaMinute();
             int et = hour;
             while (!closed && n < 1000)
             {
@@ -120,15 +126,18 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    foreach (int id in ids)
-                    {
-                        if (finishIds.Exists(t => t != id))
+
+                    if (otherTaskParam != "1") {
+                        foreach (int id in ids)
                         {
-                            (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
-                            Teleporter.Teleport(Tp);
-                            needTp = false;
-                            Thread.Sleep(12000);
-                            break;
+                            if (finishIds.Exists(t => t != id))
+                            {
+                                (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                                Teleporter.Teleport(Tp);
+                                needTp = false;
+                                Thread.Sleep(12000);
+                                break;
+                            }
                         }
                     }
                     
@@ -284,7 +293,6 @@ namespace WoAutoCollectionPlugin.Bot
             SeTime Time = new();
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
-            int minute = Time.ServerTime.CurrentEorzeaMinute();
             int et = hour;
             while (!closed && n < 1000)
             {
@@ -438,15 +446,15 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
-            
-            string otherTaskParam = "0";
-            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var l))
-            {
-                otherTaskParam = l;
-            }
             if (otherTaskParam == "0") {
+                othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
-                Thread.Sleep(5000);
+                Task task = new(() =>
+                {
+                    Thread.Sleep(5000);
+                    othetRun = false;
+                });
+                task.Start();
             } else if (otherTaskParam == "1") {
                 othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
@@ -492,6 +500,7 @@ namespace WoAutoCollectionPlugin.Bot
         private void StopWaitTask()
         {
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CraftBot.StopScript();
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)
