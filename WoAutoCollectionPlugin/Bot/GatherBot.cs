@@ -190,7 +190,7 @@ namespace WoAutoCollectionPlugin.Bot
                     else
                     {
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
-                        //PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
+                        PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
                     }
                 }
                 n++;

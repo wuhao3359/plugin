@@ -52,7 +52,7 @@ namespace WoAutoCollectionPlugin
 
         public static GameData GameData { get; private set; } = null!;
 
-        public WeatherManager WeatherManager { get; private set; } = null!;
+        public static WeatherManager WeatherManager { get; private set; } = null!;
 
         public static Executor Executor;
 
@@ -63,8 +63,9 @@ namespace WoAutoCollectionPlugin
             Plugin = this;
             DalamudApi.Initialize(pluginInterface);
 
-            Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize();
+            // 可视化ui
+            //Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            //Configuration.Initialize();
 
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
@@ -130,7 +131,7 @@ namespace WoAutoCollectionPlugin
                 GameData = new GameData(DalamudApi.DataManager);
                 Time = new SeTime();
                 Executor = new Executor();
-                //WeatherManager = new WeatherManager(GameData);
+                WeatherManager = new WeatherManager(GameData);
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -322,18 +323,17 @@ namespace WoAutoCollectionPlugin
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
-
-            //Game.Test();
+            // 当前区域
+            GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
+            PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
 
             // 鼠标点击测试
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
 
-            //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
-            //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
-
-            //string[] str = args.Split(' ');
-            //PluginLog.Log($"daily: {args} length: {args.Length}");
+            // 天气
+            (Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
+            PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
         }
 
         private void OnActionTestCommand(string command, string args)

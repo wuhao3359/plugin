@@ -281,6 +281,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(5000);
                         PluginLog.Log($"等待停止...");
                     }
+                    Thread.Sleep(1000);
                 }
             }
 
@@ -301,8 +302,8 @@ namespace WoAutoCollectionPlugin.Bot
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
-                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(1000);
+                //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                Thread.Sleep(500);
             }
             return position;
         }
