@@ -201,6 +201,10 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         Thread.Sleep(5000);
                         PluginLog.Log($"等待停止...");
+                        if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                        {
+                            canMove = true;
+                        }
                     }
                 }
             }
@@ -279,6 +283,10 @@ namespace WoAutoCollectionPlugin.Bot
                     while (!canMove) {
                         Thread.Sleep(5000);
                         PluginLog.Log($"等待停止...");
+                        if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                        {
+                            canMove = true;
+                        }
                     }
                     Thread.Sleep(1000);
                 }

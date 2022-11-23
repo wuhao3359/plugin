@@ -343,16 +343,14 @@ namespace WoAutoCollectionPlugin.Utility
 
         // 练级路线
         public static Vector3[] Leveling = {
-            new Vector3 (869f, 2720f, 1876f),
-            new Vector3 (913f, 2742f, 1852f),
-            new Vector3 (3157f, 2583f, 915f),
-            new Vector3 (3214f, 2545f, 854f),
+            new Vector3 (864, 2782, 1939),
+            new Vector3 (1086, 2821, 2752),
+            new Vector3 (1115, 2785, 2810),
         };
 
         public static Vector3[] LevelingPoints = {
-            new Vector3 (869f, 2720f, 1876f),
-            new Vector3 (913f, 2742f, 1852f),
-            new Vector3 (3157f, 2583f, 915f),
+            new Vector3 (1142, 2785, 2811),
+            new Vector3 (1097, 2785, 2806),
         };
 
         // ------------------------------- 工票 捕鱼 ------------------------------------
