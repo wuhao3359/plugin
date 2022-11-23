@@ -84,8 +84,6 @@ namespace WoAutoCollectionPlugin.Bot
         public void LimitTimeSinglePlan(uint lv)
         {
             int n = 0;
-            bool first = true;
-
             SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
@@ -95,26 +93,20 @@ namespace WoAutoCollectionPlugin.Bot
             int et = hour;
             while (!closed && n < 1000)
             {
-                if (first)
-                {
-                    et--;
-                    first = false;
-                }
-                et++;
                 if (et >= 24) {
                     et = 0;
                     PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin et: {et}");
-                List<int> ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                List<int> ids = LimitMaterials.GetMaterialIdsByEtAndFinishId(et, lv, finishIds);
                 PluginLog.Log($"当前et总共有 {ids.Count}  ..");
 
                 while (ids.Count == 0 && et < 24)
                 {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
                     et++;
-                    ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                    ids = LimitMaterials.GetMaterialIdsByEtAndFinishId(et, lv, finishIds);
                 }
                 if (et >= 24) {
                     continue;
@@ -127,20 +119,18 @@ namespace WoAutoCollectionPlugin.Bot
                         return;
                     }
 
-                    if (otherTaskParam != "1") {
+                    if (otherTaskParam != "1")
+                    {
                         foreach (int id in ids)
                         {
-                            if (finishIds.Exists(t => t != id))
-                            {
-                                (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
-                                Teleporter.Teleport(Tp);
-                                needTp = false;
-                                Thread.Sleep(12000);
-                                break;
-                            }
+                            (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                            Teleporter.Teleport(Tp);
+                            needTp = false;
+                            Thread.Sleep(12000);
+                            break;
                         }
                     }
-                    
+
                     RunWaitTask(lv);
                     while (othetRun) {
                         Time.Update();
@@ -163,11 +153,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    if (finishIds.Exists(t => t == id))
-                    {
-                        PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
-                        continue;
-                    }
+                    
                     (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
                     PluginLog.Log($"当前完成任务: {finishIds.Count} 下个任务, id: {id} Name: {Name}, Job: {Job}, et: {et}..");
 
@@ -283,6 +269,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
+                et++;
             }
         }
 
