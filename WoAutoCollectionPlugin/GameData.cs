@@ -20,6 +20,9 @@ public class GameData
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
 
+    // TODO
+    public Dictionary<uint, Recipe> Recipes { get; init; } = new();
+
     public EventFramework EventFramework { get; private set; } = null!;
 
     public DailyBot DailyBot { get; init; } = null!;
@@ -73,6 +76,12 @@ public class GameData
                     .ToDictionary(g => (uint)g.Item, g => new Gatherable(this, g))
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
+
+            Recipes = DalamudApi.DataManager.GetExcelSheet<Recipe>()?
+                    .Where(a => a.RowId > 1)
+                    .ToDictionary(a => a.ItemResult.RawRow.RowId, a => a)
+            ?? new Dictionary<uint, Recipe>();
+            PluginLog.Log("Collected {NumGatherables} different recipes items.", Recipes.Count);
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);
 
