@@ -17,7 +17,7 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        private static bool closed = false;
+        private bool closed = false;
 
         private bool othetRun = false;
 
@@ -31,12 +31,14 @@ namespace WoAutoCollectionPlugin.Bot
         public void Init()
         {
             closed = false;
+            Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
         public void StopScript()
         {
             closed = true;
+            Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
         }

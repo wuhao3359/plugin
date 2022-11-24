@@ -7,6 +7,7 @@ using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
+using static Lumina.Excel.GeneratedSheets.Recipe;
 
 namespace WoAutoCollectionPlugin.Bot
 {
@@ -263,6 +264,45 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else {
                 PluginLog.Log($"未找到生产物品...");
+            }
+        }
+
+
+        public void CheckScript(uint recipeId) {
+            WoAutoCollectionPlugin.GameData.Recipes.TryGetValue(recipeId, out var r);
+            UnkData5Obj[] UnkData5 = r.UnkData5;
+            if (UnkData5.Length > 0)
+            {
+                foreach (UnkData5Obj obj in UnkData5)
+                {
+                    PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
+                    if (BagManager.GetItemQuantityInContainer((uint)obj.ItemIngredient) < obj.AmountIngredient * 100)
+                    {
+                        CheckScript(uint.Parse(obj.ItemIngredient.ToString()));
+                        if (r.CanQuickSynth)
+                        {
+                            // 快速制作
+                        }
+                        else { 
+                            // 普通制作
+                        }
+                    }
+                }
+            }
+            else {
+                if (BagManager.GetItemQuantityInContainer(recipeId) < 666)
+                {
+                    // 原材料采集
+                    PluginLog.Log($"执行采集任务...");
+                    try
+                    {
+                        WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript((int)recipeId, 90);
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"采集任务, error!!!\n{e}");
+                    }
+                }
             }
         }
     }

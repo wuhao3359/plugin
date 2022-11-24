@@ -5,12 +5,6 @@ namespace WoAutoCollectionPlugin.Data
 {
     public class RecipeItems
     {
-        public static Item Item31652 = new (31652, 0, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, null);
-
-        public static Item[] AllItems = {
-            new(31652, 0, "收藏用愈疮木砂轮机", 8, "刻木匠", 80, false, Item31652),   // lv.80以下 
-        };
-
         public static readonly (string Name, uint Category, uint Sub, uint ItemId)[] UploadItems =
         {
             ("收藏用无花果冻糕", 0, 1, 36626),   // ItemId 36626
