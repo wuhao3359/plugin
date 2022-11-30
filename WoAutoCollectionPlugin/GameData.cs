@@ -77,10 +77,10 @@ public class GameData
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
 
-            Recipes = DalamudApi.DataManager.GetExcelSheet<Recipe>()?
-                    .Where(a => a.RowId > 1)
-                    .ToDictionary(a => a.ItemResult.RawRow.RowId, a => a)
-            ?? new Dictionary<uint, Recipe>();
+            //Recipes = DalamudApi.DataManager.GetExcelSheet<Recipe>()?
+            //        .Where(a => a.RowId > 1)
+            //        .ToDictionary(a => a.ItemResult.RawRow.RowId, a => a)
+            //?? new Dictionary<uint, Recipe>();
             PluginLog.Log("Collected {NumGatherables} different recipes items.", Recipes.Count);
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);

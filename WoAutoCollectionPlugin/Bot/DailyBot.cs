@@ -121,7 +121,7 @@ namespace WoAutoCollectionPlugin.Bot
                         return;
                     }
 
-                    if (otherTaskParam != "1")
+                    if (otherTaskParam != "1" && needTp)
                     {
                         foreach (int id in ids)
                         {

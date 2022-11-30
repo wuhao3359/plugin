@@ -321,6 +321,10 @@ namespace WoAutoCollectionPlugin.Bot
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
 
+            // WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
+            if (!WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v)) {
+                WoAutoCollectionPlugin.GameData.param.Add("extractMateria", "1");
+            }
             if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
@@ -426,7 +430,8 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                         Thread.Sleep(500);
 
-                        if (CommonUi.AddonGatheringIsOpen()) {
+                        if (CommonUi.AddonGatheringIsOpen())
+                        {
                             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                             uint gp = player.CurrentGp;
                             int level = player.Level;
@@ -447,26 +452,46 @@ namespace WoAutoCollectionPlugin.Bot
                                 }
                             }
                             Thread.Sleep(1000);
-                            CommonUi.GatheringButton(GathingButton);
-                        }
 
-                        if (DalamudApi.Condition[ConditionFlag.Gathering42])
-                        {
-                            gatherCount += 5;
+                            n = 0;
+                            while (CommonUi.AddonGatheringIsOpen() && n < 20)
+                            {
+                                if (n == 0 && go.Name.ToString().Contains("梦幻")) {
+                                    k--;
+                                }
+                                if (go.Name.ToString().Contains("梦幻"))
+                                {
+                                    CommonUi.GatheringButton(1);
+                                }
+                                else {
+                                    CommonUi.GatheringButton(GathingButton);
+                                }
+                                gatherCount++;
+                                n++;
+                                Thread.Sleep(2000);
+                            }
                         }
                         else {
                             k--;
                         }
-                        while (DalamudApi.Condition[ConditionFlag.Gathering42])
-                        {
-                            Thread.Sleep(1000);
 
-                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
-                            {
-                                PluginLog.Log($"YGathing stopping");
-                                return;
-                            }
-                        }
+                        //if (DalamudApi.Condition[ConditionFlag.Gathering42])
+                        //{
+                        //    gatherCount += 5;
+                        //}
+                        //else {
+                        //    k--;
+                        //}
+                        //while (DalamudApi.Condition[ConditionFlag.Gathering42])
+                        //{
+                        //    Thread.Sleep(1000);
+
+                        //    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                        //    {
+                        //        PluginLog.Log($"YGathing stopping");
+                        //        return;
+                        //    }
+                        //}
                         if (gatherCount >= 40) {
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             Thread.Sleep(500);
