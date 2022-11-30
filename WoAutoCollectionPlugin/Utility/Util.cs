@@ -20,6 +20,9 @@ namespace WoAutoCollectionPlugin.Utility
                     gameObjects.Add(go);
                     gameObjectsIndex.Add(CanCollectPoint[j]);
                 }
+                if (gameObjects.ToArray().Length >= 2) {
+                    break;
+                }
             }
             return (gameObjects, gameObjectsIndex);
         }
