@@ -77,6 +77,7 @@ namespace WoAutoCollectionPlugin.Bot
                 MovePositions(Path, true);
             }
             int n = 0;
+            int error = 0;
             while (!closed & n < 1000)
             {
                 Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
@@ -98,6 +99,13 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             j += UnknownPointsNum[k];
                             k++;
+                        }
+                        if (gameObjects.ToArray().Length == 0) {
+                            error++;
+                            if (error >= 3) {
+                                closed = true;
+                                PluginLog.Log($"出现错误停止");
+                            }
                         }
                     }
 
@@ -122,7 +130,6 @@ namespace WoAutoCollectionPlugin.Bot
                                 float y = Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType)) - 5;
                                 float z = Maths.GetCoordinate(go.Position.Z, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 Vector3 GatherPoint = new(x, y, z);
-                                //PluginLog.Log($"去可采集点{i} {Points[i].X} {Points[i].Y} {Points[i].Z}");
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                                 if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
@@ -474,24 +481,6 @@ namespace WoAutoCollectionPlugin.Bot
                         else {
                             k--;
                         }
-
-                        //if (DalamudApi.Condition[ConditionFlag.Gathering42])
-                        //{
-                        //    gatherCount += 5;
-                        //}
-                        //else {
-                        //    k--;
-                        //}
-                        //while (DalamudApi.Condition[ConditionFlag.Gathering42])
-                        //{
-                        //    Thread.Sleep(1000);
-
-                        //    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
-                        //    {
-                        //        PluginLog.Log($"YGathing stopping");
-                        //        return;
-                        //    }
-                        //}
                         if (gatherCount >= 40) {
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             Thread.Sleep(500);
