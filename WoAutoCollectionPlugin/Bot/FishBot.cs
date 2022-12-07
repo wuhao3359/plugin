@@ -43,8 +43,6 @@ namespace WoAutoCollectionPlugin.Bot
         {
             canMove = false;
             readyMove = false;
-            CurrentGround = 0;
-            CurrentPoint = 0;
         }
 
         // 进入空岛
@@ -62,7 +60,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
                 ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                MovePositions(ToArea, false);
+                MovePositions(ToArea, false, DalamudApi.ClientState.TerritoryType);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
                     WoAutoCollectionPlugin.GameData.CommonBot.SetTarget("奥瓦埃尔");
@@ -157,7 +155,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area >= 100)
             {
-                MovePositions(Position.Leveling, true);
+                MovePositions(Position.Leveling, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     int tt = 0;
@@ -181,7 +179,7 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     sw.Restart();
                     MoveInit();
@@ -203,13 +201,17 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         Thread.Sleep(5000);
                         PluginLog.Log($"等待停止...");
+                        if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                        {
+                            canMove = true;
+                        }
                     }
                 }
             }
             else {
                 // 划分区域
                 (Vector3[] ToGroundA, Vector3[] ToGroundB, Vector3[] ToGroundC, Vector3[] GroundA, Vector3[] GroundB, Vector3[] GroundC) = GetAreaPoint(area);
-                MovePositions(Position.ToStart, true);
+                MovePositions(Position.ToStart, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     Vector3[] ToGround = Array.Empty<Vector3>();
@@ -232,13 +234,14 @@ namespace WoAutoCollectionPlugin.Bot
                         ToGround = ToGroundC;
                         Ground = GroundC;
                     }
-
+                    
                     CurrentGround++;
                     if (CurrentGround == 3)
                     {
                         CurrentGround = 0;
                     }
-                    MovePositions(ToGround, true);
+                    Thread.Sleep(2000);
+                    MovePositions(ToGround, true, territoryType);
                     int tt = 0;
                     while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
                     {
@@ -259,7 +262,7 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     sw.Restart();
                     MoveInit();
@@ -280,7 +283,12 @@ namespace WoAutoCollectionPlugin.Bot
                     while (!canMove) {
                         Thread.Sleep(5000);
                         PluginLog.Log($"等待停止...");
+                        if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                        {
+                            canMove = true;
+                        }
                     }
+                    Thread.Sleep(1000);
                 }
             }
 
@@ -288,21 +296,20 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
-        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
+        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount, ushort territoryType)
         {
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < ToArea.Length; i++)
             {
-                if (closed)
+                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {
                     PluginLog.Log($"中途结束");
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
-                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-                Thread.Sleep(1000);
+                //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                Thread.Sleep(500);
             }
             return position;
         }

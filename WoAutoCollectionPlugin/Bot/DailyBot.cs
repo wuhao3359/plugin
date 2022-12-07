@@ -17,11 +17,13 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class DailyBot
     {
-        private static bool closed = false;
+        private bool closed = false;
 
         private bool othetRun = false;
 
         private bool needTp = true;
+
+        private string otherTaskParam = "0";
 
         public DailyBot()
         {}
@@ -29,12 +31,14 @@ namespace WoAutoCollectionPlugin.Bot
         public void Init()
         {
             closed = false;
+            Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
         public void StopScript()
         {
             closed = true;
+            Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
         }
@@ -47,6 +51,11 @@ namespace WoAutoCollectionPlugin.Bot
                 // 参数解析
                 string command = "daily";
                 WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+                if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var ot))
+                {
+                    otherTaskParam = ot;
+                }
 
                 uint lv = 50;
                 if (WoAutoCollectionPlugin.GameData.param.TryGetValue("level", out var l)) {
@@ -77,38 +86,29 @@ namespace WoAutoCollectionPlugin.Bot
         public void LimitTimeSinglePlan(uint lv)
         {
             int n = 0;
-            bool first = true;
-
             SeTime Time = new();
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
-            int minute = Time.ServerTime.CurrentEorzeaMinute();
             int et = hour;
             while (!closed && n < 1000)
             {
-                if (first)
-                {
-                    et--;
-                    first = false;
-                }
-                et++;
                 if (et >= 24) {
                     et = 0;
                     PluginLog.Log($"重置统计, 总共完成 {finishIds.Count}..");
                     finishIds.Clear();
                 }
                 PluginLog.Log($"start begin et: {et}");
-                List<int> ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                List<int> ids = LimitMaterials.GetMaterialIdsByEtAndFinishId(et, lv, finishIds);
                 PluginLog.Log($"当前et总共有 {ids.Count}  ..");
 
                 while (ids.Count == 0 && et < 24)
                 {
                     PluginLog.Log($"当前et没事干, skip et {et} ..");
                     et++;
-                    ids = LimitMaterials.GetMaterialIdsByEt(et, lv);
+                    ids = LimitMaterials.GetMaterialIdsByEtAndFinishId(et, lv, finishIds);
                 }
                 if (et >= 24) {
                     continue;
@@ -120,9 +120,10 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    foreach (int id in ids)
+
+                    if (otherTaskParam != "1" && needTp)
                     {
-                        if (finishIds.Exists(t => t != id))
+                        foreach (int id in ids)
                         {
                             (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
                             Teleporter.Teleport(Tp);
@@ -131,7 +132,7 @@ namespace WoAutoCollectionPlugin.Bot
                             break;
                         }
                     }
-                    
+
                     RunWaitTask(lv);
                     while (othetRun) {
                         Time.Update();
@@ -154,11 +155,7 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return;
                     }
-                    if (finishIds.Exists(t => t == id))
-                    {
-                        PluginLog.Log($"该任务当前周期已被执行, skip {id}..");
-                        continue;
-                    }
+                    
                     (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
                     PluginLog.Log($"当前完成任务: {finishIds.Count} 下个任务, id: {id} Name: {Name}, Job: {Job}, et: {et}..");
 
@@ -274,6 +271,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
+                et++;
             }
         }
 
@@ -284,7 +282,6 @@ namespace WoAutoCollectionPlugin.Bot
             SeTime Time = new();
             Time.Update();
             int hour = Time.ServerTime.CurrentEorzeaHour();
-            int minute = Time.ServerTime.CurrentEorzeaMinute();
             int et = hour;
             while (!closed && n < 1000)
             {
@@ -438,15 +435,15 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
-            
-            string otherTaskParam = "0";
-            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("otherTask", out var l))
-            {
-                otherTaskParam = l;
-            }
             if (otherTaskParam == "0") {
+                othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
-                Thread.Sleep(5000);
+                Task task = new(() =>
+                {
+                    Thread.Sleep(5000);
+                    othetRun = false;
+                });
+                task.Start();
             } else if (otherTaskParam == "1") {
                 othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
@@ -492,6 +489,7 @@ namespace WoAutoCollectionPlugin.Bot
         private void StopWaitTask()
         {
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CraftBot.StopScript();
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)

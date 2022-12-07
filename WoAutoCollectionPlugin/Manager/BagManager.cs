@@ -101,19 +101,19 @@ internal class BagManager
 
             for (int i = 0; i < 35; i++)
             {
-                if (bag0->Items[i].ItemID == 0)
+                if (bag0->Items[i].ItemID == ItemId)
                 {
                     quantity += bag0->Items[i].Quantity;
                 }
-                if (bag1->Items[i].ItemID == 0)
+                if (bag1->Items[i].ItemID == ItemId)
                 {
                     quantity += bag1->Items[i].Quantity;
                 }
-                if (bag2->Items[i].ItemID == 0)
+                if (bag2->Items[i].ItemID == ItemId)
                 {
                     quantity += bag2->Items[i].Quantity;
                 }
-                if (bag3->Items[i].ItemID == 0)
+                if (bag3->Items[i].ItemID == ItemId)
                 {
                     quantity += bag3->Items[i].Quantity;
                 }

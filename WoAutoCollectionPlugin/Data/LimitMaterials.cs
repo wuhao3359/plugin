@@ -317,6 +317,22 @@ namespace WoAutoCollectionPlugin.Utility
             return list;
         }
 
+        public static List<int> GetMaterialIdsByEtAndFinishId(int et, uint lv, List<int> finishIds)
+        {
+            List<int> list = new();
+            //Dictionary<int, int> sort = new();
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            {
+                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                {
+                    if (!finishIds.Exists(t => t == Id)) {
+                        list.Add(Id);
+                    }
+                }
+            }
+            return list;
+        }
+
         public static (string, uint, string, uint, uint, Vector3[], Vector3[]) GetMaterialById(int id)
         {
             foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)

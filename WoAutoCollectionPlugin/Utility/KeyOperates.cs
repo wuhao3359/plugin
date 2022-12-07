@@ -58,9 +58,11 @@ public class KeyOperates
         int turn = 0;
         int notMove = 0;
 
-        if (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted]) {
+        int n = 0;
+        while (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted] && n < 3) {
             KeyMethod(Keys.q_key);
-            Thread.Sleep(2000);
+            Thread.Sleep(2500);
+            n++;
         }
 
         double errorDisntance = 5.5;
@@ -90,12 +92,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(50);
-
-            if (territoryType != DalamudApi.ClientState.TerritoryType)
-            {
-                break;
-            }
+            Thread.Sleep(40);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
