@@ -60,7 +60,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
                 ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                MovePositions(ToArea, false);
+                MovePositions(ToArea, false, DalamudApi.ClientState.TerritoryType);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen()) {
                     WoAutoCollectionPlugin.GameData.CommonBot.SetTarget("奥瓦埃尔");
@@ -155,7 +155,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area >= 100)
             {
-                MovePositions(Position.Leveling, true);
+                MovePositions(Position.Leveling, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     int tt = 0;
@@ -179,7 +179,7 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     sw.Restart();
                     MoveInit();
@@ -211,7 +211,7 @@ namespace WoAutoCollectionPlugin.Bot
             else {
                 // 划分区域
                 (Vector3[] ToGroundA, Vector3[] ToGroundB, Vector3[] ToGroundC, Vector3[] GroundA, Vector3[] GroundB, Vector3[] GroundC) = GetAreaPoint(area);
-                MovePositions(Position.ToStart, true);
+                MovePositions(Position.ToStart, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     Vector3[] ToGround = Array.Empty<Vector3>();
@@ -241,7 +241,7 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentGround = 0;
                     }
                     Thread.Sleep(2000);
-                    MovePositions(ToGround, true);
+                    MovePositions(ToGround, true, territoryType);
                     int tt = 0;
                     while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
                     {
@@ -262,7 +262,7 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentPoint = 0;
                     }
 
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 800);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                     sw.Restart();
                     MoveInit();
@@ -296,14 +296,13 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
-        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
+        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount, ushort territoryType)
         {
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             for (int i = 0; i < ToArea.Length; i++)
             {
-                if (closed)
+                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {
                     PluginLog.Log($"中途结束");
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);

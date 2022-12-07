@@ -94,11 +94,6 @@ public class KeyOperates
             }
             Thread.Sleep(40);
 
-            if (territoryType != DalamudApi.ClientState.TerritoryType)
-            {
-                break;
-            }
-
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
 
