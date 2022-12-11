@@ -309,32 +309,59 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (951, 2764, 1902),
         };
 
-        public static Vector3[] ToGroundA = {
+        public static Vector3[] ToGroundA1 = {
             new Vector3 (951, 2764, 1902),
             new Vector3 (1112, 2381, 2049),
             new Vector3 (1082, 1906, 2349),
             new Vector3 (1251, 1725, 2327),
         };
-        public static Vector3[] ToGroundB = {
+        public static Vector3[] ToGroundB1 = {
             new Vector3 (1491, 1917, 2280),
             new Vector3 (2525, 1828, 1480),
             new Vector3 (2576, 1774, 1385),
         };
-        public static Vector3[] ToGroundC = {
+        public static Vector3[] ToGroundC1 = {
             new Vector3 (3174, 2580, 976),
             new Vector3 (3077, 2563, 932),
         };
-        public static Vector3[] GroundA = {
+        public static Vector3[] GroundA1 = {
             new Vector3 (1229, 1720, 2302),
             new Vector3 (1289, 1731, 2311),
         };
-        public static Vector3[] GroundB = {
+        public static Vector3[] GroundB1 = {
             new Vector3 (2594, 1774, 1385),
             new Vector3 (2559, 1774, 1417),
         };
-        public static Vector3[] GroundC = {
+        public static Vector3[] GroundC1 = {
             new Vector3 (3076, 2561, 956),
             new Vector3 (3036, 2563, 909),
+        };
+        public static Vector3[] ToGroundA2 = {
+            new Vector3 (951, 2764, 1902),
+            new Vector3 (1112, 2381, 2049),
+            new Vector3 (1082, 1906, 2349),
+            new Vector3 (1147, 1765, 2368),
+        };
+        public static Vector3[] ToGroundB2 = {
+            new Vector3 (1731, 1990, 2158),
+            new Vector3 (2731, 1780, 1761),
+        };
+        public static Vector3[] ToGroundC2 = {
+            new Vector3 (2823, 1894, 1720),
+            new Vector3 (3168, 2546, 982),
+            new Vector3 (3209, 2554, 930),
+        };
+        public static Vector3[] GroundA2 = {
+            new Vector3 (1157, 1715, 2318),
+            new Vector3 (1114, 1713, 2370),
+        };
+        public static Vector3[] GroundB2 = {
+            new Vector3 (2718, 1852, 1797),
+            new Vector3 (2688, 1753, 1751),
+        };
+        public static Vector3[] GroundC2 = {
+            new Vector3 (3218, 2547, 956),
+            new Vector3 (3162, 2544, 935),
         };
 
         // A 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提

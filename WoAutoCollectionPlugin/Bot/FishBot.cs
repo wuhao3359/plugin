@@ -470,12 +470,21 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area == 1)
             {
-                ToGroundA = Position.ToGroundA;
-                ToGroundB = Position.ToGroundB;
-                ToGroundC = Position.ToGroundC;
-                GroundA = Position.GroundA;
-                GroundB = Position.GroundB;
-                GroundC = Position.GroundC;
+                ToGroundA = Position.ToGroundA1;
+                ToGroundB = Position.ToGroundB1;
+                ToGroundC = Position.ToGroundC1;
+                GroundA = Position.GroundA1;
+                GroundB = Position.GroundB1;
+                GroundC = Position.GroundC1;
+            }
+            else if (area == 2)
+            {
+                ToGroundA = Position.ToGroundA2;
+                ToGroundB = Position.ToGroundB2;
+                ToGroundC = Position.ToGroundC2;
+                GroundA = Position.GroundA2;
+                GroundB = Position.GroundB2;
+                GroundC = Position.GroundC2;
             }
             return (ToGroundA, ToGroundB, ToGroundC, GroundA, GroundB, GroundC);
         }

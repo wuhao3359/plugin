@@ -145,11 +145,11 @@ public class KeyOperates
                 notMove++;
             }
 
-            if (notMove >= 10) {
+            if (notMove >= 8) {
                 KeyMethod(Keys.d_key, 300);
                 KeyDown(Keys.space_key);
                 notMove = 0;
-            } else if (notMove >= 5) {
+            } else if (notMove >= 4) {
                 KeyMethod(Keys.a_key, 300);
                 KeyMethod(Keys.space_key);
                 notMove = 0;
@@ -187,7 +187,7 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 8) {
+            if (turn >= 5) {
                 MoveStop();
                 positionA = Revise(positionB, 800);
                 turn = 0;
