@@ -241,6 +241,11 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentGround = 0;
                     }
                     Thread.Sleep(2000);
+                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    {
+                        PluginLog.Log($"task stopping");
+                        return false;
+                    }
                     MovePositions(ToGround, true, territoryType);
                     int tt = 0;
                     while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
@@ -254,6 +259,11 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"task stopping");
                             return false;
                         }
+                    }
+                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    {
+                        PluginLog.Log($"task stopping");
+                        return false;
                     }
                     position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Ground[CurrentPoint], territoryType, false, false);
                     CurrentPoint++;
