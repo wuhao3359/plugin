@@ -165,7 +165,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(1000);
                         tt++;
 
-                        if (closed)
+                        if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                         {
                             PluginLog.Log($"task stopping");
                             return true;
@@ -241,6 +241,11 @@ namespace WoAutoCollectionPlugin.Bot
                         CurrentGround = 0;
                     }
                     Thread.Sleep(2000);
+                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    {
+                        PluginLog.Log($"task stopping");
+                        return false;
+                    }
                     MovePositions(ToGround, true, territoryType);
                     int tt = 0;
                     while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 15)
@@ -249,11 +254,16 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(1000);
                         tt++;
 
-                        if (closed)
+                        if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
                         {
                             PluginLog.Log($"task stopping");
-                            return true;
+                            return false;
                         }
+                    }
+                    if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                    {
+                        PluginLog.Log($"task stopping");
+                        return false;
                     }
                     position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Ground[CurrentPoint], territoryType, false, false);
                     CurrentPoint++;
@@ -365,7 +375,7 @@ namespace WoAutoCollectionPlugin.Bot
                 uint maxGp = player.MaxGp;
                 if (CurrentGround == 0) {
                     // C 狂风云海 灵飘尘  <14 双提 14-24 三提 >24单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 14)
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 10 && yfishsw.ElapsedMilliseconds / 1000 < 14)
                     {
                         if (maxGp >= 400)
                         {
@@ -382,7 +392,7 @@ namespace WoAutoCollectionPlugin.Bot
                 } else if (CurrentGround == 2)
                 {
                     // B 旋风云海 灵罡风  <12 双提 >12 单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 12)
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 10 && yfishsw.ElapsedMilliseconds / 1000 < 12)
                     {
                         if (maxGp >= 400)
                         {
@@ -393,7 +403,7 @@ namespace WoAutoCollectionPlugin.Bot
                 else if (CurrentGround == 1)
                 {
                     // A 摇风云海 灵飞电  <16 双提 >16单提
-                    if (yfishsw.ElapsedMilliseconds / 1000 > 8 && yfishsw.ElapsedMilliseconds / 1000 < 16)
+                    if (yfishsw.ElapsedMilliseconds / 1000 > 10 && yfishsw.ElapsedMilliseconds / 1000 < 16)
                     {
                         if (maxGp >= 400)
                         {
@@ -470,12 +480,21 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area == 1)
             {
-                ToGroundA = Position.ToGroundA;
-                ToGroundB = Position.ToGroundB;
-                ToGroundC = Position.ToGroundC;
-                GroundA = Position.GroundA;
-                GroundB = Position.GroundB;
-                GroundC = Position.GroundC;
+                ToGroundA = Position.ToGroundA1;
+                ToGroundB = Position.ToGroundB1;
+                ToGroundC = Position.ToGroundC1;
+                GroundA = Position.GroundA1;
+                GroundB = Position.GroundB1;
+                GroundC = Position.GroundC1;
+            }
+            else if (area == 2)
+            {
+                ToGroundA = Position.ToGroundA2;
+                ToGroundB = Position.ToGroundB2;
+                ToGroundC = Position.ToGroundC2;
+                GroundA = Position.GroundA2;
+                GroundB = Position.GroundB2;
+                GroundC = Position.GroundC2;
             }
             return (ToGroundA, ToGroundB, ToGroundC, GroundA, GroundB, GroundC);
         }
