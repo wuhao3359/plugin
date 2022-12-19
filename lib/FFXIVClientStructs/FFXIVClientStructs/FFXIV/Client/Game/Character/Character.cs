@@ -8,8 +8,8 @@ namespace FFXIVClientStructs.FFXIV.Client.Game.Character;
 //   Client::Graphics::Vfx::VfxDataListenner
 
 // size = 0x19F0
-// ctor E8 ? ? ? ? 0F B7 93 ? ? ? ? 45 33 C9 
-[StructLayout(LayoutKind.Explicit, Size = 0x1AE0)]
+// ctor E8 ?? ?? ?? ?? 4C 8B D0 4C 63 F7
+[StructLayout(LayoutKind.Explicit, Size = 0x1B00)]
 public unsafe partial struct Character
 {
     [FieldOffset(0x0)] public GameObject GameObject;
@@ -38,34 +38,41 @@ public unsafe partial struct Character
 
     #endregion
 
-    [FieldOffset(0xC50)] public uint PlayerTargetObjectID;
+    [FieldOffset(0x6D0)] public DrawDataContainer DrawData;
 
-    [FieldOffset(0x808)] public fixed byte EquipSlotData[4 * 10];
-    [FieldOffset(0x830)] public fixed byte CustomizeData[0x1A];
+    [FieldOffset(0x818)] public fixed byte EquipSlotData[4 * 10];
+    [FieldOffset(0x840)] public fixed byte CustomizeData[0x1A];
 
-    [FieldOffset(0x1760)] public Balloon Balloon;
+    [FieldOffset(0xC60)] public uint PlayerTargetObjectID;
 
-    [FieldOffset(0x1968)] public VfxData* VfxData;
-    [FieldOffset(0x1970)] public VfxData* VfxData2;
-    [FieldOffset(0x1998)] public VfxData* Omen;
+    [FieldOffset(0x1770)] public Balloon Balloon;
 
-    [FieldOffset(0x6B0)] public Companion* CompanionObject; // minion
-    [FieldOffset(0x1A30)] public fixed byte FreeCompanyTag[6];
-    [FieldOffset(0x1A50)] public uint TargetObjectID;
+    [FieldOffset(0x1978)] public VfxData* VfxData;
+    [FieldOffset(0x1980)] public VfxData* VfxData2;
+    [FieldOffset(0x19A8)] public VfxData* Omen;
 
-    [FieldOffset(0x1A94)] public uint NameID;
+    [FieldOffset(0x1A30)] public Companion* CompanionObject; // minion
+    [FieldOffset(0x1A48)] public fixed byte FreeCompanyTag[6];
+    [FieldOffset(0x1A68)] public uint TargetObjectID;
 
-    [FieldOffset(0x1AB0)] public ushort CurrentWorld;
-    [FieldOffset(0x1AB2)] public ushort HomeWorld;
-    [FieldOffset(0x1ABC)] public byte EventState; // or something
-    [FieldOffset(0x1ABE)] public byte OnlineStatus;
-    [FieldOffset(0x1AD3)] public byte ShieldValue;
-    [FieldOffset(0x1AD6)] public byte StatusFlags;
-    [FieldOffset(0x1AA4)] public uint CompanionOwnerID;
+    [FieldOffset(0x1AAC)] public uint NameID;
+
+    [FieldOffset(0x1AC8)] public ushort CurrentWorld;
+    [FieldOffset(0x1ACA)] public ushort HomeWorld;
+    [FieldOffset(0x1AD4)] public byte EventState; // or something
+    [FieldOffset(0x1AD6)] public byte OnlineStatus;
+    [FieldOffset(0x1AEB)] public byte ShieldValue;
+    [FieldOffset(0x1AEF)] public byte StatusFlags;
+    [FieldOffset(0x1ABC)] public uint CompanionOwnerID;
 
     [MemberFunction("E8 ?? ?? ?? ?? 49 3B C7 0F 84")]
     public partial uint GetTargetId();
-    
+
+    // Seemingly used for cutscenes and GPose.
+    [MemberFunction("E8 ?? ?? ?? ?? 0F B6 9F ?? ?? ?? ?? 48 8D 8F")]
+    public partial ulong CopyFromCharacter(Character* source, uint unk);
+
+
     [VirtualFunction(79)]
     public partial StatusManager* GetStatusManager();
 
