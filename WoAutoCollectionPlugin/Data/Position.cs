@@ -422,6 +422,30 @@ namespace WoAutoCollectionPlugin.Utility
         public static int NormalFishTime = 4;
 
 
+        // ------------------------------- 灵砂 捕鱼 ------------------------------------
+        // 灵砂随大版本更新而变化
+        // 精选鱼  红弓鳍鱼  (万能拟饵 11.5% 20.7-30.9) (蜉蝣 23% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=257&fishId=36408
+        public static Vector3[] ToFishAreaX1 = {
+            new Vector3 (0f, 0f, 0f)
+        };
+        public static Vector3[] FishAreaX1 = {
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+        };
+        public static int FishTimeX1 = 15;
+
+        // 精选鱼  噬卵者  (万能拟饵 7.5% 20.7-30.9) (奇美拉蠕虫 11.3% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=280&fishId=36497
+        public static Vector3[] ToFishAreaX2 = {
+            new Vector3 (0f, 0f, 0f)
+        };
+        public static Vector3[] FishAreaX2 = {
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+            new Vector3 (0f, 0f, 0f),
+        };
+        public static int FishTimeX2 = 15;
+
         // ------------------------------- 园艺 ------------------------------------
 
         // 传送水晶到区域A路径
