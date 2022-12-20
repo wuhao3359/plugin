@@ -25,6 +25,12 @@ namespace WoAutoCollectionPlugin.Bot
 
         private string otherTaskParam = "0";
 
+        SeTime Time = new();
+
+        int hour = 0;
+
+        int et = 0;
+
         public DailyBot()
         {}
 
@@ -32,6 +38,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             closed = false;
             Teleporter.count = 0;
+            WoAutoCollectionPlugin.GameData.CraftBot.Init();
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
@@ -43,9 +50,9 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
         }
 
-        // TODO
         public void DailyScript(string args)
         {
+            Init();
             closed = false;
             try {
                 // 参数解析
@@ -86,13 +93,13 @@ namespace WoAutoCollectionPlugin.Bot
         public void LimitTimeSinglePlan(uint lv)
         {
             int n = 0;
-            SeTime Time = new();
+            
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
             Time.Update();
-            int hour = Time.ServerTime.CurrentEorzeaHour();
-            int et = hour;
+            hour = Time.ServerTime.CurrentEorzeaHour();
+            et = hour;
             while (!closed && n < 1000)
             {
                 if (et >= 24) {
@@ -435,38 +442,53 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         private void RunWaitTask(uint lv) {
+            Time.Update();
+            hour = Time.ServerTime.CurrentEorzeaHour();
+            int minute = Time.ServerTime.CurrentEorzeaMinute();
+            othetRun = true;
+            
             if (otherTaskParam == "0") {
                 othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
                 Task task = new(() =>
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(10000);
                     othetRun = false;
                 });
                 task.Start();
             } else if (otherTaskParam == "1") {
-                othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
-                needTp = true;
-                Task task = new(() =>
+                if (et != 0 && hour - et < -1 && minute > 20)
                 {
-                    PluginLog.Log($"执行等待采集任务...");
-                    try
+                    PluginLog.Log($"间隔时间短暂, 不执行其他任务");
+                    Task task = new(() =>
                     {
-                        WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
-                    }
-                    catch (Exception e)
+                        Thread.Sleep(10000);
+                        othetRun = false;
+                    });
+                    task.Start();
+                }
+                else {
+                    needTp = true;
+                    Task task = new(() =>
                     {
-                        PluginLog.Error($"其他任务, error!!!\n{e}");
-                    }
-                    PluginLog.Log($"其他任务结束...");
-                    othetRun = false;
-                });
-                task.Start();
+                        PluginLog.Log($"执行等待采集任务...");
+                        try
+                        {
+                            WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript(0, lv);
+                        }
+                        catch (Exception e)
+                        {
+                            PluginLog.Error($"其他任务, error!!!\n{e}");
+                        }
+                        PluginLog.Log($"其他任务结束...");
+                        othetRun = false;
+                    });
+                    task.Start();
+                }
             } else if (otherTaskParam == "2") {
                 othetRun = true;
                 PluginLog.Log($"当前配置: {otherTaskParam}, 快速制作任务");
-                needTp = true;
                 Task task = new(() =>
                 {
                     PluginLog.Log($"执行等待快速制作任务...");
@@ -477,6 +499,10 @@ namespace WoAutoCollectionPlugin.Bot
                     catch (Exception e)
                     {
                         PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                     }
                     PluginLog.Log($"其他任务结束...");
                     othetRun = false;

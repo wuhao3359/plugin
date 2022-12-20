@@ -370,7 +370,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             List<string> list = new();
             string[] names = Names.Split('|');
-            PluginLog.Log($"开始采集: {Names}");
+            PluginLog.Log($"准备采集: {Names}");
             foreach (string na in names) {
                 list.Add(na);
             }
@@ -446,6 +446,90 @@ namespace WoAutoCollectionPlugin.Bot
                 
             }
 
+            return true;
+        }
+
+        // 普通材料采集手法 TODO GetRecastTimeElapsed 技能CD测试
+        public bool NormalMaterialsMethod(string Names)
+        {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+
+            uint gp = player.CurrentGp;
+            int level = player.Level;
+
+            List<string> list = new();
+            string[] names = Names.Split('|');
+            PluginLog.Log($"准备采集: {Names}");
+            foreach (string na in names)
+            {
+                list.Add(na);
+            }
+
+            bool coolDown = false;
+
+            (int GatherIndex, string name) = CommonUi.GetNormalGatheringIndex(list, coolDown);
+            int action = 0;
+            if (name.Contains("之水晶"))
+            {
+                int id = NormalItems.GetNormalItemId(name);
+                int count = BagManager.GetInventoryItemCount((uint)id);
+                if (count < 9500 && gp >= 200)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
+                    gp -= 200;
+                    action++;
+                }
+                else {
+                    (GatherIndex, name) = CommonUi.GetNormalGatheringIndex(list, false);
+                }
+            }
+            
+            if (!name.Contains("之水晶") && level >= 50)
+            {
+                if (gp >= 500)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                    gp -= 500;
+                    action++;
+                    Thread.Sleep(2000);
+                }
+            }
+            else
+            {
+                if (gp >= 400)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    gp -= 400;
+                    action++;
+                    Thread.Sleep(2000);
+                }
+            }
+
+            int tt = 0;
+            while (CommonUi.AddonGatheringIsOpen() && tt < 15)
+            {
+                CommonUi.GatheringButton(GatherIndex);
+                Thread.Sleep(2000);
+                tt++;
+                if (tt == 4)
+                {
+                    gp = player.CurrentGp;
+                    level = player.Level;
+                    if (gp >= 300 && action > 0)
+                    {
+                        if (level >= 25)
+                        {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                            Thread.Sleep(1500);
+                            if (level >= 90)
+                            {
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                                Thread.Sleep(1000);
+                            }
+                        }
+                    }
+                }
+            }
             return true;
         }
 

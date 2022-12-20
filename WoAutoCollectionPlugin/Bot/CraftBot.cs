@@ -1,4 +1,5 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,11 +16,14 @@ namespace WoAutoCollectionPlugin.Bot
     {
         private static bool closed = false;
 
+        private List<uint> jobIds = new();
+
         public CraftBot() {}
 
         public void Init()
         {
             closed = false;
+            jobIds = new();
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
@@ -68,17 +72,27 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void QuickCraftByName(string Name, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
+        public void QuickCraftByName(string Name, (int Id, string Name, int Quantity)[] LowCraft) {
             int n = 0;
-            while (!closed && n < 10) {
+            while (!closed && n < 1000) {
                 n++;
                 if (!BagManager.QickItemQuantityEnough(LowCraft))
                 {
-                    closed = true;
+                    PluginLog.Log($"生产: {Name}, 材料不足...");
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    }
                     break;
                 }
+                if (closed)
+                {
+                    PluginLog.Log($"quick craft stopping");
+                    return;
+                }
                 RunQuickCraftScriptByName(Name);
-                Thread.Sleep(5000);
+                PluginLog.Log($"Finish: {n} Item: {Name}");
+                Thread.Sleep(800);
             }
         }
 
@@ -98,16 +112,11 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 n++;
             }
-
-            Thread.Sleep(500);
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
-                RecipeNoteUi.QuickSynthesizeButton();
-                n = 0;
-                // TODO 快速生产
-                while (RecipeNoteUi.RecipeNoteIsOpen() && n < 3)
+                RecipeNoteUi.SynthesizeButton();
+                while (RecipeNoteUi.RecipeNoteIsOpen())
                 {
-                    n++;
                     Thread.Sleep(500);
                     if (closed)
                     {
@@ -116,13 +125,19 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
             }
-            else
-            {
-                PluginLog.Log($"RecipeNote not open, continue");
-                return;
-            }
+            Thread.Sleep(1800);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
 
-            //  0 9 0 2 0 TODO
+            n = 0;
+            while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
+            {
+                Thread.Sleep(500);
+                if (closed)
+                {
+                    PluginLog.Log($"craft stopping");
+                    return;
+                }
+            }
         }
 
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
@@ -232,41 +247,39 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void RunCraftScript() {
             List<int> list = RecipeItems.GetAllQuickCraftItems();
-            
             int id = 0;
-            (int Id, string Name, int Quantity, bool Craft)[] quickCraft;
+            
+            for (int i = 0; i < list.Count; i++)
+            {
+                id = list[0];
+                PluginLog.Log($"准备生产ID: {id}");
+                (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity)[] LowCraft) = RecipeItems.GetMidCraftItems(id, jobIds);
 
-            if (list.Count > 0) { 
-                for (int i = 0; i < 5; i++)
+                if (BagManager.QickItemQuantityEnough(LowCraft))
                 {
-                    Random rd = new();
-                    int r = rd.Next(list.Count);
-                    id = list[r];
-                    PluginLog.Log($"随机生产ID: {r} {id}");
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
-
-                    if (BagManager.QickItemQuantityEnough(LowCraft))
+                    if (!CommonUi.CurrentJob(Job))
                     {
-                        if (!CommonUi.CurrentJob(Job))
+                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                        Thread.Sleep(500);
+                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                        if (player.Level < Lv)
                         {
-                            WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
-                            Thread.Sleep(500);
+                            jobIds.Add(Job);
+                            id = 0;
                         }
-                        break;
+                        else
+                        {
+                            PluginLog.Log($"准备生产: {Name}");
+                            QuickCraftByName(Name, LowCraft);
+                            break;
+                        }
                     }
                 }
             }
-
-            if (id > 0)
-            {
-                (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
-                QuickCraftByName(Name, LowCraft);
-            }
-            else {
-                PluginLog.Log($"未找到生产物品...");
+            if (id == 0) {
+                PluginLog.Log($"没有找到合适物品...");
             }
         }
-
 
         public void CheckScript(uint recipeId) {
             WoAutoCollectionPlugin.GameData.Recipes.TryGetValue(recipeId, out var r);

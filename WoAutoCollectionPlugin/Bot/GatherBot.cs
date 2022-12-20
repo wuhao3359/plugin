@@ -177,9 +177,8 @@ namespace WoAutoCollectionPlugin.Bot
 
                                     if (CommonUi.AddonGatheringIsOpen())
                                     {
-                                        WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
+                                        WoAutoCollectionPlugin.GameData.CommonBot.NormalMaterialsMethod(Name);
                                     }
-
                                     if (gameObjects.ToArray().Length > 0)
                                     {
                                         gameObjects.RemoveAt(0);

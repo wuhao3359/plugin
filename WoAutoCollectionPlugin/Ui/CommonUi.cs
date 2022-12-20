@@ -227,6 +227,132 @@ namespace WoAutoCollectionPlugin.Ui
             return (index, na);
         }
 
+        public static unsafe (int, string) GetNormalGatheringIndex(List<string> ItemNames, bool CoolDown)
+        {
+            int index = 0;
+            string na = "";
+            var ptr = DalamudApi.GameGui.GetAddonByName("Gathering", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                var AtkUnitBase = (AtkUnitBase*)ptr;
+                var Addon = (AddonGathering*)ptr;
+                uint itemId1 = Addon->GatheredItemId1;
+                uint itemId2 = Addon->GatheredItemId2;
+                uint itemId3 = Addon->GatheredItemId3;
+                uint itemId4 = Addon->GatheredItemId4;
+                uint itemId5 = Addon->GatheredItemId5;
+                uint itemId6 = Addon->GatheredItemId6;
+                uint itemId7 = Addon->GatheredItemId7;
+                uint itemId8 = Addon->GatheredItemId8;
+
+                string n1 = "";
+                string n2 = "";
+                string n3 = "";
+                string n4 = "";
+                string n5 = "";
+                string n6 = "";
+                string n7 = "";
+                string n8 = "";
+                if (itemId1 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId1, out var item1);
+                    n1 = item1 != null ? item1.Name.ToString() : "";
+                }
+                if (itemId2 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId2, out var item2);
+                    n2 = item2 != null ? item2.Name.ToString() : "";
+                }
+                if (itemId3 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId3, out var item3);
+                    n3 = item3 != null ? item3.Name.ToString() : "";
+                }
+                if (itemId4 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId4, out var item4);
+                    n4 = item4 != null ? item4.Name.ToString() : "";
+                }
+                if (itemId5 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId5, out var item5);
+                    n5 = item5 != null ? item5.Name.ToString() : "";
+                }
+                if (itemId6 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId6, out var item6);
+                    n6 = item6 != null ? item6.Name.ToString() : "";
+                }
+                if (itemId7 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId7, out var item7);
+                    n7 = item7 != null ? item7.Name.ToString() : "";
+                }
+                if (itemId8 != 0)
+                {
+                    WoAutoCollectionPlugin.GameData.Gatherables.TryGetValue(itemId8, out var item8);
+                    n8 = item8 != null ? item8.Name.ToString() : "";
+                }
+
+                string priority = "地图";
+                if (CoolDown) {
+                    priority = "之水晶";
+                }
+                foreach (string name in ItemNames)
+                {
+                    if (name == n1 || n1.Contains(priority))
+                    {
+                        index = 1;
+                        na = n1;
+                        break;
+                    }
+                    else if (name == n2 || n2.Contains(priority))
+                    {
+                        index = 2;
+                        na = n2;
+                        break;
+                    }
+                    else if (name == n3 || n3.Contains(priority))
+                    {
+                        index = 3;
+                        na = n3;
+                        break;
+                    }
+                    else if (name == n4 || n4.Contains(priority))
+                    {
+                        index = 4;
+                        na = n4;
+                        break;
+                    }
+                    else if (name == n5 || n5.Contains(priority))
+                    {
+                        index = 5;
+                        na = n5;
+                        break;
+                    }
+                    else if (name == n6 || n6.Contains(priority))
+                    {
+                        index = 6;
+                        na = n6;
+                        break;
+                    }
+                    else if (name == n7 || n7.Contains(priority))
+                    {
+                        index = 7;
+                        na = n7;
+                        break;
+                    }
+                    else if (name == n8 || n8.Contains(priority))
+                    {
+                        index = 8;
+                        na = n8;
+                        break;
+                    }
+                }
+            }
+            return (index, na);
+        }
+
         public static unsafe bool SelectYesButton()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);

@@ -135,12 +135,12 @@ internal class BagManager
         return true;
     }
 
-    public static bool QickItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+    public static bool QickItemQuantityEnough((int Id, string Name, int Quantity)[] LowCraft)
     {
         for (int i = 0; i < LowCraft.Length; i++)
         {
             int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
-            if (quantity < LowCraft[i].Quantity * 50)
+            if (quantity < LowCraft[i].Quantity)
             {
                 return false;
             }
