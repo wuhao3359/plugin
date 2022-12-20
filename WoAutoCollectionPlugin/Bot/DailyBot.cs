@@ -452,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
                 Task task = new(() =>
                 {
-                    Thread.Sleep(10000);
+                    Thread.Sleep(7000);
                     othetRun = false;
                 });
                 task.Start();
@@ -463,7 +463,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"间隔时间短暂, 不执行其他任务");
                     Task task = new(() =>
                     {
-                        Thread.Sleep(10000);
+                        Thread.Sleep(7000);
                         othetRun = false;
                     });
                     task.Start();
