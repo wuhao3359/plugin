@@ -475,13 +475,15 @@ namespace WoAutoCollectionPlugin.Bot
             if (Game.GetSpellActionRecastTimeElapsed((uint)skillId) == 0) {
                 coolDown = true;
             }
-
+            
             (int GatherIndex, string name) = CommonUi.GetNormalGatheringIndex(list, coolDown);
+            PluginLog.Log($"开始采集: {Names}, {coolDown}");
             int action = 0;
             if (name.Contains("之水晶"))
             {
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
+                PluginLog.Log($"开始采集: {Names}, {count}");
                 if (count < 9500 && gp >= 200)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
@@ -535,6 +537,13 @@ namespace WoAutoCollectionPlugin.Bot
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
                                 Thread.Sleep(1000);
                             }
+                        }
+                    }
+                    else if (tt == 2)
+                    {
+                        if (name.Contains("地图"))
+                        {
+                            (GatherIndex, name) = CommonUi.GetNormalGatheringIndex(list, false);
                         }
                     }
                 }

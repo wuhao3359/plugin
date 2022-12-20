@@ -300,49 +300,97 @@ namespace WoAutoCollectionPlugin.Ui
                 }
                 foreach (string name in ItemNames)
                 {
-                    if (name == n1 || n1.Contains(priority))
-                    {
+                    if (n1.Contains(priority)) {
                         index = 1;
                         na = n1;
                         break;
                     }
-                    else if (name == n2 || n2.Contains(priority))
+                    if (n2.Contains(priority))
                     {
                         index = 2;
                         na = n2;
                         break;
                     }
-                    else if (name == n3 || n3.Contains(priority))
+                    if (n3.Contains(priority))
                     {
                         index = 3;
                         na = n3;
                         break;
                     }
-                    else if (name == n4 || n4.Contains(priority))
+                    if (n4.Contains(priority))
                     {
                         index = 4;
                         na = n4;
                         break;
                     }
-                    else if (name == n5 || n5.Contains(priority))
+                    if (n5.Contains(priority))
                     {
                         index = 5;
                         na = n5;
                         break;
                     }
-                    else if (name == n6 || n6.Contains(priority))
+                    if (n6.Contains(priority))
                     {
                         index = 6;
                         na = n6;
                         break;
                     }
-                    else if (name == n7 || n7.Contains(priority))
+                    if (n7.Contains(priority))
                     {
                         index = 7;
                         na = n7;
                         break;
                     }
-                    else if (name == n8 || n8.Contains(priority))
+                    if (n8.Contains(priority))
+                    {
+                        index = 8;
+                        na = n8;
+                        break;
+                    }
+
+                    if (name == n1)
+                    {
+                        index = 1;
+                        na = n1;
+                        break;
+                    }
+                    else if (name == n2)
+                    {
+                        index = 2;
+                        na = n2;
+                        break;
+                    }
+                    else if (name == n3)
+                    {
+                        index = 3;
+                        na = n3;
+                        break;
+                    }
+                    else if (name == n4)
+                    {
+                        index = 4;
+                        na = n4;
+                        break;
+                    }
+                    else if (name == n5)
+                    {
+                        index = 5;
+                        na = n5;
+                        break;
+                    }
+                    else if (name == n6)
+                    {
+                        index = 6;
+                        na = n6;
+                        break;
+                    }
+                    else if (name == n7)
+                    {
+                        index = 7;
+                        na = n7;
+                        break;
+                    }
+                    else if (name == n8)
                     {
                         index = 8;
                         na = n8;
