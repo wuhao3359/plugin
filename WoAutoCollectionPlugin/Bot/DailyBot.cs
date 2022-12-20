@@ -145,7 +145,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
                         PluginLog.Log($"当前时间{hour} wait to {et} ..");
-                        Thread.Sleep(5000);
+                        Thread.Sleep(7000);
                         if (hour == et) {
                            StopWaitTask();
                         }
@@ -458,7 +458,7 @@ namespace WoAutoCollectionPlugin.Bot
                 task.Start();
             } else if (otherTaskParam == "1") {
                 PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
-                if (et != 0 && hour - et < -1 && minute > 20)
+                if (et != 0 && hour - et >= -1 && minute > 20)
                 {
                     PluginLog.Log($"间隔时间短暂, 不执行其他任务");
                     Task task = new(() =>
@@ -531,7 +531,7 @@ namespace WoAutoCollectionPlugin.Bot
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
-                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+                //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
             }
             return position;
         }

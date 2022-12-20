@@ -8,6 +8,7 @@ using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
+using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -464,8 +465,16 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 list.Add(na);
             }
-
+            var jobId = DalamudApi.ClientState.LocalPlayer?.ClassJob.Id;
+            // 4589 - 采矿 大地的恩惠 4590 - 园艺 大地的恩惠
+            int skillId = 4589;
+            if (jobId == 17) {
+                skillId = 4590;
+            }
             bool coolDown = false;
+            if (Game.GetSpellActionRecastTimeElapsed((uint)skillId) == 0) {
+                coolDown = true;
+            }
 
             (int GatherIndex, string name) = CommonUi.GetNormalGatheringIndex(list, coolDown);
             int action = 0;

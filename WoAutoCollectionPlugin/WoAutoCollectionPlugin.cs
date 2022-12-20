@@ -7,6 +7,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
@@ -325,11 +326,11 @@ namespace WoAutoCollectionPlugin
         private void OnWoTestCommand(string command, string args)
         {
             // 当前区域
-            GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
-            PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
+            //GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
+            //PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
 
-            GameData.Recipes.TryGetValue(31652, out var r);
-            PluginLog.Log($"r: {r.RecipeLevelTable}, {r.ItemResult.Value.RowId}");
+            //GameData.Recipes.TryGetValue(31652, out var r);
+            //PluginLog.Log($"r: {r.RecipeLevelTable}, {r.ItemResult.Value.RowId}");
             // 430  收藏用...
             //UnkData5Obj[] UnkData5 = r.UnkData5;
             //foreach (UnkData5Obj obj in UnkData5) {
@@ -341,8 +342,11 @@ namespace WoAutoCollectionPlugin
             //GatherBot.test();
 
             // 天气
-            (Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
-            PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
+            //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
+            //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
+
+            int count = BagManager.GetInventoryItemCount(19915);
+            PluginLog.Log($"r: {count}");
         }
 
         private void OnActionTestCommand(string command, string args)
