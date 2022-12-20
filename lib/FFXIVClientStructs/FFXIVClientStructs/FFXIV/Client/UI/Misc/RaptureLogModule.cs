@@ -27,21 +27,21 @@ public unsafe partial struct RaptureLogModule
     [MemberFunction("4C 8B 81 ?? ?? ?? ?? 4D 85 C0 74 17")]
     public partial ulong GetContentIdForLogMessage(int index);
 
-    [MemberFunction("E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 48 8D 96 ?? ?? ?? ?? 48 8D 4C 24")]
-    public partial bool GetLogMessage(int index, Utf8String* str);
+    //[MemberFunction("E8 ?? ?? ?? ?? 84 C0 0F 84 ?? ?? ?? ?? 48 8D 96 ?? ?? ?? ?? 48 8D 4C 24")]
+    //public partial bool GetLogMessage(int index, Utf8String* str);
 
     [MemberFunction("E8 ?? ?? ?? ?? 84 C0 74 ?? 0F B6 85 ?? ?? ?? ?? 48 8D 8D")]
     public partial bool GetLogMessageDetail(int index, short* logKind, Utf8String* sender, Utf8String* message, uint* timeStamp);
 
-    public bool GetLogMessage(int index, out byte[] message)
-    {
-        var pMsg = stackalloc Utf8String[1];
-        pMsg->Ctor();
-        var result = GetLogMessage(index, pMsg);
-        message = new Span<byte>(pMsg->StringPtr, (int)pMsg->BufUsed - 1).ToArray();
-        pMsg->Dtor();
-        return result;
-    }
+    //public bool GetLogMessage(int index, out byte[] message)
+    //{
+    //    var pMsg = stackalloc Utf8String[1];
+    //    pMsg->Ctor();
+    //    var result = GetLogMessage(index, pMsg);
+    //    message = new Span<byte>(pMsg->StringPtr, (int)pMsg->BufUsed - 1).ToArray();
+    //    pMsg->Dtor();
+    //    return result;
+    //}
 
     public bool GetLogMessageDetail(int index, out byte[] sender, out byte[] message, out short logKind, out uint time)
     {

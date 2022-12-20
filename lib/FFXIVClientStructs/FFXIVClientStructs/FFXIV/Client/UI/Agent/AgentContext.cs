@@ -63,9 +63,9 @@ public unsafe partial struct AgentContext
     [MemberFunction("E8 ?? ?? ?? ?? 44 39 A3 ?? ?? ?? ?? 0F 86")]
     public partial bool OpenSubMenu();
 
-    [MemberFunction("E8 ?? ?? ?? ?? 48 8B 4B ?? 48 8B 01 FF 90 ?? ?? ?? ?? B2 ?? 48 8B 48")]
-    public partial void OpenYesNo(byte* text, uint yesId = 576, uint noId = 577, uint checkboxId = 0,
-        bool setOwner = true);
+    //[MemberFunction("E8 ?? ?? ?? ?? 48 8B 4B ?? 48 8B 01 FF 90 ?? ?? ?? ?? B2 ?? 48 8B 48")]
+    //public partial void OpenYesNo(byte* text, uint yesId = 576, uint noId = 577, uint checkboxId = 0,
+    //    bool setOwner = true);
 
     [MemberFunction("E8 ?? ?? ?? ?? 6B 47")]
     public partial void ClearMenu();
@@ -122,7 +122,7 @@ public unsafe partial struct AgentContext
         var str = Encoding.UTF8.GetBytes(text + '\0');
         fixed (byte* ptr = &str[0])
         {
-            OpenYesNo(ptr, yesId, noId, checkboxId, bindToOwner);
+            //OpenYesNo(ptr, yesId, noId, checkboxId, bindToOwner);
         }
     }
 
