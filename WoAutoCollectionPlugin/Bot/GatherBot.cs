@@ -340,7 +340,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 else
                 {
-                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("修理工");
                 }
             }
             else

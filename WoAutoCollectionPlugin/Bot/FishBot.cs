@@ -147,7 +147,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 PluginLog.Log($"修理装备...");
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
-                WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair();
+                WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("修理工");
             }
             else {
                 PluginLog.Log($"不需要修理装备...");

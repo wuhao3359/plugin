@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
@@ -35,6 +36,9 @@ namespace WoAutoCollectionPlugin.Bot
 
         private int num = 0;
         private int fishTime = 12;
+        private uint fishTp = 0;
+        private ushort fishTerritoryType = 0;
+        private ushort exchangeTerritoryType = 0;
 
         public CollectionFishBot()
         {
@@ -58,11 +62,52 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 try
                 {
-                    RunCollectionFishScript(args);
-                    if (BagManager.InventoryRemaining() <= 5)
+                    if (BagManager.InventoryRemaining() > 5)
                     {
-                        PluginLog.Log($"获得了{num}条目标");
-                        break;
+                        RunCollectionFishScript(args);
+                    }
+
+                    if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
+                    {
+                        Teleporter.Teleport(Position.ShopTp);
+                        Thread.Sleep(12000);
+                    }
+                    else
+                    {
+                        PluginLog.Log($"不需要TP");
+                    }
+
+                    if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
+                    {
+                        PluginLog.Log($"不在任务区域");
+                        continue;
+                    }
+                    if (CommonUi.NeedsRepair())
+                    {
+                        MovePositions(Position.RepairNPC, false);
+                        WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                    }
+                    Thread.Sleep(3000);
+                    MovePositions(Position.UploadNPC, false);
+                    (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply("灵岩之剑");
+
+                    int k = 0;
+                    while (BagManager.GetInventoryItemCountById(ItemId) > 0 && k < 3)
+                    {
+                        if (closed)
+                        {
+                            PluginLog.Log($"CraftUploadAndExchange stopping");
+                            break;
+                        }
+                        if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
+                        {
+                            MovePositions(Position.ExchangeNPC, false);
+                            WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(2);
+                            if (BagManager.GetInventoryItemCountById(ItemId) > 0) {
+                                MovePositions(Position.ExchangeToUploadNPC, false);
+                            }
+                        }
+                        k++;
                     }
                 }
                 catch (Exception e)
@@ -101,14 +146,22 @@ namespace WoAutoCollectionPlugin.Bot
                 ToArea = Position.ToWhiteFishArea;
                 FishArea = Position.WhiteFishArea;
                 fishTime = Position.WhiteFishTime;
+                fishTp = Position.WhiteFishTp;
+                fishTerritoryType = Position.WhiteFishTerritoryType;
+            }
+
+            Teleporter.Teleport(fishTp);
+            Thread.Sleep(12000);
+
+            if (DalamudApi.ClientState.TerritoryType - fishTerritoryType != 0)
+            {
+                PluginLog.Log($"不在任务区域");
+                return false;
             }
 
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            PluginLog.Log($"开始 {position.X} {position.Y} {position.Z}");
-            //KeyOperates.KeyMethod(Keys.q_key);
-            //Thread.Sleep(3000);
             // 通过路径到达固定区域位置
-            //position = MovePositions(ToArea, true);
+            position = MovePositions(ToArea, true);
 
             int tt = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 3)
@@ -133,8 +186,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 sw.Start();
 
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[2], territoryType, false);
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[currentPoint], territoryType, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[2], territoryType, false, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, FishArea[currentPoint], territoryType, false, false);
                 if (currentPoint > 0)
                 {
                     currentPoint = 0;
@@ -160,11 +213,6 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         break;
                     }
-                }
-
-                if (CommonUi.NeedsRepair())
-                {
-                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
 
                 readyMove = true;
@@ -352,6 +400,23 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(300);
             });
             task.Start();
+        }
+
+        private Vector3 MovePositions(Vector3[] Path, bool UseMount)
+        {
+            ushort territoryType = DalamudApi.ClientState.TerritoryType;
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+            for (int i = 0; i < Path.Length; i++)
+            {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                }
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
+            }
+            return position;
         }
     }
 }

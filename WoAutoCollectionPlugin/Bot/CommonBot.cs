@@ -138,7 +138,7 @@ namespace WoAutoCollectionPlugin.Bot
             return flag;
         }
 
-        public bool NpcRepair()
+        public bool NpcRepair(string npc)
         {
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
@@ -158,7 +158,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
             }
             bool flag = true;
-            SetTarget("修理工");
+            SetTarget(npc);
             Thread.Sleep(1200);
             if (CommonUi.AddonSelectIconStringIsOpen())
             {
@@ -239,7 +239,7 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
             WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
             (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
-            while (BagManager.GetInventoryItemCount(ItemId) > 0) {
+            while (BagManager.GetInventoryItemCountById(ItemId) > 0) {
                 if (closed)
                 {
                     PluginLog.Log($"CraftUploadAndExchange stopping");
@@ -257,38 +257,60 @@ namespace WoAutoCollectionPlugin.Bot
         {
             PluginLog.Log($"CraftUploading");
             if (Category == 0 && Sub == 0) {
-                return false;
+                return true;
             }
-
+            bool flag = true;
             Thread.Sleep(1000);
             SetTarget("收藏品交易员");
             Thread.Sleep(2500);
-            for (int i = 1; i < Category; i++) {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-            }
-
-            for (int i = 0; i < Sub; i++)
-            {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-            }
-
-            int n = 0;
-            while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 10 && BagManager.GetInventoryItemCount(ItemId) > 0)
-            {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(500);
-                n++;
-                if (closed)
+            if (CommonUi.AddonCollectablesShopIsOpen()) {
+                for (int i = 1; i < Category; i++)
                 {
-                    PluginLog.Log($"upload stopping");
-                    return true;
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
-            }
 
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            Thread.Sleep(1000);
-            return true;
+                for (int i = 0; i < Sub; i++)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
+
+                int n = 0;
+                int count = BagManager.GetInventoryItemCountById(ItemId);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(1000);
+                while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 20 && count > 0)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(700);
+                    n++;
+                    if (closed)
+                    {
+                        PluginLog.Log($"upload stopping");
+                        return true;
+                    }
+                    if (count == BagManager.GetInventoryItemCountById(ItemId))
+                    {
+                        flag = false;
+                        break;
+                    }
+                    else
+                    {
+                        count = BagManager.GetInventoryItemCountById(ItemId);
+                    }
+                }
+
+                if (RecipeNoteUi.SelectYesnoIsOpen())
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                }
+                while (CommonUi.AddonCollectablesShopIsOpen())
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                }
+                Thread.Sleep(2000);
+            }
+            return flag;
         }
 
         // TODO 关闭界面
@@ -296,12 +318,6 @@ namespace WoAutoCollectionPlugin.Bot
         public bool CraftExchange(int item)
         {
             PluginLog.Log($"CraftExchanging");
-            (uint Category, uint Sub) = RecipeItems.ExchangeApply(item);
-            if (Category == 0 && Sub == 0)
-            {
-                return false;
-            }
-
             Thread.Sleep(2000);
             SetTarget("工票交易员");
             Thread.Sleep(500);
@@ -315,26 +331,44 @@ namespace WoAutoCollectionPlugin.Bot
                 return true;
             }
 
-            if (item == 1) {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                for (int i = 0; i < Sub; i++)
+            if (CommonUi.AddonInclusionShopIsOpen()) {
+                if (item == 1)
                 {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
+                else if (item == 2)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
+
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num6_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num9_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                while (CommonUi.AddonInclusionShopIsOpen())
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    Thread.Sleep(1000);
+                }
             }
-
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num6_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num9_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            Thread.Sleep(1000);
             return true;
         }
 

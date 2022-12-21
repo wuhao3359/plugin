@@ -42,6 +42,18 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonCollectablesShopIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("CollectablesShop");
+            return success;
+        }
+
+        public unsafe static bool AddonInclusionShopIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("InclusionShop");
+            return success;
+        }
+
         public unsafe static bool SelectString1Button()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
@@ -556,7 +568,7 @@ namespace WoAutoCollectionPlugin.Ui
                 if (item == null)
                     continue;
 
-                if (item->Condition <= 8000)
+                if (item->Condition <= 10000)
                 {
                     PluginLog.Log($"{item->Condition}");
                     return true;
@@ -569,12 +581,12 @@ namespace WoAutoCollectionPlugin.Ui
         {
             int count = 0;
 
-            bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
-            if (!b || v == null || v == "0")
-            {
-                PluginLog.Log($"精制配置: b: {b}, v: {v},");
-                return count;
-            }
+            //bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
+            //if (!b || v == null || v == "0")
+            //{
+            //    PluginLog.Log($"精制配置: b: {b}, v: {v},");
+            //    return count;
+            //}
 
             var im = InventoryManager.Instance();
             if (im == null)

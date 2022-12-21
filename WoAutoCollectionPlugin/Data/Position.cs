@@ -380,6 +380,27 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1097, 2785, 2806),
         };
 
+        // ------------------------------- 工票交易员 -----------------------------------
+        // 拉扎罕
+        public static uint ShopTp = 183;    
+        public static ushort ShopTerritoryType = 963;
+        public static Vector3[] RepairNPC = {
+            new Vector3 (1139, 1125, 1046),
+        };
+        public static Vector3[] UploadNPC = {
+            new Vector3 (1197, 1125, 1016),
+            new Vector3 (1187, 1125, 986),
+            new Vector3 (1175, 1125, 987),
+        };
+        public static Vector3[] ExchangeNPC = {
+            new Vector3 (1177, 1126, 950),
+            new Vector3 (1164, 1126, 950),
+        };
+        public static Vector3[] ExchangeToUploadNPC = {
+            new Vector3 (1183, 1126, 964),
+            new Vector3 (1174, 1126, 984),
+        };
+
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化
         // Purple 紫票 佛恩·米克 (灰蚯蚓 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
@@ -398,15 +419,22 @@ namespace WoAutoCollectionPlugin.Utility
         // White 白票 灵岩之剑 (万能拟饵 11.9-20.6) https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static Vector3[] ToWhiteFishArea = {
-            new Vector3 (0f, 0f, 0f)
+            new Vector3 (1381, 2490, 3447),
+            new Vector3 (1666, 2430, 3258),
+            new Vector3 (2092, 2280, 2944),
+            new Vector3 (2197, 2226, 3001),
+            new Vector3 (2179, 2202, 3054),
+            new Vector3 (2212, 2194, 3081),
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] WhiteFishArea = {
-            new Vector3 (2287f, 2193f, 3119f),
-            new Vector3 (2253f, 2192f, 3126f),
-            new Vector3 (2264f, 2194f, 3107f),
+            new Vector3 (2280, 2193, 3126),
+            new Vector3 (2224, 2193, 3129),
+            new Vector3 (2263, 2194, 3098),
         };
         public static int WhiteFishTime = 11;
+        public static uint WhiteFishTp = 174;
+        public static ushort WhiteFishTerritoryType = 959;
 
         // 普通鱼 萨维奈卡拉墨鱼 (万能拟饵 9.2-13.7) (青花鱼块 4-10.9) https://fish.ffmomola.com/#/wiki?spotId=269&fishId=36686
         // 去钓鱼区域的路径 TerritoryType: ? 

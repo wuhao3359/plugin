@@ -8,11 +8,13 @@ namespace WoAutoCollectionPlugin.Data
         public static readonly (string Name, uint Category, uint Sub, uint ItemId)[] UploadItems =
         {
             ("收藏用无花果冻糕", 0, 1, 36626),   // ItemId 36626
+            ("灵岩之剑", 0, 13, 36473),
         };
 
         public static readonly (int Id, uint Category, uint Sub)[] ExchangeItems =
         {
             (1, 1, 1),   // TEST
+            (2, 1, 1),
         };
 
         public static (uint Category, uint Sub, uint ItemId) UploadApply(string ItemName)
