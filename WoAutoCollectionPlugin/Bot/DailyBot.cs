@@ -64,9 +64,9 @@ namespace WoAutoCollectionPlugin.Bot
                     otherTaskParam = ot;
                 }
 
-                uint lv = 50;
+                string lv = "50";
                 if (WoAutoCollectionPlugin.GameData.param.TryGetValue("level", out var l)) {
-                    lv = uint.Parse(l);
+                    lv = l;
                 }
 
                 if (WoAutoCollectionPlugin.GameData.param.TryGetValue("duration", out var d))
@@ -90,7 +90,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void LimitTimeSinglePlan(uint lv)
+        public void LimitTimeSinglePlan(string lv)
         {
             int n = 0;
             
@@ -282,7 +282,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void LimitTimeMultiPlan(uint lv)
+        public void LimitTimeMultiPlan(string lv)
         {
             int n = 0;
             bool first = true;
@@ -441,7 +441,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        private void RunWaitTask(uint lv) {
+        private void RunWaitTask(string lv) {
             Time.Update();
             hour = Time.ServerTime.CurrentEorzeaHour();
             int minute = Time.ServerTime.CurrentEorzeaMinute();

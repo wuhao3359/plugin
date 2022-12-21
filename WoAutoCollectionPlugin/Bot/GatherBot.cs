@@ -27,7 +27,6 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void test() {
-            WoAutoCollectionPlugin.GameData.KeyOperates.MouseMove(653, 311);
         }
 
         public void Init()
@@ -42,7 +41,7 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 try
                 {
-                    RunNormalScript(area, 200);
+                    RunNormalScript(area, "100");
                 }
                 catch (Exception e)
                 {
@@ -55,7 +54,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 普通采集点
-        public bool RunNormalScript(int id, uint lv)
+        public bool RunNormalScript(int id, string lv)
         {
             Init();
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
@@ -102,7 +101,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                         if (gameObjects.ToArray().Length == 0) {
                             error++;
-                            if (error >= 3) {
+                            if (error >= 1) {
                                 closed = true;
                                 PluginLog.Log($"出现错误停止");
                             }
@@ -516,7 +515,7 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
-        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, uint lv) {
+        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, string lv) {
             if (id == 0)
             {
                 List<int> list = Position.GetMateriaId(lv);
@@ -524,7 +523,9 @@ namespace WoAutoCollectionPlugin.Bot
                 foreach (int i in list)
                 {
                     (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
-                    if (MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
+                    int count = BagManager.GetInventoryItemCount((uint)i);
+                    PluginLog.Log($"物品count: {count}, 最大: {MaxBackPack}");
+                    if (MaxBackPack > count)
                     {
                         li.Add(i);
                     }
@@ -533,7 +534,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Random rd = new();
                 int r = rd.Next(li.Count);
                 id = li[r];
-                PluginLog.Log($"随机采集ID: {r} {id}");
+                PluginLog.Log($"随机采集ID: {r} {id} {li.Count}");
                 return Position.GetMaterialById(id);
             }
             else {

@@ -217,7 +217,7 @@ namespace WoAutoCollectionPlugin.Utility
          * params   
          *  command:daily    主要用途(Daily-限时采集)
          *  duration:1       持续次数(1次或多次)
-         *  level:50         等级(lv<50)
+         *  level:0-50       等级区间(0到50)
          *  bagLimit:1       背包限制(1-有)
          *  
          *  example:    daily duration:1 level:50 bagLimit:1
@@ -254,5 +254,21 @@ namespace WoAutoCollectionPlugin.Utility
             { "repair", "0" },
             { "extractMateria", "0" },
         };
+
+        public static (int, int) LevelSplit(string lv) {
+            int lv0 = 0;
+            int lv1;
+            string[] lvstr = lv.Split("-");
+            if (lvstr.Length > 1)
+            {
+                lv0 = int.Parse(lvstr[0]);
+                lv1 = int.Parse(lvstr[1]);
+            }
+            else
+            {
+                lv1 = int.Parse(lvstr[0]);
+            }
+            return (lv0, lv1);
+        }
     }
 }

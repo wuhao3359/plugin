@@ -84,9 +84,8 @@ namespace WoAutoCollectionPlugin.Bot
         {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
-
             fishsw = new();
-            Init();
+            
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
@@ -111,9 +110,13 @@ namespace WoAutoCollectionPlugin.Bot
             // 通过路径到达固定区域位置
             //position = MovePositions(ToArea, true);
 
-            //KeyOperates.KeyMethod(Keys.q_key);
-            //Thread.Sleep(3000);
-            //KeyOperates.KeyMethod(Keys.q_key);
+            int tt = 0;
+            while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 3)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(1000);
+                tt++;
+            }
 
             // 在固定区域到达作业点 作业循环 40min切换  0->2->1->2->0....
             int currentPoint = 0;
@@ -121,6 +124,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             for (int i = 0; i <= 10; i++)
             {
+                Init();
                 sw.Reset();
                 if (closed)
                 {
@@ -144,7 +148,7 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
-                while (sw.ElapsedMilliseconds / 1000 / 60 < 40)
+                while (sw.ElapsedMilliseconds / 1000 / 60 < 44)
                 {
                     Thread.Sleep(1000);
                     if (closed)
@@ -172,6 +176,10 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"中途结束");
                         return false;
                     }
+                    if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
+                    {
+                        canMove = true;
+                    }
                 }
 
                 // 判断是否需要修理
@@ -179,7 +187,6 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                 }
-
                 // 判断是否需要精制
                 int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
@@ -322,7 +329,7 @@ namespace WoAutoCollectionPlugin.Bot
                         Thread.Sleep(1000);
                     }
                     LastFish = false;
-
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n8_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
                 }
                 else {

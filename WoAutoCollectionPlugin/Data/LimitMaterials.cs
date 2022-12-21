@@ -10,8 +10,8 @@ namespace WoAutoCollectionPlugin.Utility
         // 14-炼金术士 15-烹调师
 
         public static Vector3[] path0 = {
-            new Vector3(2268, 2217, 866),
-            new Vector3(2311, 2223, 913),
+            new Vector3(2268, 2225, 866),
+            new Vector3(2311, 2228, 913),
             new Vector3(2889, 2236, 1252),
             new Vector3(3142, 2228, 1333),
         };
@@ -21,9 +21,9 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(3172, 2130, 1460),
         };
         public static Vector3[] path3 = {
-            new Vector3(2268, 2217, 866),
-            new Vector3(2311, 2223, 913),
-            new Vector3(2692, 2210, 1110),
+            new Vector3(2268, 2225, 866),
+            new Vector3(2311, 2228, 913),
+            new Vector3(2692, 2212, 1110),
         };
         public static Vector3[] points3 = {
             new Vector3(2825, 2139, 1235),
@@ -235,12 +235,17 @@ namespace WoAutoCollectionPlugin.Utility
         // 限时点 Lv以下
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points)[] Materials =
         {
-            (3621511, "极硬水", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
-            (3621512, "极硬水", 12, 13, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
-            (3621521, "极硬水", 2, 3, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
-            (3621522, "极硬水", 14, 15, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
-            (3621531, "极硬水", 4, 5, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
-            (3621532, "极硬水", 16, 17, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
+            // 6.2版本
+            (37694, "不定性铁陨石", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(37691, "不定性结晶花", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 天外天垓 
+
+            // 6.0版本
+            //(3621511, "极硬水", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(3621512, "极硬水", 12, 13, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(3621521, "极硬水", 2, 3, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
+            //(3621522, "极硬水", 14, 15, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
+            //(3621531, "极硬水", 4, 5, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
+            //(3621532, "极硬水", 16, 17, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
 
             (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
             (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
@@ -317,13 +322,14 @@ namespace WoAutoCollectionPlugin.Utility
             return list;
         }
 
-        public static List<int> GetMaterialIdsByEtAndFinishId(int et, uint lv, List<int> finishIds)
+        public static List<int> GetMaterialIdsByEtAndFinishId(int et, string lv, List<int> finishIds)
         {
             List<int> list = new();
             //Dictionary<int, int> sort = new();
+            (int lv0, int lv1) = Util.LevelSplit(lv);
             foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
             {
-                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                if (et >= MinEt && et <= MaxEt && Lv >= lv0 && Lv <= lv1)
                 {
                     if (!finishIds.Exists(t => t == Id)) {
                         list.Add(Id);
@@ -345,11 +351,12 @@ namespace WoAutoCollectionPlugin.Utility
             return (null, 0, null, 0, 0, null, null);
         }
 
-        public static int GetCollecMaterialIdByEt(int et, uint lv)
+        public static int GetCollecMaterialIdByEt(int et, string lv)
         {
+            (int lv0, int lv1) = Util.LevelSplit(lv);
             foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) in CollecMaterials)
             {
-                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                if (et >= MinEt && et <= MaxEt && Lv >= lv0 && Lv <= lv1)
                 {
                     return Id;
                 }
