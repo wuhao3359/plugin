@@ -251,7 +251,6 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
-        // TODO 关闭界面
         // 交收藏品
         public bool CraftUpload(uint Category, uint Sub, uint ItemId)
         {
@@ -278,9 +277,13 @@ namespace WoAutoCollectionPlugin.Bot
                 int count = BagManager.GetInventoryItemCountById(ItemId);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
-                while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 20 && count > 0)
+                while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 25 && count > 0)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(200);
+                    if (RecipeNoteUi.SelectYesnoIsOpen()) {
+                        break;
+                    }
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(700);
                     n++;
@@ -302,13 +305,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (RecipeNoteUi.SelectYesnoIsOpen())
                 {
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                 }
                 while (CommonUi.AddonCollectablesShopIsOpen())
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                 }
-                Thread.Sleep(2000);
+                Thread.Sleep(3000);
             }
             return flag;
         }
@@ -354,6 +357,12 @@ namespace WoAutoCollectionPlugin.Bot
 
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
+
+                if (closed)
+                {
+                    PluginLog.Log($"exchange stopping");
+                    return true;
                 }
 
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num6_key);
@@ -573,12 +582,12 @@ namespace WoAutoCollectionPlugin.Bot
                             }
                         }
                     }
-                    else if (tt == 2)
+                }
+                else if (tt == 2)
+                {
+                    if (name.Contains("地图"))
                     {
-                        if (name.Contains("地图"))
-                        {
-                            (GatherIndex, name) = CommonUi.GetNormalGatheringIndex(list, false);
-                        }
+                        (GatherIndex, name) = CommonUi.GetNormalGatheringIndex(list, false);
                     }
                 }
             }

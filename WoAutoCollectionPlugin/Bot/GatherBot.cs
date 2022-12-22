@@ -524,13 +524,11 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
                     int count = BagManager.GetInventoryItemCount((uint)i);
-                    PluginLog.Log($"物品count: {count}, 最大: {MaxBackPack}");
                     if (MaxBackPack > count)
                     {
                         li.Add(i);
                     }
                 }
-
                 Random rd = new();
                 int r = rd.Next(li.Count);
                 id = li[r];
