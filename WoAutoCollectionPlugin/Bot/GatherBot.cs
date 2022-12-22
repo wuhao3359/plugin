@@ -552,7 +552,6 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 return Position.GetMaterialById(id);
             }
-            //  灵银沙(矿:51)
             return (0, 0, null, 0, null, 0, 0, null, null, null, null, null);
         }
 
