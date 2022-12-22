@@ -34,14 +34,24 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
         }
 
-        public void NormalScript(int area) {
+        public void NormalScript(string args) {
             closed = false;
             int n = 0;
+            string[] str = args.Split('-');
             while (!closed & n < 1000)
             {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return;
+                }
                 try
                 {
-                    RunNormalScript(area, "100");
+                    for (int i = 0; i < str.Length; i++) {
+                        int id = int.Parse(str[i]);
+                        RunNormalScript(id, "100");
+                        Thread.Sleep(3000);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -77,7 +87,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             int n = 0;
             int error = 0;
-            while (!closed & n < 1000)
+            while (!closed & n < 100)
             {
                 Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
@@ -123,6 +133,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (!DalamudApi.Condition[ConditionFlag.Mounted])
                                 {
+                                    WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
@@ -195,7 +206,6 @@ namespace WoAutoCollectionPlugin.Bot
                     else
                     {
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
-                        PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
                     }
                 }
                 n++;
@@ -531,11 +541,11 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Random rd = new();
                 int r = rd.Next(li.Count);
-                id = li[r];
-                PluginLog.Log($"随机采集ID: {r} {id} {li.Count}");
-                return Position.GetMaterialById(id);
+                PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count}");
+                return Position.GetMaterialById(li[r]);
             }
-            else {
+            else
+            {
                 return Position.GetMaterialById(id);
             }
             //  灵银沙(矿:51)

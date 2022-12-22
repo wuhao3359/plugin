@@ -185,7 +185,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         public static Dictionary<string, string> CommandParse(string command, string args) {
             string[] str = args.Split(" ");
-            PluginLog.Log($"daily: {args} length: {str.Length}");
+            PluginLog.Log($"command: {command}, args: {args}, length: {str.Length}");
 
             Dictionary<string, string> dictionary = new();
             if (str.Length > 0) {
@@ -219,8 +219,7 @@ namespace WoAutoCollectionPlugin.Utility
          *  duration:1       持续次数(1次或多次)
          *  level:0-50       等级区间(0到50)
          *  bagLimit:1       背包限制(1-有)
-         *  
-         *  example:    daily duration:1 level:50 bagLimit:1
+         *  example:    daily duration:1 level:0-50 bagLimit:1
          *  
          *  
          *  command:craft           主要用途 自动生产
@@ -228,12 +227,18 @@ namespace WoAutoCollectionPlugin.Utility
          *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
          *  recipeName:上级以太药   生产物品名称
          *  exchangeItem:1          交换物品id 收藏品专业
-         *  
          *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
+         *  
+         *  
+         *  command:collectionfish  主要用途 钓鱼获取白票 紫票 灵砂
+         *  type:1                  1-紫票 2-白票 3-晓月灵砂 4-巨海灵砂
+         *  exchangeItem:1          交换物品id 紫票 白票 兑换的物品
+         *  example:    collectionfish type:2 exchangeItem:2
          */
         public static Dictionary<string, List<string>> CommandParams = new() {
             { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
-            { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } }
+            { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } },
+            { "collectionfish", new() { "ftype", "fexchangeItem"} }
         };
 
         public static Dictionary<string, string> DefaultValues = new()
@@ -249,6 +254,10 @@ namespace WoAutoCollectionPlugin.Utility
             { "type", "1" },
             { "recipeName", "" },
             { "exchangeItem", "0" },
+
+            // fish
+            { "ftype", "2" },
+            { "fexchangeItem", "2" },
 
             // common
             { "repair", "0" },

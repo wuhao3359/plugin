@@ -9,6 +9,8 @@ namespace WoAutoCollectionPlugin.Data
         {
             ("收藏用无花果冻糕", 0, 1, 36626),   // ItemId 36626
             ("灵岩之剑", 0, 13, 36473),
+            ("红弓鳍鱼", 0, 0, 36408),
+            ("噬卵者", 0, 0, 36497),
         };
 
         public static readonly (int Id, uint Category, uint Sub)[] ExchangeItems =

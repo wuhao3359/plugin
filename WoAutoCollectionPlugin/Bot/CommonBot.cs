@@ -335,6 +335,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             if (CommonUi.AddonInclusionShopIsOpen()) {
+                // 1 
                 if (item == 1)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
@@ -343,6 +344,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
+                // 2-大地白票 九型魔晶石
                 else if (item == 2)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);

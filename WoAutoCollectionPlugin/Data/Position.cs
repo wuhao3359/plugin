@@ -405,6 +405,7 @@ namespace WoAutoCollectionPlugin.Utility
         // 工票随大版本更新而变化
         // Purple 紫票 佛恩·米克 (灰蚯蚓 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
         // 去钓鱼区域的路径 TerritoryType: ? 
+        public static string PurpleFishName = "佛恩·米克";
         public static Vector3[] ToPurpleFishArea = {
             new Vector3 (0f, 0f, 0f)
         };
@@ -418,6 +419,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         // White 白票 灵岩之剑 (万能拟饵 11.9-20.6) https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
         // 去钓鱼区域的路径 TerritoryType: ? 
+        public static string WhiteFishName = "灵岩之剑";
         public static Vector3[] ToWhiteFishArea = {
             new Vector3 (1381, 2490, 3447),
             new Vector3 (1666, 2430, 3258),
@@ -453,10 +455,11 @@ namespace WoAutoCollectionPlugin.Utility
         // ------------------------------- 灵砂 捕鱼 ------------------------------------
         // 灵砂随大版本更新而变化
         // 精选鱼  红弓鳍鱼  (万能拟饵 11.5% 20.7-30.9) (蜉蝣 23% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=257&fishId=36408
-        public static Vector3[] ToFishAreaX1 = {
+        public static string FishNameSandA = "红弓鳍鱼";
+        public static Vector3[] ToFishAreaSandA = {
             new Vector3 (0f, 0f, 0f)
         };
-        public static Vector3[] FishAreaX1 = {
+        public static Vector3[] FishAreaSandA = {
             new Vector3 (0f, 0f, 0f),
             new Vector3 (0f, 0f, 0f),
             new Vector3 (0f, 0f, 0f),
@@ -464,10 +467,11 @@ namespace WoAutoCollectionPlugin.Utility
         public static int FishTimeX1 = 15;
 
         // 精选鱼  噬卵者  (万能拟饵 7.5% 20.7-30.9) (奇美拉蠕虫 11.3% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=280&fishId=36497
-        public static Vector3[] ToFishAreaX2 = {
+        public static string FishNameSandB = "噬卵者";
+        public static Vector3[] ToFishAreaSandB = {
             new Vector3 (0f, 0f, 0f)
         };
-        public static Vector3[] FishAreaX2 = {
+        public static Vector3[] FishAreaSandB = {
             new Vector3 (0f, 0f, 0f),
             new Vector3 (0f, 0f, 0f),
             new Vector3 (0f, 0f, 0f),

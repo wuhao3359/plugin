@@ -286,9 +286,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                string[] str = args.Split(' ');
-                int area = int.Parse(str[0]);
-                GameData.GatherBot.NormalScript(area);
+                GameData.GatherBot.NormalScript(args);
                 taskRunning = false;
                 PluginLog.Log($"end...");
             });

@@ -34,11 +34,9 @@ namespace WoAutoCollectionPlugin.Bot
 
         private bool LastFish = false;
 
-        private int num = 0;
-        private int fishTime = 12;
+        private int fishTime = 0;
         private uint fishTp = 0;
         private ushort fishTerritoryType = 0;
-        private ushort exchangeTerritoryType = 0;
 
         public CollectionFishBot()
         {
@@ -55,62 +53,103 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void CollectionFishScript(string args) {
             closed = false;
-            num = 0;
             int n = 0;
             DalamudApi.Framework.Update +=OnCollectionFishUpdate;
+            string command = "collectionfish";
+            WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("ftype", out var t);
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("fexchangeItem", out var fe);
+            if (!int.TryParse(t, out var type))
+            {
+                PluginLog.Log($"ftype 参数错误");
+                return;
+            }
+            if (!int.TryParse(fe, out var exchangeItem)) {
+                PluginLog.Log($"fexchangeItem 参数错误");
+                return;
+            }
+
+            string fishName = "";
+            if (type == 1)
+            {
+                fishName = Position.PurpleFishName;
+            }
+            else if (type == 2)
+            {
+                fishName = Position.WhiteFishName;
+            }
+            else if (type == 3)
+            {
+                fishName = Position.FishNameSandA;
+            }
+            else if (type == 4)
+            {
+                fishName = Position.FishNameSandB;
+            }
+            else {
+                PluginLog.Log($"ftype 参数错误");
+                return;
+            }
             while (!closed && n < 10)
             {
                 try
                 {
-                    (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply("灵岩之剑");
-                    if (BagManager.GetInventoryItemCountById(ItemId) > 0) {
-                        if (closed)
-                        {
-                            PluginLog.Log($"task shop stopping");
-                            return;
-                        }
-                        if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
-                        {
-                            Teleporter.Teleport(Position.ShopTp);
-                            Thread.Sleep(12000);
-                        }
-                        else
-                        {
-                            PluginLog.Log($"不需要TP");
-                        }
-
-                        if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
-                        {
-                            PluginLog.Log($"不在任务区域");
-                            continue;
-                        }
-                        if (CommonUi.CanRepair())
-                        {
-                            MovePositions(Position.RepairNPC, false);
-                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
-                        }
-                        Thread.Sleep(5000);
-                        MovePositions(Position.UploadNPC, false);
-
-                        int k = 0;
-                        while (BagManager.GetInventoryItemCountById(ItemId) > 0 && k < 3)
+                    (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(fishName);
+                    if (type <= 2) {
+                        // 大地白票 紫票
+                        if (BagManager.GetInventoryItemCountById(ItemId) > 0)
                         {
                             if (closed)
                             {
-                                PluginLog.Log($"UploadAndExchange stopping");
+                                PluginLog.Log($"task shop stopping");
                                 return;
                             }
-                            if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
+                            if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
                             {
-                                MovePositions(Position.ExchangeNPC, false);
-                                WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(2);
-                                if (BagManager.GetInventoryItemCountById(ItemId) > 0)
-                                {
-                                    MovePositions(Position.ExchangeToUploadNPC, false);
-                                }
+                                Teleporter.Teleport(Position.ShopTp);
+                                Thread.Sleep(12000);
                             }
-                            k++;
+                            else
+                            {
+                                PluginLog.Log($"不需要TP");
+                            }
+
+                            if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
+                            {
+                                PluginLog.Log($"不在任务区域");
+                                continue;
+                            }
+                            if (CommonUi.CanRepair())
+                            {
+                                MovePositions(Position.RepairNPC, false);
+                                WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                            }
+                            Thread.Sleep(5000);
+                            MovePositions(Position.UploadNPC, false);
+
+                            int k = 0;
+                            while (BagManager.GetInventoryItemCountById(ItemId) > 0 && k < 3)
+                            {
+                                if (closed)
+                                {
+                                    PluginLog.Log($"UploadAndExchange stopping");
+                                    return;
+                                }
+                                if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
+                                {
+                                    MovePositions(Position.ExchangeNPC, false);
+                                    WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(exchangeItem);
+                                    if (BagManager.GetInventoryItemCountById(ItemId) > 0)
+                                    {
+                                        MovePositions(Position.ExchangeToUploadNPC, false);
+                                    }
+                                }
+                                k++;
+                            }
                         }
+                    } else if (type >= 3) { 
+                        // 精选 TODO
                     }
 
                     if (BagManager.InventoryRemaining() > 5)
@@ -120,7 +159,7 @@ namespace WoAutoCollectionPlugin.Bot
                             PluginLog.Log($"task fish stopping");
                             return;
                         }
-                        RunCollectionFishScript(args);
+                        RunCollectionFishScript(type);
                     }
                 }
                 catch (Exception e)
@@ -138,27 +177,32 @@ namespace WoAutoCollectionPlugin.Bot
         // 前往指定钓鱼地点 [√]
         // 钓鱼   [√]
         // 清背包 (换工票/精选) [√]
-        public bool RunCollectionFishScript(string args)
+        public bool RunCollectionFishScript(int type)
         {
-            string[] str = args.Split(' ');
-            int area = int.Parse(str[0]);
             fishsw = new();
-            
+
             ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             // 划分区域
             Vector3[] ToArea = Array.Empty<Vector3>();
             Vector3[] FishArea = Array.Empty<Vector3>();
-            if (area == 1)
+            if (type == 1)
             {
                 ToArea = Position.ToPurpleFishArea;
                 FishArea = Position.PurpleFishArea;
                 fishTime = Position.PurpleFishTime;
-            } else if (area == 2) {
+            } else if (type == 2) {
                 ToArea = Position.ToWhiteFishArea;
                 FishArea = Position.WhiteFishArea;
                 fishTime = Position.WhiteFishTime;
                 fishTp = Position.WhiteFishTp;
                 fishTerritoryType = Position.WhiteFishTerritoryType;
+            } else if (type == 3) 
+            { 
+                // 时间限制
+            }
+            else if (type == 4)
+            {
+
             }
 
             Teleporter.Teleport(fishTp);
@@ -240,17 +284,17 @@ namespace WoAutoCollectionPlugin.Bot
                         canMove = true;
                     }
                 }
-
-                // 判断是否需要修理
-                if (CommonUi.NeedsRepair())
-                {
-                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
-                }
+                
                 // 判断是否需要精制
                 int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
+                }
+                // 判断是否需要修理
+                if (CommonUi.NeedsRepair())
+                {
+                    return true;
                 }
 
                 if (BagManager.InventoryRemaining() <= 5) {
@@ -403,7 +447,6 @@ namespace WoAutoCollectionPlugin.Bot
             LastFish = true;
             Task task = new(() =>
             {
-                num++;
                 Thread.Sleep(800);
                 if (CommonUi.AddonSelectYesnoIsOpen()) {
                     CommonUi.SelectYesButton();
