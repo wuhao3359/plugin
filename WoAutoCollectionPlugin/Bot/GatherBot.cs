@@ -48,7 +48,11 @@ namespace WoAutoCollectionPlugin.Bot
                 try
                 {
                     for (int i = 0; i < str.Length; i++) {
-                        int id = int.Parse(str[i]);
+                        int id = Position.GetIdByName(str[i]);
+                        if (id == 0) {
+                            PluginLog.Log($"错误名称: {str[i]}");
+                            continue;
+                        }
                         RunNormalScript(id, "100");
                         Thread.Sleep(3000);
                     }
