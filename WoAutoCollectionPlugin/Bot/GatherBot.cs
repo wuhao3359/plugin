@@ -268,16 +268,6 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
-                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-                //double d = Maths.Distance(position, ToArea[1]);
-                //if (Maths.Distance(position, ToArea[1]) > 5)
-                //{
-                //    MovePositions(ToArea, false);
-                //}
-                //else {
-                //    PluginLog.Log($"距离: {d} 不需要移动");
-                //}
                 MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
@@ -340,7 +330,6 @@ namespace WoAutoCollectionPlugin.Bot
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
 
-            // WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
             if (!WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v)) {
                 WoAutoCollectionPlugin.GameData.param.Add("extractMateria", "1");
             }

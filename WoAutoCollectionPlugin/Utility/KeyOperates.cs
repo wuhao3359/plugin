@@ -189,7 +189,7 @@ public class KeyOperates
             }
             if (turn >= 7) {
                 MoveStop();
-                positionA = Revise(positionB, 800);
+                positionA = Revise(positionB, 700);
                 turn = 0;
             }
 
@@ -353,7 +353,7 @@ public class KeyOperates
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
-        return Revise(positionB, 250);
+        return Revise(positionB, 200);
     }
 
     public Vector3 Revise(Vector3 positionB, int tt) {

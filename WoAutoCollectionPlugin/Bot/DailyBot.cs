@@ -361,7 +361,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(500);
                 Vector3 position = MovePositions(Path, true);
                 while (hour >= MinEt && hour <= MaxEt) {
-                    for (int t = 0; t < Points.Length; t++) {
+                    for (int t = 0; t < Points.Length && hour >= MinEt && hour <= MaxEt; t++) {
                         if (closed)
                         {
                             PluginLog.Log($"中途结束");
@@ -373,10 +373,17 @@ namespace WoAutoCollectionPlugin.Bot
                             if (go != null)
                             {
                                 float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                                float y = go.Position.Y - 5;
+                                float y = go.Position.Y;
                                 float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+
+                                Time.Update();
+                                hour = Time.ServerTime.CurrentEorzeaHour();
+                                if (!(hour >= MinEt && hour <= MaxEt)) {
+                                    PluginLog.Log($"时间结束...");
+                                    break;
+                                }
 
                                 var targetMgr = DalamudApi.TargetManager;
                                 targetMgr.SetTarget(go);
@@ -389,7 +396,7 @@ namespace WoAutoCollectionPlugin.Bot
                                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                                     }
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                                    Thread.Sleep(1000);
+                                    Thread.Sleep(800);
                                     tt++;
 
                                     if (closed)
@@ -401,7 +408,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                 tt = 0;
-                                while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
+                                while (!CommonUi.AddonGatheringIsOpen() && tt < 4)
                                 {
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                                     Thread.Sleep(300);
@@ -412,7 +419,7 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                     tt++;
                                 }
-                                if (tt >= 5)
+                                if (tt >= 4)
                                 {
                                     PluginLog.Log($"未打开采集面板, skip {id}..");
                                     continue;
@@ -422,6 +429,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 if (CommonUi.AddonGatheringIsOpen())
                                 {
                                     WoAutoCollectionPlugin.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
+                                    WoAutoCollectionPlugin.GameData.CommonBot.UseItem(0.65);
                                 }
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             }
@@ -509,7 +517,35 @@ namespace WoAutoCollectionPlugin.Bot
                 });
                 task.Start();
             }
-            
+            else if (otherTaskParam == "4")
+            {
+                othetRun = true;
+                PluginLog.Log($"当前配置: {otherTaskParam}, 捕鱼灵砂任务");
+                Task task = new(() =>
+                {
+                    PluginLog.Log($"执行等待捕鱼灵砂任务...");
+                    try
+                    {
+                        int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+                        if (CollectableCount > 0) {
+                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable();
+                        }
+                        string args = "ftype:3 fexchangeItem:0";
+                        WoAutoCollectionPlugin.GameData.CollectionFishBot.CollectionFishScript(args);
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    }
+                    PluginLog.Log($"其他任务结束...");
+                    othetRun = false;
+                });
+                task.Start();
+            }
         }
 
         private void StopWaitTask()
@@ -531,7 +567,6 @@ namespace WoAutoCollectionPlugin.Bot
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
-                //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
             }
             return position;
         }

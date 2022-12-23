@@ -207,19 +207,13 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     PluginLog.Log($"Finish: {i} Item: {recipeName}");
                     i++;
-                    Thread.Sleep(1000);
+
+                    // 精制+修理
+                    WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
 
                     if (BagManager.InventoryRemaining() <= 5)
                     {
                         Thread.Sleep(1000);
-                        if (RecipeNoteUi.RecipeNoteIsOpen())
-                        {
-                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                        }
-
-                        // 精制+修理
-                        WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
-
                         // 上交收藏品和交换道具
                         if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t)) {
                             if (t == "2") {

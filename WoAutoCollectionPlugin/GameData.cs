@@ -20,6 +20,8 @@ public class GameData
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
 
+    public Dictionary<uint, Status> Status { get; init; } = new();
+
     // TODO
     public Dictionary<uint, Recipe> Recipes { get; init; } = new();
 
@@ -76,6 +78,12 @@ public class GameData
                     .ToDictionary(g => (uint)g.Item, g => new Gatherable(this, g))
              ?? new Dictionary<uint, Gatherable>();
             PluginLog.Log("Collected {NumGatherables} different gatherable items.", Gatherables.Count);
+
+            Status = DataManager.GetExcelSheet<Status>()?
+                .Where(a => a.RowId > 1)
+                .ToDictionary(a => a.RowId, a => a)
+                ?? new Dictionary<uint, Status>();
+            PluginLog.Log("Collected {NumStatus} different Status.", Status.Count);
 
             //Recipes = DalamudApi.DataManager.GetExcelSheet<Recipe>()?
             //        .Where(a => a.RowId > 1)
