@@ -398,16 +398,18 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static Vector3[] ExchangeToUploadNPC = {
             new Vector3 (1183, 1126, 964),
+            new Vector3 (1194, 1126, 978),
             new Vector3 (1174, 1126, 984),
         };
 
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化
-        // Purple 紫票 佛恩·米克 (灰蚯蚓 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
+        // Purple 紫票 佛恩·米克 (万能拟饵 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static string PurpleFishName = "佛恩·米克";
         public static Vector3[] ToPurpleFishArea = {
-            new Vector3 (0f, 0f, 0f)
+            new Vector3 (1023, 2425, 2897),
+            new Vector3 (956, 2304, 3060),
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] PurpleFishArea = {
@@ -416,6 +418,8 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (934f, 2303f, 3087f),
         };
         public static int PurpleFishTime = 16 ;
+        public static uint PurpleFishTp = 179;
+        public static ushort PurpleFishTerritoryType = 960;
 
         // White 白票 灵岩之剑 (万能拟饵 11.9-20.6) https://fish.ffmomola.com/#/wiki?spotId=274&fishId=36473
         // 去钓鱼区域的路径 TerritoryType: ? 

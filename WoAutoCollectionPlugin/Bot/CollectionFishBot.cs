@@ -139,7 +139,11 @@ namespace WoAutoCollectionPlugin.Bot
                                 if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
                                 {
                                     MovePositions(Position.ExchangeNPC, false);
-                                    WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(exchangeItem);
+                                    if (exchangeItem > 100) {
+                                        for (int tt = 0; tt <= 5; tt++) {
+                                            WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(exchangeItem);
+                                        }
+                                    }
                                     if (BagManager.GetInventoryItemCountById(ItemId) > 0)
                                     {
                                         MovePositions(Position.ExchangeToUploadNPC, false);
@@ -190,6 +194,8 @@ namespace WoAutoCollectionPlugin.Bot
                 ToArea = Position.ToPurpleFishArea;
                 FishArea = Position.PurpleFishArea;
                 fishTime = Position.PurpleFishTime;
+                fishTp = Position.PurpleFishTp;
+                fishTerritoryType = Position.PurpleFishTerritoryType;
             } else if (type == 2) {
                 ToArea = Position.ToWhiteFishArea;
                 FishArea = Position.WhiteFishArea;

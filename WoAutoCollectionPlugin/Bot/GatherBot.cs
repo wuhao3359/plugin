@@ -116,8 +116,8 @@ namespace WoAutoCollectionPlugin.Bot
                         if (gameObjects.ToArray().Length == 0) {
                             error++;
                             if (error >= 1) {
-                                closed = true;
                                 PluginLog.Log($"出现错误停止");
+                                return false;
                             }
                         }
                     }

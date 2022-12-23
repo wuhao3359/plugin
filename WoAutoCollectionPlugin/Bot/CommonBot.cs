@@ -360,6 +360,23 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
+                else if (item == 101)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
+                else if (item == 102)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
 
                 if (closed)
                 {
