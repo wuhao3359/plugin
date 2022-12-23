@@ -16,7 +16,6 @@ namespace WoAutoCollectionPlugin.Utility
             (13, "水之水晶"),
         };
 
-
         public static int GetNormalItemId(string name)
         {
             foreach ((int Id, string Name) in Items)

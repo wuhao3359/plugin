@@ -52,11 +52,20 @@ namespace WoAutoCollectionPlugin.Bot
             if (CommonUi.NeedsRepair())
             {
                 if (RecipeNoteUi.RecipeNoteIsOpen()) {
-                    Thread.Sleep(300);
+                    Thread.Sleep(500);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                    Thread.Sleep(300);
+                    Thread.Sleep(500);
                 }
-                Repair();
+
+                bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
+                PluginLog.Log($"修理配置: b: {b}, v: {v}");
+                if (!b || v == null || v == "0")
+                {
+                    NpcRepair("修理工");
+                }
+                else {
+                    Repair();
+                }
             }
 
             int count = CommonUi.CanExtractMateria();
@@ -64,9 +73,9 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 if (RecipeNoteUi.RecipeNoteIsOpen())
                 {
-                    Thread.Sleep(300);
+                    Thread.Sleep(500);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                    Thread.Sleep(300);
+                    Thread.Sleep(500);
                 }
                 ExtractMateria(count);
             }
@@ -234,6 +243,13 @@ namespace WoAutoCollectionPlugin.Bot
             return true;
         }
 
+        // 精选
+        public unsafe bool ExtractMateriaCollectable()
+        {
+            // 精选 TODO
+            return true;
+        }
+
         public bool CraftUploadAndExchange()
         {
             WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
@@ -382,11 +398,23 @@ namespace WoAutoCollectionPlugin.Bot
             }
             return true;
         }
-
+        
         public bool UseItem() {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
             if (gp < player.MaxGp * 0.6)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+                Thread.Sleep(2000);
+            }
+            return true;
+        }
+
+        public bool UseItem(double factor)
+        {
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
+            if (gp < player.MaxGp * factor)
             {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                 Thread.Sleep(2000);

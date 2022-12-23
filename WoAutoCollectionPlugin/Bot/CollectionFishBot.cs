@@ -2,6 +2,7 @@
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -254,6 +255,11 @@ namespace WoAutoCollectionPlugin.Bot
                 // 开始作业
                 readyMove = false;
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                if (!CommonUi.HasStatus("收藏品采集"))
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n5_key);
+                    Thread.Sleep(300);
+                }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 44)
@@ -380,8 +386,8 @@ namespace WoAutoCollectionPlugin.Bot
                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                 if (!readyMove)
                 {
-                    bool existStatus = false;
                     byte stackCount = 0;
+                    bool existStatus = false;
                     IEnumerator<Dalamud.Game.ClientState.Statuses.Status> statusList = player.StatusList.GetEnumerator();
                     while (statusList.MoveNext())
                     {
@@ -426,7 +432,7 @@ namespace WoAutoCollectionPlugin.Bot
                             gp -= 560;
                         }
                     }
-                    if (LastFish && gp > 350)
+                    if (LastFish && gp > 350 && CommonUi.HasStatus("耐心"))
                     {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F5_key);
                         Thread.Sleep(1000);

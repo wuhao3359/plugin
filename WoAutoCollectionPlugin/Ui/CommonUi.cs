@@ -7,6 +7,7 @@ using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.Utility;
 
 namespace WoAutoCollectionPlugin.Ui
 {
@@ -580,14 +581,6 @@ namespace WoAutoCollectionPlugin.Ui
         public static unsafe int CanExtractMateria()
         {
             int count = 0;
-
-            //bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
-            //if (!b || v == null || v == "0")
-            //{
-            //    PluginLog.Log($"精制配置: b: {b}, v: {v},");
-            //    return count;
-            //}
-
             var im = InventoryManager.Instance();
             if (im == null)
             {
@@ -622,6 +615,34 @@ namespace WoAutoCollectionPlugin.Ui
             }
             PluginLog.Log($"总共有 {count}, 可以精制魔晶石 ");
             return count;
+        }
+
+        public static unsafe int CanExtractMateriaCollectable()
+        {
+            int count = 0;
+            foreach ((int itemId, string itemName) in LimitMaterials.CollecMaterialItems) {
+                count += BagManager.GetInventoryItemCountById((uint)itemId);
+            }
+            PluginLog.Log($"总共有 {count}, 可以精选物品");
+            return count;
+        }
+
+        public static unsafe bool HasStatus(string statusName)
+        {
+            statusName = statusName.ToLowerInvariant();
+            var statusList = DalamudApi.ClientState.LocalPlayer.StatusList.GetEnumerator();
+            while (statusList.MoveNext())
+            {
+                Dalamud.Game.ClientState.Statuses.Status status = statusList.Current;
+                uint statusId = status.StatusId;
+                if (WoAutoCollectionPlugin.GameData.Status.TryGetValue(statusId, out var state)) {
+                    if (state.Name == statusName)
+                    {
+                        return true;
+                    }
+                } 
+            }
+            return false;
         }
 
     }
