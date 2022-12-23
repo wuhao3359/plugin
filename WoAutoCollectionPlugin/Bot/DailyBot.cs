@@ -380,7 +380,7 @@ namespace WoAutoCollectionPlugin.Bot
 
                                 Time.Update();
                                 hour = Time.ServerTime.CurrentEorzeaHour();
-                                if (hour >= MinEt && hour <= MaxEt) {
+                                if (!(hour >= MinEt && hour <= MaxEt)) {
                                     PluginLog.Log($"时间结束...");
                                     break;
                                 }
@@ -567,7 +567,6 @@ namespace WoAutoCollectionPlugin.Bot
                     return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 }
                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
-                //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
             }
             return position;
         }
