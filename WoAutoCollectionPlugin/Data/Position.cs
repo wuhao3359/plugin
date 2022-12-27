@@ -468,7 +468,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         // ------------------------------- 灵砂 捕鱼 ------------------------------------
         // 灵砂随大版本更新而变化
-        // 精选鱼  红弓鳍鱼  (万能拟饵 11.5% 20.7-30.9) (蜉蝣 23% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=257&fishId=36408
+        // 精选鱼  红弓鳍鱼  (万能拟饵 11.5% 20.7-30.9) (蜉蝣 23% 18.2-30.2) (天空勺形鱼饵 23.9% 16.3-28.4) https://fish.ffmomola.com/#/wiki?spotId=257&fishId=36408
         public static string FishNameSandA = "红弓鳍鱼";
         public static Vector3[] ToFishAreaSandA = {
             new Vector3 (0f, 0f, 0f)

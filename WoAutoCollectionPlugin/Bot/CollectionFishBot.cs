@@ -85,7 +85,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else if (type == 4)
             {
-                fishName = Position.FishNameSandB;
+                fishName = Position.FishNameSandA;
             }
             else {
                 PluginLog.Log($"ftype 参数错误");
@@ -164,10 +164,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 k++;
                             }
                         }
-                    } else if (type >= 3) { 
-                        // 精选 TODO
                     }
-
                     if (BagManager.InventoryRemaining() > 5)
                     {
                         if (closed)
@@ -176,6 +173,14 @@ namespace WoAutoCollectionPlugin.Bot
                             break;
                         }
                         RunCollectionFishScript(type);
+                    }
+
+                    if (type >= 3) {
+                        int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+                        if (CollectableCount > 0)
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                        }
                     }
                 }
                 catch (Exception e)
@@ -215,12 +220,23 @@ namespace WoAutoCollectionPlugin.Bot
                 fishTp = Position.WhiteFishTp;
                 fishTerritoryType = Position.WhiteFishTerritoryType;
             } else if (type == 3) 
-            { 
-                // 时间限制
+            {
+                // TODO 补全相关坐标
+                // 红弓鳍鱼 灵砂 地点A
+                ToArea = Position.ToFishAreaSandA;
+                FishArea = Position.FishAreaSandA;
+                fishTime = Position.FishTimeX1;
+                //fishTp = Position.WhiteFishTp;
+                //fishTerritoryType = Position.WhiteFishTerritoryType;
             }
             else if (type == 4)
             {
-
+                // 红弓鳍鱼 灵砂 地点B
+                ToArea = Position.ToFishAreaSandA;
+                FishArea = Position.FishAreaSandA;
+                fishTime = Position.FishTimeX1;
+                //fishTp = Position.WhiteFishTp;
+                //fishTerritoryType = Position.WhiteFishTerritoryType;
             }
 
             Teleporter.Teleport(fishTp);
@@ -284,7 +300,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
-                while (sw.ElapsedMilliseconds / 1000 / 60 < 35)
+                while (sw.ElapsedMilliseconds / 1000 / 60 < 37)
                 {
                     Thread.Sleep(1000);
                     if (closed)

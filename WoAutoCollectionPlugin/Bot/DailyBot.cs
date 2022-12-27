@@ -256,7 +256,6 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
                         }
-                        // TODO close AddonGathering
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
@@ -577,7 +576,9 @@ namespace WoAutoCollectionPlugin.Bot
                         if (CollectableCount > 0) {
                             WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
                         }
-                        string args = "ftype:3 fexchangeItem:0";
+                        Random r = new();
+                        int t = r.Next(3, 5);
+                        string args = "ftype:" + t + " fexchangeItem:0";
                         WoAutoCollectionPlugin.GameData.CollectionFishBot.CollectionFishScript(args);
                     }
                     catch (Exception e)
