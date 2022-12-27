@@ -273,7 +273,23 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1000);
 
                     // 修理装备
-                    WoAutoCollectionPlugin.GameData.CommonBot.Repair();
+                    if (CommonUi.CanRepair())
+                    {
+                        if (RecipeNoteUi.RecipeNoteIsOpen())
+                        {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        }
+                        WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
+                        if (v == "1")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
+                        }
+                        else if (v == "99")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.Repair();
+                        }
+                    }
                     // 魔晶石精制
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
                 }
@@ -361,12 +377,28 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(500);
                 Vector3 position = MovePositions(Path, true);
                 while (hour >= MinEt && hour <= MaxEt) {
+                    Time.Update();
+                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    int minute = Time.ServerTime.CurrentEorzeaMinute();
+                    if (hour == MaxEt && minute >= 45)
+                    {
+                        PluginLog.Log($"时间不够...");
+                        break;
+                    }
                     for (int t = 0; t < Points.Length && hour >= MinEt && hour <= MaxEt; t++) {
+                        Time.Update();
+                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        minute = Time.ServerTime.CurrentEorzeaMinute();
+                        if (hour == MaxEt && minute >= 45) {
+                            PluginLog.Log($"时间不够...");
+                            break;
+                        }
                         if (closed)
                         {
                             PluginLog.Log($"中途结束");
                             return;
                         }
+                        WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[t], territoryType, true, false);
                         if (Array.IndexOf(CanGatherIndex, t) != -1)
                         {
                             GameObject go = Util.CurrentPositionCanGather(Points[t], SizeFactor);
@@ -398,12 +430,6 @@ namespace WoAutoCollectionPlugin.Bot
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
                                     Thread.Sleep(800);
                                     tt++;
-
-                                    if (closed)
-                                    {
-                                        PluginLog.Log($"stopping");
-                                        return;
-                                    }
                                 }
 
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
@@ -431,11 +457,12 @@ namespace WoAutoCollectionPlugin.Bot
                                     WoAutoCollectionPlugin.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
                                     WoAutoCollectionPlugin.GameData.CommonBot.UseItem(0.65);
                                 }
-                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 150);
                             }
                             else
                             {
                                 PluginLog.Log($"未知原因未找到数据, skip {id}..");
+                                t++;
                                 Thread.Sleep(1000);
                                 continue;
                             }
@@ -445,7 +472,27 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                     }
                 }
+                et = MaxEt;
                 PluginLog.Log($"当前ET结束...");
+                int count = CommonUi.CanExtractMateria();
+                if (count >= 5)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
+                }
+                int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+                if (CollectableCount > 0)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                }
+                if (CommonUi.NeedsRepair())
+                {
+                    Teleporter.Teleport(Position.ShopTp);
+                    Thread.Sleep(12000);
+                    MovePositions(Position.RepairNPC, false);
+                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                }
+                Time.Update();
+                hour = Time.ServerTime.CurrentEorzeaHour();
             }
         }
 
@@ -528,7 +575,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         int CollectableCount = CommonUi.CanExtractMateriaCollectable();
                         if (CollectableCount > 0) {
-                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable();
+                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
                         }
                         string args = "ftype:3 fexchangeItem:0";
                         WoAutoCollectionPlugin.GameData.CollectionFishBot.CollectionFishScript(args);

@@ -402,14 +402,24 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1174, 1126, 984),
         };
 
+        // 海都
+        public static uint ShopTpA = 183;
+        public static ushort ShopTerritoryTypeA = 963;
+        public static Vector3[] RepairNPCA = {
+            new Vector3 (629, 1157, 1223),
+        };
+        public static Vector3[] UploadNPCA = {
+            new Vector3 (629, 1157, 1224),
+            new Vector3 (611, 1157, 1208),
+        };
+
         // ------------------------------- 工票 捕鱼 ------------------------------------
         // 工票随大版本更新而变化
         // Purple 紫票 佛恩·米克 (万能拟饵 16.5-25.8) https://fish.ffmomola.com/#/wiki?spotId=279&fishId=36494
         // 去钓鱼区域的路径 TerritoryType: ? 
         public static string PurpleFishName = "佛恩·米克";
         public static Vector3[] ToPurpleFishArea = {
-            new Vector3 (1023, 2425, 2897),
-            new Vector3 (956, 2304, 3060),
+            new Vector3 (938, 2353, 2991),
         };
         // 固定钓鱼区域 0-钓鱼点1 1-钓鱼点2 2-移动中转点
         public static Vector3[] PurpleFishArea = {
@@ -417,7 +427,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (955f, 2303f, 3071f),
             new Vector3 (934f, 2303f, 3087f),
         };
-        public static int PurpleFishTime = 16 ;
+        public static int PurpleFishTime = 15 ;
         public static uint PurpleFishTp = 179;
         public static ushort PurpleFishTerritoryType = 960;
 
@@ -685,7 +695,7 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (3188, 2236, 2008),
             new Vector3 (3186, 2237, 2016),
             new Vector3 (3187, 2241, 2031),
-            new Vector3 (3204, 2294, 2082), // 离开A
+            new Vector3 (3204, 2310, 2082), // 离开A
             new Vector3 (3303, 2313, 2233), // 进入B
             new Vector3 (3337, 2321, 2253),
             new Vector3 (3361, 2326, 2309),
@@ -952,34 +962,103 @@ namespace WoAutoCollectionPlugin.Utility
             1, 7, 13
         };
 
+        public static Vector3[] path36089 = {
+            new Vector3 (1008, 2505, 1907),
+            new Vector3 (946, 2449, 2074),
+        };
+        public static Vector3[] Points36089 = {
+            new Vector3 (957, 2442, 2145), // 进入A
+            new Vector3 (1027, 2439, 2100),
+            new Vector3 (1004, 2440, 2133), //
+            new Vector3 (996, 2439, 2114),
+            new Vector3 (973, 2442, 2145),
+            new Vector3 (912, 2438, 2143),
+            new Vector3 (962, 2459, 2209), // 离开A
+            new Vector3 (782, 2461, 2333), // 进入B
+            new Vector3 (757, 2456, 2393),
+            new Vector3 (734, 2459, 2405),
+            new Vector3 (708, 2460, 2379),
+            new Vector3 (694, 2458, 2316),
+            new Vector3 (835, 2468, 2397), // 离开B
+            new Vector3 (995, 2458, 2460), // 进入C
+            new Vector3 (1000, 2460, 2491),
+            new Vector3 (1042, 2460, 2482),
+            new Vector3 (1018, 2455, 2454), // 
+            new Vector3 (1038, 2455, 2454),
+            new Vector3 (1053, 2453, 2434),
+            new Vector3 (957, 2463, 2219), // 离开C
+        };
+        public static int[] CanCollectPoints36089 = {
+            1, 3, 4, 5, 8, 9, 10, 11, 14, 15, 17, 18
+        };
+        public static int[] UnknownPointsNum36089 = {
+            4, 4, 4
+        };
+        public static int[] Area36089 = {
+            1, 8, 14
+        };
+
+        public static Vector3[] path36086 = {
+            new Vector3 (1361, 2200, 2177),
+            new Vector3 (1647, 2215, 2209),
+            new Vector3 (1686, 2215, 2195),
+        };
+        public static Vector3[] Points36086 = {
+            new Vector3 (1674, 2219, 2087), // 进入A
+            new Vector3 (1612, 2219, 2090),
+            new Vector3 (1600, 2218, 2083),
+            new Vector3 (1616, 2218, 2058),
+            new Vector3 (1689, 2232, 2101), // 离开A
+            new Vector3 (1809, 2228, 2170), // 进入B
+            new Vector3 (1853, 2231, 2150),
+            new Vector3 (1843, 2225, 2190),
+            new Vector3 (1866, 2230, 2194),
+            new Vector3 (1854, 2229, 2209),
+            new Vector3 (1736, 2240, 2289), // 离开B
+            new Vector3 (1638, 2198, 2368), // 进入C
+            new Vector3 (1616, 2184, 2398),
+            new Vector3 (1600, 2183, 2385),
+            new Vector3 (1578, 2187, 2354),
+            new Vector3 (1618, 2188, 2355),
+            new Vector3 (1682, 2206, 2293), // 离开C
+        };
+        public static int[] CanCollectPoints36086 = {
+            1, 2, 3, 6, 7, 8, 9, 12, 13, 14, 15
+        };
+        public static int[] UnknownPointsNum36086 = {
+            3, 4, 4
+        };
+        public static int[] Area36086 = {
+            1, 6, 12
+        };
 
 
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
-            (4814, 999, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
-            (4790, 999, "芦荟", 17, "园艺工", 50, 19, path4790, Points4790, CanCollectPoints4790, UnknownPointsNum4790, Area4790),    // 南萨纳兰
-            (19872, 999, "石间清水", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), // 延夏
-            //(19853, 1998, "葛根", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            (19914, 999, "繁缕", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
-            (19915, 999, "稻槎草", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
+            (4814, 900, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
+            (4790, 900, "芦荟", 17, "园艺工", 50, 19, path4790, Points4790, CanCollectPoints4790, UnknownPointsNum4790, Area4790),    // 南萨纳兰
+            (19872, 900, "石间清水", 16, "采矿工", 70, 107, path19872, Points19872, CanCollectPoints19872, UnknownPointsNum19872, Area19872), // 延夏
+            //(19853, 1800, "葛根", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            (19914, 900, "繁缕", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
+            (19915, 900, "稻槎草", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
 
-            // (27759, 1998, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
-            (27803, 2997, "凝灰岩", 16, "采矿工", 78, 139, path27803, Points27803, CanCollectPoints27803, UnknownPointsNum27803, Area27803), // 图姆拉村
-            (27824, 999, "野园甜菜", 17, "园艺工", 78, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
-            (27826, 999, "皇家葡萄", 17, "园艺工", 78, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
-            (27832, 999, "山地小麦", 17, "园艺工", 78, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
-            //(27834, 1998, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
-            (27687, 3996, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
-            (27703, 3996, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
+            // (27759, 1800, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
+            (27803, 2700, "凝灰岩", 16, "采矿工", 78, 139, path27803, Points27803, CanCollectPoints27803, UnknownPointsNum27803, Area27803), // 图姆拉村
+            (27824, 900, "野园甜菜", 17, "园艺工", 78, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
+            (27826, 900, "皇家葡萄", 17, "园艺工", 78, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
+            (27832, 900, "山地小麦", 17, "园艺工", 78, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
+            //(27834, 1800, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
+            (27687, 1800, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
+            (27703, 1800, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
 
 
 
-            //(36083, 3996, "裸麦", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            //(36084, 1997, "北洋岩盐", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            //(36085, 3996, "萨维奈紫苏", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36086, 3996, "棕榈糖浆", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36087, 1997, "椰子", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36089, 3996, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            //(36089, 3996, "无花果", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36083, 2700, "裸麦", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36084, 1800, "北洋岩盐", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36085, 2700, "萨维奈紫苏", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            (36086, 2700, "棕榈糖浆", 17, "园艺工", 90, 170, path36086, Points36086, CanCollectPoints36086, UnknownPointsNum36086, Area36086), // 代米尔遗烈乡
+            //(36087, 1800, "椰子", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36089, 1800, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            (36089, 1800, "无花果", 17, "园艺工", 90, 178, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 创作者之家
         };
 
         public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetMaterialById(int id)

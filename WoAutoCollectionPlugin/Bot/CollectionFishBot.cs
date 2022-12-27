@@ -55,7 +55,6 @@ namespace WoAutoCollectionPlugin.Bot
         public void CollectionFishScript(string args) {
             closed = false;
             int n = 0;
-            DalamudApi.Framework.Update +=OnCollectionFishUpdate;
             string command = "collectionfish";
             WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
 
@@ -92,6 +91,8 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"ftype 参数错误");
                 return;
             }
+
+            DalamudApi.Framework.Update += OnCollectionFishUpdate;
             while (!closed && n < 10)
             {
                 try
@@ -104,7 +105,7 @@ namespace WoAutoCollectionPlugin.Bot
                             if (closed)
                             {
                                 PluginLog.Log($"task shop stopping");
-                                return;
+                                break;
                             }
                             if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
                             {
@@ -135,15 +136,25 @@ namespace WoAutoCollectionPlugin.Bot
                                 if (closed)
                                 {
                                     PluginLog.Log($"UploadAndExchange stopping");
-                                    return;
+                                    break;
                                 }
                                 if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
                                 {
                                     MovePositions(Position.ExchangeNPC, false);
-                                    if (exchangeItem > 100) {
-                                        for (int tt = 0; tt <= 5; tt++) {
+                                    if (exchangeItem > 100)
+                                    {
+                                        for (int tt = 0; tt <= 3; tt++)
+                                        {
+                                            if (closed)
+                                            {
+                                                PluginLog.Log($"Exchange stopping");
+                                                break;
+                                            }
                                             WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(exchangeItem);
                                         }
+                                    }
+                                    else {
+                                        WoAutoCollectionPlugin.GameData.CommonBot.CraftExchange(exchangeItem);
                                     }
                                     if (BagManager.GetInventoryItemCountById(ItemId) > 0)
                                     {
@@ -162,7 +173,7 @@ namespace WoAutoCollectionPlugin.Bot
                         if (closed)
                         {
                             PluginLog.Log($"task fish stopping");
-                            return;
+                            break;
                         }
                         RunCollectionFishScript(type);
                     }
@@ -266,9 +277,14 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n5_key);
                     Thread.Sleep(300);
                 }
+                if (!CommonUi.HasStatus("钓上大尺寸的鱼几率提升"))
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
+                    Thread.Sleep(300);
+                }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
-                while (sw.ElapsedMilliseconds / 1000 / 60 < 44)
+                while (sw.ElapsedMilliseconds / 1000 / 60 < 35)
                 {
                     Thread.Sleep(1000);
                     if (closed)
@@ -297,13 +313,11 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
                 
-                // 判断是否需要精制
                 int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
                 }
-                // 判断是否需要修理
                 if (CommonUi.NeedsRepair())
                 {
                     return true;
@@ -438,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                             gp -= 560;
                         }
                     }
-                    if (LastFish && gp > 350 && CommonUi.HasStatus("耐心"))
+                    if (LastFish && gp > 350 && CommonUi.HasStatus("钓上大尺寸的鱼几率提升"))
                     {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F5_key);
                         Thread.Sleep(1000);

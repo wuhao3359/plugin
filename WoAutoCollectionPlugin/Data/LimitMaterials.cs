@@ -285,8 +285,9 @@ namespace WoAutoCollectionPlugin.Utility
         };
 
         public static Vector3[] path36285 = {
-            new Vector3(1318, 2482, 3452),
-            new Vector3(1916, 2397, 3301),
+            new Vector3(1446, 2526, 3421),
+            new Vector3(1821, 2440, 3467),
+            new Vector3(1987, 2353, 3505),
         };
         public static Vector3[] points36285 = {
             new Vector3(2094, 2321, 3440),
@@ -300,12 +301,58 @@ namespace WoAutoCollectionPlugin.Utility
             1, 3, 5
         };
 
+        public static Vector3[] path36286 = {
+            new Vector3(1294, 2402, 2492),
+            new Vector3(1229, 2290, 1547),
+        };
+        public static Vector3[] points36286 = {
+            new Vector3(1092, 2206, 1674),
+            new Vector3(1168, 2236, 1561),
+            new Vector3(862, 2237, 1569),
+            new Vector3(1090, 2205, 1358),
+            new Vector3(1179, 2233, 1605),
+        };
+        public static int[] gatherIndex36286 = {
+            0, 2, 3
+        };
+
+        public static Vector3[] path36287 = {
+            new Vector3(782, 2146, 3003),
+            new Vector3(929, 2096, 3257),
+        };
+        public static Vector3[] points36287 = {
+            new Vector3(942, 2097, 3332),
+            new Vector3(1087, 2116, 3404),
+            new Vector3(1174, 2092, 3443),
+            new Vector3(1099, 2139, 3581),
+            new Vector3(1058, 2116, 3662),
+            new Vector3(981, 2124, 3417),
+        };
+        public static int[] gatherIndex36287 = {
+            0, 2, 4
+        };
+
+        public static Vector3[] path36288 = {
+            new Vector3(2676, 2185, 1795),
+        };
+        public static Vector3[] points36288 = {
+            new Vector3(2693, 2161, 1741),
+            new Vector3(2541, 2168, 1625),
+            new Vector3(2491, 2165, 1600),
+            new Vector3(2797, 2189, 1416),
+            new Vector3(2843, 2163, 1359),
+            new Vector3(2696, 2181, 1692),
+        };
+        public static int[] gatherIndex36288 = {
+            0, 2, 4
+        };
+
         // 收藏品 需要分解或者上交
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = {
-             (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
-            // (36286, "暗性岩", 20, 23, 16, "采矿工", 80, 138, path36, points36, index1),    //
-            // (36287, "水瓶土", 8, 11, 17, "园艺工", 80, 138, path36, points36, index1),    // 
-            // (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 80, 138, path36, points36),    //
+            (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
+            (36286, "暗性岩", 20, 23, 16, "采矿工", 90, 172, path36286, points36286, gatherIndex36286),    // 碎璃营地
+            (36287, "水瓶土", 8, 11, 17, "园艺工", 90, 168, path36287, points36287, gatherIndex36287),    // 迷津
+            (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 90, 171, path36288, points36288, gatherIndex36288), // 波洛伽护法村
         };
 
         // 6.0版本灵砂获取途径 随大版本更新

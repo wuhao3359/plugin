@@ -343,8 +343,16 @@ namespace WoAutoCollectionPlugin
             //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
             //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
-            int count = BagManager.GetInventoryItemCount(19915);
-            PluginLog.Log($"r: {count}");
+            var statusList = DalamudApi.ClientState.LocalPlayer.StatusList.GetEnumerator();
+            while (statusList.MoveNext())
+            {
+                Dalamud.Game.ClientState.Statuses.Status status = statusList.Current;
+                uint statusId = status.StatusId;
+                if (WoAutoCollectionPlugin.GameData.Status.TryGetValue(statusId, out var state))
+                {
+                    PluginLog.Log($"Name : {state.Name}");
+                }
+            }
         }
 
         private void OnActionTestCommand(string command, string args)

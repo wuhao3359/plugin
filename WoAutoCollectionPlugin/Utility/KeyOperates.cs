@@ -92,7 +92,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(40);
+            Thread.Sleep(45);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);

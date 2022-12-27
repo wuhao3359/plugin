@@ -43,6 +43,12 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonGatheringMasterpieceIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("GatheringMasterpiece");
+            return success;
+        }
+
         public unsafe static bool AddonCollectablesShopIsOpen()
         {
             var (addon, success) = IsAddonVisible("CollectablesShop");
@@ -430,6 +436,12 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonPurifyItemSelectorIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("PurifyItemSelector");
+            return success;
+        }
+
         public static unsafe bool SelectMaterializeDialogYesButton()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("MaterializeDialog", 1);
@@ -569,9 +581,8 @@ namespace WoAutoCollectionPlugin.Ui
                 if (item == null)
                     continue;
 
-                if (item->Condition <= 3000)
+                if (item->Condition <= 8000)
                 {
-                    PluginLog.Log($"{item->Condition}");
                     return true;
                 }
             }

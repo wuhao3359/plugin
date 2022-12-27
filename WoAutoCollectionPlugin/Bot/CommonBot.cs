@@ -2,8 +2,10 @@
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
 using WoAutoCollectionPlugin.Managers;
@@ -48,61 +50,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void RepairAndExtractMateriaInCraft() {
-            if (CommonUi.NeedsRepair())
-            {
-                if (RecipeNoteUi.RecipeNoteIsOpen()) {
-                    Thread.Sleep(500);
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                    Thread.Sleep(500);
-                }
-
-                bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
-                PluginLog.Log($"修理配置: b: {b}, v: {v}");
-                if (!b || v == null || v == "0")
-                {
-                    NpcRepair("修理工");
-                }
-                else {
-                    Repair();
-                }
-            }
-
-            int count = CommonUi.CanExtractMateria();
-            if (count >= 2)
-            {
-                if (RecipeNoteUi.RecipeNoteIsOpen())
-                {
-                    Thread.Sleep(500);
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                    Thread.Sleep(500);
-                }
-                ExtractMateria(count);
-            }
-        }
-
-        public void RepairAndExtractMateria() {
-            if (CommonUi.NeedsRepair())
-            {
-                Repair();
-            }
-
-            int count = CommonUi.CanExtractMateria();
-            if (count >= 2)
-            {
-                ExtractMateria(count);
-            }
-        }
-
         // 修理
         public bool Repair() {
-            bool b = WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
-            if (!b || v == null || v == "0")
-            {
-                PluginLog.Log($"修理配置: b: {b}, v: {v}");
-                return true;
-            }
-
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
@@ -222,6 +171,11 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"ExtractMateria stopping");
                 return true;
             }
+            if (RecipeNoteUi.RecipeNoteIsOpen())
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                Thread.Sleep(1000);
+            }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1000);
             for (int i = 0; i < count; i++) {
@@ -244,9 +198,30 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 精选
-        public unsafe bool ExtractMateriaCollectable()
+        public unsafe bool ExtractMateriaCollectable(int CollectableCount)
         {
-            // 精选 TODO
+            int tt = 0;
+            while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 5)
+            {
+                if (tt >= 3)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                }
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                Thread.Sleep(800);
+                tt++;
+            }
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F10_key);
+            for (int i = 0; i < CollectableCount; i++) {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                Thread.Sleep(2500);
+            }
+
+            //if (CommonUi.AddonPurifyItemSelectorIsOpen())
+            //{
+            //    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            //}
             return true;
         }
 
@@ -254,6 +229,11 @@ namespace WoAutoCollectionPlugin.Bot
         {
             WoAutoCollectionPlugin.GameData.param.TryGetValue("recipeName", out var r);
             WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("uploadNPC", out var up);
+            if (up == "1") {
+                MovePositions(Position.UploadNPCA, false);
+            }
+
             (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
             while (BagManager.GetInventoryItemCountById(ItemId) > 0) {
                 if (closed)
@@ -360,9 +340,18 @@ namespace WoAutoCollectionPlugin.Bot
 
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
-                // 2-大地白票 九型魔晶石
+                // 2-大地白票 随机采集魔晶石
                 else if (item == 2)
                 {
+                    Random rd = new();
+                    int r = rd.Next(19);
+                    if (r <= 0) {
+                        r = 0;
+                    }
+                    if (r >= 18)
+                    {
+                        r = 18;
+                    }
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
@@ -373,8 +362,35 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
 
+                    for (int k = 0; k < r; k++) {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    }
+                }
+                else if (item >= 80 && item <= 99)
+                {
+                    int r = item - 80;
+                    if (r <= 0)
+                    {
+                        r = 0;
+                    }
+                    if (r >= 18)
+                    {
+                        r = 18;
+                    }
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    for (int k = 0; k < r; k++)
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    }
                 }
                 else if (item == 101)
                 {
@@ -392,6 +408,26 @@ namespace WoAutoCollectionPlugin.Bot
 
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                }
+                else if (item >= 1000 && item <= 1100)
+                {
+                    int r = item - 1000;
+                    if (r <= 0)
+                    {
+                        r = 0;
+                    }
+                    if (r >= 1006)
+                    {
+                        r = 5;
+                    }
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    for (int k = 0; k < r; k++)
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    }
                 }
 
                 if (closed)
@@ -574,7 +610,7 @@ namespace WoAutoCollectionPlugin.Bot
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
                 PluginLog.Log($"开始采集: {Names}, {count}");
-                if (count < 9500 && gp >= 200)
+                if (count < 4000 && gp >= 200)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
@@ -645,18 +681,70 @@ namespace WoAutoCollectionPlugin.Bot
         public bool LimitMultiMaterialsMethod(string Name)
         {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            uint gp = player.CurrentGp;
             List<string> list = new();
             list.Add(Name);
             PluginLog.Log($"开始采集: {Name}");
            
             (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
             CommonUi.GatheringButton(GatherIndex);
+            Thread.Sleep(2000);
 
-            uint gp = player.CurrentGp;
-            // TODO
+            int action = 0;
+            if (gp >= 700)
+            {
+                action++;
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F6_key);
+                Thread.Sleep(2000);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F7_key);
+                Thread.Sleep(2400);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F6_key);
+                Thread.Sleep(2000);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F7_key);
+                Thread.Sleep(2400);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F9_key);
+                Thread.Sleep(2400);
 
-
+                if (gp >= 300 && action > 0)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                    Thread.Sleep(1500);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                    Thread.Sleep(1000);
+                }
+            }
+            else {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                Thread.Sleep(2400);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                Thread.Sleep(2400);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                Thread.Sleep(2400);
+            }
+            int tt = 0;
+            while (CommonUi.AddonGatheringMasterpieceIsOpen() && tt < 7)
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F5_key);
+                Thread.Sleep(2800);
+                tt++;
+            }
             return true;
+        }
+
+        public Vector3 MovePositions(Vector3[] Path, bool UseMount)
+        {
+            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+            for (int i = 0; i < Path.Length; i++)
+            {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                }
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Path[i], DalamudApi.ClientState.TerritoryType, UseMount, false);
+            }
+            return position;
         }
     }
 }

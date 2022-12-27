@@ -57,7 +57,13 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     PluginLog.Log($"根据名称普通制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
-                } else if (t == "3") {
+                }
+                else if (t == "2")
+                {
+                    PluginLog.Log($"根据名称普通制作...");
+                    RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                }
+                else if (t == "3") {
                     PluginLog.Log($"根据名称快速制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
                 }
@@ -145,7 +151,7 @@ namespace WoAutoCollectionPlugin.Bot
             int i = 0;
             while (!closed)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(1500);
                 if (closed)
                 {
                     PluginLog.Log($"craft stopping");
@@ -172,13 +178,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                     // TODO Select Item
 
-                    Thread.Sleep(500);
+                    Thread.Sleep(800);
                     if (RecipeNoteUi.RecipeNoteIsOpen())
                     {
                         RecipeNoteUi.SynthesizeButton();
                         while (RecipeNoteUi.RecipeNoteIsOpen())
                         {
-                            Thread.Sleep(500);
+                            Thread.Sleep(700);
                             if (closed)
                             {
                                 PluginLog.Log($"craft stopping");
@@ -192,13 +198,13 @@ namespace WoAutoCollectionPlugin.Bot
                         continue;
                     }
 
-                    Thread.Sleep(1800);
+                    Thread.Sleep(2000);
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
 
                     n = 0;
                     while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                     {
-                        Thread.Sleep(500);
+                        Thread.Sleep(800);
                         if (closed)
                         {
                             PluginLog.Log($"craft stopping");
@@ -208,11 +214,35 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"Finish: {i} Item: {recipeName}");
                     i++;
 
-                    // 精制+修理
-                    WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
+                    // 修理装备
+                    if (CommonUi.NeedsRepair())
+                    {
+                        PluginLog.Log($"开始修理装备");
+                        if (RecipeNoteUi.RecipeNoteIsOpen()) {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        }
+                        WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var rep);
+                        if (rep == "1")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
+                        }
+                        else if (rep == "99")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.Repair();
+                        }
+                    }
+                    
+                    // 魔晶石精制
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
 
                     if (BagManager.InventoryRemaining() <= 5)
                     {
+                        if (RecipeNoteUi.RecipeNoteIsOpen())
+                        {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                            Thread.Sleep(1000);
+                        }
                         Thread.Sleep(1000);
                         // 上交收藏品和交换道具
                         if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t)) {
