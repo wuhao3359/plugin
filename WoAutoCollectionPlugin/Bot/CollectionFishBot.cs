@@ -50,6 +50,13 @@ namespace WoAutoCollectionPlugin.Bot
         {
             canMove = false;
             readyMove = false;
+            WoAutoCollectionPlugin.GameData.CommonBot.Init();
+        }
+
+        public void StopScript()
+        {
+            closed = true;
+            WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
         public void CollectionFishScript(string args) {
@@ -92,9 +99,21 @@ namespace WoAutoCollectionPlugin.Bot
                 return;
             }
 
+            if (!CommonUi.CurrentJob(18))
+            {
+                Thread.Sleep(500);
+                WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                Thread.Sleep(500);
+            }
+
             DalamudApi.Framework.Update += OnCollectionFishUpdate;
             while (!closed && n < 10)
             {
+                if (closed)
+                {
+                    PluginLog.Log($"task fish stopping");
+                    break;
+                }
                 try
                 {
                     (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(fishName);
@@ -174,14 +193,6 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                         RunCollectionFishScript(type);
                     }
-
-                    if (type >= 3) {
-                        int CollectableCount = CommonUi.CanExtractMateriaCollectable();
-                        if (CollectableCount > 0)
-                        {
-                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
-                        }
-                    }
                 }
                 catch (Exception e)
                 {
@@ -192,7 +203,34 @@ namespace WoAutoCollectionPlugin.Bot
                 n++;
                 Thread.Sleep(3000);
             }
+
             DalamudApi.Framework.Update -= OnCollectionFishUpdate;
+            if (type >= 3)
+            {
+                int tt = 0;
+                while (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing])
+                {
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key);
+                    if (CommonUi.AddonSelectYesnoIsOpen())
+                    {
+                        CommonUi.SelectYesButton();
+                    }
+                    Thread.Sleep(1000);
+                    if (tt > 10)
+                    {
+                        break;
+                    }
+                    tt++;
+                }
+
+                int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+                if (CollectableCount > 0)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                }
+            }
         }
 
         // 前往指定钓鱼地点 [√]
@@ -221,24 +259,24 @@ namespace WoAutoCollectionPlugin.Bot
                 fishTerritoryType = Position.WhiteFishTerritoryType;
             } else if (type == 3) 
             {
-                // TODO 补全相关坐标
                 // 红弓鳍鱼 灵砂 地点A
                 ToArea = Position.ToFishAreaSandA;
-                FishArea = Position.FishAreaSandA;
-                fishTime = Position.FishTimeX1;
-                //fishTp = Position.WhiteFishTp;
-                //fishTerritoryType = Position.WhiteFishTerritoryType;
+                FishArea = Position.FishAreaSandA1;
+                fishTime = Position.SandFishTimeA1;
+                fishTp = Position.SandFishTp;
+                fishTerritoryType = Position.SandFishTerritoryType;
             }
             else if (type == 4)
             {
                 // 红弓鳍鱼 灵砂 地点B
                 ToArea = Position.ToFishAreaSandA;
-                FishArea = Position.FishAreaSandA;
-                fishTime = Position.FishTimeX1;
-                //fishTp = Position.WhiteFishTp;
-                //fishTerritoryType = Position.WhiteFishTerritoryType;
+                FishArea = Position.FishAreaSandA2;
+                fishTime = Position.SandFishTimeA1;
+                fishTp = Position.SandFishTp;
+                fishTerritoryType = Position.SandFishTerritoryType;
             }
 
+            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             Teleporter.Teleport(fishTp);
             Thread.Sleep(12000);
 
@@ -248,7 +286,6 @@ namespace WoAutoCollectionPlugin.Bot
                 return false;
             }
 
-            Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             // 通过路径到达固定区域位置
             position = MovePositions(ToArea, true);
 
@@ -270,7 +307,7 @@ namespace WoAutoCollectionPlugin.Bot
                 sw.Reset();
                 if (closed)
                 {
-                    PluginLog.Log($"中途结束");
+                    PluginLog.Log($"中途结束...");
                     return false;
                 }
                 sw.Start();
@@ -306,7 +343,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (closed)
                     {
                         PluginLog.Log($"中途结束");
-                        return false;
+                        break;
                     }
                     if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
                     {
@@ -320,20 +357,15 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1000);
                     if (closed)
                     {
-                        PluginLog.Log($"中途结束");
-                        return false;
+                        PluginLog.Log($"中途结束, 等待收杆...");
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                     }
                     if (!(DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]))
                     {
                         canMove = true;
                     }
                 }
-                
-                int count = CommonUi.CanExtractMateria();
-                if (count >= 5)
-                {
-                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
-                }
+
                 if (CommonUi.NeedsRepair())
                 {
                     return true;
@@ -420,7 +452,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Thread.Sleep(2000);
                 PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                if (!readyMove)
+                if (!readyMove && !canMove)
                 {
                     byte stackCount = 0;
                     bool existStatus = false;

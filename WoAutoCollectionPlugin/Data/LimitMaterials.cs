@@ -350,9 +350,9 @@ namespace WoAutoCollectionPlugin.Utility
         // 收藏品 需要分解或者上交
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = {
             (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
-            (36286, "暗性岩", 20, 23, 16, "采矿工", 90, 172, path36286, points36286, gatherIndex36286),    // 碎璃营地
+            //(36286, "暗性岩", 20, 23, 16, "采矿工", 90, 172, path36286, points36286, gatherIndex36286),    // 碎璃营地
             (36287, "水瓶土", 8, 11, 17, "园艺工", 90, 168, path36287, points36287, gatherIndex36287),    // 迷津
-            (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 90, 171, path36288, points36288, gatherIndex36288), // 波洛伽护法村
+            //(36288, "棕榈碎皮", 12, 15, 17, "园艺工", 90, 171, path36288, points36288, gatherIndex36288), // 波洛伽护法村
         };
 
         // 6.0版本灵砂获取途径 随大版本更新

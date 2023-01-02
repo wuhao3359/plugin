@@ -227,6 +227,7 @@ namespace WoAutoCollectionPlugin.Utility
          *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
          *  recipeName:上级以太药   生产物品名称
          *  exchangeItem:1          交换物品id 收藏品专业
+         *  hq:1                    hq物品index
          *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
          *  
          *  
@@ -237,7 +238,7 @@ namespace WoAutoCollectionPlugin.Utility
          */
         public static Dictionary<string, List<string>> CommandParams = new() {
             { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
-            { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } },
+            { "craft", new() { "pressKey", "type", "recipeName", "hq", "exchangeItem", "repair", "extractMateria" } },
             { "collectionfish", new() { "ftype", "fexchangeItem"} }
         };
 
@@ -253,6 +254,7 @@ namespace WoAutoCollectionPlugin.Utility
             { "pressKey", "1" },
             { "type", "1" },
             { "recipeName", "" },
+            { "hq", "0-0" },
             { "exchangeItem", "0" },
 
             // fish

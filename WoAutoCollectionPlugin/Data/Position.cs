@@ -471,14 +471,23 @@ namespace WoAutoCollectionPlugin.Utility
         // 精选鱼  红弓鳍鱼  (万能拟饵 11.5% 20.7-30.9) (蜉蝣 23% 18.2-30.2) (天空勺形鱼饵 23.9% 16.3-28.4) https://fish.ffmomola.com/#/wiki?spotId=257&fishId=36408
         public static string FishNameSandA = "红弓鳍鱼";
         public static Vector3[] ToFishAreaSandA = {
-            new Vector3 (0f, 0f, 0f)
+            new Vector3 (3172, 2583, 1048),
+            new Vector3 (3204, 2560, 990),
+            new Vector3 (3254, 2475, 868),
         };
-        public static Vector3[] FishAreaSandA = {
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
-            new Vector3 (0f, 0f, 0f),
+        public static Vector3[] FishAreaSandA1 = {
+            new Vector3 (3222, 2470, 804),
+            new Vector3 (3297, 2470, 836),
+            new Vector3 (3262, 2470, 835),
         };
-        public static int FishTimeX1 = 15;
+        public static Vector3[] FishAreaSandA2 = {
+            new Vector3 (3247, 2470, 951),
+            new Vector3 (3274, 2470, 1008),
+            new Vector3 (3247, 2470, 951),
+        };
+        public static int SandFishTimeA1 = 15;
+        public static uint SandFishTp = 166;
+        public static ushort SandFishTerritoryType = 956;
 
         // 精选鱼  噬卵者  (万能拟饵 7.5% 20.7-30.9) (奇美拉蠕虫 11.3% 18.2-30.2) https://fish.ffmomola.com/#/wiki?spotId=280&fishId=36497
         public static string FishNameSandB = "噬卵者";
@@ -1032,6 +1041,42 @@ namespace WoAutoCollectionPlugin.Utility
             1, 6, 12
         };
 
+        public static Vector3[] path4837 = {
+            new Vector3 (2900, 2238, 3085),
+            new Vector3 (2761, 2224, 3085),
+        };
+        public static Vector3[] Points4837 = {
+            new Vector3 (2681, 2223, 3068), // 进入A
+            new Vector3 (2704, 2217, 3068),
+            new Vector3 (2730, 2219, 3054),
+            new Vector3 (2717, 2223, 3038),
+            new Vector3 (2738, 2242, 2984), // 离开A
+            new Vector3 (2699, 2239, 2939), // 进入B
+            new Vector3 (2675, 2239, 2932),
+            new Vector3 (2674, 2245, 2921),
+            new Vector3 (2661, 2245, 2927),
+            new Vector3 (2663, 2254, 2958), // 离开B
+            new Vector3 (2648, 2241, 2982), // 进入C
+            new Vector3 (2640, 2235, 2998),
+            new Vector3 (2605, 2245, 2991),
+            new Vector3 (2600, 2252, 2980),
+            new Vector3 (2635, 2234, 3054), // 离开C
+            new Vector3 (2627, 2239, 3062), // 进入D
+            new Vector3 (2638, 2232, 3045),
+            new Vector3 (2617, 2243, 3075),
+            new Vector3 (2610, 2245, 3082),
+            new Vector3 (2664, 2231, 3081), // 离开D
+        };
+        public static int[] CanCollectPoints4837 = {
+            1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
+        };
+        public static int[] UnknownPointsNum4837 = {
+            3, 3, 3, 3
+        };
+        public static int[] Area4837 = {
+            1, 6, 11, 16
+        };
+
 
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
             (4814, 900, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
@@ -1050,7 +1095,7 @@ namespace WoAutoCollectionPlugin.Utility
             (27687, 1800, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
             (27703, 1800, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
 
-
+            (4837, 1800, "中原罗勒草", 17, "园艺工", 40, 11, path4837, Points4837, CanCollectPoints4837, UnknownPointsNum4837, Area4837), // 雷克兰德
 
             //(36083, 2700, "裸麦", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
             //(36084, 1800, "北洋岩盐", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //

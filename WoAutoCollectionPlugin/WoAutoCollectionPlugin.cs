@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using ClickLib;
+using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
@@ -343,16 +344,7 @@ namespace WoAutoCollectionPlugin
             //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
             //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
-            var statusList = DalamudApi.ClientState.LocalPlayer.StatusList.GetEnumerator();
-            while (statusList.MoveNext())
-            {
-                Dalamud.Game.ClientState.Statuses.Status status = statusList.Current;
-                uint statusId = status.StatusId;
-                if (WoAutoCollectionPlugin.GameData.Status.TryGetValue(statusId, out var state))
-                {
-                    PluginLog.Log($"Name : {state.Name}");
-                }
-            }
+            Click.TrySendClick("synthesis_material2_hq");
         }
 
         private void OnActionTestCommand(string command, string args)

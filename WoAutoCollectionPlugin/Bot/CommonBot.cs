@@ -235,7 +235,8 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
-            while (BagManager.GetInventoryItemCountById(ItemId) > 0) {
+            int tt = 0;
+            while (BagManager.GetInventoryItemCountById(ItemId) > 0 && tt < 5) {
                 if (closed)
                 {
                     PluginLog.Log($"CraftUploadAndExchange stopping");
@@ -243,6 +244,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 CraftUpload(Category, Sub, ItemId);
                 CraftExchange(int.Parse(e));
+                tt++;
             }
             return true;
         }

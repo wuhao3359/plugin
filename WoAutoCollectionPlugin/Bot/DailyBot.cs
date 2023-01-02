@@ -48,6 +48,7 @@ namespace WoAutoCollectionPlugin.Bot
             Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CollectionFishBot.StopScript();
         }
 
         public void DailyScript(string args)
@@ -144,6 +145,11 @@ namespace WoAutoCollectionPlugin.Bot
                     while (othetRun) {
                         Time.Update();
                         hour = Time.ServerTime.CurrentEorzeaHour();
+                        if (closed)
+                        {
+                            PluginLog.Log($"中途结束");
+                            return;
+                        }
                         PluginLog.Log($"当前时间{hour} wait to {et} ..");
                         Thread.Sleep(7000);
                         if (hour == et) {
@@ -569,25 +575,33 @@ namespace WoAutoCollectionPlugin.Bot
                 PluginLog.Log($"当前配置: {otherTaskParam}, 捕鱼灵砂任务");
                 Task task = new(() =>
                 {
+                    if (!CommonUi.CurrentJob(18))
+                    {
+                        Thread.Sleep(500);
+                        WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                        Thread.Sleep(500);
+                    }
+
+                    if (CommonUi.CanRepair())
+                    {
+                        Teleporter.Teleport(Position.ShopTp);
+                        Thread.Sleep(12000);
+                        MovePositions(Position.RepairNPC, false);
+                        WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                        Thread.Sleep(500);
+                    }
                     PluginLog.Log($"执行等待捕鱼灵砂任务...");
                     try
                     {
-                        int CollectableCount = CommonUi.CanExtractMateriaCollectable();
-                        if (CollectableCount > 0) {
-                            WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
-                        }
                         Random r = new();
                         int t = r.Next(3, 5);
                         string args = "ftype:" + t + " fexchangeItem:0";
+                        PluginLog.Log($"执行等待捕鱼灵砂任务: {args}");
                         WoAutoCollectionPlugin.GameData.CollectionFishBot.CollectionFishScript(args);
                     }
                     catch (Exception e)
                     {
                         PluginLog.Error($"其他任务, error!!!\n{e}");
-                    }
-                    if (RecipeNoteUi.RecipeNoteIsOpen())
-                    {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                     }
                     PluginLog.Log($"其他任务结束...");
                     othetRun = false;
@@ -600,6 +614,7 @@ namespace WoAutoCollectionPlugin.Bot
         {
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
             WoAutoCollectionPlugin.GameData.CraftBot.StopScript();
+            WoAutoCollectionPlugin.GameData.CollectionFishBot.StopScript();
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)

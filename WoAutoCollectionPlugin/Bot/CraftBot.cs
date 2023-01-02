@@ -176,7 +176,7 @@ namespace WoAutoCollectionPlugin.Bot
                         n++;
                     }
 
-                    // TODO Select Item
+                    RecipeNoteUi.Material1HqButton();
 
                     Thread.Sleep(800);
                     if (RecipeNoteUi.RecipeNoteIsOpen())
@@ -220,11 +220,15 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"开始修理装备");
                         if (RecipeNoteUi.RecipeNoteIsOpen()) {
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                            Thread.Sleep(1500);
                         }
                         WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var rep);
+                        PluginLog.Log($"修理装备配置: {rep}");
                         if (rep == "1")
                         {
-                            WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t) && t == "2") {
+                                WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                            }
                             WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
                         }
                         else if (rep == "99")
