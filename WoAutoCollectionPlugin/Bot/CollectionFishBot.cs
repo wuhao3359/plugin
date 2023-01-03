@@ -207,24 +207,6 @@ namespace WoAutoCollectionPlugin.Bot
             DalamudApi.Framework.Update -= OnCollectionFishUpdate;
             if (type >= 3)
             {
-                int tt = 0;
-                while (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing])
-                {
-
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key);
-                    if (CommonUi.AddonSelectYesnoIsOpen())
-                    {
-                        CommonUi.SelectYesButton();
-                    }
-                    Thread.Sleep(1000);
-                    if (tt > 10)
-                    {
-                        break;
-                    }
-                    tt++;
-                }
-
                 int CollectableCount = CommonUi.CanExtractMateriaCollectable();
                 if (CollectableCount > 0)
                 {
@@ -308,6 +290,21 @@ namespace WoAutoCollectionPlugin.Bot
                 if (closed)
                 {
                     PluginLog.Log($"中途结束...");
+                    int ii = 0;
+                    while (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
+                        PluginLog.Log($"正在停止钓鱼中...");
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                        if (CommonUi.AddonSelectYesnoIsOpen())
+                        {
+                            CommonUi.SelectYesButton();
+                        }
+                        Thread.Sleep(1000);
+                        if (ii > 15)
+                        {
+                            break;
+                        }
+                        ii++;
+                    }
                     return false;
                 }
                 sw.Start();
@@ -403,7 +400,13 @@ namespace WoAutoCollectionPlugin.Bot
                 case FishingState.Reeling:
                     break;
                 case FishingState.PoleReady:
-                    CollectionFishScript();
+                    if (!closed)
+                    {
+                        CollectionFishScript();
+                    }
+                    else {
+                        PluginLog.Log($"中途结束, 正在停止中...");
+                    }
                     break;
                 case FishingState.Waiting:
                     MakeSure();
