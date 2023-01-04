@@ -129,7 +129,6 @@ namespace WoAutoCollectionPlugin.Bot
                             if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
                             {
                                 Teleporter.Teleport(Position.ShopTp);
-                                Thread.Sleep(12000);
                             }
                             else
                             {
@@ -260,7 +259,6 @@ namespace WoAutoCollectionPlugin.Bot
 
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
             Teleporter.Teleport(fishTp);
-            Thread.Sleep(12000);
 
             if (DalamudApi.ClientState.TerritoryType - fishTerritoryType != 0)
             {

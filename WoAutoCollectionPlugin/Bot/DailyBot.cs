@@ -136,7 +136,6 @@ namespace WoAutoCollectionPlugin.Bot
                             (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
                             Teleporter.Teleport(Tp);
                             needTp = false;
-                            Thread.Sleep(12000);
                             break;
                         }
                     }
@@ -186,7 +185,6 @@ namespace WoAutoCollectionPlugin.Bot
                     if (needTp)
                     {
                         Teleporter.Teleport(Tp);
-                        Thread.Sleep(12000);
                     }
                     else {
                         needTp = true;
@@ -369,7 +367,7 @@ namespace WoAutoCollectionPlugin.Bot
                     break;
                 }
                 Teleporter.Teleport(Tp);
-                Thread.Sleep(12000);
+                
                 WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(territoryType);
@@ -492,7 +490,6 @@ namespace WoAutoCollectionPlugin.Bot
                 if (CommonUi.NeedsRepair())
                 {
                     Teleporter.Teleport(Position.ShopTp);
-                    Thread.Sleep(12000);
                     MovePositions(Position.RepairNPC, false);
                     WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                 }
@@ -585,7 +582,6 @@ namespace WoAutoCollectionPlugin.Bot
                     if (CommonUi.CanRepair())
                     {
                         Teleporter.Teleport(Position.ShopTp);
-                        Thread.Sleep(12000);
                         MovePositions(Position.RepairNPC, false);
                         WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500);

@@ -81,7 +81,6 @@ namespace WoAutoCollectionPlugin.Bot
             if (Tp != 0)
             {
                 Teleporter.Teleport(Tp);
-                Thread.Sleep(12000);
                 if (!CommonUi.CurrentJob(Job))
                 {
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
