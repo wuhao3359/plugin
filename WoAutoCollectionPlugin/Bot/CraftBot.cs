@@ -178,12 +178,6 @@ namespace WoAutoCollectionPlugin.Bot
                         RecipeNoteUi.SynthesizeButton();
                         Thread.Sleep(2000);
                     }
-                    else
-                    {
-                        PluginLog.Log($"RecipeNote not open, continue");
-                        Thread.Sleep(2000);
-                        continue;
-                    }
                     
                     if (RecipeNoteUi.SynthesisIsOpen()) {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
