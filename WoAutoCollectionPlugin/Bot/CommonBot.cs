@@ -213,6 +213,9 @@ namespace WoAutoCollectionPlugin.Bot
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F10_key);
             for (int i = 0; i < CollectableCount; i++) {
+                if (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(2500);
