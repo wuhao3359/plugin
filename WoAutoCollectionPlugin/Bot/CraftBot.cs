@@ -182,13 +182,18 @@ namespace WoAutoCollectionPlugin.Bot
                     if (RecipeNoteUi.SynthesisIsOpen()) {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
                         int n = 0;
-                        while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
+                        while (RecipeNoteUi.SynthesisIsOpen())
                         {
                             Thread.Sleep(1000);
                             if (closed)
                             {
                                 PluginLog.Log($"craft stopping");
                                 return;
+                            }
+                            n++;
+                            if (n > 60) {
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
+                                Thread.Sleep(2000);
                             }
                         }
                         PluginLog.Log($"Finish: {i} Item: {recipeName}");
