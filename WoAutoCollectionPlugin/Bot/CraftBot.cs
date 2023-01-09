@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.ClientState.Objects.SubKinds;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
@@ -149,6 +150,8 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             int i = 0;
+            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            PluginLog.Log($"---> {recipeName}, {recipeId}");
             while (!closed)
             {
                 Thread.Sleep(1500);
@@ -160,59 +163,44 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (BagManager.InventoryRemaining() > 5)
                 {
-                    int n = 0;
-                    while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
+                    if (!RecipeNoteUi.RecipeNoteIsOpen() && !RecipeNoteUi.SynthesisIsOpen())
                     {
-                        uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-                        PluginLog.Log($"---> {recipeName}, {recipeId}");
-                        RecipeNoteUi.OpenRecipeNote(recipeId);
-
-                        Thread.Sleep(1000);
-                        if (closed)
-                        {
-                            PluginLog.Log($"craft stopping");
-                            return;
+                        if (!DalamudApi.Condition[ConditionFlag.Crafting]) {
+                            RecipeNoteUi.OpenRecipeNote(recipeId);
                         }
-                        n++;
+                        Thread.Sleep(1000);
                     }
-
-                    RecipeNoteUi.Material1HqButton();
-
-                    Thread.Sleep(800);
+                    
                     if (RecipeNoteUi.RecipeNoteIsOpen())
                     {
+                        RecipeNoteUi.Material1HqButton();
+                        Thread.Sleep(800);
                         RecipeNoteUi.SynthesizeButton();
-                        while (RecipeNoteUi.RecipeNoteIsOpen())
+                        Thread.Sleep(2000);
+                    }
+                    else
+                    {
+                        PluginLog.Log($"RecipeNote not open, continue");
+                        Thread.Sleep(2000);
+                        continue;
+                    }
+                    
+                    if (RecipeNoteUi.SynthesisIsOpen()) {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
+                        int n = 0;
+                        while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
                         {
-                            Thread.Sleep(700);
+                            Thread.Sleep(1000);
                             if (closed)
                             {
                                 PluginLog.Log($"craft stopping");
                                 return;
                             }
                         }
+                        PluginLog.Log($"Finish: {i} Item: {recipeName}");
+                        i++;
                     }
-                    else
-                    {
-                        PluginLog.Log($"RecipeNote not open, continue");
-                        continue;
-                    }
-
-                    Thread.Sleep(2000);
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
-
-                    n = 0;
-                    while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
-                    {
-                        Thread.Sleep(800);
-                        if (closed)
-                        {
-                            PluginLog.Log($"craft stopping");
-                            return;
-                        }
-                    }
-                    PluginLog.Log($"Finish: {i} Item: {recipeName}");
-                    i++;
+                    Thread.Sleep(500);
 
                     // 修理装备
                     if (CommonUi.NeedsRepair())
