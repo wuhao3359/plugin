@@ -170,13 +170,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                     tt = 0;
-                                    while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
+                                    while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
                                     {
                                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                                        Thread.Sleep(500);
+                                        Thread.Sleep(800);
                                         tt++;
                                     }
-                                    if (tt >= 5)
+                                    if (tt >= 7)
                                     {
                                         PluginLog.Log($"未打开采集面板, skip {i}..");
                                         if (gameObjects.ToArray().Length > 0)
