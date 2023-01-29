@@ -149,6 +149,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
+            bool needHQ = true;
             int i = 0;
             uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             PluginLog.Log($"---> {recipeName}, {recipeId}");
@@ -170,16 +171,20 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                         Thread.Sleep(1000);
                     }
-                    
+
                     if (RecipeNoteUi.RecipeNoteIsOpen())
                     {
-                        RecipeNoteUi.Material1HqButton();
-                        Thread.Sleep(800);
+                        if (needHQ) {
+                            RecipeNoteUi.Material1HqButton();
+                            Thread.Sleep(800);
+                            needHQ = false;
+                        }
                         RecipeNoteUi.SynthesizeButton();
                         Thread.Sleep(2000);
                     }
-                    
-                    if (RecipeNoteUi.SynthesisIsOpen()) {
+
+                    if (RecipeNoteUi.SynthesisIsOpen())
+                    {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
                         int n = 0;
                         while (RecipeNoteUi.SynthesisIsOpen())
@@ -191,7 +196,8 @@ namespace WoAutoCollectionPlugin.Bot
                                 return;
                             }
                             n++;
-                            if (n > 60) {
+                            if (n > 60)
+                            {
                                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 Thread.Sleep(2000);
                             }
@@ -199,11 +205,15 @@ namespace WoAutoCollectionPlugin.Bot
                         PluginLog.Log($"Finish: {i} Item: {recipeName}");
                         i++;
                     }
+                    else {
+                        needHQ = true;
+                    }
                     Thread.Sleep(500);
 
                     // 修理装备
                     if (CommonUi.NeedsRepair())
                     {
+                        needHQ = true;
                         PluginLog.Log($"开始修理装备");
                         if (RecipeNoteUi.RecipeNoteIsOpen()) {
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
@@ -223,9 +233,13 @@ namespace WoAutoCollectionPlugin.Bot
                             WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                         }
                     }
-                    
+
                     // 魔晶石精制
-                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
+                    int em = CommonUi.CanExtractMateria();
+                    if (em > 2) {
+                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(em);
+                        needHQ = true;
+                    }
 
                     if (BagManager.InventoryRemaining() <= 5)
                     {
@@ -254,8 +268,18 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1000);
                 }
                 else {
-                    PluginLog.Log($"背包容量不足, 任务停止...");
-                    closed = true;
+                    // 尝试重试一次
+                    if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t))
+                    {
+                        if (t == "2")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange();
+                        }
+                    }
+                    if (BagManager.InventoryRemaining() <= 5) {
+                        PluginLog.Log($"背包容量不足, 任务停止...");
+                        closed = true;
+                    }
                 }
             }
         }

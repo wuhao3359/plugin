@@ -615,7 +615,7 @@ namespace WoAutoCollectionPlugin.Bot
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
                 PluginLog.Log($"开始采集: {Names}, {count}");
-                if (count < 4000 && gp >= 200)
+                if (count < 8000 && gp >= 200)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
