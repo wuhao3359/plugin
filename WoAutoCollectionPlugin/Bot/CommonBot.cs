@@ -174,10 +174,10 @@ namespace WoAutoCollectionPlugin.Bot
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(2000);
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F11_key);
-            Thread.Sleep(1000);
+            Thread.Sleep(1500);
             for (int i = 0; i < count; i++) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000);
