@@ -1,4 +1,5 @@
-﻿using Dalamud.Game.Command;
+﻿using ClickLib;
+using Dalamud.Game.Command;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using System;
@@ -7,6 +8,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
@@ -285,9 +287,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                string[] str = args.Split(' ');
-                int area = int.Parse(str[0]);
-                GameData.GatherBot.NormalScript(area);
+                GameData.GatherBot.NormalScript(args);
                 taskRunning = false;
                 PluginLog.Log($"end...");
             });
@@ -325,24 +325,26 @@ namespace WoAutoCollectionPlugin
         private void OnWoTestCommand(string command, string args)
         {
             // 当前区域
-            GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
-            PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
+            //GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
+            //PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
 
-            GameData.Recipes.TryGetValue(31652, out var r);
-            PluginLog.Log($"r: {r.RecipeLevelTable}, {r.ItemResult.Value.RowId}");
+            //GameData.Recipes.TryGetValue(31652, out var r);
+            //PluginLog.Log($"r: {r.RecipeLevelTable}, {r.ItemResult.Value.RowId}");
             // 430  收藏用...
-            UnkData5Obj[] UnkData5 = r.UnkData5;
-            foreach (UnkData5Obj obj in UnkData5) {
-                PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
-            }
+            //UnkData5Obj[] UnkData5 = r.UnkData5;
+            //foreach (UnkData5Obj obj in UnkData5) {
+            //    PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
+            //}
 
             // 鼠标点击测试
             //GatherBot GatherBot = new GatherBot(GameData);
             //GatherBot.test();
 
             // 天气
-            (Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
-            PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
+            //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
+            //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
+
+            Click.TrySendClick("synthesis_material2_hq");
         }
 
         private void OnActionTestCommand(string command, string args)

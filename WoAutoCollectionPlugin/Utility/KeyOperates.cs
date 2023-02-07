@@ -92,7 +92,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(40);
+            Thread.Sleep(45);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
@@ -145,11 +145,11 @@ public class KeyOperates
                 notMove++;
             }
 
-            if (notMove >= 8) {
+            if (notMove >= 9) {
                 KeyMethod(Keys.d_key, 300);
                 KeyDown(Keys.space_key);
                 notMove = 0;
-            } else if (notMove >= 4) {
+            } else if (notMove >= 5) {
                 KeyMethod(Keys.a_key, 300);
                 KeyMethod(Keys.space_key);
                 notMove = 0;
@@ -187,9 +187,9 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 5) {
+            if (turn >= 7) {
                 MoveStop();
-                positionA = Revise(positionB, 800);
+                positionA = Revise(positionB, 700);
                 turn = 0;
             }
 
@@ -353,7 +353,7 @@ public class KeyOperates
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
-        return Revise(positionB, 250);
+        return Revise(positionB, 200);
     }
 
     public Vector3 Revise(Vector3 positionB, int tt) {
