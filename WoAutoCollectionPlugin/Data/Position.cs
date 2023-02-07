@@ -1087,23 +1087,23 @@ namespace WoAutoCollectionPlugin.Utility
             (19915, 900, "稻槎草", 17, "园艺工", 70, 110, path19915, Points19915, CanCollectPoints19915, UnknownPointsNum19915, Area19915), // 延夏
 
             // (27759, 1800, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
-            (27803, 2700, "凝灰岩", 16, "采矿工", 78, 139, path27803, Points27803, CanCollectPoints27803, UnknownPointsNum27803, Area27803), // 图姆拉村
-            (27824, 900, "野园甜菜", 17, "园艺工", 78, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
+            (27803, 900, "凝灰岩", 16, "采矿工", 78, 139, path27803, Points27803, CanCollectPoints27803, UnknownPointsNum27803, Area27803), // 图姆拉村
+            (27824, 2700, "野园甜菜", 17, "园艺工", 78, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
             (27826, 900, "皇家葡萄", 17, "园艺工", 78, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
             (27832, 900, "山地小麦", 17, "园艺工", 78, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
             //(27834, 1800, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
-            (27687, 1800, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
-            (27703, 1800, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
+            (27687, 900, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
+            (27703, 900, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
 
             (4837, 1800, "中原罗勒草", 17, "园艺工", 40, 11, path4837, Points4837, CanCollectPoints4837, UnknownPointsNum4837, Area4837), // 雷克兰德
 
-            //(36083, 2700, "裸麦", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            //(36084, 1800, "北洋岩盐", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            //(36085, 2700, "萨维奈紫苏", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            (36086, 2700, "棕榈糖浆", 17, "园艺工", 90, 170, path36086, Points36086, CanCollectPoints36086, UnknownPointsNum36086, Area36086), // 代米尔遗烈乡
-            //(36087, 1800, "椰子", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36089, 1800, "巨人新薯", 16, "采矿工", 90, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            (36089, 1800, "无花果", 17, "园艺工", 90, 178, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 创作者之家
+            //(36083, 2700, "裸麦", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36084, 1800, "北洋岩盐", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            //(36085, 2700, "萨维奈紫苏", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            (36086, 2700, "棕榈糖浆", 17, "园艺工", 88, 170, path36086, Points36086, CanCollectPoints36086, UnknownPointsNum36086, Area36086), // 代米尔遗烈乡
+            //(36087, 1800, "椰子", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
+            //(36089, 1800, "巨人新薯", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
+            (36089, 1800, "无花果", 17, "园艺工", 88, 178, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 创作者之家
         };
 
         public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetMaterialById(int id)
