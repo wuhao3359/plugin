@@ -94,7 +94,6 @@ namespace WoAutoCollectionPlugin
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
             newRequest = false;
-            items = GameData.DataManager.GetExcelSheet<Item>();
             MarketEventHandler = new MarketEventHandler();
 
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
@@ -168,6 +167,7 @@ namespace WoAutoCollectionPlugin
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
+                items = GameData.DataManager.GetExcelSheet<Item>();
                 Time = new SeTime();
                 Executor = new Executor();
                 WeatherManager = new WeatherManager(GameData);
