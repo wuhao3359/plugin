@@ -218,7 +218,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2600);
             }
 
             //if (CommonUi.AddonPurifyItemSelectorIsOpen())
@@ -370,6 +370,17 @@ namespace WoAutoCollectionPlugin.Bot
                     for (int k = 0; k < r; k++) {
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                     }
+                }
+                else if (item == 72)
+                {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num8_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
                 }
                 else if (item >= 80 && item <= 99)
                 {
@@ -702,13 +713,13 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F6_key);
                 Thread.Sleep(2000);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F7_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F6_key);
                 Thread.Sleep(2000);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F7_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F9_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
 
                 if (gp >= 300 && action > 0)
                 {
@@ -720,11 +731,11 @@ namespace WoAutoCollectionPlugin.Bot
             }
             else {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2400);
+                Thread.Sleep(2500);
             }
             int tt = 0;
             while (CommonUi.AddonGatheringMasterpieceIsOpen() && tt < 7)

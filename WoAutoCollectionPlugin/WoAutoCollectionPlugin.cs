@@ -1,10 +1,16 @@
 ﻿using ClickLib;
 using Dalamud.Game.Command;
+using Dalamud.Game.Network;
+using Dalamud.Game.Network.Structures;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using Lumina.Data.Parsing;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Numerics;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -57,9 +63,23 @@ namespace WoAutoCollectionPlugin
 
         public static WeatherManager WeatherManager { get; private set; } = null!;
 
+        internal MarketEventHandler MarketEventHandler { get; private set; }
+
         public static Executor Executor;
 
+        public static bool newRequest;
+
+        public static GetFilePointer getFilePtr;
+
+        public static List<MarketBoardCurrentOfferings> _cache = new();
+
+        public static Dictionary<string, int> itemsPrice = new();
+
+        public static Lumina.Excel.ExcelSheet<Item> items;
+
         public bool taskRunning = false;
+
+        public static int price = 1000000;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
         {
@@ -73,7 +93,23 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             ClickLib.Click.Initialize();
-            
+            newRequest = false;
+            items = GameData.DataManager.GetExcelSheet<Item>();
+            MarketEventHandler = new MarketEventHandler();
+
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+
+            try
+            {
+                var ptr = DalamudApi.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 14 83 7B 44 00");
+                getFilePtr = Marshal.GetDelegateForFunctionPointer<GetFilePointer>(ptr);
+            }
+            catch (Exception e)
+            {
+                getFilePtr = null;
+                PluginLog.LogError(e.ToString());
+            }
+
             try
             {
                 DalamudApi.CommandManager.AddHandler(collect, new CommandInfo(OnCommand)
@@ -145,6 +181,9 @@ namespace WoAutoCollectionPlugin
             }
         }
 
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate IntPtr GetFilePointer(byte index);
+
         public void Dispose()
         {
             // PluginUi.Dispose();
@@ -159,7 +198,9 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
-
+            MarketEventHandler.Dispose();
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            MarketCommons.Dispose();
             // Game.DisAble();
         }
 
@@ -344,7 +385,7 @@ namespace WoAutoCollectionPlugin
             //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
             //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
-            Click.TrySendClick("synthesis_material2_hq");
+            CommonUi.test1();
         }
 
         private void OnActionTestCommand(string command, string args)

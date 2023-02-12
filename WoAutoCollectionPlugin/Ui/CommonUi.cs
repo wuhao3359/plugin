@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using ClickLib;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
+using Dalamud.Plugin.Ipc.Exceptions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Lumina.Excel.GeneratedSheets;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Utility;
 
@@ -59,6 +61,18 @@ namespace WoAutoCollectionPlugin.Ui
         {
             var (addon, success) = IsAddonVisible("InclusionShop");
             return success;
+        }
+
+        public unsafe static bool AddonRetainerSellListIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("AddonRetainerSellList");
+            return success;
+        }
+
+        public unsafe static bool GetAddonRetainerSell()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("AddonRetainerSell", 1);
+            return false;
         }
 
         public unsafe static bool SelectString1Button()
@@ -513,6 +527,133 @@ namespace WoAutoCollectionPlugin.Ui
             {
                 return Click.TrySendClick("repair_all");
             }
+            return false;
+        }
+
+        public static unsafe bool ItemSearchIsOpen()
+        {
+            var (addon, success) = CommonUi.IsAddonVisible("ItemSearch");
+            return success;
+        }
+
+        public static unsafe bool RetainerSellConfirmButton()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("RetainerSell", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("confirm");
+            }
+            return false;
+        }
+
+        public static unsafe bool test()
+        {
+            PluginLog.Log("----------into------------");
+            var im = InventoryManager.Instance();
+            var marketContainer = im->GetInventoryContainer(InventoryType.RetainerMarket);
+
+            PluginLog.Log($"------------------------------------, {marketContainer->Size}");
+            uint slot2 = 0;
+            for (var i = 0; i < marketContainer->Size; i++)
+            {
+                var item = marketContainer->GetInventorySlot(i);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+                if (item->ItemID == 0)
+                {
+                    slot2 = (uint)item->Slot;
+                }
+            }
+
+            var inventory4Container = im->GetInventoryContainer(InventoryType.Inventory4);
+            PluginLog.Log($"------------------------------------, {inventory4Container->Size}");
+            uint slot1 = 0;
+            for (var j = 0; j < inventory4Container->Size; j++)
+            {
+                var item = inventory4Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+                if (item->ItemID != 0) {
+                    slot1 = (uint)item->Slot;
+                }
+            }
+            PluginLog.Log($"{slot1}--->{slot2}");
+
+           // int res = im->MoveItemSlot(InventoryType.Inventory4, slot1, InventoryType.RetainerMarket, slot2, 1);
+
+            PluginLog.Log("------------------------------------");
+            return false;
+        }
+
+        public static unsafe bool test1()
+        {
+            PluginLog.Log("----------into------------");
+            var im = InventoryManager.Instance();
+            var marketContainer = im->GetInventoryContainer(InventoryType.RetainerMarket);
+
+            PluginLog.Log($"------------------------------------, {marketContainer->Size}");
+            for (var i = 0; i < marketContainer->Size; i++)
+            {
+                var item = marketContainer->GetInventorySlot(i);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+
+
+
+            var inventory1Container = im->GetInventoryContainer(InventoryType.Inventory1);
+            PluginLog.Log($"------------------------------------, {inventory1Container->Size}");
+            for (var j = 0; j < inventory1Container->Size; j++)
+            {
+                var item = inventory1Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+            PluginLog.Log("------------------------------------");
+
+            var inventory2Container = im->GetInventoryContainer(InventoryType.Inventory2);
+            PluginLog.Log($"------------------------------------, {inventory2Container->Size}");
+            for (var j = 0; j < inventory2Container->Size; j++)
+            {
+                var item = inventory2Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+            PluginLog.Log("------------------------------------");
+
+            var inventory3Container = im->GetInventoryContainer(InventoryType.Inventory3);
+            PluginLog.Log($"------------------------------------, {inventory3Container->Size}");
+            for (var j = 0; j < inventory3Container->Size; j++)
+            {
+                var item = inventory3Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+            PluginLog.Log("------------------------------------");
+
+            var inventory4Container = im->GetInventoryContainer(InventoryType.Inventory4);
+            PluginLog.Log($"------------------------------------, {inventory4Container->Size}");
+            for (var j = 0; j < inventory4Container->Size; j++)
+            {
+                var item = inventory4Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+            PluginLog.Log("------------------------------------");
             return false;
         }
 

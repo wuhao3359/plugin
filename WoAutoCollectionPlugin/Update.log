@@ -1,5 +1,6 @@
 ﻿备注：
 	初始化需要把\XIVLauncher目录的dll文件移到 C:\Users\用户名\AppData\Roaming\XIVLauncher\addon\Hooks\dev\下
+	关注C:\Users\wuhao\AppData\Roaming\NuGet\NuGet.Config
 
 8/9
 *  测试移动脚本[√]
