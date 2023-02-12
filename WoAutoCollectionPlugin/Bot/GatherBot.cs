@@ -71,7 +71,6 @@ namespace WoAutoCollectionPlugin.Bot
         public bool RunNormalScript(int id, string lv)
         {
             Init();
-            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id, lv);
             if (Id <= 0) {
@@ -92,6 +91,7 @@ namespace WoAutoCollectionPlugin.Bot
             int error = 0;
             while (!closed & n < 100)
             {
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 List<GameObject> gameObjects = new();
