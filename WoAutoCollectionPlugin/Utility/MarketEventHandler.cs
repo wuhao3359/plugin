@@ -130,6 +130,9 @@ namespace WoAutoCollectionPlugin.Utility
             }
             PluginLog.Log($"price --->> {itemPrice}");
             if (itemPrice >= 1 && itemPrice < 10000000) {
+                if (itemsPrice.TryGetValue(itemName, out var p)) {
+                    itemsPrice.Remove(itemName);
+                }
                 itemsPrice.Add(itemName, itemPrice);
             }
             WoAutoCollectionPlugin.newRequest = false;
@@ -248,7 +251,7 @@ namespace WoAutoCollectionPlugin.Utility
             if (retainerSell == null) return;
 
             if (retainerSell->UldManager.NodeListCount != 23) {
-                PluginLog.Log("Unexpected fields in addon RetainerSell");
+                PluginLog.LogError("Unexpected fields in addon RetainerSell");
                 return;
             }
 
@@ -259,10 +262,8 @@ namespace WoAutoCollectionPlugin.Utility
                 var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
                 PluginLog.Log($"componentNumericInput: {new IntPtr(priceComponentNumericInput).ToString("X")}");
                 PluginLog.Log($"componentNumericInput: {new IntPtr(quantityComponentNumericInput).ToString("X")}");
-                priceComponentNumericInput->SetValue(itemPrice);
+                priceComponentNumericInput->SetValue(p);
 
-                if (retainerSell->UldManager.NodeListCount != 23)
-                    PluginLog.Log($"Unexpected fields in addon RetainerSell");
                 // click confirm on RetainerSell
                 // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214B4D360E0 evt=EventType.CHANGE  a3=21  a4=0x214B920D2E0 (src=0x214B4D360E0; tgt=0x21460686550) a5=0xBB316FE6C8
                 var addonRetainerSell = (AddonRetainerSell*)retainerSell;
