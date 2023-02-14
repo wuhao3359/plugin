@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.Reflection;
 using FFXIVClientStructs.Attributes;
+using System.Collections.Generic;
 
 namespace WoAutoCollectionPlugin.Utility
 {
@@ -62,6 +63,12 @@ namespace WoAutoCollectionPlugin.Utility
         //internal Configuration conf => Configuration.GetOrLoad();
 
         private IntPtr AddonRetainerSellList = IntPtr.Zero;
+
+        private static Dictionary<string, int> itemsPrice = new();
+
+        private static string itemName = "";
+
+        private static int itemPrice = 10000000;
 
         public MarketEventHandler()
         {
@@ -115,13 +122,16 @@ namespace WoAutoCollectionPlugin.Utility
                     if (i == listing.ItemListings.Count) return;
                 }
             }
-                
-            WoAutoCollectionPlugin.price = (int)listing.ItemListings[i].PricePerUnit - 1;
 
-            if (WoAutoCollectionPlugin.price <= 0) {
-                WoAutoCollectionPlugin.price = 1;
+            itemPrice = (int)listing.ItemListings[i].PricePerUnit - 1;
+
+            if (itemPrice <= 0) {
+                itemPrice = 1;
             }
-            PluginLog.Log($"price --->> {WoAutoCollectionPlugin.price}");
+            PluginLog.Log($"price --->> {itemPrice}");
+            if (itemPrice >= 1 && itemPrice < 10000000) {
+                itemsPrice.Add(itemName, itemPrice);
+            }
             WoAutoCollectionPlugin.newRequest = false;
         }
 
@@ -147,7 +157,9 @@ namespace WoAutoCollectionPlugin.Utility
                 PluginLog.Log(
                     $"AddonRetainerSellList.OnFinalize (unk. have {AddonRetainerSellList:X} got {addon:X})");
             AddonRetainerSellList = IntPtr.Zero;
-            WoAutoCollectionPlugin.itemsPrice = new();
+            itemsPrice = new();
+            itemName = "";
+            itemPrice = 10000000;
             AddonRetainerSellList_OnFinalize_HW.Original(addon);
         }
 
@@ -157,8 +169,9 @@ namespace WoAutoCollectionPlugin.Utility
             var result = AddonRetainerSellList_OnSetup_HW.Original(addon, a2, dataPtr);
             AddonRetainerSellList = addon;
 
-            WoAutoCollectionPlugin.itemsPrice = new();
-            WoAutoCollectionPlugin.price = 1000000;
+            itemsPrice = new();
+            itemName = "";
+            itemPrice = 10000000;
             return result;
         }
 
@@ -177,12 +190,12 @@ namespace WoAutoCollectionPlugin.Utility
             //open compare prices list on opening sell price selection
             var addonRetainerSell = (AddonRetainerSell*)addon;
             var comparePrices = addonRetainerSell->ComparePrices->AtkComponentBase.OwnerNode;
-            var itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
+            itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
             PluginLog.Log($"itemName: {itemName}");
-            if (WoAutoCollectionPlugin.itemsPrice.TryGetValue(itemName, out var itemPrice))
+            if (itemsPrice.TryGetValue(itemName, out var p))
             {
-                PluginLog.Log($"有缓存数据: {itemPrice}");
-                SetPrice(itemPrice);
+                PluginLog.Log($"有缓存数据: {p}");
+                SetPrice();
             }
             else
             {
@@ -200,7 +213,7 @@ namespace WoAutoCollectionPlugin.Utility
             if (!CommonUi.ItemSearchIsOpen()) {
                 Task task = new(() =>
                 {
-                    Thread.Sleep(800);
+                    Thread.Sleep(1000);
                     // close ItemSearchResult
                     // Component::GUI::AtkComponentWindow.ReceiveEvent this=0x1AC801863B0 evt=EventType.CHANGE               a3=2   a4=0x1AC66640090 (src=0x1AC801863B0; tgt=0x1AC98B47EA0) a5=0x4AAAEFE388
                     var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
@@ -239,57 +252,24 @@ namespace WoAutoCollectionPlugin.Utility
                 return;
             }
 
-            var priceComponentNumericInput =
-(AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
-            var quantityComponentNumericInput =
-                (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
-            var price = WoAutoCollectionPlugin.price;
-            priceComponentNumericInput->SetValue(WoAutoCollectionPlugin.price);
+            if (itemsPrice.TryGetValue(itemName, out var p)) {
+                // 价格
+                var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
+                // 数量
+                var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
+                PluginLog.Log($"componentNumericInput: {new IntPtr(priceComponentNumericInput).ToString("X")}");
+                PluginLog.Log($"componentNumericInput: {new IntPtr(quantityComponentNumericInput).ToString("X")}");
+                priceComponentNumericInput->SetValue(itemPrice);
 
-            if (retainerSell->UldManager.NodeListCount != 23)
-                PluginLog.Log($"Unexpected fields in addon RetainerSell");
-            // click confirm on RetainerSell
-            // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214B4D360E0 evt=EventType.CHANGE  a3=21  a4=0x214B920D2E0 (src=0x214B4D360E0; tgt=0x21460686550) a5=0xBB316FE6C8
-            var addonRetainerSell = (AddonRetainerSell*)retainerSell;
-            if (!WoAutoCollectionPlugin.itemsPrice.TryGetValue(CommonUi.GetNodeText(addonRetainerSell->ItemName), out var p)) {
-                WoAutoCollectionPlugin.itemsPrice.Add(CommonUi.GetNodeText(addonRetainerSell->ItemName), price);
-            }
-
-            if (DalamudApi.KeyState[Keys.shift_key]) {
-                Task task = new(() =>
+                if (retainerSell->UldManager.NodeListCount != 23)
+                    PluginLog.Log($"Unexpected fields in addon RetainerSell");
+                // click confirm on RetainerSell
+                // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214B4D360E0 evt=EventType.CHANGE  a3=21  a4=0x214B920D2E0 (src=0x214B4D360E0; tgt=0x21460686550) a5=0xBB316FE6C8
+                var addonRetainerSell = (AddonRetainerSell*)retainerSell;
+                if (DalamudApi.KeyState[Keys.shift_key])
                 {
-                    Thread.Sleep(500);
                     MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
-                });
-                task.Start();
-            }
-        }
-
-        private unsafe void SetPrice(int price)
-        {
-            var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
-            if (retainerSell == null) return;
-
-            var priceComponentNumericInput =
-(AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
-            //var quantityComponentNumericInput =
-            //    (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
-            priceComponentNumericInput->SetValue(price);
-
-            if (retainerSell->UldManager.NodeListCount != 23)
-                PluginLog.Log($"Unexpected fields in addon RetainerSell");
-            // click confirm on RetainerSell
-            // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214B4D360E0 evt=EventType.CHANGE  a3=21  a4=0x214B920D2E0 (src=0x214B4D360E0; tgt=0x21460686550) a5=0xBB316FE6C8
-            var addonRetainerSell = (AddonRetainerSell*)retainerSell;
-
-            if (DalamudApi.KeyState[Keys.shift_key])
-            {
-                Task task = new(() =>
-                {
-                    Thread.Sleep(500);
-                    MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
-                });
-                task.Start();
+                }
             }
         }
 

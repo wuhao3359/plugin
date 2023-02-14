@@ -73,13 +73,9 @@ namespace WoAutoCollectionPlugin
 
         public static List<MarketBoardCurrentOfferings> _cache = new();
 
-        public static Dictionary<string, int> itemsPrice = new();
-
         public static Lumina.Excel.ExcelSheet<Item> items;
 
         public bool taskRunning = false;
-
-        public static int price = 1000000;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
         {
@@ -170,7 +166,6 @@ namespace WoAutoCollectionPlugin
                 items = GameData.DataManager.GetExcelSheet<Item>();
                 Time = new SeTime();
                 Executor = new Executor();
-                WeatherManager = new WeatherManager(GameData);
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
