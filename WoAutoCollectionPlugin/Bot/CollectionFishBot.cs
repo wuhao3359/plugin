@@ -20,7 +20,6 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class CollectionFishBot
     {
-        private EventFramework EventFramework { get; init; }
 
         private static SeTugType TugType { get; set; } = null!;
 
@@ -41,7 +40,6 @@ namespace WoAutoCollectionPlugin.Bot
 
         public CollectionFishBot()
         {
-            EventFramework = new EventFramework(DalamudApi.SigScanner);
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
         }
@@ -382,36 +380,40 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void OnCollectionFishUpdate(Framework _)
         {
-            FishingState = EventFramework.FishingState;
-            if (LastState == FishingState)
-                return;
-            LastState = FishingState;
-            switch (FishingState)
+            if (WoAutoCollectionPlugin.GameData.EventFramework != null)
             {
-                case FishingState.PoleOut:
-                    canMove = false;
-                    fishsw.Restart();
-                    break;
-                case FishingState.Bite:
-                    OnCollectionFishBite();
-                    break;
-                case FishingState.Reeling:
-                    break;
-                case FishingState.PoleReady:
-                    if (!closed)
-                    {
-                        CollectionFishScript();
-                    }
-                    else {
-                        PluginLog.Log($"中途结束, 正在停止中...");
-                    }
-                    break;
-                case FishingState.Waiting:
-                    MakeSure();
-                    break;
-                case FishingState.Quit:
-                    canMove = true;
-                    break;
+                FishingState = WoAutoCollectionPlugin.GameData.EventFramework.FishingState;
+                if (LastState == FishingState)
+                    return;
+                LastState = FishingState;
+                switch (FishingState)
+                {
+                    case FishingState.PoleOut:
+                        canMove = false;
+                        fishsw.Restart();
+                        break;
+                    case FishingState.Bite:
+                        OnCollectionFishBite();
+                        break;
+                    case FishingState.Reeling:
+                        break;
+                    case FishingState.PoleReady:
+                        if (!closed)
+                        {
+                            CollectionFishScript();
+                        }
+                        else
+                        {
+                            PluginLog.Log($"中途结束, 正在停止中...");
+                        }
+                        break;
+                    case FishingState.Waiting:
+                        MakeSure();
+                        break;
+                    case FishingState.Quit:
+                        canMove = true;
+                        break;
+                }
             }
         }
 
