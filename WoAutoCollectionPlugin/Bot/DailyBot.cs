@@ -25,8 +25,6 @@ namespace WoAutoCollectionPlugin.Bot
 
         private string otherTaskParam = "0";
 
-        SeTime Time = new();
-
         int hour = 0;
 
         int et = 0;
@@ -98,8 +96,8 @@ namespace WoAutoCollectionPlugin.Bot
             // 每24个et内单个任务只允许被执行一遍
             List<int> finishIds = new();
 
-            Time.Update();
-            hour = Time.ServerTime.CurrentEorzeaHour();
+            WoAutoCollectionPlugin.Time.Update();
+            hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             et = hour;
             while (!closed && n < 1000)
             {
@@ -142,8 +140,8 @@ namespace WoAutoCollectionPlugin.Bot
 
                     RunWaitTask(lv);
                     while (othetRun) {
-                        Time.Update();
-                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        WoAutoCollectionPlugin.Time.Update();
+                        hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                         if (closed)
                         {
                             PluginLog.Log($"中途结束");
@@ -155,8 +153,8 @@ namespace WoAutoCollectionPlugin.Bot
                            StopWaitTask();
                         }
                     }
-                    Time.Update();
-                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    WoAutoCollectionPlugin.Time.Update();
+                    hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                     PluginLog.Log($"当前时间{hour} wait to {et} ..");
                 }
 
@@ -271,8 +269,8 @@ namespace WoAutoCollectionPlugin.Bot
                     // finish work
                     finishIds.Add(id);
                     num++;
-                    Time.Update();
-                    hour = Time.ServerTime.CurrentEorzeaHour();
+                    WoAutoCollectionPlugin.Time.Update();
+                    hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                     Thread.Sleep(1000);
 
                     // 修理装备
@@ -305,9 +303,8 @@ namespace WoAutoCollectionPlugin.Bot
         {
             int n = 0;
             bool first = true;
-            SeTime Time = new();
-            Time.Update();
-            int hour = Time.ServerTime.CurrentEorzeaHour();
+            WoAutoCollectionPlugin.Time.Update();
+            int hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             int et = hour;
             while (!closed && n < 1000)
             {
@@ -346,8 +343,8 @@ namespace WoAutoCollectionPlugin.Bot
                     RunWaitTask(lv);
                     while (othetRun)
                     {
-                        Time.Update();
-                        hour = Time.ServerTime.CurrentEorzeaHour();
+                        WoAutoCollectionPlugin.Time.Update();
+                        hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                         PluginLog.Log($"当前时间{hour} wait to {et} ..");
                         Thread.Sleep(5000);
                         if (hour == et)
@@ -358,8 +355,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
 
                 (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) = LimitMaterials.GetCollecMaterialById(id);
-                Time.Update();
-                hour = Time.ServerTime.CurrentEorzeaHour();
+                WoAutoCollectionPlugin.Time.Update();
+                hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                 PluginLog.Log($"开始执行任务, id: {id} Name: {Name}, Job: {Job}, MinEt: {MinEt}, MaxEt: {MaxEt}..");
                 if (Tp == 0)
                 {
@@ -380,18 +377,18 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(500);
                 Vector3 position = MovePositions(Path, true);
                 while (hour >= MinEt && hour <= MaxEt) {
-                    Time.Update();
-                    hour = Time.ServerTime.CurrentEorzeaHour();
-                    int minute = Time.ServerTime.CurrentEorzeaMinute();
+                    WoAutoCollectionPlugin.Time.Update();
+                    hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+                    int minute = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaMinute();
                     if (hour == MaxEt && minute >= 45)
                     {
                         PluginLog.Log($"时间不够...");
                         break;
                     }
                     for (int t = 0; t < Points.Length && hour >= MinEt && hour <= MaxEt; t++) {
-                        Time.Update();
-                        hour = Time.ServerTime.CurrentEorzeaHour();
-                        minute = Time.ServerTime.CurrentEorzeaMinute();
+                        WoAutoCollectionPlugin.Time.Update();
+                        hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+                        minute = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaMinute();
                         if (hour == MaxEt && minute >= 45) {
                             PluginLog.Log($"时间不够...");
                             break;
@@ -413,8 +410,8 @@ namespace WoAutoCollectionPlugin.Bot
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
-                                Time.Update();
-                                hour = Time.ServerTime.CurrentEorzeaHour();
+                                WoAutoCollectionPlugin.Time.Update();
+                                hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                                 if (!(hour >= MinEt && hour <= MaxEt)) {
                                     PluginLog.Log($"时间结束...");
                                     break;
@@ -469,8 +466,8 @@ namespace WoAutoCollectionPlugin.Bot
                                 Thread.Sleep(1000);
                                 continue;
                             }
-                            Time.Update();
-                            hour = Time.ServerTime.CurrentEorzeaHour();
+                            WoAutoCollectionPlugin.Time.Update();
+                            hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
                             Thread.Sleep(1000);
                         }
                     }
@@ -493,15 +490,15 @@ namespace WoAutoCollectionPlugin.Bot
                     MovePositions(Position.RepairNPC, false);
                     WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                 }
-                Time.Update();
-                hour = Time.ServerTime.CurrentEorzeaHour();
+                WoAutoCollectionPlugin.Time.Update();
+                hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             }
         }
 
         private void RunWaitTask(string lv) {
-            Time.Update();
-            hour = Time.ServerTime.CurrentEorzeaHour();
-            int minute = Time.ServerTime.CurrentEorzeaMinute();
+            WoAutoCollectionPlugin.Time.Update();
+            hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+            int minute = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaMinute();
             othetRun = true;
             
             if (otherTaskParam == "0") {
