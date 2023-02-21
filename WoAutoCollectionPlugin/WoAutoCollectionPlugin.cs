@@ -4,6 +4,8 @@ using Dalamud.Game.Network;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Logging;
 using Dalamud.Plugin;
+using Dalamud.Utility.Signatures;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using Lumina.Data.Parsing;
 using Lumina.Excel.GeneratedSheets;
 using System;

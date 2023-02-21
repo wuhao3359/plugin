@@ -20,10 +20,12 @@ using System.Threading;
 using System.Reflection;
 using FFXIVClientStructs.Attributes;
 using System.Collections.Generic;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
+using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 
 namespace WoAutoCollectionPlugin.Utility
 {
-    public class MarketEventHandler : IDisposable
+    public unsafe class MarketEventHandler : IDisposable
     {
         #region Sigs, Hooks & Delegates declaration
 
@@ -45,6 +47,9 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonInventoryManager_MoveItemSlot_Signature =
             "E8 ?? ?? ?? ?? 33 DB 89 1E";
 
+        private readonly string AddonInventoryContext_OnSetup_Signature =
+            "83 B9 ?? ?? ?? ?? ?? 7E 11";
+
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonItemSearchResult_OnSetup_HW;
@@ -52,6 +57,7 @@ namespace WoAutoCollectionPlugin.Utility
         private HookWrapper<Addon_OnFinalize_Delegate> AddonRetainerSellList_OnFinalize_HW;
 
         private HookWrapper<Addon_MoveItemSlot_Delegate> AddonInventoryManager_MoveItemSlot_HW;
+        private HookWrapper<AddonInventoryContext_OnSetup_Delegate> AddonInventoryContext_OnSetup_HW;
 
         // __int64 __fastcall Client::UI::AddonXXX_ReceiveEvent(__int64 a1, __int16 a2, int a3, __int64 a4, __int64* a5)
         private delegate IntPtr Addon_ReceiveEvent_Delegate(IntPtr self, ushort eventType,
@@ -64,6 +70,8 @@ namespace WoAutoCollectionPlugin.Utility
         private delegate void Addon_OnFinalize_Delegate(IntPtr addon);
 
         private delegate int Addon_MoveItemSlot_Delegate(InventoryType srcContainer, uint srcSlot, InventoryType dstContainer, uint dstSlot, byte unk);
+
+        private delegate void* AddonInventoryContext_OnSetup_Delegate(AgentInventoryContext* agent, InventoryType inventory, ushort slot, int a4, ushort a5, byte a6);
 
         #endregion
 
@@ -103,6 +111,10 @@ namespace WoAutoCollectionPlugin.Utility
             AddonInventoryManager_MoveItemSlot_HW = MarketCommons.Hook<Addon_MoveItemSlot_Delegate>(
                 AddonInventoryManager_MoveItemSlot_Signature,
                 AddonInventoryManager_MoveItemSlot_Delegate_Detour);
+
+            AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
+                AddonInventoryContext_OnSetup_Signature,
+                AddonInventoryContext_OnSetup_Delegate_Detour);
         }
 
         public void OnNetworkEvent(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
@@ -267,6 +279,64 @@ namespace WoAutoCollectionPlugin.Utility
             return result;
         }
 
+        private void* AddonInventoryContext_OnSetup_Delegate_Detour(AgentInventoryContext* agent, InventoryType inventoryType, ushort slot, int a4, ushort a5, byte a6)
+        {
+            PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour, {inventoryType}, {slot}, {a4}, {a5}, {a6}");
+            var result =
+                AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
+
+            try
+            {
+                if (false) {
+                    var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
+                    if (inventory != null)
+                    {
+                        var itemSlot = inventory->GetInventorySlot(slot);
+                        if (itemSlot != null)
+                        {
+                            var itemId = itemSlot->ItemID;
+                            var item = WoAutoCollectionPlugin.GameData.DataManager.GetExcelSheet<Item>()?.GetRow(itemId);
+                            if (item != null)
+                            {
+                                var addonId = agent->AgentInterface.GetAddonID();
+                                if (addonId == 0) return result;
+                                var addon = GetAddonByID(addonId);
+                                if (addon == null) return result;
+
+                                for (var i = 0; i < agent->ContextItemCount; i++)
+                                {
+                                    var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
+                                    if (contextItemParam.Type != ValueType.String) continue;
+                                    var contextItemName = contextItemParam.ToString();
+
+                                    var text = "Put Up for Sale";
+                                    if (text.Contains(contextItemName))
+                                    {
+                                        //if (Bitmask.IsBitSet(agent->ContextItemDisabledMask, i))
+                                        //{
+                                        //    PluginLog.Debug($"QRA found {i}:{contextItemName} but it's disabled");
+                                        //    continue;
+                                        //}
+                                        Util.GenerateCallback(addon, 0, i, 0U, 0, 0);
+                                        agent->AgentInterface.Hide();
+                                        UiHelper.Close(addon);
+                                        PluginLog.Debug($"QRA Selected {i}:{contextItemName}");
+                                        return result;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour error, {ex.Message} !!!");
+            }
+
+            return result;
+        }
+
         private unsafe void SetPrice()
         {
             var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
@@ -313,6 +383,11 @@ namespace WoAutoCollectionPlugin.Utility
         private bool Retainer()
         {
             return (WoAutoCollectionPlugin.getFilePtr != null) && Marshal.ReadInt64(WoAutoCollectionPlugin.getFilePtr(7), 0xB0) != 0;
+        }
+
+        public static AtkUnitBase* GetAddonByID(uint id)
+        {
+            return AtkStage.GetSingleton()->RaptureAtkUnitManager->GetAddonById((ushort)id);
         }
     }
 }
