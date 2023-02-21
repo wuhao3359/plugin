@@ -42,11 +42,16 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonRetainerSellList_OnFinalize_Signature =
             "40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 74 0E 45 33 C9";
 
+        private readonly string AddonInventoryManager_MoveItemSlot_Signature =
+            "E8 ?? ?? ?? ?? 33 DB 89 1E";
+
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonItemSearchResult_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSellList_OnSetup_HW;
         private HookWrapper<Addon_OnFinalize_Delegate> AddonRetainerSellList_OnFinalize_HW;
+
+        private HookWrapper<Addon_MoveItemSlot_Delegate> AddonInventoryManager_MoveItemSlot_HW;
 
         // __int64 __fastcall Client::UI::AddonXXX_ReceiveEvent(__int64 a1, __int16 a2, int a3, __int64 a4, __int64* a5)
         private delegate IntPtr Addon_ReceiveEvent_Delegate(IntPtr self, ushort eventType,
@@ -57,6 +62,8 @@ namespace WoAutoCollectionPlugin.Utility
 
         // __int64 __fastcall Client::UI::AddonXXX_Finalize(__int64 a1)
         private delegate void Addon_OnFinalize_Delegate(IntPtr addon);
+
+        private delegate int Addon_MoveItemSlot_Delegate(InventoryType srcContainer, uint srcSlot, InventoryType dstContainer, uint dstSlot, byte unk);
 
         #endregion
 
@@ -92,6 +99,10 @@ namespace WoAutoCollectionPlugin.Utility
             AddonRetainerSellList_OnFinalize_HW = MarketCommons.Hook<Addon_OnFinalize_Delegate>(
                 AddonRetainerSellList_OnFinalize_Signature,
                 AddonRetainerSellList_OnFinalize_Delegate_Detour);
+
+            AddonInventoryManager_MoveItemSlot_HW = MarketCommons.Hook<Addon_MoveItemSlot_Delegate>(
+                AddonInventoryManager_MoveItemSlot_Signature,
+                AddonInventoryManager_MoveItemSlot_Delegate_Detour);
         }
 
         public void OnNetworkEvent(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
@@ -183,6 +194,8 @@ namespace WoAutoCollectionPlugin.Utility
             AddonItemSearchResult_ReceiveEvent_HW.Dispose();
             AddonRetainerSell_OnSetup_HW.Dispose();
             AddonItemSearchResult_OnSetup_HW.Dispose();
+
+            AddonInventoryManager_MoveItemSlot_HW.Dispose();
         }
 
         private unsafe IntPtr AddonRetainerSell_OnSetup_Delegate_Detour(IntPtr addon, uint a2, IntPtr dataPtr)
@@ -240,8 +253,17 @@ namespace WoAutoCollectionPlugin.Utility
             var result =
                 AddonItemSearchResult_ReceiveEvent_HW.Original(self, eventType, eventParam, eventStruct, nodeParam);
 
-            //var price = getPricePerItem(nodeParam);
-            //PluginLog.Log($"AddonItemSearchResult_price, {price}");
+            return result;
+        }
+
+        private int AddonInventoryManager_MoveItemSlot_Delegate_Detour(InventoryType srcContainer, uint srcSlot, 
+            InventoryType dstContainer, uint dstSlot, byte unk)
+        {
+            PluginLog.Log($"AddonInventoryManager_MoveItemSlot_Delegate_Detour, {srcContainer}, {srcSlot}, {dstContainer}, {dstSlot}, {unk}");
+            var result =
+                AddonInventoryManager_MoveItemSlot_HW.Original(srcContainer, srcSlot, dstContainer, dstSlot, unk);
+
+            PluginLog.Log($"AddonInventoryManager_MoveItemSlot_HW result, {result}");
             return result;
         }
 
