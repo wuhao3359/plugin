@@ -108,9 +108,9 @@ namespace WoAutoCollectionPlugin.Utility
                 AddonRetainerSellList_OnFinalize_Signature,
                 AddonRetainerSellList_OnFinalize_Delegate_Detour);
 
-            AddonInventoryManager_MoveItemSlot_HW = MarketCommons.Hook<Addon_MoveItemSlot_Delegate>(
-                AddonInventoryManager_MoveItemSlot_Signature,
-                AddonInventoryManager_MoveItemSlot_Delegate_Detour);
+            //AddonInventoryManager_MoveItemSlot_HW = MarketCommons.Hook<Addon_MoveItemSlot_Delegate>(
+            //    AddonInventoryManager_MoveItemSlot_Signature,
+            //    AddonInventoryManager_MoveItemSlot_Delegate_Detour);
 
             AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
                 AddonInventoryContext_OnSetup_Signature,
