@@ -382,7 +382,9 @@ namespace WoAutoCollectionPlugin
             //(Weather.Weather LastWeather, Weather.Weather CurrentWeather, Weather.Weather NextWeather) = WeatherManager.FindLastCurrentNextWeather(DalamudApi.ClientState.TerritoryType);
             //PluginLog.Log($"LastWeather: {LastWeather.Name} CurrentWeather: {CurrentWeather.Name} NextWeather: {NextWeather.Name}");
 
-            CommonUi.test1();
+            //CommonUi.test1();
+
+            CommonUi.test2();
         }
 
         private void OnActionTestCommand(string command, string args)

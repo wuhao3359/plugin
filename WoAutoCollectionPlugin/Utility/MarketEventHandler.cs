@@ -44,9 +44,6 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonRetainerSellList_OnFinalize_Signature =
             "40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 74 0E 45 33 C9";
 
-        private readonly string AddonInventoryManager_MoveItemSlot_Signature =
-            "E8 ?? ?? ?? ?? 33 DB 89 1E";
-
         private readonly string AddonInventoryContext_OnSetup_Signature =
             "83 B9 ?? ?? ?? ?? ?? 7E 11";
 
@@ -107,10 +104,6 @@ namespace WoAutoCollectionPlugin.Utility
             AddonRetainerSellList_OnFinalize_HW = MarketCommons.Hook<Addon_OnFinalize_Delegate>(
                 AddonRetainerSellList_OnFinalize_Signature,
                 AddonRetainerSellList_OnFinalize_Delegate_Detour);
-
-            //AddonInventoryManager_MoveItemSlot_HW = MarketCommons.Hook<Addon_MoveItemSlot_Delegate>(
-            //    AddonInventoryManager_MoveItemSlot_Signature,
-            //    AddonInventoryManager_MoveItemSlot_Delegate_Detour);
 
             AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
                 AddonInventoryContext_OnSetup_Signature,
@@ -265,17 +258,6 @@ namespace WoAutoCollectionPlugin.Utility
             var result =
                 AddonItemSearchResult_ReceiveEvent_HW.Original(self, eventType, eventParam, eventStruct, nodeParam);
 
-            return result;
-        }
-
-        private int AddonInventoryManager_MoveItemSlot_Delegate_Detour(InventoryType srcContainer, uint srcSlot, 
-            InventoryType dstContainer, uint dstSlot, byte unk)
-        {
-            PluginLog.Log($"AddonInventoryManager_MoveItemSlot_Delegate_Detour, {srcContainer}, {srcSlot}, {dstContainer}, {dstSlot}, {unk}");
-            var result =
-                AddonInventoryManager_MoveItemSlot_HW.Original(srcContainer, srcSlot, dstContainer, dstSlot, unk);
-
-            PluginLog.Log($"AddonInventoryManager_MoveItemSlot_HW result, {result}");
             return result;
         }
 

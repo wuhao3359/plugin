@@ -6,6 +6,7 @@ using Dalamud.Logging;
 using Dalamud.Plugin.Ipc.Exceptions;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using Lumina.Excel.GeneratedSheets;
 using WoAutoCollectionPlugin.Managers;
@@ -654,6 +655,19 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
             }
             PluginLog.Log("------------------------------------");
+            return false;
+        }
+
+        public static unsafe bool test2() {
+            var ic = AgentInventoryContext.Instance();
+            if (ic == null) {
+                PluginLog.Error("AgentInventoryContext was null");
+                return false;
+            }
+            int addId = (int) ic->AgentInterface.GetAddonID();
+            PluginLog.Log($"AgentInventoryContext addId: {addId}");
+            ic->OpenForItemSlot(0, 16, addId, 0);
+
             return false;
         }
 
