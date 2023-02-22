@@ -619,42 +619,6 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
             }
             PluginLog.Log("------------------------------------");
-
-            var inventory2Container = im->GetInventoryContainer(InventoryType.Inventory2);
-            PluginLog.Log($"------------------------------------, {inventory2Container->Size}");
-            for (var j = 0; j < inventory2Container->Size; j++)
-            {
-                var item = inventory2Container->GetInventorySlot(j);
-                if (item == null)
-                    continue;
-
-                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
-            }
-            PluginLog.Log("------------------------------------");
-
-            var inventory3Container = im->GetInventoryContainer(InventoryType.Inventory3);
-            PluginLog.Log($"------------------------------------, {inventory3Container->Size}");
-            for (var j = 0; j < inventory3Container->Size; j++)
-            {
-                var item = inventory3Container->GetInventorySlot(j);
-                if (item == null)
-                    continue;
-
-                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
-            }
-            PluginLog.Log("------------------------------------");
-
-            var inventory4Container = im->GetInventoryContainer(InventoryType.Inventory4);
-            PluginLog.Log($"------------------------------------, {inventory4Container->Size}");
-            for (var j = 0; j < inventory4Container->Size; j++)
-            {
-                var item = inventory4Container->GetInventorySlot(j);
-                if (item == null)
-                    continue;
-
-                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
-            }
-            PluginLog.Log("------------------------------------");
             return false;
         }
 
@@ -664,9 +628,9 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Error("AgentInventoryContext was null");
                 return false;
             }
-            int addId = (int) ic->AgentInterface.GetAddonID();
+            uint addId = ic->AgentInterface.GetAddonID();
             PluginLog.Log($"AgentInventoryContext addId: {addId}");
-            ic->OpenForItemSlot(0, 16, addId, 0);
+            ic->OpenForItemSlot(InventoryType.RetainerMarket, 1, addId);
 
             return false;
         }
