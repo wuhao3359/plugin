@@ -30,58 +30,34 @@ namespace WoAutoCollectionPlugin
     public sealed class WoAutoCollectionPlugin : IDalamudPlugin
     {
         public string Name => "WoAutoCollectionPlugin";
-
         private const string collect = "/collect";
-
         private const string fish = "/fish";
-
         private const string hfish = "/hfish";
-
         private const string collectionfish = "/collectionfish";
-
         private const string gather = "/gather";
-
         private const string ygather = "/ygather";
-
         private const string woTest = "/woTest";
-
         private const string actionTest = "/actionTest";
-
         private const string close = "/close";
-
         private const string craft = "/craft";
-
         private const string daily = "/daily";
-
-        public WoAutoCollectionPlugin Plugin { get; private set; }
+        private const string market = "/market";
 
         public Configuration Configuration { get; private set; }
-
-        public static SeTime Time { get; private set; } = null!;
-
+        public static SeTime Time { get; private set; }
         private PluginUI PluginUi { get; init; }
-
-        public static GameData GameData { get; private set; } = null!;
-
-        public static WeatherManager WeatherManager { get; private set; } = null!;
-
+        public static GameData GameData { get; private set; }
         internal MarketEventHandler MarketEventHandler { get; private set; }
 
         public static Executor Executor;
-
         public static bool newRequest;
-
         public static GetFilePointer getFilePtr;
-
         public static List<MarketBoardCurrentOfferings> _cache = new();
-
         public static Lumina.Excel.ExcelSheet<Item> items;
-
-        public bool taskRunning = false;
+        public static bool taskRunning = false;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
         {
-            Plugin = this;
             DalamudApi.Initialize(pluginInterface);
 
             // 可视化ui
@@ -90,7 +66,7 @@ namespace WoAutoCollectionPlugin
 
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
-            ClickLib.Click.Initialize();
+            Click.Initialize();
             newRequest = false;
             MarketEventHandler = new MarketEventHandler();
 
@@ -113,55 +89,49 @@ namespace WoAutoCollectionPlugin
                 {
                     HelpMessage = "当前坐标信息"
                 });
-
                 DalamudApi.CommandManager.AddHandler(fish, new CommandInfo(OnFishCommand)
                 {
                     HelpMessage = "fish {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(hfish, new CommandInfo(OnHFishCommand)
                 {
                     HelpMessage = "hfish"
                 });
-
                 DalamudApi.CommandManager.AddHandler(collectionfish, new CommandInfo(OnCollectionFishCommand)
                 {
                     HelpMessage = "collectionfish {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(gather, new CommandInfo(OnGatherCommand)
                 {
                     HelpMessage = "gather {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(ygather, new CommandInfo(OnYGatherCommand)
                 {
                     HelpMessage = "ygather {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(woTest, new CommandInfo(OnWoTestCommand)
                 {
                     HelpMessage = "wotest"
                 });
-
                 DalamudApi.CommandManager.AddHandler(actionTest, new CommandInfo(OnActionTestCommand)
                 {
                     HelpMessage = "actionTest"
                 });
-
                 DalamudApi.CommandManager.AddHandler(close, new CommandInfo(OnCloseTestCommand)
                 {
                     HelpMessage = "close"
                 });
-
                 DalamudApi.CommandManager.AddHandler(craft, new CommandInfo(OnCraftCommand)
                 {
                     HelpMessage = "Craft"
                 });
-
                 DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnDailyCommand)
                 {
                     HelpMessage = "Daily"
+                });
+                DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnMarketCommand)
+                {
+                    HelpMessage = "Market"
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
@@ -454,6 +424,35 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Log($"start...");
                 GameData.DailyBot.DailyScript(args);
+                PluginLog.Log($"end...");
+                taskRunning = false;
+            });
+            task.Start();
+        }
+
+        private void OnMarketCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            PluginLog.Log($"market: {args}");
+            if (args.Length == 0)
+            {
+                PluginLog.Log($"stop");
+                GameData.DailyBot.StopScript();
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            Task task = new(() =>
+            {
+                PluginLog.Log($"start...");
+                GameData.MarketBot.RunScript();
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
