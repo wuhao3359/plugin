@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using WoAutoCollectionPlugin.Utility;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 
-namespace WoAutoCollectionPlugin.Utility
+namespace WoAutoCollectionPlugin
 {
     public static unsafe class Util
     {
@@ -229,6 +230,26 @@ namespace WoAutoCollectionPlugin.Utility
             }
 
             return atkValues;
+        }
+
+        internal static bool TryParseRetainerName(string s, out string retainer)
+        {
+            retainer = default;
+            //if (!P.retainerManager.Ready)
+            //{
+            //    return false;
+            //}
+            //for (var i = 0; i <= 2; i++)
+            //{
+            //    var r = P.retainerManager.Retainer(i);
+            //    var rname = r.Name.ToString();
+            //    if (s.Contains(rname) && (retainer == null || rname.Length > retainer.Length))
+            //    {
+            //        retainer = rname;
+            //    }
+            //}
+            //return retainer != default;
+            return false;
         }
 
         public static Dictionary<string, string> CommandParse(string command, string args) {
