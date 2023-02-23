@@ -45,7 +45,9 @@ internal class BagManager
         return count;
     }
 
-    public static unsafe int GetInventoryItemCount(uint ItemId) {
+    // 统计收藏品
+    public static unsafe int GetInventoryItemCountById(uint itemId)
+    {
         var bag0 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory1);
         var bag1 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory2);
         var bag2 = InventoryManager.Instance()->GetInventoryContainer(InventoryType.Inventory3);
@@ -57,27 +59,29 @@ internal class BagManager
 
             for (int i = 0; i < 35; i++)
             {
-                if (bag0->Items[i].ItemID == ItemId)
+                if (bag0->Items[i].ItemID == itemId)
                 {
                     count++;
                 }
-                if (bag1->Items[i].ItemID == ItemId)
+                if (bag1->Items[i].ItemID == itemId)
                 {
                     count++;
                 }
-                if (bag2->Items[i].ItemID == ItemId)
+                if (bag2->Items[i].ItemID == itemId)
                 {
                     count++;
                 }
-                if (bag3->Items[i].ItemID == ItemId)
+                if (bag3->Items[i].ItemID == itemId)
                 {
                     count++;
                 }
             }
         }
-
         return count;
-        //return InventoryManager.Instance()->GetInventoryItemCount(ItemId);
+    }
+
+    public static unsafe int GetInventoryItemCount(uint ItemId) {
+        return InventoryManager.Instance()->GetInventoryItemCount(ItemId);
     }
 
     public static unsafe (int, int, int, int) GetItemCountInContainer(uint ItemId)
@@ -135,12 +139,12 @@ internal class BagManager
         return true;
     }
 
-    public static bool QickItemQuantityEnough((int Id, string Name, int Quantity, bool Craft)[] LowCraft)
+    public static bool QickItemQuantityEnough((int Id, string Name, int Quantity)[] LowCraft)
     {
         for (int i = 0; i < LowCraft.Length; i++)
         {
             int quantity = BagManager.GetItemQuantityInContainer((uint)LowCraft[i].Id);
-            if (quantity < LowCraft[i].Quantity * 50)
+            if (quantity < LowCraft[i].Quantity)
             {
                 return false;
             }

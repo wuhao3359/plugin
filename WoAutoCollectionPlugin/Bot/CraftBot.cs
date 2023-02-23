@@ -1,4 +1,6 @@
-﻿using Dalamud.Logging;
+﻿using Dalamud.Game.ClientState.Conditions;
+using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -15,11 +17,14 @@ namespace WoAutoCollectionPlugin.Bot
     {
         private static bool closed = false;
 
+        private List<uint> jobIds = new();
+
         public CraftBot() {}
 
         public void Init()
         {
             closed = false;
+            jobIds = new();
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
         }
 
@@ -53,7 +58,13 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     PluginLog.Log($"根据名称普通制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
-                } else if (t == "3") {
+                }
+                else if (t == "2")
+                {
+                    PluginLog.Log($"根据名称普通制作...");
+                    RunCraftScriptByName(pressKey, recipeName, exchangeItem);
+                }
+                else if (t == "3") {
                     PluginLog.Log($"根据名称快速制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
                 }
@@ -68,17 +79,27 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void QuickCraftByName(string Name, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) {
+        public void QuickCraftByName(string Name, (int Id, string Name, int Quantity)[] LowCraft) {
             int n = 0;
-            while (!closed && n < 10) {
+            while (!closed && n < 1000) {
                 n++;
                 if (!BagManager.QickItemQuantityEnough(LowCraft))
                 {
-                    closed = true;
+                    PluginLog.Log($"生产: {Name}, 材料不足...");
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    }
                     break;
                 }
+                if (closed)
+                {
+                    PluginLog.Log($"quick craft stopping");
+                    return;
+                }
                 RunQuickCraftScriptByName(Name);
-                Thread.Sleep(5000);
+                PluginLog.Log($"Finish: {n} Item: {Name}");
+                Thread.Sleep(800);
             }
         }
 
@@ -98,16 +119,11 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 n++;
             }
-
-            Thread.Sleep(500);
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
-                RecipeNoteUi.QuickSynthesizeButton();
-                n = 0;
-                // TODO 快速生产
-                while (RecipeNoteUi.RecipeNoteIsOpen() && n < 3)
+                RecipeNoteUi.SynthesizeButton();
+                while (RecipeNoteUi.RecipeNoteIsOpen())
                 {
-                    n++;
                     Thread.Sleep(500);
                     if (closed)
                     {
@@ -116,21 +132,30 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                 }
             }
-            else
-            {
-                PluginLog.Log($"RecipeNote not open, continue");
-                return;
-            }
+            Thread.Sleep(1800);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
 
-            //  0 9 0 2 0 TODO
+            n = 0;
+            while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
+            {
+                Thread.Sleep(500);
+                if (closed)
+                {
+                    PluginLog.Log($"craft stopping");
+                    return;
+                }
+            }
         }
 
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
+            bool needHQ = true;
             int i = 0;
+            uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+            PluginLog.Log($"---> {recipeName}, {recipeId}");
             while (!closed)
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(1500);
                 if (closed)
                 {
                     PluginLog.Log($"craft stopping");
@@ -139,72 +164,91 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (BagManager.InventoryRemaining() > 5)
                 {
-                    int n = 0;
-                    while (!RecipeNoteUi.RecipeNoteIsOpen() && n < 10)
+                    if (!RecipeNoteUi.RecipeNoteIsOpen() && !RecipeNoteUi.SynthesisIsOpen())
                     {
-                        uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
-                        PluginLog.Log($"---> {recipeName}, {recipeId}");
-                        RecipeNoteUi.OpenRecipeNote(recipeId);
-
-                        Thread.Sleep(1000);
-                        if (closed)
-                        {
-                            PluginLog.Log($"craft stopping");
-                            return;
+                        if (!DalamudApi.Condition[ConditionFlag.Crafting]) {
+                            RecipeNoteUi.OpenRecipeNote(recipeId);
                         }
-                        n++;
+                        Thread.Sleep(1000);
                     }
 
-                    // TODO Select Item
-
-                    Thread.Sleep(500);
                     if (RecipeNoteUi.RecipeNoteIsOpen())
                     {
+                        if (needHQ) {
+                            RecipeNoteUi.Material1HqButton();
+                            Thread.Sleep(800);
+                            needHQ = false;
+                        }
                         RecipeNoteUi.SynthesizeButton();
-                        while (RecipeNoteUi.RecipeNoteIsOpen())
+                        Thread.Sleep(2000);
+                    }
+
+                    if (RecipeNoteUi.SynthesisIsOpen())
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
+                        int n = 0;
+                        while (RecipeNoteUi.SynthesisIsOpen())
                         {
-                            Thread.Sleep(500);
+                            Thread.Sleep(1000);
                             if (closed)
                             {
                                 PluginLog.Log($"craft stopping");
                                 return;
                             }
+                            n++;
+                            if (n > 60)
+                            {
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
+                                Thread.Sleep(2000);
+                            }
                         }
+                        PluginLog.Log($"Finish: {i} Item: {recipeName}");
+                        i++;
                     }
-                    else
-                    {
-                        PluginLog.Log($"RecipeNote not open, continue");
-                        continue;
+                    else {
+                        needHQ = true;
                     }
+                    Thread.Sleep(500);
 
-                    Thread.Sleep(1800);
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
-
-                    n = 0;
-                    while (RecipeNoteUi.SynthesisIsOpen() && n < 100)
+                    // 修理装备
+                    if (CommonUi.NeedsRepair())
                     {
-                        Thread.Sleep(500);
-                        if (closed)
+                        needHQ = true;
+                        PluginLog.Log($"开始修理装备");
+                        if (RecipeNoteUi.RecipeNoteIsOpen()) {
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                            Thread.Sleep(1500);
+                        }
+                        WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var rep);
+                        PluginLog.Log($"修理装备配置: {rep}");
+                        if (rep == "1")
                         {
-                            PluginLog.Log($"craft stopping");
-                            return;
+                            if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t) && t == "2") {
+                                WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                            }
+                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
+                        }
+                        else if (rep == "99")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                         }
                     }
-                    PluginLog.Log($"Finish: {i} Item: {recipeName}");
-                    i++;
-                    Thread.Sleep(1000);
+
+                    // 魔晶石精制
+                    int em = CommonUi.CanExtractMateria();
+                    if (em > 2) {
+                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(em);
+                        needHQ = true;
+                    }
 
                     if (BagManager.InventoryRemaining() <= 5)
                     {
-                        Thread.Sleep(1000);
                         if (RecipeNoteUi.RecipeNoteIsOpen())
                         {
                             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                            Thread.Sleep(1000);
                         }
-
-                        // 精制+修理
-                        WoAutoCollectionPlugin.GameData.CommonBot.RepairAndExtractMateriaInCraft();
-
+                        Thread.Sleep(1000);
                         // 上交收藏品和交换道具
                         if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t)) {
                             if (t == "2") {
@@ -224,86 +268,94 @@ namespace WoAutoCollectionPlugin.Bot
                     Thread.Sleep(1000);
                 }
                 else {
-                    PluginLog.Log($"背包容量不足, 任务停止...");
-                    closed = true;
+                    // 尝试重试一次
+                    if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t))
+                    {
+                        if (t == "2")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.CraftUploadAndExchange();
+                        }
+                    }
+                    if (BagManager.InventoryRemaining() <= 5) {
+                        PluginLog.Log($"背包容量不足, 任务停止...");
+                        closed = true;
+                    }
                 }
             }
         }
 
         public void RunCraftScript() {
             List<int> list = RecipeItems.GetAllQuickCraftItems();
-            
             int id = 0;
-            (int Id, string Name, int Quantity, bool Craft)[] quickCraft;
+            
+            for (int i = 0; i < list.Count; i++)
+            {
+                id = list[0];
+                PluginLog.Log($"准备生产ID: {id}");
+                (int Id, string Name, uint Job, string JobName, uint Lv, (int Id, string Name, int Quantity)[] LowCraft) = RecipeItems.GetMidCraftItems(id, jobIds);
 
-            if (list.Count > 0) { 
-                for (int i = 0; i < 5; i++)
+                if (BagManager.QickItemQuantityEnough(LowCraft))
                 {
-                    Random rd = new();
-                    int r = rd.Next(list.Count);
-                    id = list[r];
-                    PluginLog.Log($"随机生产ID: {r} {id}");
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
-
-                    if (BagManager.QickItemQuantityEnough(LowCraft))
+                    if (!CommonUi.CurrentJob(Job))
                     {
-                        if (!CommonUi.CurrentJob(Job))
+                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                        Thread.Sleep(500);
+                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                        if (player.Level < Lv)
                         {
-                            WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
-                            Thread.Sleep(500);
+                            jobIds.Add(Job);
+                            id = 0;
                         }
-                        break;
+                        else
+                        {
+                            PluginLog.Log($"准备生产: {Name}");
+                            QuickCraftByName(Name, LowCraft);
+                            break;
+                        }
                     }
                 }
             }
-
-            if (id > 0)
-            {
-                (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, bool QuickCraft, (int Id, string Name, int Quantity, bool Craft)[] LowCraft) = RecipeItems.GetMidCraftItems(id);
-                QuickCraftByName(Name, LowCraft);
-            }
-            else {
-                PluginLog.Log($"未找到生产物品...");
+            if (id == 0) {
+                PluginLog.Log($"没有找到合适物品...");
             }
         }
 
-
         public void CheckScript(uint recipeId) {
-            WoAutoCollectionPlugin.GameData.Recipes.TryGetValue(recipeId, out var r);
-            UnkData5Obj[] UnkData5 = r.UnkData5;
-            if (UnkData5.Length > 0)
-            {
-                foreach (UnkData5Obj obj in UnkData5)
-                {
-                    PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
-                    if (BagManager.GetItemQuantityInContainer((uint)obj.ItemIngredient) < obj.AmountIngredient * 100)
-                    {
-                        CheckScript(uint.Parse(obj.ItemIngredient.ToString()));
-                        if (r.CanQuickSynth)
-                        {
-                            // 快速制作
-                        }
-                        else { 
-                            // 普通制作
-                        }
-                    }
-                }
-            }
-            else {
-                if (BagManager.GetItemQuantityInContainer(recipeId) < 666)
-                {
-                    // 原材料采集
-                    PluginLog.Log($"执行采集任务...");
-                    try
-                    {
-                        WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript((int)recipeId, 90);
-                    }
-                    catch (Exception e)
-                    {
-                        PluginLog.Error($"采集任务, error!!!\n{e}");
-                    }
-                }
-            }
+            //WoAutoCollectionPlugin.GameData.Recipes.TryGetValue(recipeId, out var r);
+            //UnkData5Obj[] UnkData5 = r.UnkData5;
+            //if (UnkData5.Length > 0)
+            //{
+            //    foreach (UnkData5Obj obj in UnkData5)
+            //    {
+            //        PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
+            //        if (BagManager.GetItemQuantityInContainer((uint)obj.ItemIngredient) < obj.AmountIngredient * 100)
+            //        {
+            //            CheckScript(uint.Parse(obj.ItemIngredient.ToString()));
+            //            if (r.CanQuickSynth)
+            //            {
+            //                // 快速制作
+            //            }
+            //            else { 
+            //                // 普通制作
+            //            }
+            //        }
+            //    }
+            //}
+            //else {
+            //    if (BagManager.GetItemQuantityInContainer(recipeId) < 666)
+            //    {
+            //        // 原材料采集
+            //        PluginLog.Log($"执行采集任务...");
+            //        try
+            //        {
+            //            WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript((int)recipeId, 90);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            PluginLog.Error($"采集任务, error!!!\n{e}");
+            //        }
+            //    }
+            //}
         }
     }
 }

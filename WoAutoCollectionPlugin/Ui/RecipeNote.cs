@@ -54,6 +54,68 @@ namespace WoAutoCollectionPlugin.Ui
             }
         }
 
+        public static unsafe bool Material1HqButton()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                if (WoAutoCollectionPlugin.GameData.param.TryGetValue("hq", out var hq))
+                {
+                    string[] hqs = hq.Split(",");
+                    for (int k = 0; k < hqs.Length; k++)
+                    {
+                        string[] config = hqs[k].Split("-");
+                        string index = config[0];
+                        string quantity = config[1];
+                        if (index == "1")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material1_hq");
+                            }
+                        } 
+                        else if (index == "2")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material2_hq");
+                            }
+                        }
+                        else if (index == "3")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material3_hq");
+                            }
+                        }
+                        else if (index == "4")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material4_hq");
+                            }
+                        }
+                        else if (index == "5")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material5_hq");
+                            }
+                        }
+                        else if (index == "6")
+                        {
+                            for (int kk = 0; kk < int.Parse(quantity); kk++)
+                            {
+                                Click.TrySendClick("synthesis_material6_hq");
+                            }
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static unsafe void OpenRecipeNote(uint recipeID)
         {
             var agent = AgentRecipeNote.Instance();

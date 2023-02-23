@@ -14,7 +14,6 @@ namespace WoAutoCollectionPlugin.Bot
 {
     public class HFishBot
     {
-        private EventFramework EventFramework { get; init; }
         private static SeTugType TugType { get; set; } = null!;
 
         private FishRecord Record;
@@ -25,7 +24,6 @@ namespace WoAutoCollectionPlugin.Bot
 
         public HFishBot()
         {
-            EventFramework = new EventFramework(DalamudApi.SigScanner);
             TugType = new SeTugType(DalamudApi.SigScanner);
             Record = new FishRecord();
         }
@@ -65,26 +63,29 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void OnHFishUpdate(Framework _)
         {
-            FishingState = EventFramework.FishingState;
-            if (LastState == FishingState)
-                return;
-            LastState = FishingState;
-            switch (FishingState)
+            if (WoAutoCollectionPlugin.GameData.EventFramework != null)
             {
-                case FishingState.PoleOut:
-                    break;
-                case FishingState.Bite:
-                    OnHFishBite();
-                    break;
-                case FishingState.Reeling:
-                    break;
-                case FishingState.PoleReady:
-                    HFishScript();
-                    break;
-                case FishingState.Waiting:
-                    break;
-                case FishingState.Quit:
-                    break;
+                FishingState = WoAutoCollectionPlugin.GameData.EventFramework.FishingState;
+                if (LastState == FishingState)
+                    return;
+                LastState = FishingState;
+                switch (FishingState)
+                {
+                    case FishingState.PoleOut:
+                        break;
+                    case FishingState.Bite:
+                        OnHFishBite();
+                        break;
+                    case FishingState.Reeling:
+                        break;
+                    case FishingState.PoleReady:
+                        HFishScript();
+                        break;
+                    case FishingState.Waiting:
+                        break;
+                    case FishingState.Quit:
+                        break;
+                }
             }
         }
 

@@ -39,17 +39,18 @@ namespace WoAutoCollectionPlugin.UseAction
             //ActionManager.Instance()->UseAction(ActionType.General, 4); // 疾跑
             //ActionManager.Instance()->UseAction(ActionType.Spell, 19700);
             //ActionManager.Instance()->GetActionStatus(ActionType.Spell, 19700);
-            float t = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, 26522); // 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
+            float t = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, 4590); // 4589-采矿 大地的恩惠 4590-园艺 大地的恩惠
             PluginLog.Log($"{t}");
-            bool tt = ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, 26522);
+            bool tt = ActionManager.Instance()->IsRecastTimerActive(ActionType.Spell, 4590);
             PluginLog.Log($"{tt}");
-            uint ttt = ActionManager.Instance()->GetActionStatus(ActionType.Spell, 26522);
+            uint ttt = ActionManager.Instance()->GetActionStatus(ActionType.Spell, 4590);
             PluginLog.Log($"{ttt}");
             // 26521-采矿 理智同兴
         }
 
+        // return 0 时表示技能冷却结束
         public static float GetSpellActionRecastTimeElapsed(uint id) {
-            float b = 1;
+            float b = 0;
             try
             {
                 b = ActionManager.Instance()->GetRecastTimeElapsed(ActionType.Spell, id);

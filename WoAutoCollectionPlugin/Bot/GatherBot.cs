@@ -27,7 +27,6 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public void test() {
-            WoAutoCollectionPlugin.GameData.KeyOperates.MouseMove(653, 311);
         }
 
         public void Init()
@@ -35,14 +34,28 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
         }
 
-        public void NormalScript(int area) {
+        public void NormalScript(string args) {
             closed = false;
             int n = 0;
+            string[] str = args.Split('-');
             while (!closed & n < 1000)
             {
+                if (closed)
+                {
+                    PluginLog.Log($"中途结束");
+                    return;
+                }
                 try
                 {
-                    RunNormalScript(area, 200);
+                    for (int i = 0; i < str.Length; i++) {
+                        int id = Position.GetIdByName(str[i]);
+                        if (id == 0) {
+                            PluginLog.Log($"错误名称: {str[i]}");
+                            continue;
+                        }
+                        RunNormalScript(id, "100");
+                        Thread.Sleep(3000);
+                    }
                 }
                 catch (Exception e)
                 {
@@ -55,10 +68,9 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         // 普通采集点
-        public bool RunNormalScript(int id, uint lv)
+        public bool RunNormalScript(int id, string lv)
         {
             Init();
-            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
             (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id, lv);
             if (Id <= 0) {
@@ -68,7 +80,6 @@ namespace WoAutoCollectionPlugin.Bot
             if (Tp != 0)
             {
                 Teleporter.Teleport(Tp);
-                Thread.Sleep(12000);
                 if (!CommonUi.CurrentJob(Job))
                 {
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
@@ -78,8 +89,9 @@ namespace WoAutoCollectionPlugin.Bot
             }
             int n = 0;
             int error = 0;
-            while (!closed & n < 1000)
+            while (!closed & n < 100)
             {
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 List<GameObject> gameObjects = new();
@@ -102,9 +114,9 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                         if (gameObjects.ToArray().Length == 0) {
                             error++;
-                            if (error >= 3) {
-                                closed = true;
+                            if (error >= 1) {
                                 PluginLog.Log($"出现错误停止");
+                                return false;
                             }
                         }
                     }
@@ -124,6 +136,7 @@ namespace WoAutoCollectionPlugin.Bot
                             {
                                 if (!DalamudApi.Condition[ConditionFlag.Mounted])
                                 {
+                                    WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
@@ -157,13 +170,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                     tt = 0;
-                                    while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
+                                    while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
                                     {
                                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                                        Thread.Sleep(500);
+                                        Thread.Sleep(800);
                                         tt++;
                                     }
-                                    if (tt >= 5)
+                                    if (tt >= 7)
                                     {
                                         PluginLog.Log($"未打开采集面板, skip {i}..");
                                         if (gameObjects.ToArray().Length > 0)
@@ -177,9 +190,8 @@ namespace WoAutoCollectionPlugin.Bot
 
                                     if (CommonUi.AddonGatheringIsOpen())
                                     {
-                                        WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
+                                        WoAutoCollectionPlugin.GameData.CommonBot.NormalMaterialsMethod(Name);
                                     }
-
                                     if (gameObjects.ToArray().Length > 0)
                                     {
                                         gameObjects.RemoveAt(0);
@@ -197,7 +209,6 @@ namespace WoAutoCollectionPlugin.Bot
                     else
                     {
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
-                        PluginLog.Log($"到达点: {i} not work point {i}, {position.X} {position.Y} {position.Z}");
                     }
                 }
                 n++;
@@ -256,16 +267,6 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Position.YunGuanNPC;
-                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
-                //double d = Maths.Distance(position, ToArea[1]);
-                //if (Maths.Distance(position, ToArea[1]) > 5)
-                //{
-                //    MovePositions(ToArea, false);
-                //}
-                //else {
-                //    PluginLog.Log($"距离: {d} 不需要移动");
-                //}
                 MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
@@ -328,7 +329,6 @@ namespace WoAutoCollectionPlugin.Bot
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
 
-            // WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v);
             if (!WoAutoCollectionPlugin.GameData.param.TryGetValue("extractMateria", out var v)) {
                 WoAutoCollectionPlugin.GameData.param.Add("extractMateria", "1");
             }
@@ -342,7 +342,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 else
                 {
-                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair();
+                    WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("修理工");
                 }
             }
             else
@@ -517,7 +517,7 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
-        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, uint lv) {
+        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, string lv) {
             if (id == 0)
             {
                 List<int> list = Position.GetMateriaId(lv);
@@ -525,22 +525,21 @@ namespace WoAutoCollectionPlugin.Bot
                 foreach (int i in list)
                 {
                     (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
-                    if (MaxBackPack > BagManager.GetInventoryItemCount((uint)i))
+                    int count = BagManager.GetInventoryItemCount((uint)i);
+                    if (MaxBackPack > count)
                     {
                         li.Add(i);
                     }
                 }
-
                 Random rd = new();
                 int r = rd.Next(li.Count);
-                id = li[r];
-                PluginLog.Log($"随机采集ID: {r} {id}");
+                PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count}");
+                return Position.GetMaterialById(li[r]);
+            }
+            else
+            {
                 return Position.GetMaterialById(id);
             }
-            else {
-                return Position.GetMaterialById(id);
-            }
-            //  灵银沙(矿:51)
             return (0, 0, null, 0, null, 0, 0, null, null, null, null, null);
         }
 

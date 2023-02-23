@@ -10,8 +10,8 @@ namespace WoAutoCollectionPlugin.Utility
         // 14-炼金术士 15-烹调师
 
         public static Vector3[] path0 = {
-            new Vector3(2268, 2217, 866),
-            new Vector3(2311, 2223, 913),
+            new Vector3(2268, 2225, 866),
+            new Vector3(2311, 2228, 913),
             new Vector3(2889, 2236, 1252),
             new Vector3(3142, 2228, 1333),
         };
@@ -21,9 +21,9 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(3172, 2130, 1460),
         };
         public static Vector3[] path3 = {
-            new Vector3(2268, 2217, 866),
-            new Vector3(2311, 2223, 913),
-            new Vector3(2692, 2210, 1110),
+            new Vector3(2268, 2225, 866),
+            new Vector3(2311, 2228, 913),
+            new Vector3(2692, 2212, 1110),
         };
         public static Vector3[] points3 = {
             new Vector3(2825, 2139, 1235),
@@ -231,47 +231,58 @@ namespace WoAutoCollectionPlugin.Utility
         };
 
         // 16-采矿工 17-园艺工 18-捕鱼人
-        // 优先级排序 TODO
-        // 限时点 Lv以下
-        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points)[] Materials =
+        // 优先级排序
+        // type 类型 1-普通限时 2-  3-  4-灵砂 5-高难限时
+        public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type)[] Materials =
         {
-            (3621511, "极硬水", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
-            (3621512, "极硬水", 12, 13, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
-            (3621521, "极硬水", 2, 3, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
-            (3621522, "极硬水", 14, 15, 16, "采矿工", 90, 174, path362152, points362152), // 叹息海
-            (3621531, "极硬水", 4, 5, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
-            (3621532, "极硬水", 16, 17, 16, "采矿工", 90, 178, path362153, points362153), // 厄尔庇斯 
+            // 6.2版本
+            //(37694, "不定性铁陨石", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(37691, "不定性结晶花", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 天外天垓 
 
-            (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33),   // 黑衣森林东部林区
-            (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34),     // 黑衣森林东部林区
-            (35, "黄杏", 9, 10, 17, "园艺工", 50, 52, path35, points35),     // 中拉诺西亚
-            (36, "小柠檬", 6, 7, 17, "园艺工", 80, 138, path36, points36),     // 珂露西亚岛
-            (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36),    // 珂露西亚岛
+            // TODO
+            // (37819, "诃子", 0, 1, 17, "园艺工", 50, 4, path33, points33, 1), // 萨维奈岛
+            // (37819, "诃子", 12, 13, 17, "园艺工", 50, 4, path33, points33, 1), // 萨维奈岛
+            // (37818, "仁面木原木", 2, 3, 17, "园艺工", 50, 4, path33, points33, 1), // 厄尔庇斯
+            // (37818, "仁面木原木", 14, 15, 17, "园艺工", 50, 4, path33, points33, 1), // 厄尔庇斯
 
-            (0, "暗物质晶簇|火之晶簇", 1, 2, 17, "园艺工", 50, 24, path0, points0),    // 摩杜纳
-            (1, "暗物质晶簇|火之晶簇", 5, 6, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
-            (2, "暗物质晶簇|水之晶簇", 9, 10, 17, "园艺工", 50, 24, path0, points0),   // 摩杜纳
-            (3, "暗物质晶簇|雷之晶簇", 13, 14, 16, "采矿工", 50, 24, path3, points3),    // 摩杜纳
-            (4, "暗物质晶簇|雷之晶簇", 17, 18, 16, "采矿工", 50,24, path3, points3),    // 摩杜纳
-            (5, "暗物质晶簇|雷之晶簇", 21, 22, 16, "采矿工", 50, 24, path3, points3),   // 摩杜纳
-            (6, "暗物质晶簇|云杉原木", 9, 10, 17, "园艺工", 50, 23, path6, points6), // 库尔札斯中央高地
-            (11, "暗物质晶簇|绯红树汁", 3, 4, 17, "园艺工", 50, 7, path11, points11),   // 黑衣森林北部林区
-            (17, "暗物质晶簇|黑衣香木", 2, 4, 17, "园艺工", 50, 6, path17, points17),  // 黑衣森林南部林区
-            (18, "暗物质晶簇|高级黑衣香木", 6, 7, 16, "园艺工", 50, 3, path18, points18),  // 黑衣森林中央林区
-            (19, "白金矿|暗物质晶簇", 4, 5, 16, "采矿工", 50, 19, path19, points19), // 南萨纳兰
-            (20, "暗物质晶簇", 2, 3, 17, "园艺工", 50, 76, path20, points20), // 龙堡参天高地
-            (21, "暗物质晶簇", 14, 15, 17, "园艺工", 50, 76, path20, points20),   // 龙堡参天高地
-            (22, "玄铁矿|暗物质晶簇", 1, 2, 16, "采矿工", 50, 23, path22, points22), // 库尔札斯中央高地
-            (23, "金矿|暗物质晶簇", 9, 10, 16, "采矿工", 50, 18, path23, points23), // 东萨纳兰
-            (24, "暗物质晶簇|拉诺西亚岩盐", 17, 18, 16, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚
+            // 6.0版本
+            //(3621511, "极硬水", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(3621512, "极硬水", 12, 13, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
+            //(3621521, "极硬水", 2, 3, 16, "采矿工", 90, 174, path362152, points362152, 1), // 叹息海
+            //(3621522, "极硬水", 14, 15, 16, "采矿工", 90, 174, path362152, points362152, 1), // 叹息海
+            //(3621531, "极硬水", 4, 5, 16, "采矿工", 90, 178, path362153, points362153, 1), // 厄尔庇斯 
+            //(3621532, "极硬水", 16, 17, 16, "采矿工", 90, 178, path362153, points362153, 1), // 厄尔庇斯 
+
+            (33, "迷迭香", 17, 18, 17, "园艺工", 50, 4, path33, points33, 1),   // 黑衣森林东部林区
+            (34, "延龄花", 5, 6, 17, "园艺工", 50, 4, path34, points34, 1),     // 黑衣森林东部林区
+            (35, "黄杏", 9, 10, 17, "园艺工", 50, 52, path35, points35, 1),     // 中拉诺西亚
+            (36, "小柠檬", 6, 7, 17, "园艺工", 80, 138, path36, points36, 1),     // 珂露西亚岛
+            (37, "小柠檬", 18, 19, 17, "园艺工", 80, 138, path36, points36, 1),    // 珂露西亚岛
+
+            (0, "暗物质晶簇|水之晶簇", 1, 2, 17, "园艺工", 50, 24, path0, points0, 1),    // 摩杜纳
+            (1, "暗物质晶簇|水之晶簇", 5, 6, 17, "园艺工", 50, 24, path0, points0, 1),   // 摩杜纳
+            (2, "暗物质晶簇|水之晶簇", 9, 10, 17, "园艺工", 50, 24, path0, points0, 1),   // 摩杜纳
+            (3, "暗物质晶簇|水之晶簇", 13, 14, 16, "采矿工", 50, 24, path3, points3, 1),    // 摩杜纳
+            (4, "暗物质晶簇|火之晶簇", 17, 18, 16, "采矿工", 50,24, path3, points3, 1),    // 摩杜纳
+            (5, "暗物质晶簇|雷之晶簇", 21, 22, 16, "采矿工", 50, 24, path3, points3, 1),   // 摩杜纳
+            (6, "暗物质晶簇|云杉原木", 9, 10, 17, "园艺工", 50, 23, path6, points6, 1), // 库尔札斯中央高地
+            (11, "暗物质晶簇|绯红树汁", 3, 4, 17, "园艺工", 50, 7, path11, points11, 1),   // 黑衣森林北部林区
+            (17, "暗物质晶簇|黑衣香木", 2, 4, 17, "园艺工", 50, 6, path17, points17, 1),  // 黑衣森林南部林区
+            (18, "暗物质晶簇|高级黑衣香木", 6, 7, 16, "园艺工", 50, 3, path18, points18, 1),  // 黑衣森林中央林区
+            (19, "白金矿|暗物质晶簇", 4, 5, 16, "采矿工", 50, 19, path19, points19, 1), // 南萨纳兰
+            (20, "暗物质晶簇", 2, 3, 17, "园艺工", 50, 76, path20, points20, 1), // 龙堡参天高地
+            (21, "暗物质晶簇", 14, 15, 17, "园艺工", 50, 76, path20, points20, 1),   // 龙堡参天高地
+            (22, "玄铁矿|暗物质晶簇", 1, 2, 16, "采矿工", 50, 23, path22, points22, 1), // 库尔札斯中央高地
+            (23, "金矿|暗物质晶簇", 9, 10, 16, "采矿工", 50, 18, path23, points23, 1), // 东萨纳兰
+            //(24, "暗物质晶簇|拉诺西亚岩盐", 17, 18, 16, "采矿工", 50, 11, path24, points24),   // 东拉诺西亚 
             // (25, "暗物质晶簇|钨铁矿", 3, 4, 16, "采矿工", 50, 11, path24, points24),   // 翻云雾海
-            (26, "强灵性岩", 2, 3, 16, "采矿工", 50, 18, path26, points26), // 东萨纳兰
+            //(26, "强灵性岩", 2, 3, 16, "采矿工", 50, 18, path26, points26), // 东萨纳兰
             // (27, "光银矿", 2, 3, 16, "采矿工", 60, 18, path26, points26), // 翻云雾海
             // (28, "皇金矿", 14, 15, 16, "采矿工", 60, 18, path26, points26), // 翻云雾海
             
-            (30, "暗物质晶簇|火之晶簇", 19, 21, 16, "采矿工", 50, 52, path30, points30),   // 中拉诺西亚
-            (31, "暗物质晶簇|3级黑衣森林土壤|灵性岩", 6, 8, 16, "采矿工", 50, 6, path31, points31),  // 黑衣森林南部林区
-            (32, "暗物质晶簇|3级萨纳兰土壤|水之晶簇", 5, 7, 16, "采矿工", 50, 17, path32, points32), // 西萨纳兰
+            (30, "暗物质晶簇|火之晶簇", 19, 21, 16, "采矿工", 50, 52, path30, points30, 1),   // 中拉诺西亚
+            (31, "暗物质晶簇|灵性岩", 6, 8, 16, "采矿工", 50, 6, path31, points31, 1),  // 黑衣森林南部林区
+            (32, "暗物质晶簇|水之晶簇", 5, 7, 16, "采矿工", 50, 17, path32, points32, 1), // 西萨纳兰
 
             // (38, "星极花", 4, 5, 17, "园艺工", 60, 18, path26, points26), // 翻云雾海
             // (39, "星极花", 16, 17, 17, "园艺工", 60, 18, path26, points26), // 翻云雾海
@@ -280,8 +291,9 @@ namespace WoAutoCollectionPlugin.Utility
         };
 
         public static Vector3[] path36285 = {
-            new Vector3(1318, 2482, 3452),
-            new Vector3(1916, 2397, 3301),
+            new Vector3(1446, 2526, 3421),
+            new Vector3(1821, 2440, 3467),
+            new Vector3(1987, 2353, 3505),
         };
         public static Vector3[] points36285 = {
             new Vector3(2094, 2321, 3440),
@@ -295,19 +307,74 @@ namespace WoAutoCollectionPlugin.Utility
             1, 3, 5
         };
 
+        public static Vector3[] path36286 = {
+            new Vector3(1294, 2402, 2492),
+            new Vector3(1229, 2290, 1547),
+        };
+        public static Vector3[] points36286 = {
+            new Vector3(1092, 2206, 1674),
+            new Vector3(1168, 2236, 1561),
+            new Vector3(862, 2237, 1569),
+            new Vector3(1090, 2205, 1358),
+            new Vector3(1179, 2233, 1605),
+        };
+        public static int[] gatherIndex36286 = {
+            0, 2, 3
+        };
+
+        public static Vector3[] path36287 = {
+            new Vector3(782, 2146, 3003),
+            new Vector3(929, 2096, 3257),
+        };
+        public static Vector3[] points36287 = {
+            new Vector3(942, 2097, 3332),
+            new Vector3(1087, 2116, 3404),
+            new Vector3(1174, 2092, 3443),
+            new Vector3(1099, 2139, 3581),
+            new Vector3(1058, 2116, 3662),
+            new Vector3(981, 2124, 3417),
+        };
+        public static int[] gatherIndex36287 = {
+            0, 2, 4
+        };
+
+        public static Vector3[] path36288 = {
+            new Vector3(2676, 2185, 1795),
+        };
+        public static Vector3[] points36288 = {
+            new Vector3(2693, 2161, 1741),
+            new Vector3(2541, 2168, 1625),
+            new Vector3(2491, 2165, 1600),
+            new Vector3(2797, 2189, 1416),
+            new Vector3(2843, 2163, 1359),
+            new Vector3(2696, 2181, 1692),
+        };
+        public static int[] gatherIndex36288 = {
+            0, 2, 4
+        };
+
         // 收藏品 需要分解或者上交
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] CollecMaterials = {
-             (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
-            // (36286, "暗性岩", 20, 23, 16, "采矿工", 80, 138, path36, points36, index1),    //
-            // (36287, "水瓶土", 8, 11, 17, "园艺工", 80, 138, path36, points36, index1),    // 
-            // (36288, "棕榈碎皮", 12, 15, 17, "园艺工", 80, 138, path36, points36),    //
+            (36285, "月石英", 0, 3, 16, "采矿工", 90, 174, path36285, points36285, gatherIndex36285),    //叹息海
+            //(36286, "暗性岩", 20, 23, 16, "采矿工", 90, 172, path36286, points36286, gatherIndex36286),    // 碎璃营地
+            (36287, "水瓶土", 8, 11, 17, "园艺工", 90, 168, path36287, points36287, gatherIndex36287),    // 迷津
+            //(36288, "棕榈碎皮", 12, 15, 17, "园艺工", 90, 171, path36288, points36288, gatherIndex36288), // 波洛伽护法村
+        };
+
+        // 6.0版本灵砂获取途径 随大版本更新
+        public static (int, string)[] CollecMaterialItems = {
+            (36285, "月石英"),
+            (36286, "暗性岩"),
+            (36287, "水瓶土"),
+            (36288, "棕榈碎皮"),
+            (36408, "红弓鳍鱼"),
         };
 
         public static List<int> GetMaterialIdsByEt(int et, uint lv)
         {
             List<int> list = new List<int>();
             //Dictionary<int, int> sort = new();
-            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type) in Materials)
             {
                 if (et >= MinEt && et <= MaxEt && lv >= Lv)
                 {
@@ -317,13 +384,14 @@ namespace WoAutoCollectionPlugin.Utility
             return list;
         }
 
-        public static List<int> GetMaterialIdsByEtAndFinishId(int et, uint lv, List<int> finishIds)
+        public static List<int> GetMaterialIdsByEtAndFinishId(int et, string lv, List<int> finishIds)
         {
             List<int> list = new();
             //Dictionary<int, int> sort = new();
-            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            (int lv0, int lv1) = Util.LevelSplit(lv);
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type) in Materials)
             {
-                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                if (et >= MinEt && et <= MaxEt && Lv >= lv0 && Lv <= lv1)
                 {
                     if (!finishIds.Exists(t => t == Id)) {
                         list.Add(Id);
@@ -335,7 +403,7 @@ namespace WoAutoCollectionPlugin.Utility
 
         public static (string, uint, string, uint, uint, Vector3[], Vector3[]) GetMaterialById(int id)
         {
-            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) in Materials)
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type) in Materials)
             {
                 if (id == Id)
                 {
@@ -345,11 +413,12 @@ namespace WoAutoCollectionPlugin.Utility
             return (null, 0, null, 0, 0, null, null);
         }
 
-        public static int GetCollecMaterialIdByEt(int et, uint lv)
+        public static int GetCollecMaterialIdByEt(int et, string lv)
         {
+            (int lv0, int lv1) = Util.LevelSplit(lv);
             foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) in CollecMaterials)
             {
-                if (et >= MinEt && et <= MaxEt && lv >= Lv)
+                if (et >= MinEt && et <= MaxEt && Lv >= lv0 && Lv <= lv1)
                 {
                     return Id;
                 }

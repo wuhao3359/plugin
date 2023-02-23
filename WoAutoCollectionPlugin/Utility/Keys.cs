@@ -30,6 +30,8 @@ public static class Keys
     public static Byte F12_key = 123;
     public static Byte esc_key = 27;
     public static Byte space_key = 32;
+    public static Byte shift_key = 16;
+    public static Byte ctrl_key = 17;
     public static Byte a_key = 65;
     public static Byte d_key = 68;
     public static Byte e_key = 69;

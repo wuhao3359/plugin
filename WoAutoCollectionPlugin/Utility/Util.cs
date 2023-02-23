@@ -1,9 +1,12 @@
 ﻿using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices;
+using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 
 namespace WoAutoCollectionPlugin.Utility
 {
@@ -157,35 +160,80 @@ namespace WoAutoCollectionPlugin.Utility
             DalamudApi.TargetManager.SetTarget(target);
         }
 
-        public static (int, Vector3[]) GetNulHunmanPos(List<Vector3[]> FishList) {
-            Vector3[] vectors = { };
-            ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            int index = 1;
-            foreach (Vector3[] vector in FishList) {
-                bool flag = true;
-                int length = DalamudApi.ObjectTable.Length;
-                for (int i = 0; i < length; i++) {
-                    GameObject? gameObject = DalamudApi.ObjectTable[i];
-                    if (gameObject != null && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player) {
-                        Vector3 play = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
-                        Vector3 v = vector[vector.Length - 1];
-                        if (Maths.Distance(play, v) < 10) {
-                            flag = false;
-                        }
+        public static void GenerateCallback(AtkUnitBase* unitBase, params object[] values)
+        {
+            var atkValues = CreateAtkValueArray(values);
+            if (atkValues == null) return;
+            try
+            {
+                unitBase->FireCallback(values.Length, atkValues);
+            }
+            finally
+            {
+                for (var i = 0; i < values.Length; i++)
+                {
+                    if (atkValues[i].Type == ValueType.String)
+                    {
+                        Marshal.FreeHGlobal(new IntPtr(atkValues[i].String));
                     }
                 }
-                if (flag) {
-                    return (index, vector);
-                }
-                index++;
+                Marshal.FreeHGlobal(new IntPtr(atkValues));
             }
-                
-            return (-1, vectors);
+        }
+
+        public static AtkValue* CreateAtkValueArray(params object[] values)
+        {
+            var atkValues = (AtkValue*)Marshal.AllocHGlobal(values.Length * sizeof(AtkValue));
+            if (atkValues == null) return null;
+            try
+            {
+                for (var i = 0; i < values.Length; i++)
+                {
+                    var v = values[i];
+                    switch (v)
+                    {
+                        case uint uintValue:
+                            atkValues[i].Type = ValueType.UInt;
+                            atkValues[i].UInt = uintValue;
+                            break;
+                        case int intValue:
+                            atkValues[i].Type = ValueType.Int;
+                            atkValues[i].Int = intValue;
+                            break;
+                        case float floatValue:
+                            atkValues[i].Type = ValueType.Float;
+                            atkValues[i].Float = floatValue;
+                            break;
+                        case bool boolValue:
+                            atkValues[i].Type = ValueType.Bool;
+                            atkValues[i].Byte = (byte)(boolValue ? 1 : 0);
+                            break;
+                        case string stringValue:
+                            {
+                                atkValues[i].Type = ValueType.String;
+                                var stringBytes = System.Text.Encoding.UTF8.GetBytes(stringValue);
+                                var stringAlloc = Marshal.AllocHGlobal(stringBytes.Length + 1);
+                                Marshal.Copy(stringBytes, 0, stringAlloc, stringBytes.Length);
+                                Marshal.WriteByte(stringAlloc, stringBytes.Length, 0);
+                                atkValues[i].String = (byte*)stringAlloc;
+                                break;
+                            }
+                        default:
+                            throw new ArgumentException($"Unable to convert type {v.GetType()} to AtkValue");
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+            return atkValues;
         }
 
         public static Dictionary<string, string> CommandParse(string command, string args) {
             string[] str = args.Split(" ");
-            PluginLog.Log($"daily: {args} length: {str.Length}");
+            PluginLog.Log($"command: {command}, args: {args}, length: {str.Length}");
 
             Dictionary<string, string> dictionary = new();
             if (str.Length > 0) {
@@ -217,10 +265,9 @@ namespace WoAutoCollectionPlugin.Utility
          * params   
          *  command:daily    主要用途(Daily-限时采集)
          *  duration:1       持续次数(1次或多次)
-         *  level:50         等级(lv<50)
+         *  level:0-50       等级区间(0到50)
          *  bagLimit:1       背包限制(1-有)
-         *  
-         *  example:    daily duration:1 level:50 bagLimit:1
+         *  example:    daily duration:1 level:0-50 bagLimit:1
          *  
          *  
          *  command:craft           主要用途 自动生产
@@ -228,12 +275,19 @@ namespace WoAutoCollectionPlugin.Utility
          *  type:1                  1-普通制作 2-收藏品制作 3-快速制作 4-重建制作
          *  recipeName:上级以太药   生产物品名称
          *  exchangeItem:1          交换物品id 收藏品专业
-         *  
+         *  hq:1                    hq物品index
          *  example:    craft pressKey:1 type:1 recipeName:上级以太药 exchangeItem:1
+         *  
+         *  
+         *  command:collectionfish  主要用途 钓鱼获取白票 紫票 灵砂
+         *  type:1                  1-紫票 2-白票 3-晓月灵砂 4-巨海灵砂
+         *  exchangeItem:1          交换物品id 紫票 白票 兑换的物品
+         *  example:    collectionfish type:2 exchangeItem:2
          */
         public static Dictionary<string, List<string>> CommandParams = new() {
             { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
-            { "craft", new() { "pressKey", "type", "recipeName", "exchangeItem", "repair", "extractMateria" } }
+            { "craft", new() { "pressKey", "type", "recipeName", "hq", "exchangeItem", "repair", "extractMateria" } },
+            { "collectionfish", new() { "ftype", "fexchangeItem"} }
         };
 
         public static Dictionary<string, string> DefaultValues = new()
@@ -248,11 +302,32 @@ namespace WoAutoCollectionPlugin.Utility
             { "pressKey", "1" },
             { "type", "1" },
             { "recipeName", "" },
+            { "hq", "0-0" },
             { "exchangeItem", "0" },
+
+            // fish
+            { "ftype", "2" },
+            { "fexchangeItem", "2" },
 
             // common
             { "repair", "0" },
             { "extractMateria", "0" },
         };
+
+        public static (int, int) LevelSplit(string lv) {
+            int lv0 = 0;
+            int lv1;
+            string[] lvstr = lv.Split("-");
+            if (lvstr.Length > 1)
+            {
+                lv0 = int.Parse(lvstr[0]);
+                lv1 = int.Parse(lvstr[1]);
+            }
+            else
+            {
+                lv1 = int.Parse(lvstr[0]);
+            }
+            return (lv0, lv1);
+        }
     }
 }

@@ -25,7 +25,7 @@ public unsafe partial struct AgentMap
 
     [FieldOffset(0x37B8)] public FlagMapMarker FlagMapMarker;
 
-    [FieldOffset(0x3800)] public fixed byte UnkArray1[0x38 * 12]; // 12 * MapMarkerBase
+    [FieldOffset(0x3800)] public fixed byte WarpMarkerArray[0x38 * 12]; // 12 * MapMarkerBase
     [FieldOffset(0x3AA0)] public fixed byte UnkArray2[0xA8 * 6];
     [FieldOffset(0x3E90)] public fixed byte MiniMapMarkerArray[0x40 * 100]; // 100 * MiniMapMarker
 
@@ -49,9 +49,12 @@ public unsafe partial struct AgentMap
     [FieldOffset(0x5900)] public uint SelectedMapDiscoveryFlag;
     [FieldOffset(0x5904)] public uint SelectedMapSub;
 
+    [FieldOffset(0x5914)] public uint UpdateFlags;
+
     [FieldOffset(0x59B0)] public byte MapMarkerCount;
     [FieldOffset(0x59B1)] public byte TempMapMarkerCount;
     [FieldOffset(0x59B3)] public byte IsFlagMarkerSet;
+    [FieldOffset(0x59B5)] public byte MiniMapMarkerCount;
     [FieldOffset(0x59BD)] public byte IsPlayerMoving;
     [FieldOffset(0x59C5)] public byte IsControlKeyPressed;
 
@@ -110,6 +113,7 @@ public unsafe struct MapMarkerBase
     [FieldOffset(0x08)] public uint SecondaryIconId;
     [FieldOffset(0x0C)] public int Scale;
     [FieldOffset(0x10)] public byte* Subtext;
+    [FieldOffset(0x18)] public byte Index;
 
     [FieldOffset(0x2C)] public short X;
     [FieldOffset(0x2E)] public short Y;
@@ -133,7 +137,7 @@ public struct MapMarkerInfo
     [FieldOffset(0x3C)] public ushort DataType;
     [FieldOffset(0x3E)] public ushort DataKey;
 
-    [FieldOffset(0x44)] public uint MapMarkerSubKey;
+    [FieldOffset(0x44)] public byte MapMarkerSubKey;
 }
 
 [StructLayout(LayoutKind.Explicit, Size = 0x108)]
@@ -149,6 +153,9 @@ public struct TempMapMarker
 [StructLayout(LayoutKind.Explicit, Size = 0x40)]
 public struct MiniMapMarker
 {
+    [FieldOffset(0x00)] public ushort DataType;
+    [FieldOffset(0x02)] public ushort DataKey;
+
     [FieldOffset(0x08)] public MapMarkerBase MapMarker;
 }
 

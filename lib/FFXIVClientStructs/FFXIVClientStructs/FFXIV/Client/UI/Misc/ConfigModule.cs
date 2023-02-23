@@ -6,13 +6,13 @@ namespace FFXIVClientStructs.FFXIV.Client.UI.Misc;
 // Client::UI::Misc::ConfigModule
 // ctor E8 ?? ?? ?? ?? 48 8B 97 ?? ?? ?? ?? 48 8D 8F ?? ?? ?? ?? 4C 8B CF
 
-[StructLayout(LayoutKind.Explicit, Size = 0xD948)]
+[StructLayout(LayoutKind.Explicit, Size = 0xD9E8)]
 public unsafe partial struct ConfigModule
 {
-    public const int ConfigOptionCount = 683;
+    public const int ConfigOptionCount = 685;
     [FieldOffset(0x28)] public UIModule* UIModule;
     [FieldOffset(0x2C8)] private fixed byte options[Option.Size * ConfigOptionCount];
-    [FieldOffset(0x5838)] private fixed byte values[0x10 * ConfigOptionCount];
+    [FieldOffset(0x5878)] private fixed byte values[0x10 * ConfigOptionCount];
 
     public static ConfigModule* Instance()
     {
