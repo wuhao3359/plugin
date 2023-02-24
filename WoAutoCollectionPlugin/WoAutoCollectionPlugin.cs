@@ -129,7 +129,7 @@ namespace WoAutoCollectionPlugin
                 {
                     HelpMessage = "Daily"
                 });
-                DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnMarketCommand)
+                DalamudApi.CommandManager.AddHandler(market, new CommandInfo(OnMarketCommand)
                 {
                     HelpMessage = "Market"
                 });
@@ -165,6 +165,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
+            DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             MarketCommons.Dispose();
@@ -355,6 +356,8 @@ namespace WoAutoCollectionPlugin
             //CommonUi.test1();
 
             CommonUi.test2();
+
+            //CommonUi.test3();
         }
 
         private void OnActionTestCommand(string command, string args)

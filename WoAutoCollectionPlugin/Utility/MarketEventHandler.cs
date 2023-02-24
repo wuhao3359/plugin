@@ -47,9 +47,6 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonInventoryContext_OnSetup_Signature =
             "83 B9 ?? ?? ?? ?? ?? 7E 11";
 
-        private readonly string FireCallback_Signature =
-            "E8 ?? ?? ?? ?? 8B 44 24 20 C1 E8 05";
-
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonItemSearchResult_OnSetup_HW;
@@ -58,7 +55,6 @@ namespace WoAutoCollectionPlugin.Utility
 
         private HookWrapper<AddonInventoryContext_OnSetup_Delegate> AddonInventoryContext_OnSetup_HW;
 
-        private HookWrapper<FireCallback_Delegate> FireCallback_HW;
 
         // __int64 __fastcall Client::UI::AddonXXX_ReceiveEvent(__int64 a1, __int16 a2, int a3, __int64 a4, __int64* a5)
         private delegate IntPtr Addon_ReceiveEvent_Delegate(IntPtr self, ushort eventType,
@@ -113,10 +109,6 @@ namespace WoAutoCollectionPlugin.Utility
             AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
                 AddonInventoryContext_OnSetup_Signature,
                 AddonInventoryContext_OnSetup_Delegate_Detour);
-
-            FireCallback_HW = MarketCommons.Hook<FireCallback_Delegate>(
-                FireCallback_Signature,
-                FireCallback_Delegate_Detour);
 
             UiHelper.Setup();
         }
@@ -200,6 +192,21 @@ namespace WoAutoCollectionPlugin.Utility
             var result = AddonRetainerSellList_OnSetup_HW.Original(addon, a2, dataPtr);
             AddonRetainerSellList = addon;
 
+            // 第一个参数: addon
+            // 第二个参数:
+            // 第三个参数: InventoryType
+            // 第四个参数: Slot
+            AddonRetainerSellList_Position(out Vector2 position);
+            //Util.GenerateCallback((AtkUnitBase*)addon, 2, 12002, 0, 0);
+            var addonRetainerSellList = MarketCommons.GetUnitBase("RetainerSellList");
+            //IntPtr t0 = new IntPtr(addonRetainerSellList);
+            //IntPtr t1 = new IntPtr(addonRetainerSellList->WindowCollisionNode);
+            //IntPtr t2 = new IntPtr(addonRetainerSellList->WindowHeaderCollisionNode);
+            ////IntPtr t3 = new IntPtr(addonRetainerSellList->WindowNode->Component->UldManager.NodeListCount);
+            //PluginLog.Log($"(got: {t0:X} {t1:X}) {t2:X}) {addonRetainerSellList->WindowCollisionNode->LinkedComponent->UldManager.NodeListCount}");
+            //MarketCommons.SendClick(addon, EventType.CHANGE, 2, addonRetainerSellList->WindowNode->Component->UldManager
+            //                    .NodeList[1]->GetComponent()->OwnerNode);
+
             itemsPrice = new();
             itemName = "";
             itemPrice = 10000000;
@@ -272,16 +279,6 @@ namespace WoAutoCollectionPlugin.Utility
             return result;
         }
 
-        private void FireCallback_Delegate_Detour(int valueCount, AtkValue* values, void* a4)
-        {
-            PluginLog.Log($"AddonItemSearchResult_ReceiveEvent_Delegate_Detour, {valueCount}");
-            for (int i = 0; i < valueCount; i++) {
-                PluginLog.Log($"values, {values[i]}");
-            }
-            FireCallback_HW.Original(valueCount, values, a4);
-            return;
-        }
-
         private void* AddonInventoryContext_OnSetup_Delegate_Detour(AgentInventoryContext* agent, InventoryType inventoryType, ushort slot, int a4, ushort a5, byte a6)
         {
             PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour, {inventoryType}, {slot}, {a4}, {a5}, {a6}");
@@ -289,6 +286,7 @@ namespace WoAutoCollectionPlugin.Utility
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
             var aId = agent->AgentInterface.GetAddonID();
 
+            return result;
             PluginLog.Log($"addonId, {aId}");
             try
             {
@@ -311,9 +309,9 @@ namespace WoAutoCollectionPlugin.Utility
                             {
                                 var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
                                 if (contextItemParam.Type != ValueType.String) continue;
-                                var contextItemName = contextItemParam.ToString();
+                                var contextItemName = contextItemParam.ValueString();
 
-                                var text = "Put Up for Sale";
+                                var text = "到市场出售";
                                 PluginLog.Log($"contextItemName:{contextItemName}");
                                 if (text.Contains(contextItemName))
                                 {
