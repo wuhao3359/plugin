@@ -161,6 +161,22 @@ namespace WoAutoCollectionPlugin
             DalamudApi.TargetManager.SetTarget(target);
         }
 
+        public static string ValueString(this AtkValue v)
+        {
+            return v.Type switch
+            {
+                ValueType.Int => $"{v.Int}",
+                ValueType.String => Marshal.PtrToStringUTF8(new IntPtr(v.String)),
+                ValueType.UInt => $"{v.UInt}",
+                ValueType.Bool => $"{v.Byte != 0}",
+                ValueType.Float => $"{v.Float}",
+                ValueType.Vector => "[Vector]",
+                ValueType.AllocatedString => Marshal.PtrToStringUTF8(new IntPtr(v.String))?.TrimEnd('\0') ?? string.Empty,
+                ValueType.AllocatedVector => "[Allocated Vector]",
+                _ => $"Unknown Type: {v.Type}"
+            };
+        }
+
         public static void GenerateCallback(AtkUnitBase* unitBase, params object[] values)
         {
             var atkValues = CreateAtkValueArray(values);
