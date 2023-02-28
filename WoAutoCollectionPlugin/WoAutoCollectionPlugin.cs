@@ -71,6 +71,8 @@ namespace WoAutoCollectionPlugin
             MarketEventHandler = new MarketEventHandler();
 
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login += OnLoginEvent;
+            DalamudApi.ClientState.Logout += OnLogoutEvent;
 
             try
             {
@@ -205,6 +207,8 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login -= OnLoginEvent;
+            DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
 
             pingTracker.OnPingUpdated -= PacketPingTracker.UpdatePing;
@@ -510,6 +514,18 @@ namespace WoAutoCollectionPlugin
         private void DrawConfigUI()
         {
             PluginUi.SettingsVisible = true;
+        }
+
+        private void OnLoginEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> login...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        }
+
+        private void OnLogoutEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> logout...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
         }
     }
 }
