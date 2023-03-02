@@ -512,9 +512,9 @@ namespace WoAutoCollectionPlugin.Bot
                 task.Start();
             } else if (otherTaskParam == "1") {
                 PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
-                if (et != 0 && hour - et >= -1 && minute > 20)
+                if ((et - hour == 1 && minute > 20) || (hour - et > 3 && minute > 20))
                 {
-                    PluginLog.Log($"间隔时间短暂, 不执行其他任务");
+                    PluginLog.Log($"间隔时间短暂, 不执行其他任务 hour: {hour}, minute: {minute}, 下个et: {et}");
                     Task task = new(() =>
                     {
                         Thread.Sleep(7000);

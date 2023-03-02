@@ -522,9 +522,9 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 List<int> list = Position.GetMateriaId(lv);
                 List<int> li = new();
-                foreach (int i in list)
+                for (int i = 0; i < list.Count; i ++)
                 {
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(i);
+                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(list[i]);
                     int count = BagManager.GetInventoryItemCount((uint)i);
                     if (MaxBackPack > count)
                     {
