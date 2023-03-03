@@ -167,6 +167,12 @@ namespace WoAutoCollectionPlugin.Bot
                     if (!RecipeNoteUi.RecipeNoteIsOpen() && !RecipeNoteUi.SynthesisIsOpen())
                     {
                         if (!DalamudApi.Condition[ConditionFlag.Crafting]) {
+                            if (needHQ)
+                            {
+                                recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
+                                PluginLog.Log($"<=======> {recipeName}, {recipeId}");
+                                Thread.Sleep(1000);
+                            }
                             RecipeNoteUi.OpenRecipeNote(recipeId);
                         }
                         Thread.Sleep(1000);
@@ -202,7 +208,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 Thread.Sleep(2000);
                             }
                         }
-                        PluginLog.Log($"Finish: {i} Item: {recipeName}");
+                        PluginLog.Log($"Finish: {i} Item: {recipeName}, {recipeId}");
                         i++;
                     }
                     else {
