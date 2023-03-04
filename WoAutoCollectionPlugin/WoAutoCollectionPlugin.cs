@@ -4,26 +4,21 @@ using Dalamud.Game.Network;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Lumina.Data.Parsing;
+using Dalamud.Plugin.Ipc;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Dynamic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.GameAddressDetectors;
+using WoAutoCollectionPlugin.PingTrackers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
-using WoAutoCollectionPlugin.Weather;
-using static Lumina.Excel.GeneratedSheets.Recipe;
 
 namespace WoAutoCollectionPlugin
 {
@@ -56,7 +51,12 @@ namespace WoAutoCollectionPlugin
         public static Lumina.Excel.ExcelSheet<Item> items;
         public static bool taskRunning = false;
 
-        public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
+        private readonly GameNetwork network;
+        private readonly GameAddressDetector addressDetector;
+        public static PingTracker pingTracker;
+        internal ICallGateProvider<object, object> IpcProvider;
+
+        public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
             DalamudApi.Initialize(pluginInterface);
 
@@ -71,6 +71,8 @@ namespace WoAutoCollectionPlugin
             MarketEventHandler = new MarketEventHandler();
 
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login += OnLoginEvent;
+            DalamudApi.ClientState.Logout += OnLogoutEvent;
 
             try
             {
@@ -139,6 +141,29 @@ namespace WoAutoCollectionPlugin
                 Time = new SeTime();
                 Executor = new Executor();
 
+                this.network = network;
+                addressDetector = pluginInterface.Create<AggregateAddressDetector>();
+                pingTracker = RequestNewPingTracker();
+                pingTracker.Verbose = false;
+                pingTracker.Start();
+
+                try
+                {
+                    IpcProvider = pluginInterface.GetIpcProvider<object, object>("PingPlugin");
+                    pingTracker.OnPingUpdated += payload =>
+                    {
+                        dynamic obj = new ExpandoObject();
+                        obj.LastRTT = payload.LastRTT;
+                        obj.AverageRTT = payload.AverageRTT;
+                        IpcProvider.SendMessage(obj);
+                    };
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"Error registering IPC provider:\n{e}");
+                }
+                pingTracker.OnPingUpdated += PacketPingTracker.UpdatePing;
+
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
             }
@@ -146,6 +171,20 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Error($"Failed loading WoAutoCollectionPlugin\n{e}");
             }
+        }
+
+        private PingTracker RequestNewPingTracker()
+        {
+            pingTracker?.Dispose();
+            PingTracker newTracker = new PacketPingTracker(addressDetector, network);
+
+            pingTracker = newTracker;
+            if (pingTracker == null)
+            {
+                throw new InvalidOperationException("Failed to create ping tracker. The provided arguments may be incorrect.");
+            }
+            pingTracker.Start();
+            return newTracker;
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -168,7 +207,12 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login -= OnLoginEvent;
+            DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
+
+            pingTracker.OnPingUpdated -= PacketPingTracker.UpdatePing;
+            pingTracker.Dispose();
             // Game.DisAble();
         }
 
@@ -470,6 +514,18 @@ namespace WoAutoCollectionPlugin
         private void DrawConfigUI()
         {
             PluginUi.SettingsVisible = true;
+        }
+
+        private void OnLoginEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> login...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        }
+
+        private void OnLogoutEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> logout...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
         }
     }
 }
