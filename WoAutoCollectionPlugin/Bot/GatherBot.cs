@@ -525,15 +525,15 @@ namespace WoAutoCollectionPlugin.Bot
                 for (int i = 0; i < list.Count; i ++)
                 {
                     (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(list[i]);
-                    int count = BagManager.GetInventoryItemCount((uint)i);
+                    int count = BagManager.GetInventoryItemCount((uint)Id);
                     if (MaxBackPack > count)
                     {
-                        li.Add(i);
+                        li.Add(Id);
                     }
                 }
                 Random rd = new();
                 int r = rd.Next(li.Count);
-                PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count}");
+                PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count} {list.Count}");
                 return Position.GetMaterialById(li[r]);
             }
             else
