@@ -6,9 +6,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using WoAutoCollectionPlugin.Utility;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 
-namespace WoAutoCollectionPlugin.Utility
+namespace WoAutoCollectionPlugin
 {
     public static unsafe class Util
     {
@@ -160,6 +161,22 @@ namespace WoAutoCollectionPlugin.Utility
             DalamudApi.TargetManager.SetTarget(target);
         }
 
+        public static string ValueString(this AtkValue v)
+        {
+            return v.Type switch
+            {
+                ValueType.Int => $"{v.Int}",
+                ValueType.String => Marshal.PtrToStringUTF8(new IntPtr(v.String)),
+                ValueType.UInt => $"{v.UInt}",
+                ValueType.Bool => $"{v.Byte != 0}",
+                ValueType.Float => $"{v.Float}",
+                ValueType.Vector => "[Vector]",
+                ValueType.AllocatedString => Marshal.PtrToStringUTF8(new IntPtr(v.String))?.TrimEnd('\0') ?? string.Empty,
+                ValueType.AllocatedVector => "[Allocated Vector]",
+                _ => $"Unknown Type: {v.Type}"
+            };
+        }
+
         public static void GenerateCallback(AtkUnitBase* unitBase, params object[] values)
         {
             var atkValues = CreateAtkValueArray(values);
@@ -229,6 +246,26 @@ namespace WoAutoCollectionPlugin.Utility
             }
 
             return atkValues;
+        }
+
+        internal static bool TryParseRetainerName(string s, out string retainer)
+        {
+            retainer = default;
+            //if (!P.retainerManager.Ready)
+            //{
+            //    return false;
+            //}
+            //for (var i = 0; i <= 2; i++)
+            //{
+            //    var r = P.retainerManager.Retainer(i);
+            //    var rname = r.Name.ToString();
+            //    if (s.Contains(rname) && (retainer == null || rname.Length > retainer.Length))
+            //    {
+            //        retainer = rname;
+            //    }
+            //}
+            //return retainer != default;
+            return false;
         }
 
         public static Dictionary<string, string> CommandParse(string command, string args) {

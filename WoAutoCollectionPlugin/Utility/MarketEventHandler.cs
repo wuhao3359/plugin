@@ -53,8 +53,8 @@ namespace WoAutoCollectionPlugin.Utility
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSellList_OnSetup_HW;
         private HookWrapper<Addon_OnFinalize_Delegate> AddonRetainerSellList_OnFinalize_HW;
 
-        private HookWrapper<Addon_MoveItemSlot_Delegate> AddonInventoryManager_MoveItemSlot_HW;
         private HookWrapper<AddonInventoryContext_OnSetup_Delegate> AddonInventoryContext_OnSetup_HW;
+
 
         // __int64 __fastcall Client::UI::AddonXXX_ReceiveEvent(__int64 a1, __int16 a2, int a3, __int64 a4, __int64* a5)
         private delegate IntPtr Addon_ReceiveEvent_Delegate(IntPtr self, ushort eventType,
@@ -66,10 +66,9 @@ namespace WoAutoCollectionPlugin.Utility
         // __int64 __fastcall Client::UI::AddonXXX_Finalize(__int64 a1)
         private delegate void Addon_OnFinalize_Delegate(IntPtr addon);
 
-        private delegate int Addon_MoveItemSlot_Delegate(InventoryType srcContainer, uint srcSlot, InventoryType dstContainer, uint dstSlot, byte unk);
-
         private delegate void* AddonInventoryContext_OnSetup_Delegate(AgentInventoryContext* agent, InventoryType inventory, ushort slot, int a4, ushort a5, byte a6);
 
+        private delegate void FireCallback_Delegate(int valueCount, AtkValue* values, void* a4);
         #endregion
 
         //internal Configuration conf => Configuration.GetOrLoad();
@@ -81,6 +80,8 @@ namespace WoAutoCollectionPlugin.Utility
         private static string itemName = "";
 
         private static int itemPrice = 10000000;
+
+        private static int retry = 0;
 
         public MarketEventHandler()
         {
@@ -108,6 +109,8 @@ namespace WoAutoCollectionPlugin.Utility
             AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
                 AddonInventoryContext_OnSetup_Signature,
                 AddonInventoryContext_OnSetup_Delegate_Detour);
+
+            UiHelper.Setup();
         }
 
         public void OnNetworkEvent(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
@@ -179,6 +182,7 @@ namespace WoAutoCollectionPlugin.Utility
             itemsPrice = new();
             itemName = "";
             itemPrice = 10000000;
+            retry = 0;
             AddonRetainerSellList_OnFinalize_HW.Original(addon);
         }
 
@@ -187,6 +191,21 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonRetainerSellList.OnSetup (got: {addon:X})");
             var result = AddonRetainerSellList_OnSetup_HW.Original(addon, a2, dataPtr);
             AddonRetainerSellList = addon;
+
+            // 第一个参数: addon
+            // 第二个参数:
+            // 第三个参数: InventoryType
+            // 第四个参数: Slot
+            AddonRetainerSellList_Position(out Vector2 position);
+            //Util.GenerateCallback((AtkUnitBase*)addon, 2, 12002, 0, 0);
+            var addonRetainerSellList = MarketCommons.GetUnitBase("RetainerSellList");
+            //IntPtr t0 = new IntPtr(addonRetainerSellList);
+            //IntPtr t1 = new IntPtr(addonRetainerSellList->WindowCollisionNode);
+            //IntPtr t2 = new IntPtr(addonRetainerSellList->WindowHeaderCollisionNode);
+            ////IntPtr t3 = new IntPtr(addonRetainerSellList->WindowNode->Component->UldManager.NodeListCount);
+            //PluginLog.Log($"(got: {t0:X} {t1:X}) {t2:X}) {addonRetainerSellList->WindowCollisionNode->LinkedComponent->UldManager.NodeListCount}");
+            //MarketCommons.SendClick(addon, EventType.CHANGE, 2, addonRetainerSellList->WindowNode->Component->UldManager
+            //                    .NodeList[1]->GetComponent()->OwnerNode);
 
             itemsPrice = new();
             itemName = "";
@@ -265,45 +284,47 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour, {inventoryType}, {slot}, {a4}, {a5}, {a6}");
             var result =
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
+            var aId = agent->AgentInterface.GetAddonID();
 
+            return result;
+            PluginLog.Log($"addonId, {aId}");
             try
             {
-                if (false) {
-                    var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
-                    if (inventory != null)
+                var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
+                if (inventory != null)
+                {
+                    var itemSlot = inventory->GetInventorySlot(slot);
+                    if (itemSlot != null)
                     {
-                        var itemSlot = inventory->GetInventorySlot(slot);
-                        if (itemSlot != null)
+                        var itemId = itemSlot->ItemID;
+                        var item = WoAutoCollectionPlugin.GameData.DataManager.GetExcelSheet<Item>()?.GetRow(itemId);
+                        if (item != null)
                         {
-                            var itemId = itemSlot->ItemID;
-                            var item = WoAutoCollectionPlugin.GameData.DataManager.GetExcelSheet<Item>()?.GetRow(itemId);
-                            if (item != null)
+                            var addonId = agent->AgentInterface.GetAddonID();
+                            if (addonId == 0) return result;
+                            var addon = GetAddonByID(addonId);
+                            if (addon == null) return result;
+
+                            for (var i = 0; i < agent->ContextItemCount; i++)
                             {
-                                var addonId = agent->AgentInterface.GetAddonID();
-                                if (addonId == 0) return result;
-                                var addon = GetAddonByID(addonId);
-                                if (addon == null) return result;
+                                var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
+                                if (contextItemParam.Type != ValueType.String) continue;
+                                var contextItemName = contextItemParam.ValueString();
 
-                                for (var i = 0; i < agent->ContextItemCount; i++)
+                                var text = "到市场出售";
+                                PluginLog.Log($"contextItemName:{contextItemName}");
+                                if (text.Contains(contextItemName))
                                 {
-                                    var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
-                                    if (contextItemParam.Type != ValueType.String) continue;
-                                    var contextItemName = contextItemParam.ToString();
-
-                                    var text = "Put Up for Sale";
-                                    if (text.Contains(contextItemName))
-                                    {
-                                        //if (Bitmask.IsBitSet(agent->ContextItemDisabledMask, i))
-                                        //{
-                                        //    PluginLog.Debug($"QRA found {i}:{contextItemName} but it's disabled");
-                                        //    continue;
-                                        //}
-                                        Util.GenerateCallback(addon, 0, i, 0U, 0, 0);
-                                        agent->AgentInterface.Hide();
-                                        UiHelper.Close(addon);
-                                        PluginLog.Debug($"QRA Selected {i}:{contextItemName}");
-                                        return result;
-                                    }
+                                    //if (Bitmask.IsBitSet(agent->ContextItemDisabledMask, i))
+                                    //{
+                                    //    PluginLog.Debug($"QRA found {i}:{contextItemName} but it's disabled");
+                                    //    continue;
+                                    //}
+                                    Util.GenerateCallback(addon, 0, i, 0U, 0, 0);
+                                    agent->AgentInterface.Hide();
+                                    UiHelper.Close(addon);
+                                    PluginLog.Log($"QRA Selected {i}:{contextItemName}");
+                                    return result;
                                 }
                             }
                         }
@@ -328,7 +349,8 @@ namespace WoAutoCollectionPlugin.Utility
                 return;
             }
 
-            if (itemsPrice.TryGetValue(itemName, out var p)) {
+            if (itemsPrice.TryGetValue(itemName, out var p))
+            {
                 // 价格
                 var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
                 // 数量
@@ -343,6 +365,16 @@ namespace WoAutoCollectionPlugin.Utility
                 if (DalamudApi.KeyState[Keys.shift_key])
                 {
                     MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
+                }
+            }
+            else {
+                PluginLog.Log($"获取价格重试: {retry}");
+                if (retry < 3) {
+                    GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                    var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
+
+                    MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
+                    retry++;
                 }
             }
         }

@@ -27,6 +27,7 @@ public class GameData
 
     public EventFramework EventFramework { get; private set; } = null!;
 
+    public MarketBot MarketBot { get; init; } = null!;
     public DailyBot DailyBot { get; init; } = null!;
     public FishBot FishBot { get; init; } = null!;
     public HFishBot HFishBot { get; init; } = null!;
@@ -99,6 +100,7 @@ public class GameData
             CollectionFishBot = new();
             GatherBot = new();
             DailyBot = new();
+            MarketBot = new();
             CraftBot = new();
             CommonBot = new();
         }

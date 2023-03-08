@@ -4,6 +4,7 @@ using ClickLib;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
 using Dalamud.Plugin.Ipc.Exceptions;
+using FFXIVClientStructs.Attributes;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
@@ -606,8 +607,6 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
             }
 
-
-
             var inventory1Container = im->GetInventoryContainer(InventoryType.Inventory1);
             PluginLog.Log($"------------------------------------, {inventory1Container->Size}");
             for (var j = 0; j < inventory1Container->Size; j++)
@@ -619,18 +618,39 @@ namespace WoAutoCollectionPlugin.Ui
                 PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
             }
             PluginLog.Log("------------------------------------");
+            var inventory2Container = im->GetInventoryContainer(InventoryType.Inventory2);
+            PluginLog.Log($"------------------------------------, {inventory2Container->Size}");
+            for (var j = 0; j < inventory2Container->Size; j++)
+            {
+                var item = inventory2Container->GetInventorySlot(j);
+                if (item == null)
+                    continue;
+
+                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
+            }
+            PluginLog.Log("------------------------------------");
             return false;
         }
 
         public static unsafe bool test2() {
-            var ic = AgentInventoryContext.Instance();
-            if (ic == null) {
-                PluginLog.Error("AgentInventoryContext was null");
+            var ac = AgentContext.Instance();
+            if (ac == null)
+            {
+                PluginLog.Error("AgentContext was null");
                 return false;
             }
-            uint addId = ic->AgentInterface.GetAddonID();
-            PluginLog.Log($"AgentInventoryContext addId: {addId}");
-            ic->OpenForItemSlot(InventoryType.RetainerMarket, 1, addId);
+            uint addId = ac->AgentInterface.GetAddonID();
+            PluginLog.Log($"AgentContext addId: {addId} {ac->Position.X} {ac->Position.Y}");
+            PluginLog.Log($"-----------   {ac->OwnerAddon}  -------------------");
+            //ac->OpenForItemSlot(InventoryType.Inventory1, 1, 8);
+            ac->OpenContextMenu();
+            return false;
+        }
+
+        public static unsafe bool test3()
+        {
+            GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var addon);
+            Util.GenerateCallback(addon, 0, 0, 0U, 0, 0);
 
             return false;
         }

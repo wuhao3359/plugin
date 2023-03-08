@@ -4,84 +4,60 @@ using Dalamud.Game.Network;
 using Dalamud.Game.Network.Structures;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Client.UI.Agent;
-using Lumina.Data.Parsing;
+using Dalamud.Plugin.Ipc;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Dynamic;
 using System.Numerics;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
-using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.GameAddressDetectors;
+using WoAutoCollectionPlugin.PingTrackers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
-using WoAutoCollectionPlugin.Weather;
-using static Lumina.Excel.GeneratedSheets.Recipe;
 
 namespace WoAutoCollectionPlugin
 {
     public sealed class WoAutoCollectionPlugin : IDalamudPlugin
     {
         public string Name => "WoAutoCollectionPlugin";
-
         private const string collect = "/collect";
-
         private const string fish = "/fish";
-
         private const string hfish = "/hfish";
-
         private const string collectionfish = "/collectionfish";
-
         private const string gather = "/gather";
-
         private const string ygather = "/ygather";
-
         private const string woTest = "/woTest";
-
         private const string actionTest = "/actionTest";
-
         private const string close = "/close";
-
         private const string craft = "/craft";
-
         private const string daily = "/daily";
-
-        public WoAutoCollectionPlugin Plugin { get; private set; }
+        private const string market = "/market";
 
         public Configuration Configuration { get; private set; }
-
-        public static SeTime Time { get; private set; } = null!;
-
+        public static SeTime Time { get; private set; }
         private PluginUI PluginUi { get; init; }
-
-        public static GameData GameData { get; private set; } = null!;
-
-        public static WeatherManager WeatherManager { get; private set; } = null!;
-
+        public static GameData GameData { get; private set; }
         internal MarketEventHandler MarketEventHandler { get; private set; }
 
         public static Executor Executor;
-
         public static bool newRequest;
-
         public static GetFilePointer getFilePtr;
-
         public static List<MarketBoardCurrentOfferings> _cache = new();
-
         public static Lumina.Excel.ExcelSheet<Item> items;
+        public static bool taskRunning = false;
 
-        public bool taskRunning = false;
+        private readonly GameNetwork network;
+        private readonly GameAddressDetector addressDetector;
+        public static PingTracker pingTracker;
+        internal ICallGateProvider<object, object> IpcProvider;
 
-        public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface)
+        public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
-            Plugin = this;
             DalamudApi.Initialize(pluginInterface);
 
             // 可视化ui
@@ -90,11 +66,13 @@ namespace WoAutoCollectionPlugin
 
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
-            ClickLib.Click.Initialize();
+            Click.Initialize();
             newRequest = false;
             MarketEventHandler = new MarketEventHandler();
 
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login += OnLoginEvent;
+            DalamudApi.ClientState.Logout += OnLogoutEvent;
 
             try
             {
@@ -113,61 +91,78 @@ namespace WoAutoCollectionPlugin
                 {
                     HelpMessage = "当前坐标信息"
                 });
-
                 DalamudApi.CommandManager.AddHandler(fish, new CommandInfo(OnFishCommand)
                 {
                     HelpMessage = "fish {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(hfish, new CommandInfo(OnHFishCommand)
                 {
                     HelpMessage = "hfish"
                 });
-
                 DalamudApi.CommandManager.AddHandler(collectionfish, new CommandInfo(OnCollectionFishCommand)
                 {
                     HelpMessage = "collectionfish {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(gather, new CommandInfo(OnGatherCommand)
                 {
                     HelpMessage = "gather {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(ygather, new CommandInfo(OnYGatherCommand)
                 {
                     HelpMessage = "ygather {param}"
                 });
-
                 DalamudApi.CommandManager.AddHandler(woTest, new CommandInfo(OnWoTestCommand)
                 {
                     HelpMessage = "wotest"
                 });
-
                 DalamudApi.CommandManager.AddHandler(actionTest, new CommandInfo(OnActionTestCommand)
                 {
                     HelpMessage = "actionTest"
                 });
-
                 DalamudApi.CommandManager.AddHandler(close, new CommandInfo(OnCloseTestCommand)
                 {
                     HelpMessage = "close"
                 });
-
                 DalamudApi.CommandManager.AddHandler(craft, new CommandInfo(OnCraftCommand)
                 {
                     HelpMessage = "Craft"
                 });
-
                 DalamudApi.CommandManager.AddHandler(daily, new CommandInfo(OnDailyCommand)
                 {
                     HelpMessage = "Daily"
+                });
+                DalamudApi.CommandManager.AddHandler(market, new CommandInfo(OnMarketCommand)
+                {
+                    HelpMessage = "Market"
                 });
 
                 GameData = new GameData(DalamudApi.DataManager);
                 items = GameData.DataManager.GetExcelSheet<Item>();
                 Time = new SeTime();
                 Executor = new Executor();
+
+                this.network = network;
+                addressDetector = pluginInterface.Create<AggregateAddressDetector>();
+                pingTracker = RequestNewPingTracker();
+                pingTracker.Verbose = false;
+                pingTracker.Start();
+
+                try
+                {
+                    IpcProvider = pluginInterface.GetIpcProvider<object, object>("PingPlugin");
+                    pingTracker.OnPingUpdated += payload =>
+                    {
+                        dynamic obj = new ExpandoObject();
+                        obj.LastRTT = payload.LastRTT;
+                        obj.AverageRTT = payload.AverageRTT;
+                        IpcProvider.SendMessage(obj);
+                    };
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"Error registering IPC provider:\n{e}");
+                }
+                pingTracker.OnPingUpdated += PacketPingTracker.UpdatePing;
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -176,6 +171,20 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Error($"Failed loading WoAutoCollectionPlugin\n{e}");
             }
+        }
+
+        private PingTracker RequestNewPingTracker()
+        {
+            pingTracker?.Dispose();
+            PingTracker newTracker = new PacketPingTracker(addressDetector, network);
+
+            pingTracker = newTracker;
+            if (pingTracker == null)
+            {
+                throw new InvalidOperationException("Failed to create ping tracker. The provided arguments may be incorrect.");
+            }
+            pingTracker.Start();
+            return newTracker;
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -195,9 +204,15 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
+            DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login -= OnLoginEvent;
+            DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
+
+            pingTracker.OnPingUpdated -= PacketPingTracker.UpdatePing;
+            pingTracker.Dispose();
             // Game.DisAble();
         }
 
@@ -385,6 +400,8 @@ namespace WoAutoCollectionPlugin
             //CommonUi.test1();
 
             CommonUi.test2();
+
+            //CommonUi.test3();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -460,6 +477,35 @@ namespace WoAutoCollectionPlugin
             task.Start();
         }
 
+        private void OnMarketCommand(string command, string args)
+        {
+            string[] str = args.Split(' ');
+            PluginLog.Log($"market: {args}");
+            if (args.Length == 0)
+            {
+                PluginLog.Log($"stop");
+                GameData.DailyBot.StopScript();
+                taskRunning = false;
+                return;
+            }
+
+            if (taskRunning)
+            {
+                PluginLog.Log($"stop first");
+                return;
+            }
+
+            taskRunning = true;
+            Task task = new(() =>
+            {
+                PluginLog.Log($"start...");
+                GameData.MarketBot.RunScript();
+                PluginLog.Log($"end...");
+                taskRunning = false;
+            });
+            task.Start();
+        }
+
         private void DrawUI()
         {
             PluginUi.Draw();
@@ -468,6 +514,18 @@ namespace WoAutoCollectionPlugin
         private void DrawConfigUI()
         {
             PluginUi.SettingsVisible = true;
+        }
+
+        private void OnLoginEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> login...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        }
+
+        private void OnLogoutEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> logout...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
         }
     }
 }
