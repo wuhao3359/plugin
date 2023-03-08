@@ -271,28 +271,19 @@ namespace WoAutoCollectionPlugin.Bot
                     num++;
                     WoAutoCollectionPlugin.Time.Update();
                     hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
-                    Thread.Sleep(1000);
+                    Thread.Sleep(2000);
 
-                    // 修理装备
-                    if (CommonUi.CanRepair())
+                    int count = CommonUi.CanExtractMateria();
+                    if (count >= 5)
                     {
-                        if (RecipeNoteUi.RecipeNoteIsOpen())
-                        {
-                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                        }
-                        WoAutoCollectionPlugin.GameData.param.TryGetValue("repair", out var v);
-                        if (v == "1")
-                        {
-                            WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
-                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
-                        }
-                        else if (v == "99")
-                        {
-                            WoAutoCollectionPlugin.GameData.CommonBot.Repair();
-                        }
+                        WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
                     }
-                    // 魔晶石精制
-                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(CommonUi.CanExtractMateria());
+                    if (CommonUi.NeedsRepair())
+                    {
+                        Teleporter.Teleport(Position.ShopTp);
+                        MovePositions(Position.RepairNPC, false);
+                        WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                    }
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
                 et++;

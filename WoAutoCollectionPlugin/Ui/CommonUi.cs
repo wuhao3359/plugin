@@ -700,7 +700,7 @@ namespace WoAutoCollectionPlugin.Ui
                 if (item == null)
                     continue;
 
-                if (item->Condition <= 8000)
+                if (item->Condition <= 10000)
                 {
                     return true;
                 }
