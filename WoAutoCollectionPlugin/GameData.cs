@@ -84,8 +84,8 @@ public class GameData
                 .Select(group => group.First())
                 .ToDictionary(f => f.ItemId, f => f)
                 ?? new Dictionary<uint, Fish>();
-            PluginLog.Verbose("Collected {NumFishes} different types of fish.", Fishes.Count);
-            //Data.Fish.Apply(this);
+            PluginLog.Log("Collected {NumFishes} different types of fish.", Fishes.Count);
+            Data.Fish.Apply(this);
 
             FishingSpots = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.FishingSpot>()?
                 .Where(f => f.PlaceName.Row != 0 && (f.TerritoryType.Row > 0 || f.RowId == 10000 || f.RowId >= 10017))
@@ -98,7 +98,7 @@ public class GameData
                 .Where(f => f.Territory.Id != 0)
                 .ToDictionary(f => f.Id, f => f)
             ?? new Dictionary<uint, FishingSpot>();
-            PluginLog.Verbose("Collected {NumFishingSpots} different fishing spots.", FishingSpots.Count);
+            PluginLog.Log("Collected {NumFishingSpots} different fishing spots.", FishingSpots.Count);
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);
 

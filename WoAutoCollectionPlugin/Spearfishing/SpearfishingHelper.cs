@@ -6,6 +6,8 @@ using WoAutoCollectionPlugin.SeFunctions;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using FishingSpot = WoAutoCollectionPlugin.Classes.FishingSpot;
+using Dalamud.Logging;
+using WoAutoCollectionPlugin.Classes;
 
 namespace WoAutoCollectionPlugin.Spearfishing;
 
