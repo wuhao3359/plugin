@@ -39,7 +39,6 @@
 	<ItemGroup>
 		<PackageReference Include="DalamudPackager" Version="2.1.8" />
 		<PackageReference Include="ILRepack" Version="2.0.18" GeneratePathProperty="true" />
-		
 		<ProjectReference Include="..\lib\ClickLib\ClickLib\ClickLib.csproj" />
 		<ProjectReference Include="..\lib\FFXIVClientStructs\FFXIVClientStructs\FFXIVClientStructs.csproj" />
 		<Reference Include="Dalamud" Private="False" />
@@ -49,7 +48,7 @@
 		<Reference Include="Lumina.Excel" Private="False" />
 		<Reference Include="Newtonsoft.Json" Private="False" />
 	</ItemGroup>
-
+	
 	<Target Name="ILRepack" AfterTargets="Build">
 		<ItemGroup>
 			<InputAssemblies Include="$(TargetPath)" />

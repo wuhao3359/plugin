@@ -13,7 +13,6 @@ public class Territory : IComparable<Territory>, IEquatable<Territory>
     public TerritoryType Data { get; } = new();
     public string Name { get; } = string.Empty;
     public HashSet<Aetheryte> Aetherytes { get; } = new();
-    public CumulativeWeatherRates WeatherRates { get; init; } = CumulativeWeatherRates.InvalidWeather;
     public float SizeFactor { get; init; }
     public ushort XStream { get; init; }
     public ushort YStream { get; init; }
@@ -31,10 +30,6 @@ public class Territory : IComparable<Territory>, IEquatable<Territory>
         XStream = aether?.Unknown0 ?? 0;
         YStream = aether?.Unknown1 ?? 0;
         Plane = aether?.Unknown2 ?? 0;
-
-        WeatherRates = gameData.CumulativeWeatherRates.TryGetValue(data.WeatherRate, out var wr)
-            ? wr
-            : CumulativeWeatherRates.InvalidWeather;
     }
 
     private Territory()

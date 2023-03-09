@@ -2,19 +2,17 @@
 using Dalamud.Game.Command;
 using Dalamud.Game.Network;
 using Dalamud.Game.Network.Structures;
+using Dalamud.Interface.Windowing;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using Dalamud.Plugin.Ipc;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
-using System.Dynamic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using WoAutoCollectionPlugin.GameAddressDetectors;
-using WoAutoCollectionPlugin.PingTrackers;
 using WoAutoCollectionPlugin.SeFunctions;
+using WoAutoCollectionPlugin.Spearfishing;
 using WoAutoCollectionPlugin.Time;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
@@ -24,7 +22,7 @@ namespace WoAutoCollectionPlugin
 {
     public sealed class WoAutoCollectionPlugin : IDalamudPlugin
     {
-        public string Name => "WoAutoCollectionPlugin";
+        public string Name => "EasyGame";
         private const string collect = "/collect";
         private const string fish = "/fish";
         private const string hfish = "/hfish";
@@ -51,10 +49,7 @@ namespace WoAutoCollectionPlugin
         public static Lumina.Excel.ExcelSheet<Item> items;
         public static bool taskRunning = false;
 
-        private readonly GameNetwork network;
-        private readonly GameAddressDetector addressDetector;
-        public static PingTracker pingTracker;
-        internal ICallGateProvider<object, object> IpcProvider;
+        internal readonly WindowSystem WindowSystem;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
@@ -141,28 +136,9 @@ namespace WoAutoCollectionPlugin
                 Time = new SeTime();
                 Executor = new Executor();
 
-                this.network = network;
-                addressDetector = pluginInterface.Create<AggregateAddressDetector>();
-                pingTracker = RequestNewPingTracker();
-                pingTracker.Verbose = false;
-                pingTracker.Start();
-
-                try
-                {
-                    IpcProvider = pluginInterface.GetIpcProvider<object, object>("PingPlugin");
-                    pingTracker.OnPingUpdated += payload =>
-                    {
-                        dynamic obj = new ExpandoObject();
-                        obj.LastRTT = payload.LastRTT;
-                        obj.AverageRTT = payload.AverageRTT;
-                        IpcProvider.SendMessage(obj);
-                    };
-                }
-                catch (Exception e)
-                {
-                    PluginLog.Error($"Error registering IPC provider:\n{e}");
-                }
-                pingTracker.OnPingUpdated += PacketPingTracker.UpdatePing;
+                WindowSystem = new WindowSystem(Name);
+                WindowSystem.AddWindow(new SpearfishingHelper(GameData));
+                DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
@@ -171,20 +147,6 @@ namespace WoAutoCollectionPlugin
             {
                 PluginLog.Error($"Failed loading WoAutoCollectionPlugin\n{e}");
             }
-        }
-
-        private PingTracker RequestNewPingTracker()
-        {
-            pingTracker?.Dispose();
-            PingTracker newTracker = new PacketPingTracker(addressDetector, network);
-
-            pingTracker = newTracker;
-            if (pingTracker == null)
-            {
-                throw new InvalidOperationException("Failed to create ping tracker. The provided arguments may be incorrect.");
-            }
-            pingTracker.Start();
-            return newTracker;
         }
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
@@ -211,8 +173,9 @@ namespace WoAutoCollectionPlugin
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
 
-            pingTracker.OnPingUpdated -= PacketPingTracker.UpdatePing;
-            pingTracker.Dispose();
+            if (WindowSystem != null)
+                DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
+            WindowSystem?.RemoveAllWindows();
             // Game.DisAble();
         }
 
@@ -508,7 +471,7 @@ namespace WoAutoCollectionPlugin
 
         private void DrawUI()
         {
-            PluginUi.Draw();
+            //PluginUi.Draw();
         }
 
         private void DrawConfigUI()

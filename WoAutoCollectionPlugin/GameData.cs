@@ -7,19 +7,19 @@ using System.Linq;
 using WoAutoCollectionPlugin.Bot;
 using WoAutoCollectionPlugin.Classes;
 using WoAutoCollectionPlugin.SeFunctions;
+using Fish = WoAutoCollectionPlugin.Classes.Fish;
+using FishingSpot = WoAutoCollectionPlugin.Classes.FishingSpot;
 
 namespace WoAutoCollectionPlugin;
 
 public class GameData
 {
     internal DataManager DataManager { get; init; }
-    public Dictionary<uint, Weather.Weather> Weathers { get; init; } = new();
-    internal Dictionary<byte, CumulativeWeatherRates> CumulativeWeatherRates = new();
-    public Territory[] WeatherTerritories { get; init; } = Array.Empty<Territory>();
     public Dictionary<uint, Territory> Territories { get; init; } = new();
     public Dictionary<uint, TerritoryType> TerritoryType { get; init; } = new();
     public Dictionary<uint, Gatherable> Gatherables { get; init; } = new();
-
+    public Dictionary<uint, Fish> Fishes { get; init; } = new();
+    public Dictionary<uint, FishingSpot> FishingSpots { get; init; } = new();
     public Dictionary<uint, Status> Status { get; init; } = new();
 
     // TODO
@@ -47,25 +47,6 @@ public class GameData
         DataManager = gameData;
         try
         {
-            Weathers = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.Weather>()!
-                .ToDictionary(w => w.RowId, w => new Weather.Weather(w));
-            PluginLog.Verbose("Collected {NumWeathers} different Weathers.", Weathers.Count);
-
-            CumulativeWeatherRates = DataManager.GetExcelSheet<WeatherRate>()!
-                .ToDictionary(w => (byte)w.RowId, w => new CumulativeWeatherRates(this, w));
-
-            WeatherTerritories = DataManager.GetExcelSheet<TerritoryType>()?
-                    .Where(t => t.PCSearch && t.WeatherRate != 0)
-                    .Select(FindOrAddTerritory)
-                    .Where(t => t != null && t.WeatherRates.Rates.Length > 1)
-                    .Cast<Territory>()
-                    .GroupBy(t => t.Name)
-                    .Select(group => group.First())
-                    .OrderBy(t => t.Name)
-                    .ToArray()
-             ?? Array.Empty<Territory>();
-            PluginLog.Verbose("Collected {NumWeatherTerritories} different territories with dynamic weather.", WeatherTerritories.Length);
-
             TerritoryType = DalamudApi.DataManager.GetExcelSheet<TerritoryType>()?
                     .Where(a => a.RowId > 1)
                     .ToDictionary(a => a.RowId, a => a)
@@ -90,7 +71,34 @@ public class GameData
             //        .Where(a => a.RowId > 1)
             //        .ToDictionary(a => a.ItemResult.RawRow.RowId, a => a)
             //?? new Dictionary<uint, Recipe>();
-            PluginLog.Log("Collected {NumGatherables} different recipes items.", Recipes.Count);
+            //PluginLog.Log("Collected {NumGatherables} different recipes items.", Recipes.Count);
+
+            Fishes = DataManager.GetExcelSheet<FishParameter>()?
+                .Where(f => f.Item != 0 && f.Item < 1000000)
+                .Select(f => new Fish(DataManager, f))
+                .Concat(DataManager.GetExcelSheet<SpearfishingItem>()?
+                .Where(sf => sf.Item.Row != 0 && sf.Item.Row < 1000000)
+                .Select(sf => new Fish(DataManager, sf))
+                ?? Array.Empty<Fish>())
+                .GroupBy(f => f.ItemId)
+                .Select(group => group.First())
+                .ToDictionary(f => f.ItemId, f => f)
+                ?? new Dictionary<uint, Fish>();
+            PluginLog.Verbose("Collected {NumFishes} different types of fish.", Fishes.Count);
+            //Data.Fish.Apply(this);
+
+            FishingSpots = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.FishingSpot>()?
+                .Where(f => f.PlaceName.Row != 0 && (f.TerritoryType.Row > 0 || f.RowId == 10000 || f.RowId >= 10017))
+                .Select(f => new FishingSpot(this, f))
+                .Concat(
+                    DataManager.GetExcelSheet<SpearfishingNotebook>()?
+                        .Where(sf => sf.PlaceName.Row != 0 && sf.TerritoryType.Row > 0)
+                        .Select(sf => new FishingSpot(this, sf))
+                 ?? Array.Empty<FishingSpot>())
+                .Where(f => f.Territory.Id != 0)
+                .ToDictionary(f => f.Id, f => f)
+            ?? new Dictionary<uint, FishingSpot>();
+            PluginLog.Verbose("Collected {NumFishingSpots} different fishing spots.", FishingSpots.Count);
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);
 
