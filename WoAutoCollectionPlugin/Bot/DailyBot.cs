@@ -280,8 +280,8 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (CommonUi.NeedsRepair())
                     {
-                        Teleporter.Teleport(Position.ShopTp);
-                        MovePositions(Position.RepairNPC, false);
+                        Teleporter.Teleport(Positions.ShopTp);
+                        MovePositions(Positions.RepairNPC, false);
                         WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                     }
                 }
@@ -477,8 +477,8 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 if (CommonUi.NeedsRepair())
                 {
-                    Teleporter.Teleport(Position.ShopTp);
-                    MovePositions(Position.RepairNPC, false);
+                    Teleporter.Teleport(Positions.ShopTp);
+                    MovePositions(Positions.RepairNPC, false);
                     WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                 }
                 WoAutoCollectionPlugin.Time.Update();
@@ -569,8 +569,8 @@ namespace WoAutoCollectionPlugin.Bot
 
                     if (CommonUi.CanRepair())
                     {
-                        Teleporter.Teleport(Position.ShopTp);
-                        MovePositions(Position.RepairNPC, false);
+                        Teleporter.Teleport(Positions.ShopTp);
+                        MovePositions(Positions.RepairNPC, false);
                         WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500);
                     }
@@ -582,6 +582,42 @@ namespace WoAutoCollectionPlugin.Bot
                         string args = "ftype:" + t + " fexchangeItem:0";
                         PluginLog.Log($"执行等待捕鱼灵砂任务: {args}");
                         WoAutoCollectionPlugin.GameData.CollectionFishBot.CollectionFishScript(args);
+                    }
+                    catch (Exception e)
+                    {
+                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                    }
+                    PluginLog.Log($"其他任务结束...");
+                    othetRun = false;
+                });
+                task.Start();
+            }
+            else if (otherTaskParam == "5")
+            {
+                othetRun = true;
+                PluginLog.Log($"当前配置: {otherTaskParam}, 刺鱼灵砂任务");
+                Task task = new(() =>
+                {
+                    if (!CommonUi.CurrentJob(18))
+                    {
+                        Thread.Sleep(500);
+                        WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                        Thread.Sleep(500);
+                    }
+
+                    if (CommonUi.CanRepair())
+                    {
+                        Teleporter.Teleport(Positions.ShopTp);
+                        MovePositions(Positions.RepairNPC, false);
+                        WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
+                        Thread.Sleep(500);
+                    }
+                    PluginLog.Log($"执行等待刺鱼灵砂任务...");
+                    try
+                    {
+                        string args = "ftype:5";
+                        PluginLog.Log($"执行等待刺鱼灵砂任务: {args}");
+                        WoAutoCollectionPlugin.GameData.CollectionFishBot.SpearfishScript(args);
                     }
                     catch (Exception e)
                     {

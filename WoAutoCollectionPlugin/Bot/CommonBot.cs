@@ -220,11 +220,6 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(2600);
             }
-
-            //if (CommonUi.AddonPurifyItemSelectorIsOpen())
-            //{
-            //    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            //}
             return true;
         }
 
@@ -234,7 +229,7 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.param.TryGetValue("exchangeItem", out var e);
             WoAutoCollectionPlugin.GameData.param.TryGetValue("uploadNPC", out var up);
             if (up == "1") {
-                MovePositions(Position.UploadNPCA, false);
+                MovePositions(Positions.UploadNPCA, false);
             }
 
             (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
@@ -744,6 +739,12 @@ namespace WoAutoCollectionPlugin.Bot
                 Thread.Sleep(2800);
                 tt++;
             }
+            return true;
+        }
+
+        // 刺鱼
+        public bool SpearfishMethod() {
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.t_key);
             return true;
         }
 

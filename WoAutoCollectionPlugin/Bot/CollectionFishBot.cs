@@ -1,6 +1,7 @@
 ﻿using Dalamud.Game;
 using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using System;
@@ -78,19 +79,19 @@ namespace WoAutoCollectionPlugin.Bot
             string fishName = "";
             if (type == 1)
             {
-                fishName = Position.PurpleFishName;
+                fishName = Positions.PurpleFishName;
             }
             else if (type == 2)
             {
-                fishName = Position.WhiteFishName;
+                fishName = Positions.WhiteFishName;
             }
             else if (type == 3)
             {
-                fishName = Position.FishNameSandA;
+                fishName = Positions.FishNameSandA;
             }
             else if (type == 4)
             {
-                fishName = Position.FishNameSandA;
+                fishName = Positions.FishNameSandA;
             }
             else {
                 PluginLog.Log($"ftype 参数错误");
@@ -124,27 +125,27 @@ namespace WoAutoCollectionPlugin.Bot
                                 PluginLog.Log($"task shop stopping");
                                 break;
                             }
-                            if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
+                            if (DalamudApi.ClientState.TerritoryType - Positions.ShopTerritoryType != 0)
                             {
-                                Teleporter.Teleport(Position.ShopTp);
+                                Teleporter.Teleport(Positions.ShopTp);
                             }
                             else
                             {
                                 PluginLog.Log($"不需要TP");
                             }
 
-                            if (DalamudApi.ClientState.TerritoryType - Position.ShopTerritoryType != 0)
+                            if (DalamudApi.ClientState.TerritoryType - Positions.ShopTerritoryType != 0)
                             {
                                 PluginLog.Log($"不在任务区域");
                                 continue;
                             }
                             if (CommonUi.CanRepair())
                             {
-                                MovePositions(Position.RepairNPC, false);
+                                MovePositions(Positions.RepairNPC, false);
                                 WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                             }
                             Thread.Sleep(5000);
-                            MovePositions(Position.UploadNPC, false);
+                            MovePositions(Positions.UploadNPC, false);
 
                             int k = 0;
                             while (BagManager.GetInventoryItemCountById(ItemId) > 0 && k < 3)
@@ -156,7 +157,7 @@ namespace WoAutoCollectionPlugin.Bot
                                 }
                                 if (WoAutoCollectionPlugin.GameData.CommonBot.CraftUpload(Category, Sub, ItemId))
                                 {
-                                    MovePositions(Position.ExchangeNPC, false);
+                                    MovePositions(Positions.ExchangeNPC, false);
                                     if (exchangeItem > 100)
                                     {
                                         for (int tt = 0; tt <= 3; tt++)
@@ -174,7 +175,7 @@ namespace WoAutoCollectionPlugin.Bot
                                     }
                                     if (BagManager.GetInventoryItemCountById(ItemId) > 0)
                                     {
-                                        MovePositions(Position.ExchangeToUploadNPC, false);
+                                        MovePositions(Positions.ExchangeToUploadNPC, false);
                                     }
                                 }
                                 k++;
@@ -212,6 +213,59 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
+        // 刺鱼
+        public void SpearfishScript(string args) {
+            closed = false;
+            int n = 0;
+            string command = "spearfish";
+            WoAutoCollectionPlugin.GameData.param = Util.CommandParse(command, args);
+
+            WoAutoCollectionPlugin.GameData.param.TryGetValue("ftype", out var t);
+            if (!int.TryParse(t, out var type))
+            {
+                PluginLog.Log($"ftype 参数错误");
+                return;
+            }
+
+            if (!CommonUi.CurrentJob(18))
+            {
+                Thread.Sleep(500);
+                WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                Thread.Sleep(500);
+            }
+
+            while (!closed && n < 10) {
+                if (closed)
+                {
+                    PluginLog.Log($"task fish stopping");
+                    break;
+                }
+
+                try {
+                    if (BagManager.InventoryRemaining() > 5)
+                    {
+                        if (closed)
+                        {
+                            PluginLog.Log($"task fish stopping");
+                            break;
+                        }
+                        RunSpearfishScript();
+                    }
+                }
+                catch (Exception e)
+                {
+                    PluginLog.Error($"刺鱼 error!!!\n{e}");
+                }
+                n++;
+            }
+
+            int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+            if (CollectableCount > 0)
+            {
+                WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+            }
+        }
+
         // 前往指定钓鱼地点 [√]
         // 钓鱼   [√]
         // 清背包 (换工票/精选) [√]
@@ -225,34 +279,34 @@ namespace WoAutoCollectionPlugin.Bot
             Vector3[] FishArea = Array.Empty<Vector3>();
             if (type == 1)
             {
-                ToArea = Position.ToPurpleFishArea;
-                FishArea = Position.PurpleFishArea;
-                fishTime = Position.PurpleFishTime;
-                fishTp = Position.PurpleFishTp;
-                fishTerritoryType = Position.PurpleFishTerritoryType;
+                ToArea = Positions.ToPurpleFishArea;
+                FishArea = Positions.PurpleFishArea;
+                fishTime = Positions.PurpleFishTime;
+                fishTp = Positions.PurpleFishTp;
+                fishTerritoryType = Positions.PurpleFishTerritoryType;
             } else if (type == 2) {
-                ToArea = Position.ToWhiteFishArea;
-                FishArea = Position.WhiteFishArea;
-                fishTime = Position.WhiteFishTime;
-                fishTp = Position.WhiteFishTp;
-                fishTerritoryType = Position.WhiteFishTerritoryType;
+                ToArea = Positions.ToWhiteFishArea;
+                FishArea = Positions.WhiteFishArea;
+                fishTime = Positions.WhiteFishTime;
+                fishTp = Positions.WhiteFishTp;
+                fishTerritoryType = Positions.WhiteFishTerritoryType;
             } else if (type == 3) 
             {
                 // 红弓鳍鱼 灵砂 地点A
-                ToArea = Position.ToFishAreaSandA;
-                FishArea = Position.FishAreaSandA1;
-                fishTime = Position.SandFishTimeA1;
-                fishTp = Position.SandFishTp;
-                fishTerritoryType = Position.SandFishTerritoryType;
+                ToArea = Positions.ToFishAreaSandA;
+                FishArea = Positions.FishAreaSandA1;
+                fishTime = Positions.SandFishTimeA1;
+                fishTp = Positions.SandFishTp;
+                fishTerritoryType = Positions.SandFishTerritoryType;
             }
             else if (type == 4)
             {
                 // 红弓鳍鱼 灵砂 地点B
-                ToArea = Position.ToFishAreaSandA;
-                FishArea = Position.FishAreaSandA2;
-                fishTime = Position.SandFishTimeA1;
-                fishTp = Position.SandFishTp;
-                fishTerritoryType = Position.SandFishTerritoryType;
+                ToArea = Positions.ToFishAreaSandA;
+                FishArea = Positions.FishAreaSandA2;
+                fishTime = Positions.SandFishTimeA1;
+                fishTp = Positions.SandFishTp;
+                fishTerritoryType = Positions.SandFishTerritoryType;
             }
 
             Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
@@ -368,7 +422,111 @@ namespace WoAutoCollectionPlugin.Bot
                     return true;
                 }
             }
-            PluginLog.Log($"任务结束");
+            PluginLog.Log($"捕鱼任务结束");
+            return true;
+        }
+
+        public bool RunSpearfishScript() {
+            (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) = LimitMaterials.GetSpearfish();
+            PluginLog.Log($"开始执行任务, id: {Id} Name: {Name}, Job: {Job}..");
+            if (Tp <= 0)
+            {
+                PluginLog.Log($"数据异常, skip {Id}..");
+                return false;
+            }
+            Teleporter.Teleport(Tp);
+
+            WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
+            // 切换职业 
+            if (!CommonUi.CurrentJob(Job))
+            {
+                WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                Thread.Sleep(500);
+            }
+            Thread.Sleep(500);
+            MovePositions(Path, true);
+
+            int n = 0;
+            while (!closed & n < 100)
+            {
+                ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                ushort territoryType = DalamudApi.ClientState.TerritoryType;
+                List<GameObject> gameObjects = new();
+                List<int> gameObjectsIndex = new();
+
+                for (int t = 0; t < Points.Length; t++)
+                {
+                    if (closed)
+                    {
+                        PluginLog.Log($"中途结束");
+                        return false;
+                    }
+                    WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[t], territoryType, true, false);
+                    if (Array.IndexOf(CanGatherIndex, t) != -1)
+                    {
+                        GameObject go = Util.CurrentPositionCanGather(Points[t], SizeFactor);
+                        if (go != null)
+                        {
+                            float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
+                            float y = go.Position.Y;
+                            float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                            Vector3 GatherPoint = new(x, y, z);
+                            position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                            var targetMgr = DalamudApi.TargetManager;
+                            targetMgr.SetTarget(go);
+
+                            int tt = 0;
+                            while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 7)
+                            {
+                                if (tt >= 3)
+                                {
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                }
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                                Thread.Sleep(800);
+                                tt++;
+                            }
+
+                            tt = 0;
+                            while (!CommonUi.AddonSpearFishingIsOpen() && tt < 4)
+                            {
+                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                                Thread.Sleep(300);
+                                if (closed)
+                                {
+                                    PluginLog.Log($"stopping");
+                                    return true;
+                                }
+                                tt++;
+                            }
+                            if (tt >= 4)
+                            {
+                                PluginLog.Log($"未打开采集面板, skip {Id}..");
+                                continue;
+                            }
+                            Thread.Sleep(1000);
+
+                            if (CommonUi.AddonSpearFishingIsOpen())
+                            {
+                                WoAutoCollectionPlugin.GameData.CommonBot.SpearfishMethod();
+                                WoAutoCollectionPlugin.GameData.CommonBot.UseItem(0.65);
+                            }
+                        }
+                        else
+                        {
+                            PluginLog.Log($"未知原因未找到数据, skip {Id}..");
+                            t++;
+                            Thread.Sleep(1000);
+                            continue;
+                        }
+                        Thread.Sleep(1000);
+                    }
+                }
+                n++;
+            }
+
+            PluginLog.Log($"刺鱼任务结束");
             return true;
         }
 
@@ -489,7 +647,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (gp < maxGp * 0.5)
                     {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                         Thread.Sleep(1000);
                     }
                     if (!existStatus)

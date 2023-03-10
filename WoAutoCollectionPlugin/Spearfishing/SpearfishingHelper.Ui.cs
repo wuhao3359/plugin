@@ -9,7 +9,6 @@ using WoAutoCollectionPlugin.SeFunctions;
 using ImGuiNET;
 using OtterGui;
 using ImRaii = OtterGui.Raii.ImRaii;
-using Dalamud.Logging;
 using WoAutoCollectionPlugin.Gui;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Utility;
@@ -55,13 +54,13 @@ public partial class SpearfishingHelper : Window
 
         ImGui.SameLine();
         ImGui.Text(info.Speed.ToName() + "\n" + x);
-        if (x > lineStart.Y - size.X / 2f && x < lineStart.Y + size.X / 2f && text.Contains("顶髻鱼")) {
+        if (x > lineStart.Y - size.X / 2f && x < lineStart.Y + size.X / 2f && LimitMaterials.IsNeedSpearfish(text)) {
             Task task = new(() =>
             {
                 if (!action) {
                     action = true;
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
-                    Thread.Sleep(500);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.r_key);
+                    Thread.Sleep(800);
                     action = false;
                 }
             });

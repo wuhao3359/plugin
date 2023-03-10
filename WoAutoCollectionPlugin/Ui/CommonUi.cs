@@ -47,6 +47,12 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonSpearFishingIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("SpearFishing");
+            return success;
+        }
+
         public unsafe static bool AddonGatheringMasterpieceIsOpen()
         {
             var (addon, success) = IsAddonVisible("GatheringMasterpiece");

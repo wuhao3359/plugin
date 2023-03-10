@@ -48,7 +48,7 @@ namespace WoAutoCollectionPlugin.Bot
                 try
                 {
                     for (int i = 0; i < str.Length; i++) {
-                        int id = Position.GetIdByName(str[i]);
+                        int id = Positions.GetIdByName(str[i]);
                         if (id == 0) {
                             PluginLog.Log($"错误名称: {str[i]}");
                             continue;
@@ -227,13 +227,13 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
                     }
-                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                    if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType == 0)
                     {
                         RunIntoYunGuanScript();
                         gatherCount = 0;
                     }
 
-                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                    if (DalamudApi.ClientState.TerritoryType - Positions.YunGuanTerritoryType == 0)
                     {
                         RunYGatherScript(args);
                     }
@@ -256,17 +256,17 @@ namespace WoAutoCollectionPlugin.Bot
         // 进入空岛
         public bool RunIntoYunGuanScript()
         {
-            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType != 0)
+            if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType != 0)
             {
                 // 传送到伊修加德
                 Teleporter.Teleport(70);
                 // 转移到天穹街
                 // TODO
             }
-            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+            if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType == 0)
             {
                 // 移动到指定NPC 路径点
-                Vector3[] ToArea = Position.YunGuanNPC;
+                Vector3[] ToArea = Positions.YunGuanNPC;
                 MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
@@ -335,7 +335,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Positions.YunGuanRepairNPC, territoryType, false);
                 if (repair > 0)
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.Repair();
@@ -520,11 +520,11 @@ namespace WoAutoCollectionPlugin.Bot
         public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, string lv) {
             if (id == 0)
             {
-                List<int> list = Position.GetMateriaId(lv);
+                List<int> list = Positions.GetMateriaId(lv);
                 List<int> li = new();
                 for (int i = 0; i < list.Count; i ++)
                 {
-                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Position.GetMaterialById(list[i]);
+                    (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Positions.GetMaterialById(list[i]);
                     int count = BagManager.GetInventoryItemCount((uint)Id);
                     if (MaxBackPack > count)
                     {
@@ -534,11 +534,11 @@ namespace WoAutoCollectionPlugin.Bot
                 Random rd = new();
                 int r = rd.Next(li.Count);
                 PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count} {list.Count}");
-                return Position.GetMaterialById(li[r]);
+                return Positions.GetMaterialById(li[r]);
             }
             else
             {
-                return Position.GetMaterialById(id);
+                return Positions.GetMaterialById(id);
             }
             return (0, 0, null, 0, null, 0, 0, null, null, null, null, null);
         }
@@ -551,15 +551,15 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (type <= 10)
             {
-                AreaPosition = Position.AreaPositionA;
-                Tp = Position.TpA;
-                GatherPosition = Position.GatherPositionA;
+                AreaPosition = Positions.AreaPositionA;
+                Tp = Positions.TpA;
+                GatherPosition = Positions.GatherPositionA;
                 GathingButton = type;
             }
             else {
-                AreaPosition = Position.AreaPositionB;
-                Tp = Position.TpB;
-                GatherPosition = Position.GatherPositionB;
+                AreaPosition = Positions.AreaPositionB;
+                Tp = Positions.TpB;
+                GatherPosition = Positions.GatherPositionB;
                 GathingButton = type - 10;
             }
             return (AreaPosition, Tp, GatherPosition, GathingButton);

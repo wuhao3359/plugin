@@ -48,17 +48,17 @@ namespace WoAutoCollectionPlugin.Bot
         // 进入空岛
         public bool RunIntoYunGuanScript()
         {
-            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType != 0)
+            if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType != 0)
             {
                 // 传送到伊修加德
                 Teleporter.Teleport(70);
                 // 转移到天穹街
                 // TODO
             }
-            if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+            if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType == 0)
             {
                 // 移动到指定NPC 路径点
-                Vector3[] ToArea = Position.YunGuanNPC;
+                Vector3[] ToArea = Positions.YunGuanNPC;
                 ushort SizeFactor = WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 MovePositions(ToArea, false, DalamudApi.ClientState.TerritoryType);
                 // 进入空岛
@@ -104,12 +104,12 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         PluginLog.Log($"当前位置: {DalamudApi.ClientState.TerritoryType} {territoryType.PlaceName.Value.Name}");
                     }
-                    if (DalamudApi.ClientState.TerritoryType - Position.TianQiongJieTerritoryType == 0)
+                    if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType == 0)
                     {
                         RunIntoYunGuanScript();
                     }
 
-                    if (DalamudApi.ClientState.TerritoryType - Position.YunGuanTerritoryType == 0)
+                    if (DalamudApi.ClientState.TerritoryType - Positions.YunGuanTerritoryType == 0)
                     {
                         RunYFishScript(args);
                     }
@@ -146,7 +146,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.YunGuanRepairNPC, territoryType, false, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Positions.YunGuanRepairNPC, territoryType, false, false);
                 WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("修理工");
             }
             else {
@@ -155,7 +155,7 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area >= 100)
             {
-                MovePositions(Position.Leveling, true, territoryType);
+                MovePositions(Positions.Leveling, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     int tt = 0;
@@ -172,7 +172,7 @@ namespace WoAutoCollectionPlugin.Bot
                         }
                     }
 
-                    position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Position.LevelingPoints[CurrentPoint], territoryType, false, false);
+                    position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Positions.LevelingPoints[CurrentPoint], territoryType, false, false);
                     CurrentPoint++;
                     if (CurrentPoint > 1)
                     {
@@ -211,7 +211,7 @@ namespace WoAutoCollectionPlugin.Bot
             else {
                 // 划分区域
                 (Vector3[] ToGroundA, Vector3[] ToGroundB, Vector3[] ToGroundC, Vector3[] GroundA, Vector3[] GroundB, Vector3[] GroundC) = GetAreaPoint(area);
-                MovePositions(Position.ToStart, true, territoryType);
+                MovePositions(Positions.ToStart, true, territoryType);
                 for (int i = 0; i <= 20; i++)
                 {
                     Vector3[] ToGround = Array.Empty<Vector3>();
@@ -450,7 +450,7 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     if (gp < maxGp * 0.5)
                     {
-                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                         Thread.Sleep(1500);
                     }
                     if (readyMove)
@@ -480,21 +480,21 @@ namespace WoAutoCollectionPlugin.Bot
 
             if (area == 1)
             {
-                ToGroundA = Position.ToGroundA1;
-                ToGroundB = Position.ToGroundB1;
-                ToGroundC = Position.ToGroundC1;
-                GroundA = Position.GroundA1;
-                GroundB = Position.GroundB1;
-                GroundC = Position.GroundC1;
+                ToGroundA = Positions.ToGroundA1;
+                ToGroundB = Positions.ToGroundB1;
+                ToGroundC = Positions.ToGroundC1;
+                GroundA = Positions.GroundA1;
+                GroundB = Positions.GroundB1;
+                GroundC = Positions.GroundC1;
             }
             else if (area == 2)
             {
-                ToGroundA = Position.ToGroundA2;
-                ToGroundB = Position.ToGroundB2;
-                ToGroundC = Position.ToGroundC2;
-                GroundA = Position.GroundA2;
-                GroundB = Position.GroundB2;
-                GroundC = Position.GroundC2;
+                ToGroundA = Positions.ToGroundA2;
+                ToGroundB = Positions.ToGroundB2;
+                ToGroundC = Positions.ToGroundC2;
+                GroundA = Positions.GroundA2;
+                GroundB = Positions.GroundB2;
+                GroundC = Positions.GroundC2;
             }
             return (ToGroundA, ToGroundB, ToGroundC, GroundA, GroundB, GroundC);
         }

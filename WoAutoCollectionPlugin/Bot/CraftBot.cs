@@ -230,7 +230,7 @@ namespace WoAutoCollectionPlugin.Bot
                         if (rep == "1")
                         {
                             if (WoAutoCollectionPlugin.GameData.param.TryGetValue("type", out var t) && t == "2") {
-                                WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Position.RepairNPCA, false);
+                                WoAutoCollectionPlugin.GameData.CommonBot.MovePositions(Positions.RepairNPCA, false);
                             }
                             WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿里斯特尔");
                         }

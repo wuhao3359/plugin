@@ -38,7 +38,9 @@ public static class Keys
     public static Byte l_key = 76;
     public static Byte n_key = 78;
     public static Byte q_key = 81;
+    public static Byte r_key = 0x52;
     public static Byte s_key = 83;
+    public static Byte t_key = 0x54;
     public static Byte w_key = 87;
     public static Byte plus_key = 187;
     public static Byte minus_key = 189;

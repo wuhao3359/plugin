@@ -1,10 +1,9 @@
-﻿using Dalamud.Logging;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Numerics;
 
 namespace WoAutoCollectionPlugin.Utility
 {
-    public static class Position
+    public static class Positions
     {
         // 16-采矿工 17-园艺工 18-捕鱼人
 
@@ -1145,6 +1144,41 @@ namespace WoAutoCollectionPlugin.Utility
         };
         public static int[] Area4837 = {
             1, 6, 11, 16
+        };
+
+        // TODO
+        public static Vector3[] path36525 = {
+            new Vector3 (2900, 2238, 3085),
+            new Vector3 (2761, 2224, 3085),
+        };
+        public static Vector3[] Points36525 = {
+            new Vector3 (2681, 2223, 3068), // 进入A
+            new Vector3 (2704, 2217, 3068),
+            new Vector3 (2730, 2219, 3054),
+            new Vector3 (2717, 2223, 3038),
+            new Vector3 (2738, 2242, 2984), // 离开A
+            new Vector3 (2699, 2239, 2939), // 进入B
+            new Vector3 (2675, 2239, 2932),
+            new Vector3 (2674, 2245, 2921),
+            new Vector3 (2661, 2245, 2927),
+            new Vector3 (2663, 2254, 2958), // 离开B
+            new Vector3 (2648, 2241, 2982), // 进入C
+            new Vector3 (2640, 2235, 2998),
+            new Vector3 (2605, 2245, 2991),
+            new Vector3 (2600, 2252, 2980),
+            new Vector3 (2635, 2234, 3054), // 离开C
+            new Vector3 (2627, 2239, 3062), // 进入D
+            new Vector3 (2638, 2232, 3045),
+            new Vector3 (2617, 2243, 3075),
+            new Vector3 (2610, 2245, 3082),
+            new Vector3 (2664, 2231, 3081), // 离开D
+        };
+        public static int[] CanCollectPoints36525 = {
+            1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
+        };
+        public static int[] UnknownPointsNum36525 = {
+        };
+        public static int[] Area36525 = {
         };
 
 

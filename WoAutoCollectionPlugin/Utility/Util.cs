@@ -324,7 +324,8 @@ namespace WoAutoCollectionPlugin
         public static Dictionary<string, List<string>> CommandParams = new() {
             { "daily", new() { "duration", "level", "bagLimit", "otherTask", "repair", "extractMateria" } },
             { "craft", new() { "pressKey", "type", "recipeName", "hq", "exchangeItem", "repair", "extractMateria" } },
-            { "collectionfish", new() { "ftype", "fexchangeItem"} }
+            { "collectionfish", new() { "ftype", "fexchangeItem"} },
+            { "spearfish", new() { "ftype" } }
         };
 
         public static Dictionary<string, string> DefaultValues = new()

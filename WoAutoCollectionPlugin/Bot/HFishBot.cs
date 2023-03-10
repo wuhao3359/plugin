@@ -152,7 +152,7 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 if (gp < maxGp * 0.5)
                 {
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.minus_key);
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
                     Thread.Sleep(1500);
                 }
                 if (!existStatus)
