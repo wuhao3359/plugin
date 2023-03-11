@@ -193,6 +193,7 @@ namespace WoAutoCollectionPlugin.Bot
                     // 切换职业 
                     if (!CommonUi.CurrentJob(Job))
                     {
+                        Thread.Sleep(2000);
                         WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                         Thread.Sleep(500);
                     }
@@ -362,6 +363,7 @@ namespace WoAutoCollectionPlugin.Bot
                 // 切换职业 
                 if (!CommonUi.CurrentJob(Job))
                 {
+                    Thread.Sleep(2000);
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }

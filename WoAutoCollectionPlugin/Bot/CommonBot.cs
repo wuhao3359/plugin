@@ -1,6 +1,5 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
-using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
@@ -219,6 +218,10 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(2600);
+            }
+            while (CommonUi.AddonPurifyItemSelectorIsOpen() || CommonUi.AddonPurifyResultIsOpen()) {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                Thread.Sleep(500);
             }
             return true;
         }
@@ -745,6 +748,9 @@ namespace WoAutoCollectionPlugin.Bot
         // 刺鱼
         public bool SpearfishMethod() {
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.t_key);
+            while (CommonUi.AddonSpearFishingIsOpen()) {
+                Thread.Sleep(1000);
+            }
             return true;
         }
 

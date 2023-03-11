@@ -47,20 +47,19 @@ public partial class SpearfishingHelper : Window
         
         var text = Identify(spot, info);
         var size = ImGui.CalcTextSize(text);
-        var (x, y) = (node->X * _uiScale + node->Width * node->ScaleX * _uiScale / 2f - size.X / 2f,
+        var (x, y) = (node->X * _uiScale + node->Width * node->ScaleX * _uiScale / 2f,
                 (node->Y + fishLines->Y + node->Height / 2f) * _uiScale - (size.Y + ImGui.GetStyle().FramePadding.Y) / 2f);
         ImGui.SetCursorPos(new Vector2(x, y));
         ImGuiUtil.DrawTextButton(text, Vector2.Zero, 0x40000000, 0xFFFFFFFF);
 
         ImGui.SameLine();
-        ImGui.Text(info.Speed.ToName() + "\n" + x);
-        if (x > lineStart.Y - size.X / 2f && x < lineStart.Y + size.X / 2f && LimitMaterials.IsNeedSpearfish(text)) {
+        ImGui.Text(info.Speed.ToName());
+        if (x > _uiSize.X / 2 - size.X && x < _uiSize.X / 2 + size.X && Positions.IsNeedSpearfish(text)) {
             Task task = new(() =>
             {
                 if (!action) {
                     action = true;
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.r_key);
-                    Thread.Sleep(800);
                     action = false;
                 }
             });

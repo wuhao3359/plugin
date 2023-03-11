@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Dalamud.Game.ClientState.Conditions;
+using System;
 using System.Numerics;
 
 namespace WoAutoCollectionPlugin.Utility;
@@ -62,9 +63,14 @@ public static class Maths
     }
 
     // 计算两点之间的高度
+
+    public static double Height(Vector3 positionA, Vector3 positionB)
+    {
+        return Height(positionA, positionB, true);
+    }
     public static double Height(Vector3 positionA, Vector3 positionB, bool UseMount)
     {
-        if (UseMount)
+        if (UseMount || DalamudApi.Condition[ConditionFlag.Diving])
         {
             return positionA.Y - positionB.Y;
         }

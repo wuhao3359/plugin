@@ -78,9 +78,14 @@ public class KeyOperates
 
         if (UseMount && DalamudApi.Condition[ConditionFlag.Mounted])
         {
-            if (height < -2) {
+            if (height < -1) {
                 KeyDown(Keys.space_key);
                 flying = 1;
+            }
+            else if (height > 1)
+            {
+                KeyDown(Keys.num_sub_key);
+                flying = -1;
             }
         }
 
@@ -100,11 +105,12 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
+            //PluginLog.Log($"height {height} <====> {positionC.Y} {positionB.Y}");
             if (height < -1)
             {
                 if (flying <= 0)
                 {
-                    if (DalamudApi.KeyState[Keys.num_sub_key] && DalamudApi.Condition[ConditionFlag.InFlight])
+                    if (DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
                     {
                         KeyUp(Keys.num_sub_key);
                     }
@@ -115,18 +121,14 @@ public class KeyOperates
                     flying = 1;
                 }
             }
-            else if (height > 2)
+            else if (height > 1)
             {
                 if (flying >= 0)
                 {
-                    if (!DalamudApi.KeyState[Keys.num_sub_key] && DalamudApi.Condition[ConditionFlag.InFlight])
+                    if (!DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
                     {
                         KeyDown(Keys.num_sub_key);
                     }
-                    //if (DalamudApi.KeyState[Keys.space_key])
-                    //{
-                    //    KeyUp(Keys.space_key);
-                    //}
                     flying = -1;
                 }
             }
@@ -238,7 +240,31 @@ public class KeyOperates
         Stop();
         return GetUserPosition(SizeFactor);
     }
-    
+
+    public void AdjustHeight(Vector3 positionB) {
+        ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+        Vector3 positionA = GetUserPosition(SizeFactor);
+        double height = Maths.Height(positionA, positionB);
+        int i = 0;
+        while ((height < -1 || height > 1) && i < 10) {
+            if (height < -1 && !DalamudApi.KeyState[Keys.space_key])
+            {
+                KeyDown(Keys.space_key);
+            }
+            else if (height > 1 && !DalamudApi.KeyState[Keys.num_sub_key])
+            {
+                KeyDown(Keys.num_sub_key);
+            }
+            positionA = GetUserPosition(SizeFactor);
+            height = Maths.Height(positionA, positionB);
+            PluginLog.Log($"height {height} <====> {positionA.Y} {positionB.Y}");
+            Thread.Sleep(1000);
+            i++;
+        }
+        FlyStop();
+    }
+
+
     public void Stop()
     {
         MoveStop();
@@ -286,6 +312,7 @@ public class KeyOperates
         {
             KeyUp(Keys.num_sub_key);
         }
+        flying = 0;
     }
 
     public void KeyMethod(Byte key)

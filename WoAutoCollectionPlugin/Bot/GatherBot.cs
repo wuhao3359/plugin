@@ -4,7 +4,6 @@ using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
 using System.Threading;
 using WoAutoCollectionPlugin.Managers;
@@ -82,6 +81,7 @@ namespace WoAutoCollectionPlugin.Bot
                 Teleporter.Teleport(Tp);
                 if (!CommonUi.CurrentJob(Job))
                 {
+                    Thread.Sleep(2000);
                     WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }

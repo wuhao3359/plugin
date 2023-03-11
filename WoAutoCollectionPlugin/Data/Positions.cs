@@ -1146,41 +1146,33 @@ namespace WoAutoCollectionPlugin.Utility
             1, 6, 11, 16
         };
 
-        // TODO
         public static Vector3[] path36525 = {
-            new Vector3 (2900, 2238, 3085),
-            new Vector3 (2761, 2224, 3085),
+            new Vector3(1849, 2199, 3596),
+            new Vector3(1683, 2153, 3623),
+            new Vector3(1632, 2056, 3654),
         };
         public static Vector3[] Points36525 = {
-            new Vector3 (2681, 2223, 3068), // 进入A
-            new Vector3 (2704, 2217, 3068),
-            new Vector3 (2730, 2219, 3054),
-            new Vector3 (2717, 2223, 3038),
-            new Vector3 (2738, 2242, 2984), // 离开A
-            new Vector3 (2699, 2239, 2939), // 进入B
-            new Vector3 (2675, 2239, 2932),
-            new Vector3 (2674, 2245, 2921),
-            new Vector3 (2661, 2245, 2927),
-            new Vector3 (2663, 2254, 2958), // 离开B
-            new Vector3 (2648, 2241, 2982), // 进入C
-            new Vector3 (2640, 2235, 2998),
-            new Vector3 (2605, 2245, 2991),
-            new Vector3 (2600, 2252, 2980),
-            new Vector3 (2635, 2234, 3054), // 离开C
-            new Vector3 (2627, 2239, 3062), // 进入D
-            new Vector3 (2638, 2232, 3045),
-            new Vector3 (2617, 2243, 3075),
-            new Vector3 (2610, 2245, 3082),
-            new Vector3 (2664, 2231, 3081), // 离开D
+            new Vector3 (1653, 2032, 3740), // 进入A
+            new Vector3 (1679, 2012, 3790),
+            new Vector3 (1344, 2050, 3819), // 离开A
+            new Vector3 (1328, 2024, 3820), // 进入B
+            new Vector3 (1289, 2003, 3854),
+            new Vector3 (1305, 2008, 3793),
+            new Vector3 (1386, 2049, 3694), // 离开B
+            new Vector3 (1490, 2040, 3560), // 进入C
+            new Vector3 (1489, 2038, 3524),
+            new Vector3 (1515, 2050, 3555),
+            new Vector3 (1587, 2065, 3685), // 离开C
         };
         public static int[] CanCollectPoints36525 = {
-            1, 2, 3, 6, 7, 8, 11, 12, 13, 16, 17, 18
+            1, 4, 5, 8, 9
         };
         public static int[] UnknownPointsNum36525 = {
+            1, 2, 2
         };
         public static int[] Area36525 = {
+            1, 4, 8
         };
-
 
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
             (4814, 900, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
@@ -1216,6 +1208,31 @@ namespace WoAutoCollectionPlugin.Utility
             //(36089, 1800, "巨人新薯", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
             (36096, 1800, "无花果", 17, "园艺工", 88, 178, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 创作者之家
         };
+
+        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] Spearfishs = {
+            (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
+        };
+
+        public static bool IsNeedSpearfish(string text)
+        {
+            if (Spearfishs.Length > 0 && text.Contains(Spearfishs[0].Name))
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public static (int, string, uint, string, uint, uint, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetSpearfish()
+        {
+            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in Spearfishs)
+            {
+                if (Spearfishs.Length > 0)
+                {
+                    return Spearfishs[0];
+                }
+            }
+            return (0, null, 0, null, 0, 0, null, null, null, null, null);
+        }
 
         public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetMaterialById(int id)
         {

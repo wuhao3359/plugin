@@ -1,4 +1,5 @@
 ﻿using ClickLib;
+using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Game.Command;
 using Dalamud.Game.Network;
 using Dalamud.Game.Network.Structures;
@@ -183,6 +184,7 @@ namespace WoAutoCollectionPlugin
         {
             // in response to the slash command, just display our main ui
             // PluginUi.Visible = false;
+            
             if (DalamudApi.ClientState != null && DalamudApi.ClientState.LocalPlayer != null)
             {
                 Vector3 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
@@ -193,6 +195,8 @@ namespace WoAutoCollectionPlugin
                     float y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
                     float z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
                     PluginLog.Log($"{DalamudApi.ClientState.TerritoryType}  {x}   {y}   {z}");
+                    //Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                    //GameObject go = Util.CurrentFishCanGather(position, SizeFactor);
                 }
                 catch (Exception)
                 {

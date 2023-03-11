@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using ClickLib;
-using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Logging;
-using Dalamud.Plugin.Ipc.Exceptions;
-using FFXIVClientStructs.Attributes;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Lumina.Excel.GeneratedSheets;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Utility;
 
@@ -461,6 +457,12 @@ namespace WoAutoCollectionPlugin.Ui
         public unsafe static bool AddonPurifyItemSelectorIsOpen()
         {
             var (addon, success) = IsAddonVisible("PurifyItemSelector");
+            return success;
+        }
+
+        public unsafe static bool AddonPurifyResultIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("PurifyResult");
             return success;
         }
 

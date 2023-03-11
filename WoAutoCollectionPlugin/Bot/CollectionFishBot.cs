@@ -258,12 +258,6 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 n++;
             }
-
-            int CollectableCount = CommonUi.CanExtractMateriaCollectable();
-            if (CollectableCount > 0)
-            {
-                WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
-            }
         }
 
         // 前往指定钓鱼地点 [√]
@@ -427,7 +421,7 @@ namespace WoAutoCollectionPlugin.Bot
         }
 
         public bool RunSpearfishScript() {
-            (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) = LimitMaterials.GetSpearfish();
+            (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = Positions.GetSpearfish();
             PluginLog.Log($"开始执行任务, id: {Id} Name: {Name}, Job: {Job}..");
             if (Tp <= 0)
             {
@@ -440,10 +434,15 @@ namespace WoAutoCollectionPlugin.Bot
             // 切换职业 
             if (!CommonUi.CurrentJob(Job))
             {
+                Thread.Sleep(2000);
                 WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                 Thread.Sleep(500);
             }
-            Thread.Sleep(500);
+            if (!CommonUi.HasStatus("收藏品采集"))
+            {
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n5_key);
+                Thread.Sleep(500);
+            }
             MovePositions(Path, true);
 
             int n = 0;
@@ -455,75 +454,133 @@ namespace WoAutoCollectionPlugin.Bot
                 List<GameObject> gameObjects = new();
                 List<int> gameObjectsIndex = new();
 
-                for (int t = 0; t < Points.Length; t++)
+                for (int i = 0, j = 0, k = 0; i < Points.Length; i++)
                 {
                     if (closed)
                     {
                         PluginLog.Log($"中途结束");
                         return false;
                     }
-                    WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[t], territoryType, true, false);
-                    if (Array.IndexOf(CanGatherIndex, t) != -1)
+                    if (gameObjects.ToArray().Length == 0 && Area[k] == i && j < CanCollectPoints.Length)
                     {
-                        GameObject go = Util.CurrentPositionCanGather(Points[t], SizeFactor);
-                        if (go != null)
+                        (gameObjects, gameObjectsIndex) = Util.GetCanGatherPosition(Points, CanCollectPoints, j, UnknownPointsNum[k], SizeFactor);
+                        if (k < UnknownPointsNum.Length - 1)
                         {
-                            float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                            float y = go.Position.Y;
-                            float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
-                            Vector3 GatherPoint = new(x, y, z);
-                            position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
-                            var targetMgr = DalamudApi.TargetManager;
-                            targetMgr.SetTarget(go);
-
-                            int tt = 0;
-                            while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 7)
-                            {
-                                if (tt >= 3)
-                                {
-                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
-                                }
-                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                                Thread.Sleep(800);
-                                tt++;
-                            }
-
-                            tt = 0;
-                            while (!CommonUi.AddonSpearFishingIsOpen() && tt < 4)
-                            {
-                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                                Thread.Sleep(300);
-                                if (closed)
-                                {
-                                    PluginLog.Log($"stopping");
-                                    return true;
-                                }
-                                tt++;
-                            }
-                            if (tt >= 4)
-                            {
-                                PluginLog.Log($"未打开采集面板, skip {Id}..");
-                                continue;
-                            }
-                            Thread.Sleep(1000);
-
-                            if (CommonUi.AddonSpearFishingIsOpen())
-                            {
-                                WoAutoCollectionPlugin.GameData.CommonBot.SpearfishMethod();
-                                WoAutoCollectionPlugin.GameData.CommonBot.UseItem(0.65);
-                            }
+                            j += UnknownPointsNum[k];
+                            k++;
                         }
-                        else
+                    }
+
+                    if (Array.IndexOf(CanCollectPoints, i) != -1)
+                    {
+                        if (gameObjectsIndex.ToArray().Length > 0 && gameObjectsIndex[0] != i)
                         {
-                            PluginLog.Log($"未知原因未找到数据, skip {Id}..");
-                            t++;
-                            Thread.Sleep(1000);
+                            PluginLog.Log($"skip point {i}");
                             continue;
                         }
-                        Thread.Sleep(1000);
+
+                        if (gameObjects.ToArray().Length > 0)
+                        {
+                            GameObject go = gameObjects[0];
+                            if (go != null)
+                            {
+                                if (!DalamudApi.Condition[ConditionFlag.Mounted])
+                                {
+                                    WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
+                                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
+                                }
+                                float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float y = Maths.GetCoordinate(Points[i].Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float z = Maths.GetCoordinate(go.Position.Z, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                Vector3 GatherPoint = new(x, y, z);
+                                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
+                                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                                {
+                                    var targetMgr = DalamudApi.TargetManager;
+                                    targetMgr.SetTarget(go);
+
+                                    int tt = 0;
+                                    while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 5)
+                                    {
+                                        if (tt >= 2)
+                                        {
+                                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                        }
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                                        Thread.Sleep(1000);
+                                        tt++;
+
+                                        if (closed)
+                                        {
+                                            PluginLog.Log($"task stopping");
+                                            return true;
+                                        }
+                                    }
+                                    tt = 0;
+                                    while (!CommonUi.AddonSpearFishingIsOpen() && tt < 7)
+                                    {
+                                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                                        Thread.Sleep(800);
+                                        tt++;
+                                        if (tt >= 5) {
+                                            WoAutoCollectionPlugin.GameData.KeyOperates.AdjustHeight(GatherPoint);
+                                        }
+                                    }
+                                    if (tt >= 7)
+                                    {
+                                        PluginLog.Log($"未打开采集面板, skip {i}..");
+                                        if (gameObjects.ToArray().Length > 0)
+                                        {
+                                            gameObjects.RemoveAt(0);
+                                            gameObjectsIndex.RemoveAt(0);
+                                        }
+                                        continue;
+                                    }
+                                    Thread.Sleep(1000);
+
+                                    if (CommonUi.AddonSpearFishingIsOpen())
+                                    {
+                                        WoAutoCollectionPlugin.GameData.CommonBot.SpearfishMethod();
+                                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                                        uint gp = player.CurrentGp;
+                                        if (gp < player.MaxGp * 0.6)
+                                        {
+                                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
+                                            Thread.Sleep(1000);
+                                        }
+                                        WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
+                                    }
+                                    if (gameObjects.ToArray().Length > 0)
+                                    {
+                                        gameObjects.RemoveAt(0);
+                                        gameObjectsIndex.RemoveAt(0);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                PluginLog.Log($"从 点{j} 开始");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                     }
                 }
                 n++;
+                int c = CommonUi.CanExtractMateriaCollectable();
+                if (c > 20)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(c);
+                }
+            }
+
+            int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+            if (CollectableCount > 0)
+            {
+                WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
             }
 
             PluginLog.Log($"刺鱼任务结束");

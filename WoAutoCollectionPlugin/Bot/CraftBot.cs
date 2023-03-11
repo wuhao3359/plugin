@@ -304,6 +304,7 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     if (!CommonUi.CurrentJob(Job))
                     {
+                        Thread.Sleep(2000);
                         WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                         Thread.Sleep(500);
                         PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;

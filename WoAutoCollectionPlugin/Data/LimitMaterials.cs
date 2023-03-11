@@ -418,10 +418,6 @@ namespace WoAutoCollectionPlugin.Utility
             //(36288, "棕榈碎皮", 12, 15, 17, "园艺工", 90, 171, path36288, points36288, gatherIndex36288), // 波洛伽护法村
         };
 
-        public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex)[] Spearfishs = {
-            (36525, "顶髻鱼", 18, "捕鱼人", 90, 174, path36288, points36288, gatherIndex36288),    // TODO
-        };
-
         // 6.0版本灵砂获取途径 随大版本更新
         public static (int, string)[] CollecMaterialItems = {
             (36285, "月石英"),
@@ -431,27 +427,6 @@ namespace WoAutoCollectionPlugin.Utility
             (36408, "红弓鳍鱼"),
             (36525, "顶髻鱼"),
         };
-
-        public static bool IsNeedSpearfish(string text)
-        {
-            if (Spearfishs.Length > 0 && text.Contains(Spearfishs[0].Name))
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public static (int, string, uint, string, uint, uint, Vector3[], Vector3[], int[]) GetSpearfish()
-        {
-            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanGatherIndex) in Spearfishs)
-            {
-                if (Spearfishs.Length > 0)
-                {
-                    return Spearfishs[0];
-                }
-            }
-            return (0, null, 0, null, 0, 0, null, null, null);
-        }
 
         public static List<int> GetMaterialIdsByEtAndFinishId(int et, string lv, List<int> finishIds)
         {

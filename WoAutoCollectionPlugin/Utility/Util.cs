@@ -64,6 +64,40 @@ namespace WoAutoCollectionPlugin
             }
         }
 
+        public static GameObject CurrentFishCanGather(Vector3 position, ushort SizeFactor)
+        {
+            GameObject nearestGo = null;
+            double distance = 1000000000f;
+            int index = 0;
+            int length = DalamudApi.ObjectTable.Length;
+            for (int i = 0; i < length; i++)
+            {
+                GameObject? gameObject = DalamudApi.ObjectTable[i];
+                if (gameObject != null && CanGather(gameObject) && gameObject.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
+                {
+                    Vector3 v = new(Maths.GetCoordinate(gameObject.Position.X, SizeFactor), Maths.GetCoordinate(gameObject.Position.Y, SizeFactor), Maths.GetCoordinate(gameObject.Position.Z, SizeFactor));
+                    double d = Maths.Distance(position, v);
+                    if (d < distance)
+                    {
+                        distance = d;
+                        nearestGo = gameObject;
+                        index = i;
+                    }
+                }
+            }
+
+            if (nearestGo != null)
+            {
+                PluginLog.Log($"最近fish: {index}");
+                return nearestGo;
+            }
+            else
+            {
+                PluginLog.Log($"没有找到最近的fish");
+                return null;
+            }
+        }
+
         public static GameObject CurrentYPositionCanGather(Vector3 position, ushort SizeFactor)
         {
             GameObject nearestGo = null;
@@ -134,7 +168,6 @@ namespace WoAutoCollectionPlugin
 
             if (nearestGo != null)
             {
-                //PluginLog.Log($"最近, {nearestGo.DataId}");
                 return (nearestGo, position);
             }
             else

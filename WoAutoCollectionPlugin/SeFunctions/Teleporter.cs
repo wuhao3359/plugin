@@ -24,7 +24,7 @@ namespace WoAutoCollectionPlugin.SeFunctions
             PluginLog.Log($"开始传送, 累计次数: {count}");
             Telepo.Instance()->Teleport(aetheryte, 0);
             count++;
-            Thread.Sleep(12000);
+            Thread.Sleep(15000);
             return true;
         }
     }
