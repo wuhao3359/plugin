@@ -141,7 +141,14 @@ namespace WoAutoCollectionPlugin.Utility
                     if (i == listing.ItemListings.Count) return;
                 }
             }
-
+            if (!DalamudApi.KeyState[Keys.alt_key]) {
+                while (listing.ItemListings[i].ItemQuantity < 66)
+                {
+                    i++;
+                    if (i == listing.ItemListings.Count) return;
+                }
+            }
+            
             itemPrice = (int)listing.ItemListings[i].PricePerUnit - 1;
 
             if (itemPrice <= 0) {
@@ -153,6 +160,7 @@ namespace WoAutoCollectionPlugin.Utility
                     itemsPrice.Remove(itemName);
                 }
                 itemsPrice.Add(itemName, itemPrice);
+                retry = 0;
             }
             WoAutoCollectionPlugin.newRequest = false;
         }
@@ -250,11 +258,21 @@ namespace WoAutoCollectionPlugin.Utility
             var result = AddonItemSearchResult_OnSetup_HW.Original(addon, a2, dataPtr);
 
             if (!CommonUi.ItemSearchIsOpen()) {
-                Task task = new(() =>
-                {
-                    Thread.Sleep(1000);
-                    // close ItemSearchResult
-                    // Component::GUI::AtkComponentWindow.ReceiveEvent this=0x1AC801863B0 evt=EventType.CHANGE               a3=2   a4=0x1AC66640090 (src=0x1AC801863B0; tgt=0x1AC98B47EA0) a5=0x4AAAEFE388
+                //Task task = new(() =>
+                //{
+                //    Thread.Sleep(1000);
+                //    // close ItemSearchResult
+                //    // Component::GUI::AtkComponentWindow.ReceiveEvent this=0x1AC801863B0 evt=EventType.CHANGE               a3=2   a4=0x1AC66640090 (src=0x1AC801863B0; tgt=0x1AC98B47EA0) a5=0x4AAAEFE388
+                //    var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
+                //    if (addonItemSearchResult != null)
+                //        MarketCommons.SendClick(new IntPtr(addonItemSearchResult->WindowNode->Component), EventType.CHANGE, 2,
+                //            addonItemSearchResult->WindowNode->Component->UldManager
+                //                .NodeList[7]->GetComponent()->OwnerNode);
+
+                //    SetPrice();
+                //});
+                //task.Start();
+                if (retry < 3) {
                     var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
                     if (addonItemSearchResult != null)
                         MarketCommons.SendClick(new IntPtr(addonItemSearchResult->WindowNode->Component), EventType.CHANGE, 2,
@@ -262,8 +280,7 @@ namespace WoAutoCollectionPlugin.Utility
                                 .NodeList[7]->GetComponent()->OwnerNode);
 
                     SetPrice();
-                });
-                task.Start();
+                }
             }
 
             return result;
@@ -367,13 +384,19 @@ namespace WoAutoCollectionPlugin.Utility
                     MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
                 }
             }
-            else {
-                PluginLog.Log($"获取价格重试: {retry}");
-                if (retry < 3) {
-                    GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
-                    var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
-
-                    MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
+            else
+            {
+                PluginLog.Log($"获取价格重试: {retry} 次");
+                if (retry < 3)
+                {
+                    Task task = new(() =>
+                    {
+                        Thread.Sleep(1000);
+                        GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                        var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
+                        MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
+                    });
+                    task.Start();
                     retry++;
                 }
             }

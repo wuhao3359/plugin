@@ -286,14 +286,25 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(2799, 2481, 1163),
         };
 
+        public static Vector3[] path37691 = {
+            new Vector3(2811, 2754, 1282),
+        };
+        public static Vector3[] points37691 = {
+            new Vector3(2799, 2752, 1310),
+            new Vector3(2804, 2756, 1332),
+            new Vector3(2827, 2747, 1332),
+        };
+
         // 16-采矿工 17-园艺工 18-捕鱼人
         // 优先级排序
         // type 类型 1-普通限时 2-  3-  4-灵砂 5-高难限时
         public static (int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type)[] Materials =
         {
             // 6.2版本
-            //(37694, "不定性铁陨石", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 加雷马
-            //(37691, "不定性结晶花", 0, 1, 16, "采矿工", 90, 172, path362151, points362151), // 天外天垓 
+            //(376941, "不定性铁陨石", 0, 1, 16, "采矿工", 90, 172, path362151, points362151, 2), // 加雷马
+            //(376942, "不定性铁陨石", 12, 13, 16, "采矿工", 90, 172, path362151, points362151, 2), // 加雷马
+            //(376911, "不定性结晶花", 10, 11, 17, "园艺工", 90, 180, path37691, points37691, 2), // 天外天垓 异亚村落
+            //(376912, "不定性结晶花", 22, 23, 17, "园艺工", 90, 180, path37691, points37691, 2), // 天外天垓 异亚村落
 
             (378191, "诃子", 0, 1, 17, "园艺工", 90, 171, path378191, points378191, 1), // 萨维奈岛 护法村
             (378192, "诃子", 12, 13, 17, "园艺工", 90, 171, path378191, points378191, 1), // 萨维奈岛 护法村
@@ -327,7 +338,7 @@ namespace WoAutoCollectionPlugin.Utility
             (4, "暗物质晶簇|火之晶簇", 17, 18, 16, "采矿工", 50,24, path3, points3, 1),    // 摩杜纳
             (5, "暗物质晶簇|雷之晶簇", 21, 22, 16, "采矿工", 50, 24, path3, points3, 1),   // 摩杜纳
             (6, "暗物质晶簇|云杉原木", 9, 10, 17, "园艺工", 50, 23, path6, points6, 1), // 库尔札斯中央高地
-            (11, "暗物质晶簇|绯红树汁", 3, 4, 17, "园艺工", 50, 7, path11, points11, 1),   // 黑衣森林北部林区
+            //(11, "暗物质晶簇|绯红树汁", 3, 4, 17, "园艺工", 50, 7, path11, points11, 1),   // 黑衣森林北部林区
             // (17, "暗物质晶簇|黑衣香木", 2, 4, 17, "园艺工", 50, 6, path17, points17, 1),  // 黑衣森林南部林区
             // (18, "暗物质晶簇|高级黑衣香木", 6, 7, 16, "园艺工", 50, 3, path18, points18, 1),  // 黑衣森林中央林区
             (19, "白金矿|暗物质晶簇", 4, 5, 16, "采矿工", 50, 19, path19, points19, 1), // 南萨纳兰
@@ -426,6 +437,8 @@ namespace WoAutoCollectionPlugin.Utility
             (36288, "棕榈碎皮"),
             (36408, "红弓鳍鱼"),
             (36525, "顶髻鱼"),
+            //(37694, "不定性铁陨石"),
+            //(37691, "不定性结晶花"),
         };
 
         public static List<int> GetMaterialIdsByEtAndFinishId(int et, string lv, List<int> finishIds)
@@ -445,16 +458,16 @@ namespace WoAutoCollectionPlugin.Utility
             return list;
         }
 
-        public static (string, uint, string, uint, uint, Vector3[], Vector3[]) GetMaterialById(int id)
+        public static (string, uint, string, uint, uint, Vector3[], Vector3[], uint) GetMaterialById(int id)
         {
-            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint type) in Materials)
+            foreach ((int Id, string Name, int MinEt, int MaxEt, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint Type) in Materials)
             {
                 if (id == Id)
                 {
-                    return (Name, Job, JobName, Lv, Tp, Path, Points);
+                    return (Name, Job, JobName, Lv, Tp, Path, Points, Type);
                 }
             }
-            return (null, 0, null, 0, 0, null, null);
+            return (null, 0, null, 0, 0, null, null, 0);
         }
 
         public static int GetCollecMaterialIdByEt(int et, string lv)

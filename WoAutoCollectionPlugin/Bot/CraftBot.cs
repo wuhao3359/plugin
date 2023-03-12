@@ -238,6 +238,10 @@ namespace WoAutoCollectionPlugin.Bot
                         {
                             WoAutoCollectionPlugin.GameData.CommonBot.Repair();
                         }
+                        else if (rep == "100")
+                        {
+                            WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("修理工");
+                        }
                     }
 
                     // 魔晶石精制

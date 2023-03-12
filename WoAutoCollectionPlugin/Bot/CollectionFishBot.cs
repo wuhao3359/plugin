@@ -537,18 +537,10 @@ namespace WoAutoCollectionPlugin.Bot
                                         }
                                         continue;
                                     }
-                                    Thread.Sleep(1000);
-
+                                    Thread.Sleep(500);
                                     if (CommonUi.AddonSpearFishingIsOpen())
                                     {
                                         WoAutoCollectionPlugin.GameData.CommonBot.SpearfishMethod();
-                                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-                                        uint gp = player.CurrentGp;
-                                        if (gp < player.MaxGp * 0.6)
-                                        {
-                                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
-                                            Thread.Sleep(1000);
-                                        }
                                         WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
                                     }
                                     if (gameObjects.ToArray().Length > 0)

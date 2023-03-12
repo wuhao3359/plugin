@@ -131,7 +131,7 @@ namespace WoAutoCollectionPlugin.Bot
                     {
                         foreach (int id in ids)
                         {
-                            (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                            (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint Type) = LimitMaterials.GetMaterialById(id);
                             Teleporter.Teleport(Tp);
                             needTp = false;
                             break;
@@ -166,7 +166,7 @@ namespace WoAutoCollectionPlugin.Bot
                         return;
                     }
                     
-                    (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points) = LimitMaterials.GetMaterialById(id);
+                    (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint Type) = LimitMaterials.GetMaterialById(id);
                     PluginLog.Log($"当前完成任务: {finishIds.Count} 下个任务, id: {id} Name: {Name}, Job: {Job}, et: {et}..");
 
                     if (hour > et || (et >= 20 && hour < 10)) {
@@ -235,6 +235,16 @@ namespace WoAutoCollectionPlugin.Bot
                         }
 
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+
+                        if (Type == 2) {
+                            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                            uint gp = player.CurrentGp;
+                            if (gp < 700)
+                            {
+                                Thread.Sleep(10000);
+                            }
+                        }
+
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                         {
@@ -257,7 +267,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                         if (CommonUi.AddonGatheringIsOpen())
                         {
-                            WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
+                            if (Type == 2)
+                            {
+                                WoAutoCollectionPlugin.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
+                            }
+                            else {
+                                WoAutoCollectionPlugin.GameData.CommonBot.LimitMaterialsMethod(Name);
+                            }
                         }
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }

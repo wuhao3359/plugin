@@ -11,6 +11,7 @@ using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
+using static Lumina.Data.Parsing.Layer.LayerCommon;
 
 namespace WoAutoCollectionPlugin.Bot
 {
@@ -748,8 +749,43 @@ namespace WoAutoCollectionPlugin.Bot
         // 刺鱼
         public bool SpearfishMethod() {
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.t_key);
+            int n = 0;
+
+            byte stackCount = 0;
+            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            IEnumerator<Dalamud.Game.ClientState.Statuses.Status> statusList = player.StatusList.GetEnumerator();
+            while (statusList.MoveNext())
+            {
+                // 2778-捕鱼人之识
+                Dalamud.Game.ClientState.Statuses.Status status = statusList.Current;
+                uint statusId = status.StatusId;
+                byte StackCount = status.StackCount;
+                if (statusId == 2778)
+                {
+                    stackCount = StackCount;
+                }
+            }
+
             while (CommonUi.AddonSpearFishingIsOpen()) {
                 Thread.Sleep(1000);
+                if (n < 10) {
+                    if (!CommonUi.HasStatus("收藏品采集"))
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.t_key);
+                        Thread.Sleep(700);
+                    }
+                }
+                if (n > 10) {
+                    uint gp = player.CurrentGp;
+                    if (gp < player.MaxGp * 0.6 && stackCount >= 3)
+                    {
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
+                        stackCount -= 3;
+                        gp += 150;
+                        Thread.Sleep(700);
+                    }
+                }
+                n++;
             }
             return true;
         }
