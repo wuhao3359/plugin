@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading;
+using WoAutoCollectionPlugin.Utility;
+using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
 
 namespace WoAutoCollectionPlugin.Bot
 {
@@ -28,21 +30,20 @@ namespace WoAutoCollectionPlugin.Bot
             // 传送并移动到雇员铃
 
             // 打开雇员铃
+            WoAutoCollectionPlugin.GameData.CommonBot.SetTarget("雇员铃");
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
 
-            // 点击1号雇员 判断 RetainerSellList 物品数量 根据数量进行改价 然后上架商品
-
+            // 点击雇员 判断 RetainerSellList 正在出售数量selling 根据selling进行改价 然后上架20-selling商品
             for (int i = 1; i <= 2; i++) {
+                // 雇员选择
                 Clicker.SelectRetainerByIndex(i);
                 Thread.Sleep(3000);
-                Clicker.UpdateRetainerSellList(i, out var succeed);
+                // 改价
+                Clicker.UpdateRetainerSellList(i, out var succeed, out int selling);
 
-                //
-                Clicker.PutUpRetainerSellList(i, out succeed);
+                // 上架
+                Clicker.PutUpRetainerSellList(i, 20 - selling, out succeed);
             }
-            
-
-
-            // 点击2号雇员 重复上述步骤
             // PS: 上架商品根据配置
 
             // 完成结束

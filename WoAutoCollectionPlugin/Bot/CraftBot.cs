@@ -60,7 +60,7 @@ namespace WoAutoCollectionPlugin.Bot
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
                 }
                 else if (t == "2")
-                {
+                {   // type = 2 代表收藏品
                     PluginLog.Log($"根据名称普通制作...");
                     RunCraftScriptByName(pressKey, recipeName, exchangeItem);
                 }
@@ -150,6 +150,7 @@ namespace WoAutoCollectionPlugin.Bot
         public void RunCraftScriptByName(int pressKey, string recipeName, int exchangeItem)
         {
             bool needHQ = true;
+            int error = 0;
             int i = 0;
             uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
             PluginLog.Log($"---> {recipeName}, {recipeId}");
@@ -186,11 +187,16 @@ namespace WoAutoCollectionPlugin.Bot
                             needHQ = false;
                         }
                         RecipeNoteUi.SynthesizeButton();
+                        if (error > 3) {
+                            closed = true;
+                            PluginLog.Log($"停止 error: {error}");
+                        }
                         Thread.Sleep(2000);
                     }
 
                     if (RecipeNoteUi.SynthesisIsOpen())
                     {
+                        error = 0;
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Byte.Parse(pressKey.ToString()));
                         int n = 0;
                         while (RecipeNoteUi.SynthesisIsOpen())
@@ -329,44 +335,6 @@ namespace WoAutoCollectionPlugin.Bot
             if (id == 0) {
                 PluginLog.Log($"没有找到合适物品...");
             }
-        }
-
-        public void CheckScript(uint recipeId) {
-            //WoAutoCollectionPlugin.GameData.Recipes.TryGetValue(recipeId, out var r);
-            //UnkData5Obj[] UnkData5 = r.UnkData5;
-            //if (UnkData5.Length > 0)
-            //{
-            //    foreach (UnkData5Obj obj in UnkData5)
-            //    {
-            //        PluginLog.Log($"ItemIngredient : {obj.ItemIngredient}, AmountIngredient : {obj.AmountIngredient}");
-            //        if (BagManager.GetItemQuantityInContainer((uint)obj.ItemIngredient) < obj.AmountIngredient * 100)
-            //        {
-            //            CheckScript(uint.Parse(obj.ItemIngredient.ToString()));
-            //            if (r.CanQuickSynth)
-            //            {
-            //                // 快速制作
-            //            }
-            //            else { 
-            //                // 普通制作
-            //            }
-            //        }
-            //    }
-            //}
-            //else {
-            //    if (BagManager.GetItemQuantityInContainer(recipeId) < 666)
-            //    {
-            //        // 原材料采集
-            //        PluginLog.Log($"执行采集任务...");
-            //        try
-            //        {
-            //            WoAutoCollectionPlugin.GameData.GatherBot.RunNormalScript((int)recipeId, 90);
-            //        }
-            //        catch (Exception e)
-            //        {
-            //            PluginLog.Error($"采集任务, error!!!\n{e}");
-            //        }
-            //    }
-            //}
         }
     }
 }

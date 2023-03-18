@@ -140,8 +140,9 @@ namespace WoAutoCollectionPlugin.Bot
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
-                                float y = Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType)) - 5;
+                                float y = Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float z = Maths.GetCoordinate(go.Position.Z, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType))} < ---> 辅助点高度: {y}");
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
@@ -365,8 +366,11 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"YGathing stopping");
                     return;
                 }
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
-                PluginLog.Log($"到达{k} TP点{Array.IndexOf(Tp, k) != -1} 采集点{Array.IndexOf(GatherPosition, k) != -1}");
+                Vector3 p = AreaPosition[k];
+                if (Array.IndexOf(Tp, k) != -1) {
+                    p.Y -= 3;
+                }
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, p, territoryType, true, false);
                 // 默认为移动点
                 // 传送点
                 if (Array.IndexOf(Tp, k) != -1) {
@@ -533,6 +537,16 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 Random rd = new();
                 int r = rd.Next(li.Count);
+                PluginLog.Log($"随机采集Count: {r} {li.Count} {list.Count}");
+                if (r < 0 || r > li.Count)
+                {
+                    r = 0;
+                }
+
+                if (li.Count == 0) {
+                    PluginLog.Log($"固定采集ID: 36086");
+                    return Positions.GetMaterialById(36086);
+                }
                 PluginLog.Log($"随机采集ID: {r} {li[r]} {li.Count} {list.Count}");
                 return Positions.GetMaterialById(li[r]);
             }
@@ -540,7 +554,6 @@ namespace WoAutoCollectionPlugin.Bot
             {
                 return Positions.GetMaterialById(id);
             }
-            return (0, 0, null, 0, null, 0, 0, null, null, null, null, null);
         }
 
         public (Vector3[], int[], int[], int) GetAreaByType(int type) {

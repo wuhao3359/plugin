@@ -189,7 +189,7 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 7) {
+            if (turn >= 5) {
                 MoveStop();
                 positionA = Revise(positionB, 700);
                 turn = 0;
@@ -257,7 +257,7 @@ public class KeyOperates
             }
             positionA = GetUserPosition(SizeFactor);
             height = Maths.Height(positionA, positionB);
-            PluginLog.Log($"height {height} <====> {positionA.Y} {positionB.Y}");
+            PluginLog.Log($"height {height} <====> {positionA.Y} <---------> {positionB.Y}");
             Thread.Sleep(1000);
             i++;
         }

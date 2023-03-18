@@ -40,8 +40,6 @@ public partial class SpearfishingHelper : Window
 
     private unsafe void DrawFish(FishingSpot? spot, SpearfishWindow.Info info, AtkResNode* node, AtkResNode* fishLines, int idx)
     {
-        var lineStart = _uiPos + new Vector2(_uiSize.X / 2, _addon->FishLines->Y * _uiScale);
-        var lineEnd = lineStart + new Vector2(0, _addon->FishLines->Height * _uiScale);
         if (!info.Available)
             return;
         
@@ -83,17 +81,10 @@ public partial class SpearfishingHelper : Window
         foreach (var fish in _currentSpot.Items)
         {
             var name = fish.Name[ClientLanguage.ChineseSimplified];
-            if (false)
-            {
-                name = $"{name} ({fish.Size.ToName()} and {fish.Speed.ToName()})";
-            }
-            else
-            {
-                ImGui.Image(IconId.FromSpeed(fish.Speed).ImGuiHandle, iconSize);
-                ImGui.SameLine();
-                ImGui.Image(IconId.FromSize(fish.Size).ImGuiHandle, iconSize);
-                ImGui.SameLine();
-            }
+            ImGui.Image(IconId.FromSpeed(fish.Speed).ImGuiHandle, iconSize);
+            ImGui.SameLine();
+            ImGui.Image(IconId.FromSize(fish.Size).ImGuiHandle, iconSize);
+            ImGui.SameLine();
 
             ImGui.Image(Icons.DefaultStorage[fish.ItemData.Icon].ImGuiHandle, iconSize);
             var pos = ImGui.GetCursorPos();
@@ -154,7 +145,7 @@ public partial class SpearfishingHelper : Window
         if (_isOpen != oldOpen)
         {
             _currentSpot = GetTargetFishingSpot();
-            ComputeListSize();
+            //ComputeListSize();
         }
 
         var drawOverlay =  _currentSpot != null && _currentSpot.Items.Length > 0;
@@ -185,6 +176,6 @@ public partial class SpearfishingHelper : Window
     {
         DrawFishOverlay();
         DrawFishCenterLine();
-        DrawList();
+        //DrawList();
     }
 }

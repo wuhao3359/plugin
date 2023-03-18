@@ -438,13 +438,12 @@ namespace WoAutoCollectionPlugin.Bot
                 WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
                 Thread.Sleep(500);
             }
+            MovePositions(Path, true);
             if (!CommonUi.HasStatus("收藏品采集"))
             {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n5_key);
                 Thread.Sleep(500);
             }
-            MovePositions(Path, true);
-
             int n = 0;
             while (!closed & n < 100)
             {
@@ -490,8 +489,9 @@ namespace WoAutoCollectionPlugin.Bot
                                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
-                                float y = Maths.GetCoordinate(Points[i].Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                float y = Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float z = Maths.GetCoordinate(go.Position.Z, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
+                                PluginLog.Log($"目标高度1: {Maths.GetCoordinate(go.Position.Y, WoAutoCollectionPlugin.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType))} <---> 辅助点高度: {y}");
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
@@ -542,6 +542,30 @@ namespace WoAutoCollectionPlugin.Bot
                                     {
                                         WoAutoCollectionPlugin.GameData.CommonBot.SpearfishMethod();
                                         WoAutoCollectionPlugin.GameData.CommonBot.UseItem();
+
+                                        PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+                                        byte stackCount = 0;
+                                        IEnumerator<Dalamud.Game.ClientState.Statuses.Status> statusList = player.StatusList.GetEnumerator();
+                                        while (statusList.MoveNext())
+                                        {
+                                            // 2778-捕鱼人之识 850-耐心
+                                            Dalamud.Game.ClientState.Statuses.Status status = statusList.Current;
+                                            uint statusId = status.StatusId;
+                                            byte StackCount = status.StackCount;
+                                            if (statusId == 2778)
+                                            {
+                                                stackCount = StackCount;
+                                                break;
+                                            }
+                                        }
+                                        if (player.CurrentGp < player.MaxGp * 0.6)
+                                        {
+                                            if (stackCount >= 3)
+                                            {
+                                                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
+                                                Thread.Sleep(1000);
+                                            }
+                                        }
                                     }
                                     if (gameObjects.ToArray().Length > 0)
                                     {
@@ -577,12 +601,6 @@ namespace WoAutoCollectionPlugin.Bot
 
             PluginLog.Log($"刺鱼任务结束");
             return true;
-        }
-
-        public void StopCollectionFishScript()
-        {
-            closed = true;
-            WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();
         }
 
         public void OnCollectionFishUpdate(Framework _)

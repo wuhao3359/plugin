@@ -207,8 +207,9 @@ namespace WoAutoCollectionPlugin.Bot
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                        float y = go.Position.Y - 5;
+                        float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                        PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, SizeFactor)} < ---> 辅助点高度: {y}");
                         Vector3 GatherPoint = new(x, y, z);
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, point, territoryType, true, false);
                         position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
@@ -414,8 +415,9 @@ namespace WoAutoCollectionPlugin.Bot
                             if (go != null)
                             {
                                 float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
-                                float y = go.Position.Y;
+                                float y = Maths.GetCoordinate(go.Position.Y, SizeFactor);
                                 float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
+                                PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, SizeFactor)} <---> 辅助点高度: {y}");
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 

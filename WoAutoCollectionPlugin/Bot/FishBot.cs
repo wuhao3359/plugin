@@ -324,7 +324,7 @@ namespace WoAutoCollectionPlugin.Bot
             return position;
         }
 
-        public void StopYFishScript()
+        public void StopScript()
         {
             closed = true;
             WoAutoCollectionPlugin.GameData.KeyOperates.ForceStop();

@@ -9,6 +9,7 @@ using Dalamud.Plugin;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -211,7 +212,7 @@ namespace WoAutoCollectionPlugin
             PluginLog.Log($"fish: {args}");
             if (args.Length == 0)
             {
-                GameData.FishBot.StopYFishScript();
+                GameData.FishBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -265,7 +266,7 @@ namespace WoAutoCollectionPlugin
             PluginLog.Log($"collectionfish: {args}");
             if (args.Length == 0)
             {
-                GameData.CollectionFishBot.StopCollectionFishScript();
+                GameData.CollectionFishBot.StopScript();
                 taskRunning = false;
                 return;
             }
@@ -366,9 +367,12 @@ namespace WoAutoCollectionPlugin
 
             //CommonUi.test1();
 
-            CommonUi.test2();
+            // CommonUi.test2();
 
             //CommonUi.test3();
+
+            // TODO 运行时间超过19小时 kill game 
+            Process.GetCurrentProcess().Kill();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -491,8 +495,15 @@ namespace WoAutoCollectionPlugin
 
         private void OnLogoutEvent(object? sender, EventArgs e)
         {
-            PluginLog.Log($"=====>>> logout...");
+            PluginLog.Log($"=====>>> logout... stop all");
             PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+            GameData.CommonBot.StopScript();
+            GameData.DailyBot.StopScript();
+            GameData.CraftBot.StopScript();
+            GameData.GatherBot.StopScript();
+            GameData.FishBot.StopScript();
+            GameData.HFishBot.StopScript();
+            GameData.CollectionFishBot.StopScript();
         }
     }
 }
