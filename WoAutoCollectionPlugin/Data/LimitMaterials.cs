@@ -232,12 +232,12 @@ namespace WoAutoCollectionPlugin.Utility
 
         public static Vector3[] path378191 = {
             new Vector3(2936, 2219, 1762),
-            new Vector3(2890, 2229, 2477),
+            new Vector3(2887, 2229, 2694),
         };
         public static Vector3[] points378191 = {
-            new Vector3(2826, 2169, 2624),
-            new Vector3(2874, 2169, 2750),
-            new Vector3(3021, 2170, 2651),
+            new Vector3(2822, 2166, 2626),
+            new Vector3(2874, 2163, 2774),
+            new Vector3(3040, 2170, 2659),
         };
 
         public static Vector3[] path378181 = {
