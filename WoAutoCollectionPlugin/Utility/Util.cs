@@ -55,7 +55,6 @@ namespace WoAutoCollectionPlugin
 
             if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近1: {index}");
                 return nearestGo;
             }
             else {
@@ -88,7 +87,6 @@ namespace WoAutoCollectionPlugin
 
             if (nearestGo != null)
             {
-                PluginLog.Log($"最近fish: {index}");
                 return nearestGo;
             }
             else
@@ -122,7 +120,6 @@ namespace WoAutoCollectionPlugin
 
             if (nearestGo != null && CanGather(nearestGo))
             {
-                PluginLog.Log($"最近2: {index}");
                 return nearestGo;
             }
             else

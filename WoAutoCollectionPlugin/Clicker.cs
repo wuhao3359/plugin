@@ -4,11 +4,16 @@ using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.Control;
 using FFXIVClientStructs.FFXIV.Client.Game.Object;
+using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
+using Lumina.Excel.GeneratedSheets;
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using WoAutoCollectionPlugin.Data;
+using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
@@ -18,6 +23,17 @@ internal unsafe class Clicker
 {
     internal static ActionType lastAction = ActionType.None;
 
+    private static bool closed = false;
+
+    public static void Init()
+    {
+        closed = false;
+    }
+
+    public static void Stop()
+    {
+        closed = true;
+    }
 
     internal enum ActionType
     {
@@ -25,10 +41,15 @@ internal unsafe class Clicker
         CloseRetainerWindow
     }
 
-    internal static void UpdateRetainerSellList(int index, out bool succeed, out int selling)
+    internal static void UpdateRetainerSellList(int index, out bool succeed, out List<(uint, int)> sellingList)
     {
-        selling = 0;
+        sellingList = new();
         succeed = false;
+        int selling = 0;
+        List<(uint, string, int, int, int)> items = Market.GetItemsByRetainer(index);
+        foreach ((uint Id, string ItemName, int RetainerIndex, int LowestPrice, int MaxSlot) in items){
+            sellingList.Add((Id, 0));
+        }
         if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
         {
             var im = InventoryManager.Instance();
@@ -45,67 +66,164 @@ internal unsafe class Clicker
             }
             
             var marketContainer = im->GetInventoryContainer(InventoryType.RetainerMarket);
-            PluginLog.Log($"------------------------------------, {marketContainer->Size}");
-            
+            bool replace = false;
             for (var i = 0; i < marketContainer->Size; i++)
             {
+                if (closed) return;
                 var item = marketContainer->GetInventorySlot(i);
-                if (item == null)
+                if (item == null || item->ItemID == 0)
                     continue;
                 selling++;
-                PluginLog.Log($"ItemId:{item->ItemID}, Slot: {item->Slot}");
-
-                //uint addId = ic->AgentInterface.GetAddonID();
-                //ic->OpenForItemSlot(InventoryType.RetainerMarket, 1, addId);
+                if (sellingList.Count > 0)
+                {
+                    for (int k = 0; k < sellingList.Count; k++) {
+                        (uint itemId, int itemCount) = sellingList[k];
+                        if (itemId == item->ItemID && item->ItemID != 0) {
+                            itemCount++;
+                            sellingList[k] = (itemId, itemCount);
+                            replace = true;
+                            break;
+                        }
+                    }
+                }
+                if (!replace)
+                {
+                    sellingList.Add((item->ItemID, 1));
+                }
+                replace = false;
             }
             for (int i = 0; i < selling; i++) {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n2_key);
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
-                Thread.Sleep(1000);
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.n0_key);
-                Thread.Sleep(3000);
-
-                var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
-                if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
-                {
-                    // 价格
-                    var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
-                    // 数量
-                    var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
-                    AtkUldComponentDataNumericInput price = priceComponentNumericInput->Data;
-                    AtkUldComponentDataNumericInput quantity = quantityComponentNumericInput->Data;
-                    PluginLog.Log($"change before, price: {price.Value} quantity: {quantity.Value}");
-                    Thread.Sleep(3000);
-                    PluginLog.Log($"change before, price: {price.Value} quantity: {quantity.Value}");
-                    var addonRetainerSell = (AddonRetainerSell*)retainerSell;
-                    MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
+                if (closed) return;
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                if (MarketCommons.GetUnitBase("ContextMenu") != null) {
+                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    Thread.Sleep(200);
+                    var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
+                    if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
+                    {
+                        Thread.Sleep(2000);
+                        if (!WoAutoCollectionPlugin.getPriceSucceed) {
+                            Thread.Sleep(2000);
+                        }
+                        var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
+                        var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
+                        string quantity = quantityComponentNumericInput->AtkComponentInputBase.AtkTextNode->NodeText.ToString();
+                        string afterPrice = priceComponentNumericInput->AtkComponentInputBase.AtkTextNode->NodeText.ToString();
+                        PluginLog.Log($"change before, price: {WoAutoCollectionPlugin.beforePrice} quantity: {quantity}");
+                        PluginLog.Log($"change after, price: {afterPrice} quantity: {quantity}");
+                        var addonRetainerSell = (AddonRetainerSell*)retainerSell;
+                        if (WoAutoCollectionPlugin.getPriceSucceed && WoAutoCollectionPlugin.beforePrice != "" && WoAutoCollectionPlugin.beforePrice != afterPrice)
+                        {
+                            PluginLog.Log("click addon Confirm");
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                        }
+                        WoAutoCollectionPlugin.beforePrice = "";
+                        WoAutoCollectionPlugin.getPriceSucceed = false;
+                    }
+                    else
+                    {
+                        PluginLog.LogError("Unexpected fields in addon RetainerSell");
+                    }
+                    if (MarketCommons.GetUnitBase("RetainerSell") != null) {
+                        PluginLog.Log("close addon RetainerSell");
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    }
                 }
-                else
-                {
-                    PluginLog.LogError("Unexpected fields in addon RetainerSell");
-                }
+                Thread.Sleep(500);
+                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);
             }
             succeed = true;
         }
     }
 
-    internal static void PutUpRetainerSellList(int index, int sell, out bool succeed)
+    internal static void PutUpRetainerSellList(int index, List<(uint, int)> sell, out bool succeed)
     {
         succeed = false;
-        for (int i = 0; i < sell; i++) { 
-        
+        List<(uint, string, int, int, int)> items = Market.GetItemsByRetainer(index);
+        List<(uint, InventoryType)> InventoryTypeList = Market.InventoryTypeList;
+        int sellingCount = 0;
+        foreach((uint itemId, int itemCount) in sell) {
+            sellingCount += itemCount;
         }
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
-        {
-            var ic = AgentInventoryContext.Instance();
-            if (ic == null)
+        PluginLog.Log($"selling count: {sellingCount}");
+
+        var im = InventoryManager.Instance();
+        for (int i = 0; i < 20 - sellingCount; i++) {
+            foreach ((uint Id, string ItemName, int RetainerIndex, int LowestPrice, int MaxSlot) in items)
             {
-                PluginLog.Error("AgentInventoryContext was null");
-                return;
+                for (int k = 0; k < sell.Count; k++)
+                {
+                    (uint itemId, int itemCount) = sell[k];
+                    if (Id == itemId && MaxSlot >= itemCount)
+                    {
+                        for (int j = 0; j < InventoryTypeList.Count; j++)
+                        {
+                            (uint id, InventoryType type) = InventoryTypeList[j];
+                            PutUpForInventory(itemId, im->GetInventoryContainer(type), out bool subSucceed);
+                            if (subSucceed)
+                            {
+                                itemCount++;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
-            ic->OpenForItemSlot(InventoryType.RetainerMarket, 1, ic->AgentInterface.GetAddonID());
         }
         succeed = true;
+    }
+
+    internal static void PutUpForInventory(uint itemId, InventoryContainer* Inventory, out bool succeed) {
+        succeed = false;
+        for (var i = 0; i < Inventory->Size; i++)
+        {
+            var item = Inventory->GetInventorySlot(i);
+            if (item == null)
+                continue;
+            if (item->ItemID == itemId)
+            {
+                PluginLog.Log($"find itemId: {itemId} succeed");
+                var ic = AgentInventoryContext.Instance();
+                if (ic == null)
+                {
+                    PluginLog.Error("AgentInventoryContext was null");
+                    return;
+                }
+                // TODO
+                //ic->OpenForItemSlot(InventoryType.Inventory1, 1, ic->AgentInterface.GetAddonID());
+                succeed = true;
+                return;
+            }
+        }
+    }
+
+    internal static void CloseMarketAddon() {
+        int n = 0;
+        while (MarketCommons.GetUnitBase("RetainerSell") != null && n < 5) {
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            n++;
+            PluginLog.Log("close addon RetainerSell");
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            Thread.Sleep(500);
+        }
+        n = 0;
+        while (MarketCommons.GetUnitBase("RetainerSellList") != null && n < 5)
+        {
+            n++;
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            Thread.Sleep(500);
+        }
+        n = 0;
+        while (MarketCommons.GetUnitBase("SelectString") != null && n < 5)
+        {
+            n++;
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            Thread.Sleep(500);
+            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            Thread.Sleep(1000);
+        }
     }
 
     internal static void SelectRetainerByIndex(int index)

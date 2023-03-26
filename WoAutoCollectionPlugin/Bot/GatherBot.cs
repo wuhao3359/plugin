@@ -366,11 +366,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Log($"YGathing stopping");
                     return;
                 }
-                Vector3 p = AreaPosition[k];
-                if (Array.IndexOf(Tp, k) != -1) {
-                    p.Y -= 3;
-                }
-                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, p, territoryType, true, false);
+                position = WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
                 // 默认为移动点
                 // 传送点
                 if (Array.IndexOf(Tp, k) != -1) {

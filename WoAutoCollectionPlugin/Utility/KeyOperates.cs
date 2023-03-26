@@ -15,14 +15,9 @@ public class KeyOperates
     private IntPtr hwnd;
 
     private bool closed = false;
-    private int moving = 0;
-    private int flying = 0;
 
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
-
-    [DllImport("user32.dll")]
-    private static extern int mouse_event(int dwFlags, int dx, int dy, int dwData, int dwExtraInfo);
 
     public KeyOperates(GameData GameData)
     {
@@ -65,29 +60,15 @@ public class KeyOperates
             n++;
         }
 
-        double errorDisntance = 5.5;
+        double errorDisntance = 5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
         positionA = ReviseNoTime(positionB);
         double distance = Maths.Distance(positionA, positionB);
-        double height = Maths.Height(positionA, positionB, UseMount);
 
         int index = 0;
-        moving = 1;
         KeyDown(Keys.w_key);
-
-        if (UseMount && DalamudApi.Condition[ConditionFlag.Mounted])
-        {
-            if (height < -1) {
-                KeyDown(Keys.space_key);
-                flying = 1;
-            }
-            else if (height > 1)
-            {
-                KeyDown(Keys.num_sub_key);
-                flying = -1;
-            }
-        }
+        double height = Maths.Height(positionA, positionB, UseMount);
 
         while (distance > errorDisntance && index < 2400)
         {
@@ -97,7 +78,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(45);
+            Thread.Sleep(40);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
@@ -105,31 +86,26 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
-            //PluginLog.Log($"height {height} <====> {positionC.Y} {positionB.Y}");
-            if (height < -1)
+            if (height < -1.2)
             {
-                if (flying <= 0)
+                if (DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
                 {
-                    if (DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
-                    {
-                        KeyUp(Keys.num_sub_key);
-                    }
-                    if (!DalamudApi.KeyState[Keys.space_key] || !DalamudApi.Condition[ConditionFlag.InFlight])
-                    {
-                        KeyDown(Keys.space_key);
-                    }
-                    flying = 1;
+                    KeyUp(Keys.num_sub_key);
+                }
+                if (!DalamudApi.KeyState[Keys.space_key] || !DalamudApi.Condition[ConditionFlag.InFlight])
+                {
+                    KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 1)
+            else if (height > 1.2)
             {
-                if (flying >= 0)
+                if (DalamudApi.KeyState[Keys.space_key])
                 {
-                    if (!DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
-                    {
-                        KeyDown(Keys.num_sub_key);
-                    }
-                    flying = -1;
+                    KeyUp(Keys.space_key);
+                }
+                if (!DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
+                {
+                    KeyDown(Keys.num_sub_key);
                 }
             }
             else
@@ -147,7 +123,7 @@ public class KeyOperates
                 notMove++;
             }
 
-            if (notMove >= 9) {
+            if (notMove >= 8) {
                 KeyMethod(Keys.d_key, 300);
                 KeyDown(Keys.space_key);
                 notMove = 0;
@@ -189,15 +165,15 @@ public class KeyOperates
                     }
                 }
             }
-            if (turn >= 5) {
+            if (turn >= 6) {
                 MoveStop();
-                positionA = Revise(positionB, 700);
+                positionA = Revise(positionB, 600);
                 turn = 0;
             }
 
             if (log)
             {
-                PluginLog.Log($"distance: {distance} angle: {angle} height: {height} moving: {moving} flying: {flying}");
+                PluginLog.Log($"distance: {distance} angle: {angle} height: {height}");
             }
             index++;
 
@@ -207,36 +183,14 @@ public class KeyOperates
                 {
                     KeyDown(Keys.w_key);
                 }
-                moving = 1;
             }
-            if (height <= 2 && height >= -1)
-            {
-                FlyStop();
-            }
-            else if (beforeHeight == height)
-            {
-                if (height < -1)
-                {
-                    KeyDown(Keys.space_key);
-                    flying = 1;
-                }
-                else if (height > 2)
-                {
-                    if (DalamudApi.Condition[ConditionFlag.InFlight]) {
-                        KeyDown(Keys.num_sub_key);
-                    }
-                    flying = -1;
-                }
-            }
-
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 4.3;
+                errorDisntance = 4.7;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
-                errorDisntance = 3;
+                errorDisntance = 3.3;
             }
         }
-        //PluginLog.Log($"到附近distance: {distance} height: {height} moving: {moving} flying: {flying}");
         Stop();
         return GetUserPosition(SizeFactor);
     }
@@ -282,8 +236,6 @@ public class KeyOperates
         closed = false;
         FlyStop();
         MoveStop();
-        moving = 0;
-        flying = 0;
     }
 
     private void MoveStop()
@@ -312,7 +264,6 @@ public class KeyOperates
         {
             KeyUp(Keys.num_sub_key);
         }
-        flying = 0;
     }
 
     public void KeyMethod(Byte key)
@@ -357,26 +308,6 @@ public class KeyOperates
     public void KeyUp(Byte key)
     {
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
-    }
-
-    public void ClickMouseLeft(int x, int y)
-    {
-        //int lparam = (y << 16) + x + 31 * 2;
-        int lparam = (y << 16) | x;
-        SendMessage(hwnd, Keys.WM_LBUTTONDOWN, (IntPtr)0, (IntPtr)lparam);
-        Thread.Sleep(100);
-        SendMessage(hwnd, Keys.WM_LBUTTONUP, (IntPtr)0, (IntPtr)0);
-    }
-
-    public void MouseMove(int x, int y)
-    {
-        // (y<<16) | x
-        //int lparam = (y << 16) + x + 31 * 2;
-        //int lparam = (y << 16) | x;
-        //IntPtr lparam = new IntPtr((y << 16) | x);
-        //SendMessage(hwnd, Keys.WM_MOUSEMOVE, (IntPtr)0, lparam);
-        Thread.Sleep(3000);
-        mouse_event(Keys.MOUSEEVENTF_MOVE, x, y, 0, 0);
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {

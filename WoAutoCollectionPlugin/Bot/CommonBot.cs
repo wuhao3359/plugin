@@ -11,7 +11,9 @@ using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
+using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
 using static Lumina.Data.Parsing.Layer.LayerCommon;
+using Npc = WoAutoCollectionPlugin.Data.Npc;
 
 namespace WoAutoCollectionPlugin.Bot
 {
@@ -98,6 +100,15 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool NpcRepair(string npc)
         {
+            AutoChooseNpc(out bool succeed, out npc);
+            if (!succeed)
+            {
+                PluginLog.Log($"not find repair npc");
+                return false;
+            }
+            else {
+                PluginLog.Log($"find repair npc: {npc}");
+            }
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
             {
@@ -111,13 +122,13 @@ namespace WoAutoCollectionPlugin.Bot
 
                 if (closed)
                 {
-                    PluginLog.Log($"YGathing stopping");
+                    PluginLog.Log($"NpcRepair stopping");
                     return true;
                 }
             }
             bool flag = true;
             SetTarget(npc);
-            Thread.Sleep(1200);
+            Thread.Sleep(1500);
             if (CommonUi.AddonSelectIconStringIsOpen())
             {
                 CommonUi.SelectIconString2Button();
@@ -126,9 +137,9 @@ namespace WoAutoCollectionPlugin.Bot
             
             if (CommonUi.AddonRepairIsOpen() && CommonUi.AllRepairButton())
             {
-                Thread.Sleep(800);
+                Thread.Sleep(1000);
                 CommonUi.SelectYesButton();
-                Thread.Sleep(800);
+                Thread.Sleep(1000);
             }
             else
             {
@@ -137,6 +148,22 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
             return flag;
+        }
+
+        public void AutoChooseNpc(out bool succeed, out string npc) {
+            succeed = false;
+            npc = "";
+            List<string> names = Npc.NpcNames;
+            foreach (string name in names) {
+                if (closed) return;
+                var target = DalamudApi.ObjectTable.FirstOrDefault(obj => obj.Name.TextValue.ToLowerInvariant() == name);
+                if (target != default)
+                {
+                    succeed = true;
+                    npc = name;
+                    return;
+                }
+            }
         }
 
         // 精制
@@ -625,7 +652,7 @@ namespace WoAutoCollectionPlugin.Bot
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
                 PluginLog.Log($"开始采集: {Names}, {count}");
-                if (count < 8000 && gp >= 200)
+                if (count < 9000 && gp >= 200)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;

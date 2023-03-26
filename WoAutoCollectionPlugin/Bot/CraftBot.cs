@@ -218,6 +218,7 @@ namespace WoAutoCollectionPlugin.Bot
                         i++;
                     }
                     else {
+                        error++;
                         needHQ = true;
                     }
                     Thread.Sleep(500);

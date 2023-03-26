@@ -51,6 +51,9 @@ namespace WoAutoCollectionPlugin
         public static Lumina.Excel.ExcelSheet<Item> items;
         public static bool taskRunning = false;
 
+        public static string beforePrice = "";
+        public static bool getPriceSucceed = false;
+
         internal readonly WindowSystem WindowSystem;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
@@ -79,7 +82,7 @@ namespace WoAutoCollectionPlugin
             catch (Exception e)
             {
                 getFilePtr = null;
-                PluginLog.LogError(e.ToString());
+                PluginLog.LogError("GetFilePointer error" + e.ToString());
             }
 
             try
@@ -369,10 +372,10 @@ namespace WoAutoCollectionPlugin
 
             // CommonUi.test2();
 
-            //CommonUi.test3();
+            CommonUi.test3();
 
-            // TODO 运行时间超过19小时 kill game 
-            Process.GetCurrentProcess().Kill();
+            // TODO 运行时间超过17.5小时 kill game 
+            //Process.GetCurrentProcess().Kill();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -498,6 +501,7 @@ namespace WoAutoCollectionPlugin
             PluginLog.Log($"=====>>> logout... stop all");
             PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
             GameData.CommonBot.StopScript();
+            GameData.MarketBot.StopScript();
             GameData.DailyBot.StopScript();
             GameData.CraftBot.StopScript();
             GameData.GatherBot.StopScript();

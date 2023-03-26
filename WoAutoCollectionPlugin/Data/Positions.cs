@@ -379,6 +379,13 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (1097, 2785, 2806),
         };
 
+        // ------------------------------- 拉扎罕 雇员铃 -----------------------------------
+        public static uint RetainerBellTp = 183;
+        public static Vector3[] RetainerBell = {
+            new Vector3 (1181, 1125, 1041),
+            new Vector3 (1179, 1125, 1019),
+        };
+
         // ------------------------------- 工票交易员 -----------------------------------
         // 拉扎罕
         public static uint ShopTp = 183;    

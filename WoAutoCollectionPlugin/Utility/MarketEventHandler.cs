@@ -179,6 +179,7 @@ namespace WoAutoCollectionPlugin.Utility
                 }
                 itemsPrice.Add(itemName, itemPrice);
             }
+            WoAutoCollectionPlugin.getPriceSucceed = true;
             WoAutoCollectionPlugin.newRequest = false;
         }
 
@@ -224,13 +225,6 @@ namespace WoAutoCollectionPlugin.Utility
             AddonRetainerSellList_Position(out Vector2 position);
             //Util.GenerateCallback((AtkUnitBase*)addon, 2, 12002, 0, 0);
             var addonRetainerSellList = MarketCommons.GetUnitBase("RetainerSellList");
-            //IntPtr t0 = new IntPtr(addonRetainerSellList);
-            //IntPtr t1 = new IntPtr(addonRetainerSellList->WindowCollisionNode);
-            //IntPtr t2 = new IntPtr(addonRetainerSellList->WindowHeaderCollisionNode);
-            ////IntPtr t3 = new IntPtr(addonRetainerSellList->WindowNode->Component->UldManager.NodeListCount);
-            //PluginLog.Log($"(got: {t0:X} {t1:X}) {t2:X}) {addonRetainerSellList->WindowCollisionNode->LinkedComponent->UldManager.NodeListCount}");
-            //MarketCommons.SendClick(addon, EventType.CHANGE, 2, addonRetainerSellList->WindowNode->Component->UldManager
-            //                    .NodeList[1]->GetComponent()->OwnerNode);
 
             itemsPrice = new();
             itemName = "";
@@ -262,6 +256,7 @@ namespace WoAutoCollectionPlugin.Utility
             {
                 PluginLog.Log($"有缓存数据: {p}");
                 SetPrice();
+                WoAutoCollectionPlugin.getPriceSucceed = true;
             }
             else
             {
@@ -376,10 +371,9 @@ namespace WoAutoCollectionPlugin.Utility
 
             if (itemsPrice.TryGetValue(itemName, out int p))
             {
-                // 价格
                 var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
-                // 数量
                 var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
+                WoAutoCollectionPlugin.beforePrice = priceComponentNumericInput->AtkComponentInputBase.AtkTextNode->NodeText.ToString();
                 PluginLog.Log($"componentNumericInput: {new IntPtr(priceComponentNumericInput).ToString("X")}");
                 PluginLog.Log($"quantityComponentNumericInput: {new IntPtr(quantityComponentNumericInput).ToString("X")}");
                 priceComponentNumericInput->SetValue(p);
@@ -399,7 +393,7 @@ namespace WoAutoCollectionPlugin.Utility
                 {
                     Task task = new(() =>
                     {
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1200);
                         GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
                         var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
                         MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);

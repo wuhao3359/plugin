@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ClickLib;
+using ClickLib.Enums;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI;
@@ -85,6 +86,16 @@ namespace WoAutoCollectionPlugin.Ui
             if (ptr != IntPtr.Zero)
             {
                 return Click.TrySendClick("select_string1");
+            }
+            return false;
+        }
+
+        public unsafe static bool SelectString3Button()
+        {
+            var ptr = DalamudApi.GameGui.GetAddonByName("SelectString", 1);
+            if (ptr != IntPtr.Zero)
+            {
+                return Click.TrySendClick("select_string3");
             }
             return false;
         }
@@ -466,6 +477,12 @@ namespace WoAutoCollectionPlugin.Ui
             return success;
         }
 
+        public unsafe static bool AddonRetainerListIsOpen()
+        {
+            var (addon, success) = IsAddonVisible("RetainerList");
+            return success;
+        }
+
         public static unsafe bool SelectMaterializeDialogYesButton()
         {
             var ptr = DalamudApi.GameGui.GetAddonByName("MaterializeDialog", 1);
@@ -657,9 +674,11 @@ namespace WoAutoCollectionPlugin.Ui
 
         public static unsafe bool test3()
         {
-            GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var addon);
-            Util.GenerateCallback(addon, 0, 0, 0U, 0, 0);
+            var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
+            if (retainerSell == null) return false;
 
+            var addonRetainerSell = (AddonRetainerSell*)retainerSell;
+            MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
             return false;
         }
 
@@ -691,7 +710,7 @@ namespace WoAutoCollectionPlugin.Ui
                 if (item == null)
                     continue;
 
-                if (item->Condition <= 29000)
+                if (item->Condition <= 20000)
                 {
                     PluginLog.Log($"{item->Condition}");
                     return true;
