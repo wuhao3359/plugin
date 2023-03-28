@@ -38,6 +38,7 @@ namespace WoAutoCollectionPlugin.Bot
             Teleporter.count = 0;
             WoAutoCollectionPlugin.GameData.CraftBot.Init();
             WoAutoCollectionPlugin.GameData.CommonBot.Init();
+            WoAutoCollectionPlugin.GameData.CollectionFishBot.Init();
         }
 
         public void StopScript()
@@ -76,9 +77,15 @@ namespace WoAutoCollectionPlugin.Bot
                         // 限时单次采集
                         LimitTimeSinglePlan(lv);
                     }
-                    else {
+                    else if (d == "2")
+                    {
                         // 限时多次采集
                         LimitTimeMultiPlan(lv);
+                    }
+                    else if (d == "3")
+                    {
+                        // 灵砂刺鱼
+                        OnlySpearfishPlan();
                     }
                 }
                 else {
@@ -506,7 +513,52 @@ namespace WoAutoCollectionPlugin.Bot
                     MovePositions(Positions.RepairNPC, false);
                     WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                 }
-                WoAutoCollectionPlugin.GameData.MarketBot.RunScript();
+                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(2);
+                WoAutoCollectionPlugin.Time.Update();
+                hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+            }
+        }
+
+        public void OnlySpearfishPlan()
+        {
+            int n = 0;
+            WoAutoCollectionPlugin.Time.Update();
+            int hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+            bool run = false;
+            while (!closed && n < 1000)
+            {
+                if (hour == 0) {
+                    run = true;
+                }
+                RunWaitTask("90");
+                while (othetRun)
+                {
+                    if (closed) return;
+                    WoAutoCollectionPlugin.Time.Update();
+                    hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
+                    if (hour != 0)
+                    {
+                        run = false;
+                    }
+                    Thread.Sleep(5000);
+                    if (hour == 0 && !run)
+                    {
+                        StopWaitTask();
+                    }
+                }
+
+                PluginLog.Log($"当前ez day结束...");
+                int count = CommonUi.CanExtractMateria();
+                if (count >= 5)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateria(count);
+                }
+                int CollectableCount = CommonUi.CanExtractMateriaCollectable();
+                if (CollectableCount > 0)
+                {
+                    WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                }
+                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(1);
                 WoAutoCollectionPlugin.Time.Update();
                 hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             }
@@ -600,7 +652,6 @@ namespace WoAutoCollectionPlugin.Bot
                         WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500);
                     }
-                    PluginLog.Log($"执行等待捕鱼灵砂任务...");
                     try
                     {
                         Random r = new();
@@ -611,9 +662,9 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     catch (Exception e)
                     {
-                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                        PluginLog.Error($"执行等待捕鱼灵砂任务, error!!!\n{e}");
                     }
-                    PluginLog.Log($"其他任务结束...");
+                    PluginLog.Log($"执行等待捕鱼灵砂任务结束...");
                     othetRun = false;
                 });
                 task.Start();
@@ -638,7 +689,6 @@ namespace WoAutoCollectionPlugin.Bot
                         WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500);
                     }
-                    PluginLog.Log($"执行等待刺鱼灵砂任务...");
                     try
                     {
                         string args = "ftype:5";
@@ -647,9 +697,9 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     catch (Exception e)
                     {
-                        PluginLog.Error($"其他任务, error!!!\n{e}");
+                        PluginLog.Error($"执行等待刺鱼灵砂任务, error!!!\n{e}");
                     }
-                    PluginLog.Log($"其他任务结束...");
+                    PluginLog.Log($"执行等待刺鱼灵砂任务结束...");
                     othetRun = false;
                 });
                 task.Start();

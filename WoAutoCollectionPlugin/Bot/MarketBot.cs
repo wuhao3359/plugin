@@ -80,22 +80,24 @@ namespace WoAutoCollectionPlugin.Bot
             }
         }
 
-        public void RunScript()
+        public void RunScript(int NextClick)
         {
+            WoAutoCollectionPlugin.status = "change price";
             NextClickAt++;
-            PluginLog.Log($"start change price: {NextClickAt}");
-            if (NextClickAt <= 4)
+            if (NextClickAt <= NextClick)
             {
                 return;
             }
+            PluginLog.Log($"start change price");
             NextClickAt = 0;
             Script();
             int n = 0;
-            while (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && n < 5) {
+            while ((DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] || DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]) && n < 5) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(1000);
                 n++;
             }
+            WoAutoCollectionPlugin.status = "";
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)

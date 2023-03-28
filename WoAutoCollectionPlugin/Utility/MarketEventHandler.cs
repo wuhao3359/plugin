@@ -22,6 +22,7 @@ using FFXIVClientStructs.Attributes;
 using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
+using Dalamud.Game.ClientState.Conditions;
 
 namespace WoAutoCollectionPlugin.Utility
 {
@@ -301,56 +302,50 @@ namespace WoAutoCollectionPlugin.Utility
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
             var aId = agent->AgentInterface.GetAddonID();
 
-            return result;
-            PluginLog.Log($"addonId, {aId}");
-            try
-            {
-                var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
-                if (inventory != null)
+            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell]) {
+                try
                 {
-                    var itemSlot = inventory->GetInventorySlot(slot);
-                    if (itemSlot != null)
+                    var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
+                    if (inventory != null)
                     {
-                        var itemId = itemSlot->ItemID;
-                        var item = WoAutoCollectionPlugin.GameData.DataManager.GetExcelSheet<Item>()?.GetRow(itemId);
-                        if (item != null)
+                        var itemSlot = inventory->GetInventorySlot(slot);
+                        if (itemSlot != null)
                         {
-                            var addonId = agent->AgentInterface.GetAddonID();
-                            if (addonId == 0) return result;
-                            var addon = GetAddonByID(addonId);
-                            if (addon == null) return result;
-
-                            for (var i = 0; i < agent->ContextItemCount; i++)
+                            var itemId = itemSlot->ItemID;
+                            var item = WoAutoCollectionPlugin.GameData.DataManager.GetExcelSheet<Item>()?.GetRow(itemId);
+                            if (item != null)
                             {
-                                var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
-                                if (contextItemParam.Type != ValueType.String) continue;
-                                var contextItemName = contextItemParam.ValueString();
+                                var addonId = agent->AgentInterface.GetAddonID();
+                                if (addonId == 0) return result;
+                                var addon = GetAddonByID(addonId);
+                                if (addon == null) return result;
 
-                                var text = "到市场出售";
-                                PluginLog.Log($"contextItemName:{contextItemName}");
-                                if (text.Contains(contextItemName))
+                                for (var i = 0; i < agent->ContextItemCount; i++)
                                 {
-                                    //if (Bitmask.IsBitSet(agent->ContextItemDisabledMask, i))
-                                    //{
-                                    //    PluginLog.Debug($"QRA found {i}:{contextItemName} but it's disabled");
-                                    //    continue;
-                                    //}
-                                    Util.GenerateCallback(addon, 0, i, 0U, 0, 0);
-                                    agent->AgentInterface.Hide();
-                                    UiHelper.Close(addon);
-                                    PluginLog.Log($"QRA Selected {i}:{contextItemName}");
-                                    return result;
+                                    var contextItemParam = agent->EventParamsSpan[agent->ContexItemStartIndex + i];
+                                    if (contextItemParam.Type != ValueType.String) continue;
+                                    var contextItemName = contextItemParam.ValueString();
+
+                                    var text = "到市场出售";
+                                    PluginLog.Log($"contextItemName:{contextItemName}");
+                                    if (text.Contains(contextItemName))
+                                    {
+                                        Util.GenerateCallback(addon, 0, i, 0U, 0, 0);
+                                        agent->AgentInterface.Hide();
+                                        UiHelper.Close(addon);
+                                        PluginLog.Log($"QRA Selected {i}:{contextItemName}");
+                                        return result;
+                                    }
                                 }
                             }
                         }
                     }
                 }
+                catch (Exception ex)
+                {
+                    PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour error, {ex.Message} !!!");
+                }
             }
-            catch (Exception ex)
-            {
-                PluginLog.Log($"AddonInventoryContext_OnSetup_Delegate_Detour error, {ex.Message} !!!");
-            }
-
             return result;
         }
 

@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Spearfishing;
@@ -53,6 +54,10 @@ namespace WoAutoCollectionPlugin
 
         public static string beforePrice = "";
         public static bool getPriceSucceed = false;
+
+        public static string status = "";
+
+        Stopwatch sw = new();
 
         internal readonly WindowSystem WindowSystem;
 
@@ -113,7 +118,7 @@ namespace WoAutoCollectionPlugin
                 });
                 DalamudApi.CommandManager.AddHandler(woTest, new CommandInfo(OnWoTestCommand)
                 {
-                    HelpMessage = "wotest"
+                    HelpMessage = "woTest"
                 });
                 DalamudApi.CommandManager.AddHandler(actionTest, new CommandInfo(OnActionTestCommand)
                 {
@@ -147,6 +152,7 @@ namespace WoAutoCollectionPlugin
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+                AutoKillGame();
             }
             catch (Exception e)
             {
@@ -373,9 +379,6 @@ namespace WoAutoCollectionPlugin
             // CommonUi.test2();
 
             CommonUi.test3();
-
-            // TODO 运行时间超过17.5小时 kill game 
-            //Process.GetCurrentProcess().Kill();
         }
 
         private void OnActionTestCommand(string command, string args)
@@ -473,7 +476,7 @@ namespace WoAutoCollectionPlugin
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                GameData.MarketBot.RunScript();
+                GameData.MarketBot.RunScript(1);
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
@@ -508,6 +511,24 @@ namespace WoAutoCollectionPlugin
             GameData.FishBot.StopScript();
             GameData.HFishBot.StopScript();
             GameData.CollectionFishBot.StopScript();
+        }
+
+        private void AutoKillGame() {
+            sw = new();
+            sw.Start();
+            Task task = new(() =>
+            {
+                while (true) {
+                    Thread.Sleep(60000);
+                    if (sw.ElapsedMilliseconds / 1000 / 60 / 60 > 18)
+                    {
+                        PluginLog.LogError("too long for running time, kill game");
+                        Process.GetCurrentProcess().Kill();
+                    }
+                }
+            });
+            task.Start();
+
         }
     }
 }
