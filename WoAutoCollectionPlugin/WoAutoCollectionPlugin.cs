@@ -14,6 +14,7 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Timers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Spearfishing;
 using WoAutoCollectionPlugin.Time;
@@ -57,7 +58,7 @@ namespace WoAutoCollectionPlugin
 
         public static string status = "";
 
-        Stopwatch sw = new();
+        System.Timers.Timer timer;
 
         internal readonly WindowSystem WindowSystem;
 
@@ -73,22 +74,22 @@ namespace WoAutoCollectionPlugin
             //Configuration.Initialize(DalamudApi.PluginInterface);
             Click.Initialize();
             newRequest = false;
-            MarketEventHandler = new MarketEventHandler();
+            //MarketEventHandler = new MarketEventHandler();
 
-            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
 
-            try
-            {
-                var ptr = DalamudApi.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 14 83 7B 44 00");
-                getFilePtr = Marshal.GetDelegateForFunctionPointer<GetFilePointer>(ptr);
-            }
-            catch (Exception e)
-            {
-                getFilePtr = null;
-                PluginLog.LogError("GetFilePointer error" + e.ToString());
-            }
+            //try
+            //{
+            //    var ptr = DalamudApi.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 14 83 7B 44 00");
+            //    getFilePtr = Marshal.GetDelegateForFunctionPointer<GetFilePointer>(ptr);
+            //}
+            //catch (Exception e)
+            //{
+            //    getFilePtr = null;
+            //    PluginLog.LogError("GetFilePointer error" + e.ToString());
+            //}
 
             try
             {
@@ -152,7 +153,10 @@ namespace WoAutoCollectionPlugin
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-                AutoKillGame();
+                timer = new System.Timers.Timer(17 * 60 * 60 * 1000);
+                timer.Elapsed += AutoKillGame;
+                timer.AutoReset = true;
+                timer.Start();
             }
             catch (Exception e)
             {
@@ -179,7 +183,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(daily);
             DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
-            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
@@ -513,22 +517,10 @@ namespace WoAutoCollectionPlugin
             GameData.CollectionFishBot.StopScript();
         }
 
-        private void AutoKillGame() {
-            sw = new();
-            sw.Start();
-            Task task = new(() =>
-            {
-                while (true) {
-                    Thread.Sleep(60000);
-                    if (sw.ElapsedMilliseconds / 1000 / 60 / 60 > 18)
-                    {
-                        PluginLog.LogError("too long for running time, kill game");
-                        Process.GetCurrentProcess().Kill();
-                    }
-                }
-            });
-            task.Start();
-
+        private void AutoKillGame(object sender, ElapsedEventArgs e) {
+            timer.Close();
+            PluginLog.LogError("too long for running, kill game");
+            Process.GetCurrentProcess().Kill();
         }
     }
 }

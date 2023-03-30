@@ -200,11 +200,6 @@ namespace WoAutoCollectionPlugin.Utility
 
         private void AddonRetainerSellList_OnFinalize_Delegate_Detour(IntPtr addon)
         {
-            if (addon == AddonRetainerSellList)
-                PluginLog.Log($"AddonRetainerSellList.OnFinalize (known: {addon:X})");
-            else
-                PluginLog.Log(
-                    $"AddonRetainerSellList.OnFinalize (unk. have {AddonRetainerSellList:X} got {addon:X})");
             AddonRetainerSellList = IntPtr.Zero;
             itemsPrice = new();
             itemName = "";
@@ -218,14 +213,6 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonRetainerSellList.OnSetup (got: {addon:X})");
             var result = AddonRetainerSellList_OnSetup_HW.Original(addon, a2, dataPtr);
             AddonRetainerSellList = addon;
-
-            // 第一个参数: addon
-            // 第二个参数:
-            // 第三个参数: InventoryType
-            // 第四个参数: Slot
-            AddonRetainerSellList_Position(out Vector2 position);
-            //Util.GenerateCallback((AtkUnitBase*)addon, 2, 12002, 0, 0);
-            var addonRetainerSellList = MarketCommons.GetUnitBase("RetainerSellList");
 
             itemsPrice = new();
             itemName = "";
@@ -369,17 +356,7 @@ namespace WoAutoCollectionPlugin.Utility
                 var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
                 var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
                 WoAutoCollectionPlugin.beforePrice = priceComponentNumericInput->AtkComponentInputBase.AtkTextNode->NodeText.ToString();
-                PluginLog.Log($"componentNumericInput: {new IntPtr(priceComponentNumericInput).ToString("X")}");
-                PluginLog.Log($"quantityComponentNumericInput: {new IntPtr(quantityComponentNumericInput).ToString("X")}");
                 priceComponentNumericInput->SetValue(p);
-
-                // click confirm on RetainerSell
-                // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214B4D360E0 evt=EventType.CHANGE  a3=21  a4=0x214B920D2E0 (src=0x214B4D360E0; tgt=0x21460686550) a5=0xBB316FE6C8
-                var addonRetainerSell = (AddonRetainerSell*)retainerSell;
-                if (DalamudApi.KeyState[Keys.shift_key])
-                {
-                    MarketCommons.SendClick(new IntPtr(addonRetainerSell), EventType.CHANGE, 21, addonRetainerSell->Confirm);
-                }
             }
             else
             {

@@ -82,6 +82,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void RunScript(int NextClick)
         {
+            return;
             WoAutoCollectionPlugin.status = "change price";
             NextClickAt++;
             if (NextClickAt <= NextClick)

@@ -1192,7 +1192,7 @@ namespace WoAutoCollectionPlugin.Utility
             // (27759, 1800, "矮人棉", 17, "园艺工", 80, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), //
             (27803, 900, "凝灰岩", 16, "采矿工", 78, 139, path27803, Points27803, CanCollectPoints27803, UnknownPointsNum27803, Area27803), // 图姆拉村
             (27824, 900, "野园甜菜", 17, "园艺工", 78, 144, path27824, Points27824, CanCollectPoints27824, UnknownPointsNum27824, Area27824), // 伊尔美格
-            (27826, 900, "皇家葡萄", 17, "园艺工", 78, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
+            (27826, 800, "皇家葡萄", 17, "园艺工", 78, 142, path27826, Points27826, CanCollectPoints27826, UnknownPointsNum27826, Area27826), // 拉凯提卡大森林
 
             (27779, 900, "甜香荠", 17, "园艺工", 78, 142, path27779, Points27779, CanCollectPoints27779, UnknownPointsNum27779, Area27779), // 拉凯提卡大森林
             (27780, 900, "邪衣薰衣草", 17, "园艺工", 78, 142, path27779, Points27779, CanCollectPoints27779, UnknownPointsNum27779, Area27779), // 拉凯提卡大森林
