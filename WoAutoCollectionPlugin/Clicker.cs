@@ -101,9 +101,9 @@ internal unsafe class Clicker
                     var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
                     if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
                     {
-                        Thread.Sleep(2500);
+                        Thread.Sleep(3500);
                         if (!WoAutoCollectionPlugin.getPriceSucceed) {
-                            Thread.Sleep(2000);
+                            Thread.Sleep(2500);
                         }
                         var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
                         var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();

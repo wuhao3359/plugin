@@ -63,7 +63,8 @@ public unsafe partial struct AtkResNode
     [FieldOffset(0x38)] public AtkResNode* ChildNode;
     [FieldOffset(0x40)] public NodeType Type;
     [FieldOffset(0x42)] public ushort ChildCount;
-    [FieldOffset(0x44)] public float X; // X,Y converted to floats on load, file is int16
+    [FieldOffset(0x44)] public float X; // X,Y converted to floats on load,
+                                        // is int16
     [FieldOffset(0x48)] public float Y;
     [FieldOffset(0x4C)] public float ScaleX;
     [FieldOffset(0x50)] public float ScaleY;

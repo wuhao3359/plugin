@@ -48,18 +48,12 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonInventoryContext_OnSetup_Signature =
             "83 B9 ?? ?? ?? ?? ?? 7E 11";
 
-        private readonly string ContextMenu_OnSetup_Signature = "48 8B C4 57 41 56 41 57 48 81 EC";
-
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonItemSearchResult_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSellList_OnSetup_HW;
         private HookWrapper<Addon_OnFinalize_Delegate> AddonRetainerSellList_OnFinalize_HW;
-
         private HookWrapper<AddonInventoryContext_OnSetup_Delegate> AddonInventoryContext_OnSetup_HW;
-
-        private HookWrapper<ContextMenu_Onsetup_Delegate> ContextMenu_Onsetup_HW;
-
 
         // __int64 __fastcall Client::UI::AddonXXX_ReceiveEvent(__int64 a1, __int16 a2, int a3, __int64 a4, __int64* a5)
         private delegate IntPtr Addon_ReceiveEvent_Delegate(IntPtr self, ushort eventType,
@@ -93,10 +87,10 @@ namespace WoAutoCollectionPlugin.Utility
 
         public MarketEventHandler()
         {
-            AddonItemSearchResult_ReceiveEvent_HW =
-                MarketCommons.Hook<Addon_ReceiveEvent_Delegate>(
-                    AddonItemSearchResult_ReceiveEvent_Signature,
-                    AddonItemSearchResult_ReceiveEvent_Delegate_Detour);
+            //AddonItemSearchResult_ReceiveEvent_HW =
+            //    MarketCommons.Hook<Addon_ReceiveEvent_Delegate>(
+            //        AddonItemSearchResult_ReceiveEvent_Signature,
+            //        AddonItemSearchResult_ReceiveEvent_Delegate_Detour);
 
             AddonRetainerSell_OnSetup_HW = MarketCommons.Hook<Addon_OnSetup_Delegate>(
                 AddonRetainerSell_OnSetup_Signature,
@@ -118,10 +112,6 @@ namespace WoAutoCollectionPlugin.Utility
                 AddonInventoryContext_OnSetup_Signature,
                 AddonInventoryContext_OnSetup_Delegate_Detour);
 
-            ContextMenu_Onsetup_HW = MarketCommons.Hook<ContextMenu_Onsetup_Delegate>(
-                ContextMenu_OnSetup_Signature,
-                ContextMenu_Onsetup_Delegate_Detour);
-
             UiHelper.Setup();
         }
 
@@ -136,7 +126,7 @@ namespace WoAutoCollectionPlugin.Utility
                 // clear cache on new request so we can verify that we got all the data we need when we inspect the price
                 WoAutoCollectionPlugin._cache.Clear();
             }
-            if (!Retainer()) return;
+            //if (!Retainer()) return;
             if (opCode != WoAutoCollectionPlugin.GameData.DataManager.ServerOpCodes["MarketBoardOfferings"] || !WoAutoCollectionPlugin.newRequest) return;
             var listing = MarketBoardCurrentOfferings.Read(dataPtr);
 
@@ -222,11 +212,10 @@ namespace WoAutoCollectionPlugin.Utility
 
         public void Dispose()
         {
-            AddonItemSearchResult_ReceiveEvent_HW.Dispose();
+            //AddonItemSearchResult_ReceiveEvent_HW.Dispose();
             AddonRetainerSell_OnSetup_HW.Dispose();
             AddonItemSearchResult_OnSetup_HW.Dispose();
             AddonInventoryContext_OnSetup_HW.Dispose();
-            ContextMenu_Onsetup_HW.Dispose();
         }
 
         private unsafe IntPtr AddonRetainerSell_OnSetup_Delegate_Detour(IntPtr addon, uint a2, IntPtr dataPtr)
@@ -234,23 +223,28 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonRetainerSell.OnSetup, {a2} {dataPtr.ToInt64}");
             var result = AddonRetainerSell_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            //open compare prices list on opening sell price selection
-            var addonRetainerSell = (AddonRetainerSell*)addon;
-            var comparePrices = addonRetainerSell->ComparePrices->AtkComponentBase.OwnerNode;
-            itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
-            PluginLog.Log($"itemName: {itemName}");
-            retry = 0;
-            if (itemsPrice.TryGetValue(itemName, out var p))
+            Task task = new(() =>
             {
-                PluginLog.Log($"有缓存数据: {p}");
-                SetPrice();
-                WoAutoCollectionPlugin.getPriceSucceed = true;
-            }
-            else
-            {
-                // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214C05CB480 evt=EventType.CHANGE               a3=4   a4=0x2146C18C210 (src=0x214C05CB480; tgt=0x214606863B0) a5=0xBB316FE6C8
-                MarketCommons.SendClick(addon, EventType.CHANGE, 4, comparePrices);
-            }
+                var addonRetainerSell = (AddonRetainerSell*)addon;
+                var comparePrices = addonRetainerSell->ComparePrices->AtkComponentBase.OwnerNode;
+                itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
+                PluginLog.Log($"itemName: {itemName}");
+                retry = 0;
+                if (itemsPrice.TryGetValue(itemName, out var p))
+                {
+                    PluginLog.Log($"有缓存数据: {p}");
+                    Thread.Sleep(1000);
+                    SetPrice();
+                    WoAutoCollectionPlugin.getPriceSucceed = true;
+                }
+                else
+                {
+                    Thread.Sleep(1500);
+                    // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214C05CB480 evt=EventType.CHANGE               a3=4   a4=0x2146C18C210 (src=0x214C05CB480; tgt=0x214606863B0) a5=0xBB316FE6C8
+                    MarketCommons.SendClick(addon, EventType.CHANGE, 4, comparePrices);
+                }
+            });
+            task.Start();
             return result;
         }
 
@@ -259,15 +253,20 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonItemSearchResult.OnSetup, {a2}, {dataPtr.ToInt64}");
             var result = AddonItemSearchResult_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (!CommonUi.ItemSearchIsOpen()) {
-                if (retry < 3) {
-                    var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
-                    if (addonItemSearchResult != null)
-                        MarketCommons.SendClick(new IntPtr(addonItemSearchResult->WindowNode->Component), EventType.CHANGE, 2,
-                            addonItemSearchResult->WindowNode->Component->UldManager
-                                .NodeList[7]->GetComponent()->OwnerNode);
-                    SetPrice();
-                }
+            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell]) {
+                Task task = new(() =>
+                {
+                    if (retry < 3) {
+                        Thread.Sleep(1200);
+                        var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
+                        if (addonItemSearchResult != null)
+                            MarketCommons.SendClick(new IntPtr(addonItemSearchResult->WindowNode->Component), EventType.CHANGE, 2,
+                                addonItemSearchResult->WindowNode->Component->UldManager
+                                    .NodeList[7]->GetComponent()->OwnerNode);
+                        SetPrice();
+                    }
+                });
+                task.Start();
             }
             return result;
         }
@@ -334,11 +333,6 @@ namespace WoAutoCollectionPlugin.Utility
                 }
             }
             return result;
-        }
-
-        private byte ContextMenu_Onsetup_Delegate_Detour(IntPtr addon, int menuSize, AtkValue* atkValueArgs) {
-            PluginLog.Log($"ContextMenu_Onsetup_Delegate_Detour (got: {addon:X}, menuSize: {menuSize})");
-            return ContextMenu_Onsetup_HW.Original(addon, menuSize, atkValueArgs);
         }
 
         private unsafe void SetPrice()
