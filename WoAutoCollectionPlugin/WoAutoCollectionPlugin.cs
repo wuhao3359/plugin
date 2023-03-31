@@ -74,9 +74,9 @@ namespace WoAutoCollectionPlugin
             //Configuration.Initialize(DalamudApi.PluginInterface);
             Click.Initialize();
             newRequest = false;
-            //MarketEventHandler = new MarketEventHandler();
+            MarketEventHandler = new MarketEventHandler();
 
-            //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
 
@@ -183,7 +183,7 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(daily);
             DalamudApi.CommandManager.RemoveHandler(market);
             MarketEventHandler.Dispose();
-            //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
             MarketCommons.Dispose();
