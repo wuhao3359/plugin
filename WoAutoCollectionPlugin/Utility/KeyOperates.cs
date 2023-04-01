@@ -212,7 +212,7 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             height = Maths.Height(positionA, positionB);
             PluginLog.Log($"height {height} <====> {positionA.Y} <---------> {positionB.Y}");
-            Thread.Sleep(1000);
+            Thread.Sleep(500);
             i++;
         }
         FlyStop();
