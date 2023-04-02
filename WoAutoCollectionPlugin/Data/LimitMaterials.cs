@@ -254,9 +254,9 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3(3219, 2083, 1735),
             new Vector3(3188, 2081, 1644),
             new Vector3(3181, 2114, 1566),
-            new Vector3(3165, 2122, 1518),
-            new Vector3(3262, 2158, 1427),
-            new Vector3(3158, 2188, 1292),
+            new Vector3(3156, 2117, 1529),
+            new Vector3(3156, 2154, 1469),
+            new Vector3(3156, 2189, 1286),
             new Vector3(3174, 2217, 1304),
             new Vector3(3244, 2259, 1688),
         };
