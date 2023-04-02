@@ -251,12 +251,12 @@ namespace WoAutoCollectionPlugin.Utility
         };
 
         public static Vector3[] path378171 = {
-            new Vector3(3212, 2082, 1701),
-            new Vector3(3189, 2082, 1650),
-            new Vector3(3182, 2116, 1569),
-            new Vector3(3161, 2116, 1531),
-            new Vector3(3158, 2152, 1458),
-            new Vector3(2157, 2180, 1353),
+            new Vector3(3219, 2083, 1735),
+            new Vector3(3188, 2081, 1644),
+            new Vector3(3181, 2114, 1566),
+            new Vector3(3165, 2122, 1518),
+            new Vector3(3262, 2158, 1427),
+            new Vector3(3158, 2188, 1292),
             new Vector3(3174, 2217, 1304),
             new Vector3(3244, 2259, 1688),
         };
