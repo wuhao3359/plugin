@@ -132,8 +132,9 @@ internal unsafe class Clicker
                     }
                 }
                 Thread.Sleep(500);
-                if (MarketCommons.GetUnitBase("ContextMenu") != null)
+                if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var contextMenu) && GenericHelpers.IsAddonReady(contextMenu))
                 {
+                    PluginLog.Log("close addon ContextMenu");
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num2_key);

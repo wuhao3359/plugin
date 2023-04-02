@@ -48,6 +48,7 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.CommonBot.StopScript();
             WoAutoCollectionPlugin.GameData.GatherBot.StopScript();
             WoAutoCollectionPlugin.GameData.CollectionFishBot.StopScript();
+            WoAutoCollectionPlugin.GameData.MarketBot.StopScript();
         }
 
         public void DailyScript(string args)
