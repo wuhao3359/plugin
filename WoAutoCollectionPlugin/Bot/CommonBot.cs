@@ -100,14 +100,17 @@ namespace WoAutoCollectionPlugin.Bot
 
         public bool NpcRepair(string npc)
         {
-            AutoChooseNpc(out bool succeed, out npc);
-            if (!succeed)
-            {
-                PluginLog.Log($"not find repair npc");
-                return false;
-            }
-            else {
-                PluginLog.Log($"find repair npc: {npc}");
+            if (npc == "") {
+                AutoChooseNpc(out bool succeed, out npc);
+                if (!succeed)
+                {
+                    PluginLog.Log($"not find repair npc");
+                    return false;
+                }
+                else
+                {
+                    PluginLog.Log($"find repair npc: {npc}");
+                }
             }
             int n = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted])
