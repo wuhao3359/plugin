@@ -223,28 +223,30 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonRetainerSell.OnSetup, {a2} {dataPtr.ToInt64}");
             var result = AddonRetainerSell_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            Task task = new(() =>
-            {
-                var addonRetainerSell = (AddonRetainerSell*)addon;
-                var comparePrices = addonRetainerSell->ComparePrices->AtkComponentBase.OwnerNode;
-                itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
-                PluginLog.Log($"itemName: {itemName}");
-                retry = 0;
-                if (itemsPrice.TryGetValue(itemName, out var p))
+            if (WoAutoCollectionPlugin.taskRunning) {
+                Task task = new(() =>
                 {
-                    PluginLog.Log($"有缓存数据: {p}");
-                    Thread.Sleep(1000);
-                    SetPrice();
-                    WoAutoCollectionPlugin.getPriceSucceed = true;
-                }
-                else
-                {
-                    Thread.Sleep(1500);
-                    // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214C05CB480 evt=EventType.CHANGE               a3=4   a4=0x2146C18C210 (src=0x214C05CB480; tgt=0x214606863B0) a5=0xBB316FE6C8
-                    MarketCommons.SendClick(addon, EventType.CHANGE, 4, comparePrices);
-                }
-            });
-            task.Start();
+                    var addonRetainerSell = (AddonRetainerSell*)addon;
+                    var comparePrices = addonRetainerSell->ComparePrices->AtkComponentBase.OwnerNode;
+                    itemName = CommonUi.GetNodeText(addonRetainerSell->ItemName);
+                    PluginLog.Log($"itemName: {itemName}");
+                    retry = 0;
+                    if (itemsPrice.TryGetValue(itemName, out var p))
+                    {
+                        PluginLog.Log($"有缓存数据: {p}");
+                        Thread.Sleep(1000);
+                        SetPrice();
+                        WoAutoCollectionPlugin.getPriceSucceed = true;
+                    }
+                    else
+                    {
+                        Thread.Sleep(1500);
+                        // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214C05CB480 evt=EventType.CHANGE               a3=4   a4=0x2146C18C210 (src=0x214C05CB480; tgt=0x214606863B0) a5=0xBB316FE6C8
+                        MarketCommons.SendClick(addon, EventType.CHANGE, 4, comparePrices);
+                    }
+                });
+                task.Start();
+            }
             return result;
         }
 
@@ -253,7 +255,7 @@ namespace WoAutoCollectionPlugin.Utility
             PluginLog.Log($"AddonItemSearchResult.OnSetup, {a2}, {dataPtr.ToInt64}");
             var result = AddonItemSearchResult_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell]) {
+            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && WoAutoCollectionPlugin.taskRunning) {
                 Task task = new(() =>
                 {
                     if (retry < 3) {
@@ -288,7 +290,7 @@ namespace WoAutoCollectionPlugin.Utility
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
             var aId = agent->AgentInterface.GetAddonID();
 
-            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell]) {
+            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && WoAutoCollectionPlugin.taskRunning) {
                 try
                 {
                     var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
