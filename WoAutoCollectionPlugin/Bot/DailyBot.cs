@@ -325,6 +325,7 @@ namespace WoAutoCollectionPlugin.Bot
             int et = hour;
             while (!closed && n < 1000)
             {
+                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(2);
                 if (first)
                 {
                     et--;
@@ -514,7 +515,7 @@ namespace WoAutoCollectionPlugin.Bot
                     MovePositions(Positions.RepairNPC, false);
                     WoAutoCollectionPlugin.GameData.CommonBot.NpcRepair("阿塔帕");
                 }
-                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(2);
+                
                 WoAutoCollectionPlugin.Time.Update();
                 hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             }
