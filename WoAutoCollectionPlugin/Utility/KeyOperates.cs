@@ -86,7 +86,7 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
-            if (height < -1.2)
+            if (height < -1.4)
             {
                 if (DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
                 {
@@ -97,7 +97,7 @@ public class KeyOperates
                     KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 1.2)
+            else if (height > 1.4)
             {
                 if (DalamudApi.KeyState[Keys.space_key])
                 {

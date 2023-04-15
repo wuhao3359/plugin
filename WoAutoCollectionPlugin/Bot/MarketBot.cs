@@ -43,11 +43,13 @@ namespace WoAutoCollectionPlugin.Bot
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(1000);
             // 点击雇员 判断 RetainerSellList 正在出售数量selling 根据selling进行改价 然后上架20-selling商品
-            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell]) {
+            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell])
+            {
                 for (int i = 1; i <= 2; i++)
                 {
                     Thread.Sleep(2000);
-                    if (CommonUi.AddonRetainerListIsOpen()) {
+                    if (CommonUi.AddonRetainerListIsOpen())
+                    {
                         Clicker.SelectRetainerByIndex(i);
                         Thread.Sleep(3000);
                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
@@ -77,6 +79,9 @@ namespace WoAutoCollectionPlugin.Bot
                     }
                     Clicker.CloseMarketAddon();
                 }
+            }
+            else {
+                PluginLog.Error("change price failed");
             }
         }
 
