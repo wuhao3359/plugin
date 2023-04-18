@@ -91,6 +91,7 @@ namespace WoAutoCollectionPlugin.Bot
             NextClickAt++;
             if (NextClickAt <= NextClick)
             {
+                PluginLog.Log($"start change end");
                 return;
             }
             PluginLog.Log($"start change price");

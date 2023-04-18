@@ -532,6 +532,7 @@ namespace WoAutoCollectionPlugin.Bot
                 if (hour == 0) {
                     run = true;
                 }
+                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(2);
                 RunWaitTask("90");
                 while (othetRun)
                 {
@@ -560,7 +561,6 @@ namespace WoAutoCollectionPlugin.Bot
                 {
                     WoAutoCollectionPlugin.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
                 }
-                WoAutoCollectionPlugin.GameData.MarketBot.RunScript(1);
                 WoAutoCollectionPlugin.Time.Update();
                 hour = WoAutoCollectionPlugin.Time.ServerTime.CurrentEorzeaHour();
             }
