@@ -19,34 +19,34 @@ namespace WoAutoCollectionPlugin.Utility
             new Vector3 (829f, 2730f, 1788f),
             new Vector3 (877f, 2714f, 1781f),
             new Vector3 (885f, 2708f, 1777f), // 2 tp
-            new Vector3 (1001f, 2219f, 1675f), // 3
-            new Vector3 (1032f, 2214f, 1705f), // 4
+            new Vector3 (1001f, 2218f, 1675f), // 3
+            new Vector3 (1032f, 2213f, 1705f), // 4
             new Vector3 (1099f, 2207f, 1787f),
             new Vector3 (1143f, 2200f, 1796f), // 6
-            new Vector3 (1242f, 2199f, 1843f), // 7
-            new Vector3 (1305f, 2201f, 1729f), // 8
-            new Vector3 (1352f, 2203f, 1649f), // 9
+            new Vector3 (1242f, 2198f, 1843f), // 7
+            new Vector3 (1305f, 2200f, 1729f), // 8
+            new Vector3 (1352f, 2200f, 1649f), // 9
             new Vector3 (1175f, 2214f, 1577f), // 10
             new Vector3 (1131f, 2218f, 1659f),
-            new Vector3 (1260f, 2206f, 1641f), // 12
-            new Vector3 (1326f, 2206f, 1571f), // 13
-            new Vector3 (1418f, 2181f, 1523f), // 14
-            new Vector3 (1418f, 2154f, 1435f), // 15
-            new Vector3 (1577f, 2158f, 1439f), // 16
+            new Vector3 (1260f, 2205f, 1641f), // 12
+            new Vector3 (1326f, 2205f, 1571f), // 13
+            new Vector3 (1418f, 2180f, 1523f), // 14
+            new Vector3 (1418f, 2153f, 1435f), // 15
+            new Vector3 (1577f, 2157f, 1439f), // 16
             new Vector3 (1646f, 2147f, 1421f), // 
-            new Vector3 (1719f, 2153f, 1450f), // 18
-            new Vector3 (1818f, 2147f, 1393f), // 19
+            new Vector3 (1719f, 2152f, 1450f), // 18
+            new Vector3 (1818f, 2146f, 1393f), // 19
             new Vector3 (1874f, 2151f, 1189f), // 
-            new Vector3 (1817f, 2140f, 1110f), // 21
+            new Vector3 (1817f, 2139f, 1110f), // 21
             new Vector3 (1920f, 2157f, 1004f), // 
-            new Vector3 (1995f, 2115f, 960f), // 23
+            new Vector3 (1995f, 2114f, 960f), // 23
             new Vector3 (2043f, 2131f, 1036f), // 
-            new Vector3 (2045f, 2058f, 1102f), // 25
-            new Vector3 (2104f, 2115f, 1079f), // 26
-            new Vector3 (2154f, 2108f, 1139f), // 
-            new Vector3 (2281f, 2064f, 1146f), // 28
-            new Vector3 (2361f, 2056f, 1145f), // 29
-            new Vector3 (2278f, 2075f, 1005f), // 30
+            new Vector3 (2045f, 2057f, 1102f), // 25
+            new Vector3 (2104f, 2114f, 1079f), // 26
+            new Vector3 (2154f, 2105f, 1139f), // 
+            new Vector3 (2281f, 2063f, 1146f), // 28
+            new Vector3 (2361f, 2053f, 1145f), // 29
+            new Vector3 (2278f, 2073f, 1005f), // 30
             new Vector3 (2252f, 2084f, 1020f), // 
             new Vector3 (2416f, 2063f, 1111f), // 32
             new Vector3 (2413f, 2065f, 1149f), // 

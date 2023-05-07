@@ -34,8 +34,6 @@ namespace WoAutoCollectionPlugin
         private const string gather = "/gather";
         private const string ygather = "/ygather";
         private const string woTest = "/woTest";
-        private const string actionTest = "/actionTest";
-        private const string close = "/close";
         private const string craft = "/craft";
         private const string daily = "/daily";
         private const string market = "/market";
@@ -58,8 +56,6 @@ namespace WoAutoCollectionPlugin
 
         public static string status = "";
 
-        System.Timers.Timer timer;
-
         internal readonly WindowSystem WindowSystem;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
@@ -79,17 +75,6 @@ namespace WoAutoCollectionPlugin
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
-
-            //try
-            //{
-            //    var ptr = DalamudApi.SigScanner.ScanText("E8 ?? ?? ?? ?? 48 85 C0 74 14 83 7B 44 00");
-            //    getFilePtr = Marshal.GetDelegateForFunctionPointer<GetFilePointer>(ptr);
-            //}
-            //catch (Exception e)
-            //{
-            //    getFilePtr = null;
-            //    PluginLog.LogError("GetFilePointer error" + e.ToString());
-            //}
 
             try
             {
@@ -121,14 +106,6 @@ namespace WoAutoCollectionPlugin
                 {
                     HelpMessage = "woTest"
                 });
-                DalamudApi.CommandManager.AddHandler(actionTest, new CommandInfo(OnActionTestCommand)
-                {
-                    HelpMessage = "actionTest"
-                });
-                DalamudApi.CommandManager.AddHandler(close, new CommandInfo(OnCloseTestCommand)
-                {
-                    HelpMessage = "close"
-                });
                 DalamudApi.CommandManager.AddHandler(craft, new CommandInfo(OnCraftCommand)
                 {
                     HelpMessage = "Craft"
@@ -153,10 +130,6 @@ namespace WoAutoCollectionPlugin
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-                timer = new System.Timers.Timer(17 * 60 * 60 * 1000);
-                timer.Elapsed += AutoKillGame;
-                timer.AutoReset = true;
-                timer.Start();
             }
             catch (Exception e)
             {
@@ -177,8 +150,6 @@ namespace WoAutoCollectionPlugin
             DalamudApi.CommandManager.RemoveHandler(gather);
             DalamudApi.CommandManager.RemoveHandler(ygather);
             DalamudApi.CommandManager.RemoveHandler(woTest);
-            DalamudApi.CommandManager.RemoveHandler(actionTest);
-            DalamudApi.CommandManager.RemoveHandler(close);
             DalamudApi.CommandManager.RemoveHandler(craft);
             DalamudApi.CommandManager.RemoveHandler(daily);
             DalamudApi.CommandManager.RemoveHandler(market);
@@ -191,7 +162,6 @@ namespace WoAutoCollectionPlugin
             if (WindowSystem != null)
                 DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
             WindowSystem?.RemoveAllWindows();
-            // Game.DisAble();
         }
 
         private void OnCommand(string command, string args)
@@ -383,19 +353,30 @@ namespace WoAutoCollectionPlugin
             // CommonUi.test2();
 
             //CommonUi.test3();
-        }
+            
 
-        private void OnActionTestCommand(string command, string args)
-        {
-            // 技能 测试
-            Game.Initialize();
-            Game.Test();
-            //Game.DisAble();
-        }
+            Task task = new(() =>
+            {
+                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
+                Vector3 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
+                float x = Maths.GetCoordinate(playerPosition.X, SizeFactor);
+                float y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
+                float z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
+                Vector3 position = new(x, y, z);
 
-        private void OnCloseTestCommand(string command, string args)
-        {
-            Game.DisAble();
+                Vector3 A = new Vector3(1436, 1636, 1789);
+                PluginLog.Log($"------------{Maths.Distance(position, A)}---------------");
+
+                WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, A, DalamudApi.ClientState.TerritoryType, false, false);
+
+                 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
+                x = Maths.GetCoordinate(playerPosition.X, SizeFactor);
+                 y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
+                 z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
+                 position = new(x, y, z);
+                PluginLog.Log($"------------{Maths.Distance(position, A)}---------------");
+            });
+            task.Start();
         }
 
         // 生产 
@@ -518,9 +499,7 @@ namespace WoAutoCollectionPlugin
         }
 
         private void AutoKillGame(object sender, ElapsedEventArgs e) {
-            timer.Close();
             PluginLog.LogError("too long for running, kill game");
-            Process.GetCurrentProcess().Kill();
         }
     }
 }
