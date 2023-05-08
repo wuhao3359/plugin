@@ -50,7 +50,6 @@ public class KeyOperates
     {
         Init();
 
-        int turn = 0;
         int notMove = 0;
 
         int n = 0;
@@ -60,7 +59,7 @@ public class KeyOperates
             n++;
         }
 
-        double errorDisntance = 5;
+        double errorDisntance = 4.5;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
         positionA = ReviseNoTime(positionB);
@@ -78,7 +77,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(40);
+            Thread.Sleep(20);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
@@ -86,7 +85,7 @@ public class KeyOperates
             // 根据相对高度 上升或下降
             double beforeHeight = height;
             height = Maths.Height(positionC, positionB, UseMount);
-            if (height < -1.4)
+            if (height < -2)
             {
                 if (DalamudApi.KeyState[Keys.num_sub_key] && (DalamudApi.Condition[ConditionFlag.InFlight] || DalamudApi.Condition[ConditionFlag.Diving]))
                 {
@@ -97,7 +96,7 @@ public class KeyOperates
                     KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 1.4)
+            else if (height > 2)
             {
                 if (DalamudApi.KeyState[Keys.space_key])
                 {
@@ -114,22 +113,29 @@ public class KeyOperates
             }
 
             double radians = Maths.Radians(positionA, positionB, positionC);
-
             double beforeDistance = distance;
             positionA = GetUserPosition(SizeFactor);
             distance = Maths.Distance(positionA, positionB);
-
-            if (Math.Abs(beforeDistance - distance) < 0.35) {
+            if (Math.Abs(beforeDistance - distance) < 0.05)
+            {
                 notMove++;
             }
+            else
+            {
+                if (notMove > 0)
+                {
+                    notMove--;
+                }
+            }
 
-            if (notMove >= 8) {
-                KeyMethod(Keys.d_key, 300);
+            if (notMove >= 20)
+            {
+                KeyMethod(Keys.d_key, 800);
+                if (!DalamudApi.KeyState[Keys.w_key])
+                {
+                    KeyDown(Keys.w_key);
+                }
                 KeyDown(Keys.space_key);
-                notMove = 0;
-            } else if (notMove >= 5) {
-                KeyMethod(Keys.a_key, 300);
-                KeyMethod(Keys.space_key);
                 notMove = 0;
             }
 
@@ -142,13 +148,16 @@ public class KeyOperates
             {
                 angle = 180;
             }
-            // 旋转角度速度 100毫秒 30度左右 TODO 精确数据
-            int time = Convert.ToInt32(angle / 30 * 100 - 100);
-            if (time > -90 && turn < 10)
+            // 旋转角度速度 100毫秒 35度左右 6.3 = 360 100=0.62
+            int time = Convert.ToInt32(angle / 33 * 100);
+            PluginLog.Log($"distance: {distance} angle: {angle} time: {time}");
+            if (time > 50)
             {
-                if (distance < 20)
-                {
-                    turn++;
+                if (time > 200) {
+                    if (DalamudApi.KeyState[Keys.w_key])
+                    {
+                        KeyUp(Keys.w_key);
+                    }
                 }
                 if (DirectionOfPoint < 0)
                 {
@@ -164,11 +173,10 @@ public class KeyOperates
                         KeyMethod(Keys.d_key, time);
                     }
                 }
-            }
-            if (turn >= 6) {
-                MoveStop();
-                positionA = Revise(positionB, 600);
-                turn = 0;
+                if (!DalamudApi.KeyState[Keys.w_key])
+                {
+                    KeyDown(Keys.w_key);
+                }
             }
 
             if (log)
@@ -186,9 +194,9 @@ public class KeyOperates
             }
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 4.7;
+                errorDisntance = 6;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
-                errorDisntance = 3.3;
+                errorDisntance = 4.5;
             }
         }
         Stop();
@@ -200,12 +208,12 @@ public class KeyOperates
         Vector3 positionA = GetUserPosition(SizeFactor);
         double height = Maths.Height(positionA, positionB);
         int i = 0;
-        while ((height < -1 || height > 1) && i < 10) {
-            if (height < -1 && !DalamudApi.KeyState[Keys.space_key])
+        while ((height < -2 || height > 2) && i < 10) {
+            if (height < -2 && !DalamudApi.KeyState[Keys.space_key])
             {
                 KeyDown(Keys.space_key);
             }
-            else if (height > 1 && !DalamudApi.KeyState[Keys.num_sub_key])
+            else if (height > 2 && !DalamudApi.KeyState[Keys.num_sub_key])
             {
                 KeyDown(Keys.num_sub_key);
             }
@@ -268,7 +276,7 @@ public class KeyOperates
 
     public void KeyMethod(Byte key)
     {
-        KeyMethod(key, 0, true);
+        KeyMethod(key, 100, true);
     }
 
     public void KeyMethod(Byte key, int sleep)
@@ -281,10 +289,6 @@ public class KeyOperates
         if (shortPress)
         {
             sleep = 100;
-        }
-        else
-        {
-            sleep = 100 + sleep;
         }
 
         if (sleep == 0) {
@@ -332,7 +336,7 @@ public class KeyOperates
         {
             angle = 180;
         }
-        int time = Convert.ToInt32(angle / 15 * 100 - 100);
+        int time = Convert.ToInt32(angle / 33 * 100);
         if (DirectionOfPoint < 0)
         {
             KeyMethod(Keys.a_key, time);
@@ -341,7 +345,7 @@ public class KeyOperates
         {
             KeyMethod(Keys.d_key, time);
         }
-        Thread.Sleep(80);
+        Thread.Sleep(100);
         return positionC;
     }
 }

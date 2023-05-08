@@ -37,6 +37,18 @@ public static class Maths
         return 180 - (Math.Acos(radians) * (180 / Math.PI));
     }
 
+    // 计算 A 需要旋转的角度，使其面向 B
+    public static double RotateAngle(Vector3 positionA, Vector3 positionB)
+    {
+        double angle = Math.Atan2(positionB.Z - positionA.Z, positionB.X - positionA.X) * 180 / Math.PI;
+        // 计算 A 需要旋转的角度，使其面向 B
+        if (angle < 0)
+        {
+            angle += 360;
+        }
+        return 90 - angle;
+    }
+
     // 向量计算方法
     public static int DirectionOfPoint(Vector3 positionA, Vector3 positionB, Vector3 positionC)
     {

@@ -37,7 +37,7 @@ namespace WoAutoCollectionPlugin.Bot
             closed = false;
             DalamudApi.Framework.Update += OnHFishUpdate;
             int n = 0;
-            while (!closed && n < 360)
+            while (!closed && n < 150)
             {
                 try
                 {
@@ -48,7 +48,7 @@ namespace WoAutoCollectionPlugin.Bot
                     PluginLog.Error($"error!!!\n{e}");
                 }
 
-                Thread.Sleep(5000);
+                Thread.Sleep(10000);
                 n++;
             }
             DalamudApi.Framework.Update -= OnHFishUpdate;
