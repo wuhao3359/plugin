@@ -45,9 +45,6 @@ namespace WoAutoCollectionPlugin.Utility
         private readonly string AddonRetainerSellList_OnFinalize_Signature =
             "40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 74 0E 45 33 C9";
 
-        private readonly string AddonInventoryContext_OnSetup_Signature =
-            "83 B9 ?? ?? ?? ?? ?? 7E 11";
-
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonItemSearchResult_OnSetup_HW;
@@ -107,10 +104,6 @@ namespace WoAutoCollectionPlugin.Utility
             AddonRetainerSellList_OnFinalize_HW = MarketCommons.Hook<Addon_OnFinalize_Delegate>(
                 AddonRetainerSellList_OnFinalize_Signature,
                 AddonRetainerSellList_OnFinalize_Delegate_Detour);
-
-            AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
-                AddonInventoryContext_OnSetup_Signature,
-                AddonInventoryContext_OnSetup_Delegate_Detour);
 
             UiHelper.Setup();
         }

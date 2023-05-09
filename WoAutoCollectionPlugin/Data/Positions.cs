@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Numerics;
 
 namespace WoAutoCollectionPlugin.Utility
@@ -1220,13 +1221,13 @@ namespace WoAutoCollectionPlugin.Utility
             (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
         };
 
+        public static string[] fishs = {
+            "鱼龙", "顶髻鱼", "铜绿虹鳉", "拉诺西亚龙"
+        };
+
         public static bool IsNeedSpearfish(string text)
         {
-            if (Spearfishs.Length > 0 && text.Contains(Spearfishs[0].Name))
-            {
-                return true;
-            }
-            return false;
+            return fishs.Contains(text);
         }
 
         public static (int, string, uint, string, uint, uint, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetSpearfish()

@@ -33,6 +33,7 @@ public enum Patch : ushort
     Endwalker                  = 600,
     NewfoundAdventure          = 610,
     BuriedMemory               = 620,
+    GodsRevelLandsTremble      = 630,
 }
 
 [Flags]
