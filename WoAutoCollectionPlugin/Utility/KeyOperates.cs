@@ -150,7 +150,7 @@ public class KeyOperates
             }
             // 旋转角度速度 100毫秒 35度左右 6.3 = 360 100=0.62
             int time = Convert.ToInt32(angle / 33 * 100);
-            PluginLog.Log($"distance: {distance} angle: {angle} time: {time}");
+            //PluginLog.Log($"distance: {distance} angle: {angle} time: {time}");
             if (time > 50)
             {
                 if (time > 200) {

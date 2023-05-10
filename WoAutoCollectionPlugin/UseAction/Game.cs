@@ -25,7 +25,7 @@ namespace WoAutoCollectionPlugin.UseAction
             actionManager = ActionManager.Instance();
 
             SignatureHelper.Initialise(new Game());
-            UseActionHook = new Hook<UseActionDelegate>((IntPtr)ActionManager.fpUseAction, UseActionDetour);
+            //UseActionHook = new Hook<UseActionDelegate>((IntPtr)ActionManager.fpUseAction, UseActionDetour);
 
             UseActionHook.Enable();
         }
