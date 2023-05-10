@@ -33,6 +33,7 @@ namespace WoAutoCollectionPlugin.Bot
 
         public void Script()
         {
+            return;
             Init();
             // 传送并移动到雇员铃
             Teleporter.Teleport(Positions.RetainerBellTp);
