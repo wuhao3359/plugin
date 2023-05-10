@@ -1182,6 +1182,33 @@ namespace WoAutoCollectionPlugin.Utility
             1, 4, 8
         };
 
+        public static Vector3[] path38939 = {
+            new Vector3(2612, 2201, 2127),
+            new Vector3(2578, 2044, 1990),
+        };
+        public static Vector3[] Points38939 = {
+            new Vector3 (2603, 2030, 2040), // 进入A
+            new Vector3 (2629, 2033, 2014),
+            new Vector3 (2528, 2037, 1999), // 离开A
+            new Vector3 (2354, 2012, 2021), // 进入B
+            new Vector3 (2352, 1994, 2041),
+            new Vector3 (2336, 1999, 1967),
+            new Vector3 (2394, 2018, 2129), // 离开B
+            new Vector3 (2458, 2016, 2259), // 进入C
+            new Vector3 (2416, 2001, 2271),
+            new Vector3 (2516, 1994, 2305),
+            new Vector3 (2495, 2018, 2188), // 离开C
+        };
+        public static int[] CanCollectPoints38939 = {
+            1, 4, 5, 8, 9
+        };
+        public static int[] UnknownPointsNum38939 = {
+            1, 2, 2
+        };
+        public static int[] Area38939 = {
+            1, 4, 8
+        };
+
         public static (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] NormalMaterials = {
             (4814, 900, "血红奇异果", 17, "园艺工", 50, 6, path4814, Points4814, CanCollectPoints4814, UnknownPointsNum4814, Area4814),    // 摩杜纳
             (4790, 900, "芦荟", 17, "园艺工", 50, 19, path4790, Points4790, CanCollectPoints4790, UnknownPointsNum4790, Area4790),    // 南萨纳兰
@@ -1218,7 +1245,8 @@ namespace WoAutoCollectionPlugin.Utility
         };
 
         public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] Spearfishs = {
-            (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
+        //    (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
+            (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
         };
 
         public static string[] fishs = {
@@ -1230,16 +1258,17 @@ namespace WoAutoCollectionPlugin.Utility
             return fishs.Contains(text);
         }
 
+        public static int fishN = 0;
+
         public static (int, string, uint, string, uint, uint, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) GetSpearfish()
         {
-            foreach ((int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) in Spearfishs)
+            if (fishN >= Spearfishs.Length)
             {
-                if (Spearfishs.Length > 0)
-                {
-                    return Spearfishs[0];
-                }
+                fishN = 0;
             }
-            return (0, null, 0, null, 0, 0, null, null, null, null, null);
+            (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) f = Spearfishs[fishN];
+            fishN++;
+            return f;
         }
 
         public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetMaterialById(int id)
