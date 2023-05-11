@@ -52,7 +52,7 @@ public partial class SpearfishingHelper : Window
 
         ImGui.SameLine();
         ImGui.Text(info.Speed.ToName());
-        if (x > _uiSize.X / 2 - size.X && x < _uiSize.X / 2 + size.X && Positions.IsNeedSpearfish(text)) {
+        if (x > _uiSize.X / 2 - size.X * 0.9 && x < _uiSize.X / 2 + size.X * 0.75 && Positions.IsNeedSpearfish(text)) {
             Task task = new(() =>
             {
                 if (!action) {

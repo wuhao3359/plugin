@@ -520,6 +520,10 @@ namespace WoAutoCollectionPlugin.Bot
                                     while (!CommonUi.AddonSpearFishingIsOpen() && tt < 7)
                                     {
                                         WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                                        if (tt == 3 || tt == 4)
+                                        {
+                                            WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key);
+                                        }
                                         Thread.Sleep(800);
                                         tt++;
                                         if (tt >= 5) {
