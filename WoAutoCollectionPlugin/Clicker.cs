@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using WoAutoCollectionPlugin.Data;
+using WoAutoCollectionPlugin.Helper;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
 using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
@@ -50,7 +51,7 @@ internal unsafe class Clicker
         foreach ((uint Id, string ItemName, int RetainerIndex, int LowestPrice, int MaxSlot) in items){
             sellingList.Add((Id, 0));
         }
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
+        if (GenericHelper.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelper.IsAddonReady(retainerList))
         {
             var im = InventoryManager.Instance();
             if (im == null)
@@ -132,7 +133,7 @@ internal unsafe class Clicker
                     }
                 }
                 Thread.Sleep(500);
-                if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var contextMenu) && GenericHelpers.IsAddonReady(contextMenu))
+                if (GenericHelper.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var contextMenu) && GenericHelper.IsAddonReady(contextMenu))
                 {
                     PluginLog.Log("close addon ContextMenu");
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
@@ -233,7 +234,7 @@ internal unsafe class Clicker
 
     internal static void SelectRetainerByIndex(int index)
     {
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
+        if (GenericHelper.TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && GenericHelper.IsAddonReady(retainerList))
         {
             var list = (AtkComponentNode*)retainerList->UldManager.NodeList[2];
             var retainerEntry = (AtkComponentNode*)list->Component->UldManager.NodeList[index];

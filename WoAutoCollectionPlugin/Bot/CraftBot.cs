@@ -6,7 +6,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Data;
+using WoAutoCollectionPlugin.Helper;
 using WoAutoCollectionPlugin.Managers;
+using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.Utility;
 using static Lumina.Excel.GeneratedSheets.Recipe;
@@ -316,7 +318,7 @@ namespace WoAutoCollectionPlugin.Bot
                     if (!CommonUi.CurrentJob(Job))
                     {
                         Thread.Sleep(2000);
-                        WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                        CommandProcessorHelper.DoGearChange(JobName);
                         Thread.Sleep(500);
                         PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                         if (player.Level < Lv)

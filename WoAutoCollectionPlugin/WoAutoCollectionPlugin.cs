@@ -15,6 +15,8 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
+using WoAutoCollectionPlugin.Bot;
+using WoAutoCollectionPlugin.Craft;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Spearfishing;
 using WoAutoCollectionPlugin.Time;
@@ -42,9 +44,10 @@ namespace WoAutoCollectionPlugin
         public static SeTime Time { get; private set; }
         private PluginUI PluginUi { get; init; }
         public static GameData GameData { get; private set; }
-        internal MarketEventHandler MarketEventHandler { get; private set; }
+        public MarketEventHandler MarketEventHandler { get; private set; }
 
-        public static Executor Executor;
+        public AutoCraft autoCraft { get; private set; }
+
         public static bool newRequest;
         public static GetFilePointer getFilePtr;
         public static List<MarketBoardCurrentOfferings> _cache = new();
@@ -55,6 +58,8 @@ namespace WoAutoCollectionPlugin
         public static bool getPriceSucceed = false;
 
         public static string status = "";
+
+        public static bool Debug = true;
 
         internal readonly WindowSystem WindowSystem;
 
@@ -69,6 +74,8 @@ namespace WoAutoCollectionPlugin
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             Click.Initialize();
+            autoCraft = new AutoCraft();
+            AutoCraftBot.Init();
             newRequest = false;
             //MarketEventHandler = new MarketEventHandler();
             //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
@@ -121,7 +128,6 @@ namespace WoAutoCollectionPlugin
                 GameData = new GameData(DalamudApi.DataManager);
                 items = GameData.DataManager.GetExcelSheet<Item>();
                 Time = new SeTime();
-                Executor = new Executor();
 
                 WindowSystem = new WindowSystem(Name);
                 WindowSystem.AddWindow(new SpearfishingHelper(GameData));
@@ -156,8 +162,9 @@ namespace WoAutoCollectionPlugin
             //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
-            MarketCommons.Dispose();
+            //MarketCommons.Dispose();
 
+            AutoCraftBot.Dispose();
             if (WindowSystem != null)
                 DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
             WindowSystem?.RemoveAllWindows();
@@ -327,6 +334,8 @@ namespace WoAutoCollectionPlugin
         // 测试专用
         private void OnWoTestCommand(string command, string args)
         {
+
+            autoCraft.FetchRecommendation(1);
             // 当前区域
             //GameData.TerritoryType.TryGetValue(DalamudApi.ClientState.TerritoryType, out var v);
             //PluginLog.Log($"PlaceName: {v.PlaceName.Value.Name}");
@@ -349,33 +358,9 @@ namespace WoAutoCollectionPlugin
 
             //CommonUi.test1();
 
-            // CommonUi.test2();
+            //CommonUi.test2();
 
             //CommonUi.test3();
-            
-
-            Task task = new(() =>
-            {
-                ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                Vector3 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
-                float x = Maths.GetCoordinate(playerPosition.X, SizeFactor);
-                float y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
-                float z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
-                Vector3 position = new(x, y, z);
-
-                Vector3 A = new Vector3(1436, 1636, 1789);
-                PluginLog.Log($"------------{Maths.Distance(position, A)}---------------");
-
-                WoAutoCollectionPlugin.GameData.KeyOperates.MoveToPoint(position, A, DalamudApi.ClientState.TerritoryType, false, false);
-
-                 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
-                x = Maths.GetCoordinate(playerPosition.X, SizeFactor);
-                 y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
-                 z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
-                 position = new(x, y, z);
-                PluginLog.Log($"------------{Maths.Distance(position, A)}---------------");
-            });
-            task.Start();
         }
 
         // 生产 

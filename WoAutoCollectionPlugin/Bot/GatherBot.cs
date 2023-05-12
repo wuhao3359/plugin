@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Threading;
+using WoAutoCollectionPlugin.Helper;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
@@ -82,7 +83,7 @@ namespace WoAutoCollectionPlugin.Bot
                 if (!CommonUi.CurrentJob(Job))
                 {
                     Thread.Sleep(2000);
-                    WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                    CommandProcessorHelper.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }
                 MovePositions(Path, true);

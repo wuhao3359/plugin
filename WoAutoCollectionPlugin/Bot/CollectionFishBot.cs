@@ -11,6 +11,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Data;
+using WoAutoCollectionPlugin.Helper;
 using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.SeFunctions;
 using WoAutoCollectionPlugin.Ui;
@@ -101,7 +102,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (!CommonUi.CurrentJob(18))
             {
                 Thread.Sleep(500);
-                WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                CommandProcessorHelper.DoGearChange("捕鱼人");
                 Thread.Sleep(500);
             }
 
@@ -230,7 +231,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (!CommonUi.CurrentJob(18))
             {
                 Thread.Sleep(500);
-                WoAutoCollectionPlugin.Executor.DoGearChange("捕鱼人");
+                CommandProcessorHelper.DoGearChange("捕鱼人");
                 Thread.Sleep(500);
             }
 
@@ -435,7 +436,7 @@ namespace WoAutoCollectionPlugin.Bot
             if (!CommonUi.CurrentJob(Job))
             {
                 Thread.Sleep(2000);
-                WoAutoCollectionPlugin.Executor.DoGearChange(JobName);
+                CommandProcessorHelper.DoGearChange(JobName);
                 Thread.Sleep(500);
             }
             MovePositions(Path, true);
