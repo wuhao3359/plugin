@@ -2,6 +2,7 @@
 using Dalamud.Logging;
 using System;
 using System.Diagnostics;
+using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -288,7 +289,10 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 100;
+            sleep = 100 + new Random().Next(40, 60);
+        }
+        else {
+            sleep += new Random().Next(20, 50);
         }
 
         if (sleep == 0) {
@@ -300,7 +304,7 @@ public class KeyOperates
         SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
         if (shortPress)
         {
-            Thread.Sleep(sleep + 200);
+            Thread.Sleep(sleep + new Random().Next(100, 200));
         }
     }
 

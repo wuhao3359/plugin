@@ -7,12 +7,11 @@ using WoAutoCollectionPlugin.Classes;
 using WoAutoCollectionPlugin.Enums;
 using WoAutoCollectionPlugin.SeFunctions;
 using ImGuiNET;
-using OtterGui;
 using ImRaii = OtterGui.Raii.ImRaii;
 using WoAutoCollectionPlugin.Gui;
 using System.Threading.Tasks;
 using WoAutoCollectionPlugin.Utility;
-using System.Threading;
+using System;
 
 namespace WoAutoCollectionPlugin.Spearfishing;
 
@@ -47,21 +46,47 @@ public partial class SpearfishingHelper : Window
         var size = ImGui.CalcTextSize(text);
         var (x, y) = (node->X * _uiScale + node->Width * node->ScaleX * _uiScale / 2f,
                 (node->Y + fishLines->Y + node->Height / 2f) * _uiScale - (size.Y + ImGui.GetStyle().FramePadding.Y) / 2f);
-        ImGui.SetCursorPos(new Vector2(x, y));
-        ImGuiUtil.DrawTextButton(text, Vector2.Zero, 0x40000000, 0xFFFFFFFF);
+        //ImGui.SetCursorPos(new Vector2(x, y));
+        //ImGuiUtil.DrawTextButton(text, Vector2.Zero, 0x40000000, 0xFFFFFFFF);
 
-        ImGui.SameLine();
-        ImGui.Text(info.Speed.ToName());
-        if (x > _uiSize.X / 2 - size.X * 0.9 && x < _uiSize.X / 2 + size.X * 0.75 && Positions.IsNeedSpearfish(text)) {
-            Task task = new(() =>
+        //ImGui.SameLine();
+        //ImGui.Text(info.Speed.ToName());
+
+        if (Positions.IsNeedSpearfish(text)) {
+            double x1 = size.X * 0.9;
+            double x2 = size.X * 0.75;
+            if (idx == 5)
+            {   // 第三行
+                float r = new Random().Next(5, 10) / 100;
+                x1 = size.X * (0.7 + r);
+                x2 = size.X * (0.55 + r);
+            }
+            else if (idx == 3)
+            {   // 第二行
+                float r = new Random().Next(5, 10) / 100;
+                x1 = size.X * (0.8 + r);
+                x2 = size.X * (0.65 + r);
+            }
+            else if (idx == 1)
+            {   // 第一行
+                float r = new Random().Next(5, 10) / 100;
+                x1 = size.X * (0.9 + r);
+                x2 = size.X * (0.75 + r);
+            }
+
+            if (x > _uiSize.X / 2 - x1 && x < _uiSize.X / 2 + x2)
             {
-                if (!action) {
-                    action = true;
-                    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.r_key);
-                    action = false;
-                }
-            });
-            task.Start();
+                Task task = new(() =>
+                {
+                    if (!action)
+                    {
+                        action = true;
+                        WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.r_key);
+                        action = false;
+                    }
+                });
+                task.Start();
+            }
         }
     }
 
@@ -175,7 +200,7 @@ public partial class SpearfishingHelper : Window
     public override void Draw()
     {
         DrawFishOverlay();
-        DrawFishCenterLine();
+        //DrawFishCenterLine();
         //DrawList();
     }
 }

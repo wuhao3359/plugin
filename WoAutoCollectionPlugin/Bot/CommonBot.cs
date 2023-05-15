@@ -11,8 +11,6 @@ using WoAutoCollectionPlugin.Managers;
 using WoAutoCollectionPlugin.Ui;
 using WoAutoCollectionPlugin.UseAction;
 using WoAutoCollectionPlugin.Utility;
-using static FFXIVClientStructs.FFXIV.Client.UI.AddonRelicNoteBook;
-using static Lumina.Data.Parsing.Layer.LayerCommon;
 using Npc = WoAutoCollectionPlugin.Data.Npc;
 
 namespace WoAutoCollectionPlugin.Bot
@@ -40,15 +38,15 @@ namespace WoAutoCollectionPlugin.Bot
         public void CloseAllIfOpen() {
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
-                Thread.Sleep(300);
+                Thread.Sleep(300 + new Random().Next(100, 200));
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                Thread.Sleep(300);
+                Thread.Sleep(300 + new Random().Next(100, 200));
             }
             if (CommonUi.AddonMaterializeDialogIsOpen())
             {
-                Thread.Sleep(300);
+                Thread.Sleep(300 + new Random().Next(100, 200));
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                Thread.Sleep(300);
+                Thread.Sleep(300 + new Random().Next(100, 200));
             }
         }
 
@@ -62,7 +60,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(1000 + new Random().Next(100, 200));
                 n++;
 
                 if (closed)
@@ -78,12 +76,12 @@ namespace WoAutoCollectionPlugin.Bot
                 return flag;
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F12_key);
-            Thread.Sleep(1000);
+            Thread.Sleep(1000 + new Random().Next(100, 200));
             if (CommonUi.AllRepairButton())
             {
-                Thread.Sleep(800);
+                Thread.Sleep(800 + new Random().Next(100, 200));
                 CommonUi.SelectYesButton();
-                Thread.Sleep(3500);
+                Thread.Sleep(3500 + new Random().Next(100, 200));
             }
             else {
                 flag = false;
@@ -120,7 +118,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(1000 + new Random().Next(100, 200));
                 n++;
 
                 if (closed)
@@ -187,7 +185,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(1000 + new Random().Next(100, 200));
                 n++;
 
                 if (closed)
@@ -204,18 +202,18 @@ namespace WoAutoCollectionPlugin.Bot
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                Thread.Sleep(2000);
+                Thread.Sleep(2000 + new Random().Next(100, 200));
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F11_key);
-            Thread.Sleep(1500);
+            Thread.Sleep(1500 + new Random().Next(100, 200));
             for (int i = 0; i < count; i++) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(1000 + new Random().Next(100, 200));
                 if (CommonUi.AddonMaterializeDialogIsOpen()) {
                     CommonUi.SelectMaterializeDialogYesButton();
-                    Thread.Sleep(3000);
+                    Thread.Sleep(3000 + new Random().Next(100, 200));
                 }
-                Thread.Sleep(500);
+                Thread.Sleep(500 + new Random().Next(100, 200));
             }
 
             if (CommonUi.AddonMaterializeDialogIsOpen()) {
@@ -223,7 +221,7 @@ namespace WoAutoCollectionPlugin.Bot
             }
 
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            Thread.Sleep(500);
+            Thread.Sleep(500 + new Random().Next(100, 200));
             return true;
         }
 
@@ -238,7 +236,7 @@ namespace WoAutoCollectionPlugin.Bot
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(800);
+                Thread.Sleep(900 + new Random().Next(50, 80));
                 tt++;
             }
             WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.F10_key);
@@ -248,11 +246,11 @@ namespace WoAutoCollectionPlugin.Bot
                 }
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(2600);
+                Thread.Sleep(2800 + new Random().Next(100, 300));
             }
             while (CommonUi.AddonPurifyItemSelectorIsOpen() || CommonUi.AddonPurifyResultIsOpen()) {
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                Thread.Sleep(500);
+                Thread.Sleep(500 + new Random().Next(100, 200));
             }
             return true;
         }
@@ -289,7 +287,7 @@ namespace WoAutoCollectionPlugin.Bot
                 return true;
             }
             bool flag = true;
-            Thread.Sleep(1000);
+            Thread.Sleep(900 + new Random().Next(100, 200));
             SetTarget("收藏品交易员");
             Thread.Sleep(2500);
             if (CommonUi.AddonCollectablesShopIsOpen()) {
@@ -306,16 +304,16 @@ namespace WoAutoCollectionPlugin.Bot
                 int n = 0;
                 int count = BagManager.GetInventoryItemCountById(ItemId);
                 WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(900 + new Random().Next(100, 200));
                 while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 25 && count > 0)
                 {
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(200);
+                    Thread.Sleep(100 + new Random().Next(100, 200));
                     if (RecipeNoteUi.SelectYesnoIsOpen()) {
                         break;
                     }
                     WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(700);
+                    Thread.Sleep(600 + new Random().Next(100, 200));
                     n++;
                     if (closed)
                     {
@@ -498,13 +496,13 @@ namespace WoAutoCollectionPlugin.Bot
         }
         
         public bool UseItem() {
-            PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
-            uint gp = player.CurrentGp;
-            if (gp < player.MaxGp * 0.6)
-            {
-                WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
-                Thread.Sleep(2000);
-            }
+            //PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
+            //uint gp = player.CurrentGp;
+            //if (gp < player.MaxGp * 0.6)
+            //{
+            //    WoAutoCollectionPlugin.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+            //    Thread.Sleep(2000);
+            //}
             return true;
         }
 

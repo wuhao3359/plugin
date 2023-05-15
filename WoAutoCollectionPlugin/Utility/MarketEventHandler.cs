@@ -379,10 +379,10 @@ namespace WoAutoCollectionPlugin.Utility
             return (neededItems == actualItems);
         }
 
-        private bool Retainer()
-        {
-            return (WoAutoCollectionPlugin.getFilePtr != null) && Marshal.ReadInt64(WoAutoCollectionPlugin.getFilePtr(7), 0xB0) != 0;
-        }
+        //private bool Retainer()
+        //{
+        //    return (WoAutoCollectionPlugin.getFilePtr != null) && Marshal.ReadInt64(WoAutoCollectionPlugin.getFilePtr(7), 0xB0) != 0;
+        //}
 
         public static AtkUnitBase* GetAddonByID(uint id)
         {

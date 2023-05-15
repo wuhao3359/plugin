@@ -46,7 +46,7 @@ namespace WoAutoCollectionPlugin
 
         public static Executor Executor;
         public static bool newRequest;
-        public static GetFilePointer getFilePtr;
+        //public static GetFilePointer getFilePtr;
         public static List<MarketBoardCurrentOfferings> _cache = new();
         public static Lumina.Excel.ExcelSheet<Item> items;
         public static bool taskRunning = false;
@@ -57,6 +57,8 @@ namespace WoAutoCollectionPlugin
         public static string status = "";
 
         internal readonly WindowSystem WindowSystem;
+
+        public static SpearfishingHelper spearfishingHelper;
 
         public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
@@ -124,7 +126,9 @@ namespace WoAutoCollectionPlugin
                 Executor = new Executor();
 
                 WindowSystem = new WindowSystem(Name);
-                WindowSystem.AddWindow(new SpearfishingHelper(GameData));
+
+                spearfishingHelper = new SpearfishingHelper(GameData);
+
                 DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
 
                 //DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -136,8 +140,8 @@ namespace WoAutoCollectionPlugin
             }
         }
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        public delegate IntPtr GetFilePointer(byte index);
+        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        //public delegate IntPtr GetFilePointer(byte index);
 
         public void Dispose()
         {
@@ -418,6 +422,7 @@ namespace WoAutoCollectionPlugin
                 PluginLog.Log($"stop");
                 GameData.DailyBot.StopScript();
                 taskRunning = false;
+                WindowSystem.RemoveWindow(spearfishingHelper);
                 return;
             }
 
@@ -428,6 +433,7 @@ namespace WoAutoCollectionPlugin
             }
 
             taskRunning = true;
+            WindowSystem.AddWindow(spearfishingHelper);
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
@@ -495,6 +501,8 @@ namespace WoAutoCollectionPlugin
             GameData.FishBot.StopScript();
             GameData.HFishBot.StopScript();
             GameData.CollectionFishBot.StopScript();
+
+            WindowSystem.RemoveWindow(spearfishingHelper);
         }
 
         private void AutoKillGame(object sender, ElapsedEventArgs e) {
