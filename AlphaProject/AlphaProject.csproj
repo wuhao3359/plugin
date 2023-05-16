@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Authors>hao</Authors>
+    <Company>-</Company>
+    <Version>0.0.1.0</Version>
+    <Description>Alpha Project</Description>
+    <Copyright></Copyright>
+  </PropertyGroup>
+
+	<PropertyGroup>
+		<TargetFramework>net7.0-windows</TargetFramework>
+		<Platforms>x64</Platforms>
+		<Nullable>enable</Nullable>
+		<LangVersion>latest</LangVersion>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<OutputPath>bin\$(Configuration)\</OutputPath>
+	</PropertyGroup>
+
+	<PropertyGroup Label="Documentation">
+		<DocumentationFile></DocumentationFile>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+	<DalamudLibPath>$(appdata)\XIVLauncher\addon\Hooks\dev\</DalamudLibPath>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AssemblySearchPaths>
+			$(AssemblySearchPaths);
+			$(DalamudLibPath);
+		</AssemblySearchPaths>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="DalamudPackager" Version="2.1.8" />
+		<PackageReference Include="ILRepack" Version="2.0.18" GeneratePathProperty="true" />
+		<ProjectReference Include="..\lib\ClickLib\ClickLib\ClickLib.csproj" />
+		<ProjectReference Include="..\lib\OtterGui\OtterGui\OtterGui.csproj" />
+		<Reference Include="Dalamud" Private="False" />
+		<Reference Include="ImGui.NET" Private="False" />
+		<Reference Include="ImGuiScene" Private="False" />
+		<Reference Include="Lumina" Private="False" />
+		<Reference Include="Lumina.Excel" Private="False" />
+		<Reference Include="Newtonsoft.Json" Private="False" />
+		<Reference Include="FFXIVClientStructs" Private="False" />
+	</ItemGroup>
+	
+	<Target Name="ILRepack" AfterTargets="Build">
+		<ItemGroup>
+			<InputAssemblies Include="$(TargetPath)" />
+			<InputAssemblies Include="$(TargetDir)*.dll" Exclude="$(TargetPath);$(TargetDir)NLua.dll;$(TargetDir)KeraLua.dll;$(TargetDir)lua54.dll;$(TargetDir)Serilog.dll" />
+		</ItemGroup>
+		<Exec Command="$(PkgILRepack)\tools\ILRepack.exe /lib:$(DalamudLibPath) /out:$(TargetDir)$(TargetFileName) @(InputAssemblies, ' ')" />
+	</Target>
+
+	<Target Name="CleanOutDir" AfterTargets="ILRepack">
+		<ItemGroup>
+			<DeleteFiles Include="$(TargetDir)*.dll" Exclude="$(TargetDir)$(TargetName).dll;$(TargetDir)NLua.dll;$(TargetDir)KeraLua.dll;$(TargetDir)lua54.dll" />
+			<DeleteFiles Include="$(TargetDir)*.pdb" Exclude="$(TargetDir)$(TargetName).pdb" />
+			<DeleteFiles Include="$(TargetDir)*.xml" />
+		</ItemGroup>
+		<Message Text="Deleting @(DeleteFiles)" Importance="high" />
+		<Delete Files="@(DeleteFiles)" />
+	</Target>
+	
+</Project>
