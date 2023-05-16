@@ -7,8 +7,6 @@ using AlphaProject.Classes;
 using AlphaProject.Enums;
 using AlphaProject.SeFunctions;
 using ImGuiNET;
-using ImRaii = OtterGui.Raii.ImRaii;
-using AlphaProject.Gui;
 using System.Threading.Tasks;
 using AlphaProject.Utility;
 using System;
@@ -96,32 +94,32 @@ public partial class SpearfishingHelper : Window
 
     private void DrawList()
     {
-        if (_currentSpot == null || _currentSpot.Items.Length == 0)
-            return;
+        //if (_currentSpot == null || _currentSpot.Items.Length == 0)
+        //    return;
 
-        ImGui.SetCursorPos(_uiSize * Vector2.UnitX);
-        using var color = ImRaii.PushColor(ImGuiCol.ChildBg, 0x80000000);
-        using var style = ImRaii.PushStyle(ImGuiStyleVar.ChildRounding, 5 * ImGuiHelpers.GlobalScale);
-        using var child = ImRaii.Child("##ListChild", ListSize, true, ImGuiWindowFlags.NoScrollbar);
-        if (!child)
-            return;
+        //ImGui.SetCursorPos(_uiSize * Vector2.UnitX);
+        //using var color = ImRaii.PushColor(ImGuiCol.ChildBg, 0x80000000);
+        //using var style = ImRaii.PushStyle(ImGuiStyleVar.ChildRounding, 5 * ImGuiHelpers.GlobalScale);
+        //using var child = ImRaii.Child("##ListChild", ListSize, true, ImGuiWindowFlags.NoScrollbar);
+        //if (!child)
+        //    return;
 
-        var iconSize = ImGuiHelpers.ScaledVector2(_iconSize, _iconSize);
-        foreach (var fish in _currentSpot.Items)
-        {
-            var name = fish.Name[ClientLanguage.ChineseSimplified];
-            ImGui.Image(IconId.FromSpeed(fish.Speed).ImGuiHandle, iconSize);
-            ImGui.SameLine();
-            ImGui.Image(IconId.FromSize(fish.Size).ImGuiHandle, iconSize);
-            ImGui.SameLine();
+        //var iconSize = ImGuiHelpers.ScaledVector2(_iconSize, _iconSize);
+        //foreach (var fish in _currentSpot.Items)
+        //{
+        //    var name = fish.Name[ClientLanguage.ChineseSimplified];
+        //    ImGui.Image(IconId.FromSpeed(fish.Speed).ImGuiHandle, iconSize);
+        //    ImGui.SameLine();
+        //    ImGui.Image(IconId.FromSize(fish.Size).ImGuiHandle, iconSize);
+        //    ImGui.SameLine();
 
-            ImGui.Image(Icons.DefaultStorage[fish.ItemData.Icon].ImGuiHandle, iconSize);
-            var pos = ImGui.GetCursorPos();
-            ImGui.SameLine();
-            ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (iconSize.Y - ImGui.GetTextLineHeight()) / 2);
-            ImGui.Text(name);
-            ImGui.SetCursorPos(pos);
-        }
+        //    ImGui.Image(Icons.DefaultStorage[fish.ItemData.Icon].ImGuiHandle, iconSize);
+        //    var pos = ImGui.GetCursorPos();
+        //    ImGui.SameLine();
+        //    ImGui.SetCursorPosY(ImGui.GetCursorPosY() + (iconSize.Y - ImGui.GetTextLineHeight()) / 2);
+        //    ImGui.Text(name);
+        //    ImGui.SetCursorPos(pos);
+        //}
     }
 
     private unsafe void DrawFishOverlay()
