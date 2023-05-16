@@ -15,18 +15,18 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Timers;
-using WoAutoCollectionPlugin.Bot;
-using WoAutoCollectionPlugin.Craft;
-using WoAutoCollectionPlugin.SeFunctions;
-using WoAutoCollectionPlugin.Spearfishing;
-using WoAutoCollectionPlugin.Time;
-using WoAutoCollectionPlugin.Ui;
-using WoAutoCollectionPlugin.UseAction;
-using WoAutoCollectionPlugin.Utility;
+using AlphaProject.Bot;
+using AlphaProject.Craft;
+using AlphaProject.SeFunctions;
+using AlphaProject.Spearfishing;
+using AlphaProject.Time;
+using AlphaProject.Ui;
+using AlphaProject.UseAction;
+using AlphaProject.Utility;
 
-namespace WoAutoCollectionPlugin
+namespace AlphaProject
 {
-    public sealed class WoAutoCollectionPlugin : IDalamudPlugin
+    public sealed class AlphaProject : IDalamudPlugin
     {
         public string Name => "EasyGame";
         private const string collect = "/collect";
@@ -63,7 +63,7 @@ namespace WoAutoCollectionPlugin
 
         internal readonly WindowSystem WindowSystem;
 
-        public WoAutoCollectionPlugin(DalamudPluginInterface pluginInterface, GameNetwork network)
+        public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
             DalamudApi.Initialize(pluginInterface);
 
@@ -138,7 +138,7 @@ namespace WoAutoCollectionPlugin
             }
             catch (Exception e)
             {
-                PluginLog.Error($"Failed loading WoAutoCollectionPlugin\n{e}");
+                PluginLog.Error($"Failed loading AlphaProject\n{e}");
             }
         }
 
@@ -185,7 +185,7 @@ namespace WoAutoCollectionPlugin
                     float y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
                     float z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
                     PluginLog.Log($"{DalamudApi.ClientState.TerritoryType}  {x}   {y}   {z}");
-                    //Vector3 position = WoAutoCollectionPlugin.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                    //Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
                     //GameObject go = Util.CurrentFishCanGather(position, SizeFactor);
                 }
                 catch (Exception)
