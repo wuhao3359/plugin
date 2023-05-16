@@ -56,7 +56,7 @@ namespace AlphaProject.Bot
             closed = false;
             try {
                 // 参数解析
-                string command = "daily";
+                string command = Tasks.Daily;
                 AlphaProject.GameData.param = Util.CommandParse(command, args);
 
                 if (AlphaProject.GameData.param.TryGetValue("otherTask", out var ot))

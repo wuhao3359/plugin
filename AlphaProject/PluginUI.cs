@@ -28,9 +28,9 @@ namespace AlphaProject
         }
 
         // passing in the image here just for simplicity
-        public PluginUI(Configuration configuration)
+        public PluginUI()
         {
-            this.configuration = configuration;
+            //this.configuration = configuration;
         }
 
         public void Dispose()
@@ -39,6 +39,7 @@ namespace AlphaProject
 
         public void Draw()
         {
+            visible = true;
             // This is our only draw handler attached to UIBuilder, so it needs to be
             // able to draw any windows we might have open.
             // Each method checks its own visibility/state to ensure it only draws when
@@ -57,9 +58,9 @@ namespace AlphaProject
                 return;
             }
 
-            ImGui.SetNextWindowSize(new Vector2(375, 330), ImGuiCond.FirstUseEver);
-            ImGui.SetNextWindowSizeConstraints(new Vector2(375, 330), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("My Amazing Window", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+            ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.FirstUseEver);
+            ImGui.SetNextWindowSizeConstraints(new Vector2(200, 200), new Vector2(float.MaxValue, float.MaxValue));
+            if (ImGui.Begin("Operation Window", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
             {
                 //ImGui.Text($"The random config bool is {this.configuration.SomePropertyToBeSavedAndWithADefault}");
                 if (ImGui.Button("GetCurrentPosition"))
@@ -94,7 +95,7 @@ namespace AlphaProject
                 if (ImGui.Button("AutoDaily Start"))
                 {
                     // TODO args
-                    String args = "";
+                    String args = "duration:3 level:90-90 bagLimit:1 otherTask:5";
                     Tasks.AutoDaily(args);
                 }
                 ImGui.SameLine();

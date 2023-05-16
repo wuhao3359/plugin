@@ -287,7 +287,7 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 100 + new Random().Next(50, 120);
+            sleep = 80 + new Random().Next(20, 150);
         }
         else {
             sleep += new Random().Next(50, 150);

@@ -66,6 +66,8 @@ namespace AlphaProject
                 WindowSystem = new WindowSystem(Name);
                 WindowSystem.AddWindow(new SpearfishingHelper(GameData));
 
+                PluginUi = new();
+
                 DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
                 DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
                 //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;

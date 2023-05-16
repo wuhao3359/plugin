@@ -61,7 +61,7 @@ namespace AlphaProject.Bot
         public void CollectionFishScript(string args) {
             closed = false;
             int n = 0;
-            string command = "collectionfish";
+            string command = Tasks.CFish;
             AlphaProject.GameData.param = Util.CommandParse(command, args);
 
             AlphaProject.GameData.param.TryGetValue("ftype", out var t);
