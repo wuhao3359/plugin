@@ -320,7 +320,7 @@ namespace AlphaProject.Bot
             while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 3)
             {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000);
+                Thread.Sleep(800 + new Random().Next(300, 800));
                 tt++;
             }
 
@@ -343,7 +343,7 @@ namespace AlphaProject.Bot
                         {
                             CommonUi.SelectYesButton();
                         }
-                        Thread.Sleep(1000);
+                        Thread.Sleep(800 + new Random().Next(300, 800));
                         if (ii > 15)
                         {
                             break;
@@ -370,18 +370,18 @@ namespace AlphaProject.Bot
                 if (!CommonUi.HasStatus("收藏品采集"))
                 {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n5_key);
-                    Thread.Sleep(300);
+                    Thread.Sleep(200 + new Random().Next(300, 800));
                 }
                 if (!CommonUi.HasStatus("钓上大尺寸的鱼几率提升"))
                 {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
-                    Thread.Sleep(300);
+                    Thread.Sleep(100 + new Random().Next(300, 600));
                 }
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n2_key);
 
                 while (sw.ElapsedMilliseconds / 1000 / 60 < 37)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(800 + new Random().Next(300, 800));
                     if (closed)
                     {
                         PluginLog.Log($"中途结束");
@@ -396,7 +396,7 @@ namespace AlphaProject.Bot
                 readyMove = true;
                 while (!canMove)
                 {
-                    Thread.Sleep(1000);
+                    Thread.Sleep(800 + new Random().Next(300, 800));
                     if (closed)
                     {
                         PluginLog.Log($"中途结束, 等待收杆...");
@@ -435,15 +435,15 @@ namespace AlphaProject.Bot
             // 切换职业 
             if (!CommonUi.CurrentJob(Job))
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(2000 + new Random().Next(100, 800));
                 CommandProcessorHelper.DoGearChange(JobName);
-                Thread.Sleep(500);
+                Thread.Sleep(200 + new Random().Next(300, 800));
             }
             MovePositions(Path, true);
             if (!CommonUi.HasStatus("收藏品采集"))
             {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n5_key);
-                Thread.Sleep(500);
+                Thread.Sleep(200 + new Random().Next(300, 800));
             }
             int n = 0;
             while (!closed & n < 100)
@@ -508,7 +508,7 @@ namespace AlphaProject.Bot
                                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                                         }
                                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                                        Thread.Sleep(1000);
+                                        Thread.Sleep(800 + new Random().Next(300, 800));
                                         tt++;
 
                                         if (closed)
@@ -525,7 +525,7 @@ namespace AlphaProject.Bot
                                         {
                                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key);
                                         }
-                                        Thread.Sleep(800);
+                                        Thread.Sleep(500 + new Random().Next(300, 800));
                                         tt++;
                                         if (tt >= 5) {
                                             AlphaProject.GameData.KeyOperates.AdjustHeight(GatherPoint);
@@ -567,7 +567,7 @@ namespace AlphaProject.Bot
                                             if (stackCount >= 3)
                                             {
                                                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n0_key);
-                                                Thread.Sleep(1000);
+                                                Thread.Sleep(800 + new Random().Next(200, 500));
                                             }
                                         }
                                     }
@@ -713,21 +713,21 @@ namespace AlphaProject.Bot
                         {
                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n0_key);
                             gp += 150;
-                            Thread.Sleep(1000);
+                            Thread.Sleep(800 + new Random().Next(200, 500));
                         }
                     }
                     if (gp < maxGp * 0.5)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.plus_key);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(800 + new Random().Next(200, 500));
                     }
                     if (!existStatus)
                     {
-                        Thread.Sleep(3000);
+                        Thread.Sleep(3000 + new Random().Next(0, 500));
                         if (gp > 560)
                         {
                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
-                            Thread.Sleep(1000);
+                            Thread.Sleep(800 + new Random().Next(200, 500));
                             existStatus = true;
                             gp -= 560;
                         }
@@ -735,7 +735,7 @@ namespace AlphaProject.Bot
                     if (LastFish && gp > 350 && CommonUi.HasStatus("钓上大尺寸的鱼几率提升"))
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F5_key);
-                        Thread.Sleep(1000);
+                        Thread.Sleep(800 + new Random().Next(200, 500));
                     }
                     LastFish = false;
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n8_key);
@@ -753,11 +753,11 @@ namespace AlphaProject.Bot
             LastFish = true;
             Task task = new(() =>
             {
-                Thread.Sleep(800);
+                Thread.Sleep(500 + new Random().Next(300, 800));
                 if (CommonUi.AddonSelectYesnoIsOpen()) {
                     CommonUi.SelectYesButton();
                 }
-                Thread.Sleep(300);
+                Thread.Sleep(200 + new Random().Next(300, 800));
             });
             task.Start();
         }

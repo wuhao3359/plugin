@@ -2,12 +2,10 @@
 using Dalamud.Logging;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AlphaProject;
-using AlphaProject.UseAction;
 using AlphaProject.Utility;
 
 public class KeyOperates
@@ -56,7 +54,7 @@ public class KeyOperates
         int n = 0;
         while (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted] && n < 3) {
             KeyMethod(Keys.q_key);
-            Thread.Sleep(2500);
+            Thread.Sleep(2300 + new Random().Next(200, 500));
             n++;
         }
 
@@ -129,7 +127,7 @@ public class KeyOperates
                 }
             }
 
-            if (notMove >= 20)
+            if (notMove >= 18)
             {
                 KeyMethod(Keys.d_key, 1000);
                 if (!DalamudApi.KeyState[Keys.w_key])
@@ -221,7 +219,7 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             height = Maths.Height(positionA, positionB);
             PluginLog.Log($"height {height} <====> {positionA.Y} <---------> {positionB.Y}");
-            Thread.Sleep(500);
+            Thread.Sleep(500 + new Random().Next(100, 200));
             i++;
         }
         FlyStop();
@@ -289,10 +287,10 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 100 + new Random().Next(40, 80);
+            sleep = 100 + new Random().Next(50, 120);
         }
         else {
-            sleep += new Random().Next(40, 80);
+            sleep += new Random().Next(50, 150);
         }
 
         if (sleep == 0) {
@@ -349,7 +347,23 @@ public class KeyOperates
         {
             KeyMethod(Keys.d_key, time);
         }
-        Thread.Sleep(100);
         return positionC;
+    }
+
+    public Vector3 MovePositions(Vector3[] Path, bool UseMount)
+    {
+        ushort territoryType = DalamudApi.ClientState.TerritoryType;
+        ushort SizeFactor = AlphaProject.AlphaProject.GameData.GetSizeFactor(territoryType);
+        Vector3 position = GetUserPosition(SizeFactor);
+        for (int i = 0; i < Path.Length; i++)
+        {
+            if (closed)
+            {
+                PluginLog.Log($"多路径移动 中途结束");
+                return GetUserPosition(SizeFactor);
+            }
+            position = MoveToPoint(position, Path[i], territoryType, UseMount, false);
+        }
+        return position;
     }
 }
