@@ -17,7 +17,7 @@ namespace AlphaProject
 {
     public sealed class AlphaProject : IDalamudPlugin
     {
-        public string Name => "EasyGame";
+        public string Name => "AlphaProject";
 
         public Configuration Configuration { get; private set; }
         public static SeTime Time { get; private set; }
