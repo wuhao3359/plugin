@@ -10,6 +10,7 @@ using ImGuiNET;
 using System.Threading.Tasks;
 using AlphaProject.Utility;
 using System;
+using System.Threading;
 
 namespace AlphaProject.Spearfishing;
 
@@ -83,6 +84,11 @@ public partial class SpearfishingHelper : Window
                     if (!action)
                     {
                         action = true;
+                        int r = new Random().Next(1, 100);
+                        if (r >= 98)
+                        {
+                            Thread.Sleep(new Random().Next(0, 200));
+                        }
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
                         action = false;
                     }

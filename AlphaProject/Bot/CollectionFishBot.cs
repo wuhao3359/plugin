@@ -3,7 +3,6 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.ClientState.Objects.SubKinds;
 using Dalamud.Game.ClientState.Objects.Types;
 using Dalamud.Logging;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,7 +13,6 @@ using AlphaProject.Data;
 using AlphaProject.Managers;
 using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
-using AlphaProject.UseAction;
 using AlphaProject.Utility;
 
 namespace AlphaProject.Bot
