@@ -19,6 +19,9 @@ namespace AlphaProject.Bot
     {
         private bool closed = false;
 
+        // 捕鱼嘉惠
+        private static bool useNaturesBounty { get; set; }
+
         public CommonBot()
         {
             Init();
@@ -27,6 +30,7 @@ namespace AlphaProject.Bot
         public void Init()
         {
             closed = false;
+            useNaturesBounty = true;
         }
 
         public void StopScript()
@@ -243,6 +247,7 @@ namespace AlphaProject.Bot
             for (int i = 0; i < CollectableCount; i++) {
                 if (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    continue;
                 }
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
@@ -780,8 +785,8 @@ namespace AlphaProject.Bot
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
                 Thread.Sleep(1000 + new Random().Next(200, 500));
-                if (n < 10) {
-                    if (!CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
+                if (n < 8) {
+                    if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
                         Thread.Sleep(500 + new Random().Next(300, 500));
@@ -806,6 +811,10 @@ namespace AlphaProject.Bot
                 position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], DalamudApi.ClientState.TerritoryType, UseMount, false);
             }
             return position;
+        }
+
+        public void canUseNaturesBounty(bool b) {
+            useNaturesBounty = b;
         }
     }
 }

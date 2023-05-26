@@ -14,6 +14,8 @@ namespace AlphaProject
 
         // this extra bool exists for ImGui, since you can't ref a property
         private bool visible = false;
+
+        public int selectedButton = 1;
         public bool Visible
         {
             get { return this.visible; }
@@ -68,6 +70,7 @@ namespace AlphaProject
                     Tasks.GetCurrentPosition();
                 }
                 ImGui.Spacing();
+
                 if (ImGui.Button("FishInIsland Start"))
                 {
                     // TODO args
@@ -79,22 +82,21 @@ namespace AlphaProject
                 {
                     Tasks.FishInIsland("");
                 }
-                ImGui.Spacing();
+
                 if (ImGui.Button("FishOnSea Start"))
                 {
-                    // TODO args
                     String args = "1";
                     Tasks.FishOnSea(args);
                 }
                 ImGui.SameLine();
+
                 if (ImGui.Button("FishOnSea End"))
                 {
-                    Tasks.FishInIsland("");
+                    Tasks.FishOnSea("");
                 }
-                ImGui.Spacing();
+
                 if (ImGui.Button("AutoDaily Start"))
                 {
-                    // TODO args
                     String args = "duration:3 level:90-90 bagLimit:1 otherTask:5";
                     Tasks.AutoDaily(args);
                 }
@@ -103,7 +105,62 @@ namespace AlphaProject
                 {
                     Tasks.AutoDaily("");
                 }
+
+                if (ImGui.Button("CollectibleFish Start"))
+                {
+                    String args = "ftype:1 fexchangeItem:102";
+                    Tasks.CollectibleFish(args);
+                }
+                ImGui.SameLine();
+                if (ImGui.Button("CollectibleFish End"))
+                {
+                    Tasks.CollectibleFish("");
+                }
                 ImGui.Spacing();
+
+                // 新UI测试
+                float windowHeight = ImGui.GetWindowHeight();
+                float topHeight = windowHeight * 0.3f;
+                ImGui.BeginChild("TopRegion", new Vector2(0, topHeight), true);
+                if (ImGui.Button("Button 1"))
+                {
+                    // Button 1 被点击
+                    // 在这里处理 Button 1 点击事件
+                    selectedButton = 1;
+                }
+
+                if (ImGui.Button("Button 2"))
+                {
+                    // Button 2 被点击
+                    // 在这里处理 Button 2 点击事件
+                    selectedButton = 2;
+                }
+                ImGui.EndChild();
+
+                ImGui.BeginChild("BottomRegion", new Vector2(0, windowHeight - topHeight), true);
+                string input1 = "input1";
+                string input2 = "input2";
+                if (selectedButton == 1)
+                {
+                    ImGui.Text("Content for Button 1");
+                    // 添加 Button 1 对应的下面区域内容
+                    ImGui.InputText("Input 1", ref input1, 100); // 假设 input1 是存储输入框内容的变量
+                    if (ImGui.Button("Submit 1"))
+                    {
+                        // 处理 Button 1 对应的 Submit 1 按钮点击事件
+                    }
+                }
+                else if (selectedButton == 2)
+                {
+                    ImGui.Text("Content for Button 2");
+                    // 添加 Button 2 对应的下面区域内容
+                    ImGui.InputText("Input 2", ref input2, 100); // 假设 input2 是存储输入框内容的变量
+                    if (ImGui.Button("Submit 2"))
+                    {
+                        // 处理 Button 2 对应的 Submit 2 按钮点击事件
+                    }
+                }
+                ImGui.EndChild();
             }
             ImGui.End();
         }

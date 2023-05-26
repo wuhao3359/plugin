@@ -227,9 +227,9 @@ namespace AlphaProject.Bot
 
             if (!CommonUi.CurrentJob(18))
             {
-                Thread.Sleep(500);
+                Thread.Sleep(300 + new Random().Next(200, 500));
                 AlphaProject.Executor.DoGearChange("捕鱼人");
-                Thread.Sleep(500);
+                Thread.Sleep(300 + new Random().Next(200, 500));
             }
 
             while (!closed && n < 10) {
@@ -538,7 +538,7 @@ namespace AlphaProject.Bot
                                         }
                                         continue;
                                     }
-                                    Thread.Sleep(500);
+                                    Thread.Sleep(300 + new Random().Next(200, 500));
                                     if (CommonUi.AddonSpearFishingIsOpen())
                                     {
                                         AlphaProject.GameData.CommonBot.SpearfishMethod();

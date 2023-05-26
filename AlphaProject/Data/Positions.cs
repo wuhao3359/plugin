@@ -1162,7 +1162,7 @@ namespace AlphaProject.Utility
         public static Vector3[] Points36525 = {
             new Vector3 (1653, 2032, 3740), // 进入A
             new Vector3 (1679, 2012, 3790),
-            new Vector3 (1344, 2050, 3819), // 离开A
+            new Vector3 (1344, 2055, 3819), // 离开A
             new Vector3 (1328, 2024, 3820), // 进入B
             new Vector3 (1289, 2003, 3854),
             new Vector3 (1305, 2008, 3793),
@@ -1249,7 +1249,7 @@ namespace AlphaProject.Utility
             (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
             (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
-            (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
+        //    (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
         };
 
         public static string[] fishs = {

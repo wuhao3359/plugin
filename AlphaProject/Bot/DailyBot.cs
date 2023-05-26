@@ -37,6 +37,7 @@ namespace AlphaProject.Bot
             Teleporter.count = 0;
             AlphaProject.GameData.CraftBot.Init();
             AlphaProject.GameData.CommonBot.Init();
+            AlphaProject.GameData.KeyOperates.Init();
             AlphaProject.GameData.CollectionFishBot.Init();
         }
 

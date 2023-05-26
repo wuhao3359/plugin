@@ -150,7 +150,7 @@ public class KeyOperates
             // 旋转角度速度 100毫秒 35度左右 6.3 = 360 100=0.62
             int time = Convert.ToInt32(angle / 33 * 100);
             //PluginLog.Log($"distance: {distance} angle: {angle} time: {time}");
-            if (time > 50)
+            if (time > 60)
             {
                 if (time > 200) {
                     if (DalamudApi.KeyState[Keys.w_key])
@@ -158,6 +158,7 @@ public class KeyOperates
                         KeyUp(Keys.w_key);
                     }
                 }
+                time -= 30;
                 if (DirectionOfPoint < 0)
                 {
                     if (!DalamudApi.KeyState[Keys.a_key])
@@ -290,7 +291,7 @@ public class KeyOperates
             sleep = 80 + new Random().Next(20, 150);
         }
         else {
-            sleep += new Random().Next(50, 150);
+            sleep += new Random().Next(50, 120);
         }
 
         if (sleep == 0) {
@@ -317,7 +318,7 @@ public class KeyOperates
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
-        return Revise(positionB, 200);
+        return Revise(positionB, 30);
     }
 
     public Vector3 Revise(Vector3 positionB, int tt) {

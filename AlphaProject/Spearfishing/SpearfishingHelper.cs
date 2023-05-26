@@ -3,11 +3,8 @@ using System.Linq;
 using Dalamud.Game.ClientState.Objects.Enums;
 using AlphaProject.Enums;
 using AlphaProject.SeFunctions;
-using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using FishingSpot = AlphaProject.Classes.FishingSpot;
-using Dalamud.Logging;
-using AlphaProject.Classes;
 
 namespace AlphaProject.Spearfishing;
 
