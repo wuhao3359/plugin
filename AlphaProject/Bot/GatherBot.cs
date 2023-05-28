@@ -399,7 +399,7 @@ namespace AlphaProject.Bot
                             continue;
                         }
                         position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
-                        PluginLog.Log($"到达可采集点: {position.X} {position.Y} {position.Z}");
+                        PluginLog.Log($"到达可采集点: K: {k} {position.X} {position.Y} {position.Z}");
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
 

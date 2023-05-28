@@ -134,7 +134,7 @@ public class KeyOperates
                 {
                     KeyDown(Keys.w_key);
                 }
-                KeyDown(Keys.space_key);
+                KeyMethod(Keys.space_key, 2000);
                 notMove = 0;
             }
 

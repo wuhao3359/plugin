@@ -11,6 +11,7 @@ using static AlphaProject.Craft.CurrentCraft;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using AlphaProject.Bot;
+using AlphaProject.Actions;
 
 namespace AlphaProject.Craft
 {
@@ -27,6 +28,7 @@ namespace AlphaProject.Craft
             StepChanged += ResetRecommendation;
             DalamudApi.Condition.ConditionChange += Condition_ConditionChange;
             DalamudApi.ChatGui.ChatMessage += ScanForHQItems;
+            ActionWatching.TryEnable();
         }
 
         public void Dispose()
@@ -35,6 +37,7 @@ namespace AlphaProject.Craft
             StepChanged -= ResetRecommendation;
             DalamudApi.Condition.ConditionChange -= Condition_ConditionChange;
             DalamudApi.ChatGui.ChatMessage -= ScanForHQItems;
+            ActionWatching.TryDisable();
         }
 
         public static bool CheckIfCraftFinished()
@@ -51,7 +54,6 @@ namespace AlphaProject.Craft
             if (!DalamudApi.ClientState.IsLoggedIn)
             {
                 AutoCraftBot.AutoCraftBotEnable = false;
-                Dispose();
                 return;
             }
 
@@ -73,7 +75,7 @@ namespace AlphaProject.Craft
                     return;
 
                 Tasks.Add(DalamudApi.Framework.RunOnTick(() => FetchRecommendation(CurrentStep), TimeSpan.FromMilliseconds(500)));
-            }
+            } 
 
             if (CheckIfCraftFinished() && !currentCraftFinished)
             {
@@ -112,7 +114,7 @@ namespace AlphaProject.Craft
                                 CurrentRecommendation = newAct.RowId;
                             }
                         }
-                        DalamudApi.Framework.RunOnTick(() => Hotbars.ExecuteRecommended(CurrentRecommendation), TimeSpan.FromMilliseconds(500));
+                        DalamudApi.Framework.RunOnTick(() => Hotbars.ExecuteRecommended(CurrentRecommendation), TimeSpan.FromMilliseconds(new Random().Next(800, 1100)));
                     }
                 }
                 catch (Exception ex)
@@ -124,7 +126,7 @@ namespace AlphaProject.Craft
 
         private void ResetRecommendation(object? sender, int e)
         {
-            if (AlphaProject.Debug) PluginLog.Verbose($"Step Change: {e}");
+            CurrentRecommendation = 0;
             if (e == 0)
             {
                 ManipulationUsed = false;
@@ -137,7 +139,6 @@ namespace AlphaProject.Craft
                 StandardTouchUsed = false;
                 AdvancedTouchUsed = false;
                 ExpertCraftOpenerFinish = false;
-                MacroStep = 0;
             }
             if (e > 0)
                 Tasks.Clear();

@@ -211,6 +211,11 @@ namespace AlphaProject.Bot
             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1500 + new Random().Next(100, 200));
             for (int i = 0; i < count; i++) {
+                if (!CommonUi.AddonMaterializeDialogIsOpen())
+                {
+                    return true;
+                }
+
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000 + new Random().Next(100, 200));
                 if (CommonUi.AddonMaterializeDialogIsOpen()) {
@@ -248,6 +253,10 @@ namespace AlphaProject.Bot
                 if (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                     continue;
+                }
+                if (!CommonUi.AddonPurifyItemSelectorIsOpen())
+                {
+                    return true;
                 }
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);

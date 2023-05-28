@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using static AlphaProject.Craft.CurrentCraft;
 using AlphaProject.Craft;
+using Dalamud.Logging;
 
 namespace AlphaProject.Actions
 {
@@ -13,11 +14,14 @@ namespace AlphaProject.Actions
         public delegate byte UseActionDelegate(ActionManager* actionManager, uint actionType, uint actionID, long targetObjectID, uint param, uint useType, int pvp, bool* isGroundTarget);
         public static Hook<UseActionDelegate> UseActionHook;
         public static uint LastUsedAction = 0;
+
+        private delegate void* ClickSynthesisButton(void* a1, void* a2);
+        private static Hook<ClickSynthesisButton> clickSysnthesisButtonHook;
         private static byte UseActionDetour(ActionManager* actionManager, uint actionType, uint actionID, long targetObjectID, uint param, uint useType, int pvp, bool* isGroundTarget)
         {
             try
             {
-                if (CanUse(Skills.BasicSynth))
+                if (CanUse(actionID))
                 {
                     PreviousAction = actionID;
 
@@ -33,7 +37,11 @@ namespace AlphaProject.Actions
                             WasteNotUsed = true;
 
                         if (allOfSameName.Any(x => x == Skills.FinalAppraisal))
+                        {
                             JustUsedFinalAppraisal = true;
+                            CurrentRecommendation = 0;
+                            AutoCraft.Tasks.Clear();
+                        }
                         else
                             JustUsedFinalAppraisal = false;
 
@@ -80,6 +88,18 @@ namespace AlphaProject.Actions
                             AdvancedTouchUsed = false;
 
                         JustUsedFinalAppraisal = false;
+
+                        if (allOfSameName.Any(x => x == Skills.HeartAndSoul))
+                        {
+                            CurrentRecommendation = 0;
+                            AutoCraft.Tasks.Clear();
+                        }
+
+                        if (allOfSameName.Any(x => x == Skills.CarefulObservation))
+                        {
+                            CurrentRecommendation = 0;
+                            AutoCraft.Tasks.Clear();
+                        }
                     }
                     CurrentRecommendation = 0;
                     AutoCraft.Tasks.Clear();
@@ -96,6 +116,12 @@ namespace AlphaProject.Actions
         static ActionWatching()
         {
             UseActionHook ??= Hook<UseActionDelegate>.FromAddress((IntPtr)ActionManager.Addresses.UseAction.Value, UseActionDetour);
+            clickSysnthesisButtonHook ??= Hook<ClickSynthesisButton>.FromAddress(DalamudApi.SigScanner.ScanText("E9 ?? ?? ?? ?? 4C 8B 44 24 ?? 49 8B D2 48 8B CB 48 83 C4 30 5B E9 ?? ?? ?? ?? 4C 8B 44 24 ?? 49 8B D2 48 8B CB 48 83 C4 30 5B E9 ?? ?? ?? ?? 33 D2"), ClickSynthesisButtonDetour);
+            clickSysnthesisButtonHook?.Enable();
+        }
+
+        private static void* ClickSynthesisButtonDetour(void* a1, void* a2) {
+            return clickSysnthesisButtonHook.Original(a1, a2);
         }
 
         public static void TryEnable()

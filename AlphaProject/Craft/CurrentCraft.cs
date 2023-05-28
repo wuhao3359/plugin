@@ -121,7 +121,6 @@ namespace AlphaProject.Craft
                     currentStep = value;
                     StepChanged?.Invoke(currentStep, value);
                 }
-
             }
         }
         public static string? HQLiteral { get; set; }
@@ -200,7 +199,6 @@ namespace AlphaProject.Craft
 
         public unsafe static bool GetCraft()
         {
-            PluginLog.Log("GetCraft...");
             try
             {
                 var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimple", 1);
@@ -317,7 +315,7 @@ namespace AlphaProject.Craft
             }
             catch (Exception ex)
             {
-                Dalamud.Logging.PluginLog.Error(ex, ex.StackTrace!);
+                PluginLog.Error(ex, ex.StackTrace!);
                 return false;
             }
         }
@@ -556,10 +554,10 @@ namespace AlphaProject.Craft
             if (CurrentStep == 1 && CalculateNewProgress(Skills.DelicateSynthesis) >= MaxProgress && CalculateNewQuality(Skills.DelicateSynthesis) >= MaxQuality && CanUse(Skills.DelicateSynthesis)) return Skills.DelicateSynthesis;
             if (CanFinishCraft(act)) return act;
 
-            if (CanUse(Skills.TrainedEye) && (HighQualityPercentage < 100 || Recipe.ItemResult.Value.IsCollectable) && Recipe.CanHq) return Skills.TrainedEye;
+            if (CanUse(Skills.TrainedEye) && (HighQualityPercentage < AlphaProject.Configuration.MaxPercentage || Recipe.ItemResult.Value.IsCollectable) && Recipe.CanHq) return Skills.TrainedEye;
             if (CanUse(Skills.Tricks) && CurrentStep > 2 && ((CurrentCondition == Condition.Good) || (CurrentCondition == Condition.Excellent))) return Skills.Tricks;
 
-            if (MaxQuality == 0 || !Recipe.CanHq)
+            if (MaxQuality == 0 || AlphaProject.Configuration.MaxPercentage == 0 || !Recipe.CanHq)
             {
                 if (CurrentStep == 1 && CanUse(Skills.MuscleMemory)) return Skills.MuscleMemory;
                 if (CalculateNewProgress(act) >= MaxProgress) return act;
@@ -573,7 +571,7 @@ namespace AlphaProject.Craft
             {
                 if (MaxDurability >= 60)
                 {
-                    if (CurrentQuality < MaxQuality && (HighQualityPercentage < 100 || Recipe.ItemResult.Value.IsCollectable || Recipe.IsExpert))
+                    if (CurrentQuality < MaxQuality && (CurrentQuality / MaxQuality) * 100 < AlphaProject.Configuration.MaxPercentage)
                     {
                         if (CurrentStep == 1 && CanUse(Skills.MuscleMemory) && CalculateNewProgress(Skills.MuscleMemory) < MaxProgress) return Skills.MuscleMemory;
                         if (CurrentStep == 2 && CanUse(Skills.FinalAppraisal) && !JustUsedFinalAppraisal && CalculateNewProgress(CharacterInfo.HighestLevelSynth()) >= MaxProgress) return Skills.FinalAppraisal;
@@ -583,17 +581,22 @@ namespace AlphaProject.Craft
                         if (CalculateNewQuality(Skills.ByregotsBlessing) >= MaxQuality && CanUse(Skills.ByregotsBlessing)) return Skills.ByregotsBlessing;
                         if (GetStatus(Buffs.Innovation) is null && CanUse(Skills.Innovation)) return Skills.Innovation;
                         if (GreatStridesByregotCombo() >= MaxQuality && GetStatus(Buffs.GreatStrides) is null && CanUse(Skills.GreatStrides) && CurrentCondition != Condition.Excellent) return Skills.GreatStrides;
-                        //if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation)) return Skills.CarefulObservation;
+                        if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation)) return Skills.CarefulObservation;
                         if (CurrentCondition == Condition.Poor && CanUse(Skills.Observe)) return Skills.Observe;
                         if (GetStatus(Buffs.GreatStrides) is not null && CanUse(Skills.ByregotsBlessing)) return Skills.ByregotsBlessing;
-                        //if (PredictFailureTouch(CharacterInfo.HighestLevelTouch())) return CharacterInfo.HighestLevelSynth();
+                        if (Skills.AdvancedTouch.LevelChecked())
+                        {
+                            if (PreviousActionSameAs(Skills.BasicTouch) && CanUse(Skills.StandardTouch) && GetStatus(Buffs.Innovation).StackCount >= 1) return Skills.StandardTouch;
+                            if (PreviousActionSameAs(Skills.StandardTouch) && CanUse(Skills.AdvancedTouch) && GetStatus(Buffs.Innovation).StackCount >= 2) return Skills.AdvancedTouch;
+                            if (CanUse(Skills.BasicTouch) && GetStatus(Buffs.Innovation).StackCount >= 3) return Skills.BasicTouch;
+                        }
                         if (CharacterInfo.HighestLevelTouch() != 0) return CharacterInfo.HighestLevelTouch();
                     }
                 }
 
                 if (MaxDurability >= 35 && MaxDurability < 60)
                 {
-                    if (CurrentQuality < MaxQuality && (HighQualityPercentage < 100 || Recipe.ItemResult.Value.IsCollectable || Recipe.IsExpert))
+                    if (CurrentQuality < MaxQuality && (CurrentQuality / MaxQuality) * 100 < AlphaProject.Configuration.MaxPercentage)
                     {
                         if (CurrentStep == 1 && CanUse(Skills.Reflect)) return Skills.Reflect;
                         if (!ManipulationUsed && GetStatus(Buffs.Manipulation) is null && CanUse(Skills.Manipulation)) return Skills.Manipulation;
@@ -601,11 +604,15 @@ namespace AlphaProject.Craft
                         if (!InnovationUsed && CanUse(Skills.Innovation)) return Skills.Innovation;
                         if (CalculateNewQuality(Skills.ByregotsBlessing) >= MaxQuality && CanUse(Skills.ByregotsBlessing)) return Skills.ByregotsBlessing;
                         if (GreatStridesByregotCombo() >= MaxQuality && GetStatus(Buffs.GreatStrides) is null && CanUse(Skills.GreatStrides) && CurrentCondition != Condition.Excellent) return Skills.GreatStrides;
-                        //if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation)) return Skills.CarefulObservation;
+                        if (CurrentCondition == Condition.Poor && CanUse(Skills.CarefulObservation)) return Skills.CarefulObservation;
                         if (CurrentCondition == Condition.Poor && CanUse(Skills.Observe)) return Skills.Observe;
                         if (GetStatus(Buffs.GreatStrides) is not null && CanUse(Skills.ByregotsBlessing)) return Skills.ByregotsBlessing;
-                        //if (PredictFailureTouch(CharacterInfo.HighestLevelTouch())) return CharacterInfo.
-                        //();
+                        if (Skills.AdvancedTouch.LevelChecked())
+                        {
+                            if (PreviousActionSameAs(Skills.BasicTouch) && CanUse(Skills.StandardTouch)) return Skills.StandardTouch;
+                            if (PreviousActionSameAs(Skills.StandardTouch) && CanUse(Skills.AdvancedTouch)) return Skills.AdvancedTouch;
+                            if (CanUse(Skills.BasicTouch)) return Skills.BasicTouch;
+                        }
                         if (CharacterInfo.HighestLevelTouch() != 0) return CharacterInfo.HighestLevelTouch();
                     }
                 }
@@ -833,7 +840,7 @@ namespace AlphaProject.Craft
                 return CalculateNewProgress(act) >= MaxProgress;
 
             var metMaxProg = CurrentQuality >= MaxQuality;
-            var usingPercentage = HighQualityPercentage >= 100 && !Recipe.ItemResult.Value.IsCollectable && !Recipe.IsExpert;
+            var usingPercentage = HighQualityPercentage >= AlphaProject.Configuration.MaxPercentage && !Recipe.ItemResult.Value.IsCollectable && !Recipe.IsExpert;
             return CalculateNewProgress(act) >= MaxProgress && (metMaxProg || usingPercentage);
         }
 
@@ -1049,7 +1056,7 @@ namespace AlphaProject.Craft
                 {
                     try
                     {
-                        Dalamud.Logging.PluginLog.Verbose("AddonRecipeNote: Selecting synth");
+                        PluginLog.Verbose("AddonRecipeNote: Selecting synth");
                         ClickRecipeNote.Using(recipeWindow).Synthesize();
                         //AutoCraftBot.Tasks.Clear();
                     }

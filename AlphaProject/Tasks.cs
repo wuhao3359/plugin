@@ -185,7 +185,7 @@ namespace AlphaProject
             task.Start();
         }
 
-        public static void GeneralCraft(string GCraft, string args)
+        public static void GeneralCraft(string args)
         {
             string[] str = args.Split(' ');
             PluginLog.Log($"craft: {args} length: {args.Length}");

@@ -12,6 +12,7 @@ using AlphaProject.SeFunctions;
 using AlphaProject.Spearfishing;
 using AlphaProject.Time;
 using AlphaProject.Utility;
+using AlphaProject.Craft;
 
 namespace AlphaProject
 {
@@ -19,11 +20,14 @@ namespace AlphaProject
     {
         public string Name => "AlphaProject";
 
-        public Configuration Configuration { get; private set; }
         public static SeTime Time { get; private set; }
         private PluginUI PluginUi { get; init; }
         public static GameData GameData { get; private set; }
         internal MarketEventHandler MarketEventHandler { get; private set; }
+
+        internal AutoCraft AutoCraft { get; private set; }
+
+        public static Configuration Configuration { get; private set; }
 
         public static Executor Executor;
         public static bool newRequest;
@@ -45,12 +49,9 @@ namespace AlphaProject
         {
             DalamudApi.Initialize(pluginInterface);
 
-            // 可视化ui
-            //Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            //Configuration.Initialize();
+            Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            Configuration.Initialize(DalamudApi.PluginInterface);
 
-            //Commands.InitializeCommands();
-            //Configuration.Initialize(DalamudApi.PluginInterface);
             Click.Initialize();
             //newRequest = false;
             //MarketEventHandler = new MarketEventHandler();
@@ -61,6 +62,7 @@ namespace AlphaProject
             try
             {
                 GameData = new GameData(DalamudApi.DataManager);
+                AutoCraft = new AutoCraft();
                 //items = GameData.DataManager.GetExcelSheet<Item>();
                 Time = new SeTime();
                 Executor = new Executor();
@@ -68,7 +70,7 @@ namespace AlphaProject
                 WindowSystem = new WindowSystem(Name);
                 WindowSystem.AddWindow(new SpearfishingHelper(GameData));
 
-                PluginUi = new();
+                PluginUi = new(Configuration);
 
                 DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
                 DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
@@ -92,6 +94,7 @@ namespace AlphaProject
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
             //MarketCommons.Dispose();
 
+            AutoCraft.Dispose();
             if (WindowSystem != null)
                 DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
             WindowSystem?.RemoveAllWindows();
