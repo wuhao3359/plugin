@@ -62,7 +62,7 @@ namespace AlphaProject
 
             ImGui.SetNextWindowSize(new Vector2(200, 200), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(200, 200), new Vector2(float.MaxValue, float.MaxValue));
-            if (ImGui.Begin("Operation Window", ref this.visible, ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoScrollWithMouse))
+            if (ImGui.Begin("Operation Window", ref this.visible))
             {
                 //ImGui.Text($"The random config bool is {this.configuration.SomePropertyToBeSavedAndWithADefault}");
                 if (ImGui.Button("GetCurrentPosition"))
@@ -73,7 +73,6 @@ namespace AlphaProject
 
                 if (ImGui.Button("FishInIsland Start"))
                 {
-                    // TODO args
                     String args = "100";
                     Tasks.FishInIsland(args);
                 }
@@ -120,7 +119,7 @@ namespace AlphaProject
 
                 // 新UI测试
                 float windowHeight = ImGui.GetWindowHeight();
-                float topHeight = windowHeight * 0.3f;
+                float topHeight = windowHeight * 0.2f;
                 ImGui.BeginChild("TopRegion", new Vector2(0, topHeight), true);
                 if (ImGui.Button("Button 1"))
                 {
@@ -128,18 +127,16 @@ namespace AlphaProject
                     // 在这里处理 Button 1 点击事件
                     selectedButton = 1;
                 }
-
-                if (ImGui.Button("Button 2"))
+                ImGui.SameLine();
+                if (ImGui.Button("ygather"))
                 {
-                    // Button 2 被点击
-                    // 在这里处理 Button 2 点击事件
                     selectedButton = 2;
                 }
                 ImGui.EndChild();
 
-                ImGui.BeginChild("BottomRegion", new Vector2(0, windowHeight - topHeight), true);
+                ImGui.BeginChild("BottomRegion", new Vector2(0, windowHeight * 0.5f), true);
                 string input1 = "input1";
-                string input2 = "input2";
+                string ygather = "1";
                 if (selectedButton == 1)
                 {
                     ImGui.Text("Content for Button 1");
@@ -152,12 +149,11 @@ namespace AlphaProject
                 }
                 else if (selectedButton == 2)
                 {
-                    ImGui.Text("Content for Button 2");
-                    // 添加 Button 2 对应的下面区域内容
-                    ImGui.InputText("Input 2", ref input2, 100); // 假设 input2 是存储输入框内容的变量
-                    if (ImGui.Button("Submit 2"))
+                    ImGui.Text("ygather");
+                    ImGui.InputText("ygather", ref ygather, 100);
+                    if (ImGui.Button("run"))
                     {
-                        // 处理 Button 2 对应的 Submit 2 按钮点击事件
+                        Tasks.GatherInisland(ygather);
                     }
                 }
                 ImGui.EndChild();

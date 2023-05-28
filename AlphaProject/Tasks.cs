@@ -158,7 +158,7 @@ namespace AlphaProject
             task.Start();
         }
 
-        public static void GatherInisland(string IGather, string args)
+        public static void GatherInisland(string args)
         {
             PluginLog.Log($"ygather: {args}");
             if (args.Length == 0)
