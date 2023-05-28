@@ -10,6 +10,7 @@ using AlphaProject.Managers;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
 using static Lumina.Excel.GeneratedSheets.Recipe;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
@@ -316,7 +317,7 @@ namespace AlphaProject.Bot
                     if (!CommonUi.CurrentJob(Job))
                     {
                         Thread.Sleep(2000);
-                        AlphaProject.Executor.DoGearChange(JobName);
+                        CommandProcessorHelper.DoGearChange(JobName);
                         Thread.Sleep(500);
                         PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
                         if (player.Level < Lv)

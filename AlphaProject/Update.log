@@ -6,6 +6,7 @@
 		GatherBuddy		钓鱼	
 		MarketBuddy		自动修改价格
 		AutoRetainer	自动上架物品
+		Artisan			生产求解器	 Artisan.RawInformation.CharacterInfo
 
 8/9
 *  测试移动脚本[√]

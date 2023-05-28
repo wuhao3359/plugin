@@ -11,6 +11,7 @@ using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
 using AlphaProject.UseAction;
 using AlphaProject.Utility;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
@@ -82,7 +83,7 @@ namespace AlphaProject.Bot
                 if (!CommonUi.CurrentJob(Job))
                 {
                     Thread.Sleep(2000);
-                    AlphaProject.Executor.DoGearChange(JobName);
+                    CommandProcessorHelper.DoGearChange(JobName);
                     Thread.Sleep(500);
                 }
                 MovePositions(Path, true);

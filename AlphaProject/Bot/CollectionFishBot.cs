@@ -14,6 +14,7 @@ using AlphaProject.Managers;
 using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
@@ -99,7 +100,7 @@ namespace AlphaProject.Bot
             if (!CommonUi.CurrentJob(18))
             {
                 Thread.Sleep(500);
-                AlphaProject.Executor.DoGearChange("捕鱼人");
+                CommandProcessorHelper.DoGearChange("捕鱼人");
                 Thread.Sleep(500);
             }
 
@@ -433,7 +434,7 @@ namespace AlphaProject.Bot
             if (!CommonUi.CurrentJob(Job))
             {
                 Thread.Sleep(2000 + new Random().Next(100, 800));
-                AlphaProject.Executor.DoGearChange(JobName);
+                CommandProcessorHelper.DoGearChange(JobName);
                 Thread.Sleep(200 + new Random().Next(300, 800));
             }
             MovePositions(Path, true);

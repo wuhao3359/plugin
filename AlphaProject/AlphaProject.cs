@@ -37,6 +37,8 @@ namespace AlphaProject
 
         public static string status = "";
 
+        public static bool Debug = true;
+
         public static WindowSystem WindowSystem;
 
         public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)

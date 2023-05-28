@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 using Dalamud.Game.ClientState.Conditions;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Utility
 {
@@ -355,7 +356,7 @@ namespace AlphaProject.Utility
                     Task task = new(() =>
                     {
                         Thread.Sleep(1200);
-                        GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                        GenericHelper.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
                         var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
                         MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
                     });
