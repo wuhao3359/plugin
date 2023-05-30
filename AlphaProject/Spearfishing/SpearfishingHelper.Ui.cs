@@ -31,7 +31,6 @@ public partial class SpearfishingHelper : Window
     private        Vector2          _listSizeIcons = Vector2.Zero;
     private const  float            _iconSize      = 30;
 
-    private bool action = false;
 
     private unsafe void DrawFish(FishingSpot? spot, SpearfishWindow.Info info, AtkResNode* node, AtkResNode* fishLines, int idx)
     {
@@ -39,9 +38,12 @@ public partial class SpearfishingHelper : Window
             return;
 
         if (!DalamudApi.ClientState.IsLoggedIn) {
+            AlphaProject.GameData.CommonBot.canUseNaturesBounty(false);
+            AlphaProject.GameData.CommonBot.canUseGig(false);
             return;
         }
 
+        AlphaProject.GameData.CommonBot.canUseGig(false);
         AlphaProject.GameData.CommonBot.canUseNaturesBounty(true);
 
         var text = Identify(spot, info);
@@ -75,23 +77,7 @@ public partial class SpearfishingHelper : Window
             if (x > _uiSize.X / 2 - x1 && x < _uiSize.X / 2 + x2)
             {
                 lock (lockObject) {
-                    Task task = new(() =>
-                    {
-                        if (!action)
-                        {
-                            action = true;
-                            //int r = new Random().Next(1, 100);
-                            //if (r >= 98)
-                            //{
-                            //    Thread.Sleep(new Random().Next(100, 200));
-                            //}
-                            //PluginLog.Log("刺一下...");
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
-                            Thread.Sleep(new Random().Next(100, 200));
-                            action = false;
-                        }
-                    });
-                    task.Start();
+                    AlphaProject.GameData.CommonBot.canUseGig(true);
                 }
             }
         }
