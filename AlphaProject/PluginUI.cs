@@ -2,11 +2,8 @@
 using AlphaProject.Data;
 using Dalamud.Logging;
 using ImGuiNET;
-using Lumina.Excel.GeneratedSheets;
-using Serilog;
 using System;
 using System.Numerics;
-using static FFXIVClientStructs.FFXIV.Client.UI.Misc.ConfigModule;
 
 namespace AlphaProject
 {
@@ -217,7 +214,7 @@ namespace AlphaProject
                         Tasks.GeneralCraft("");
                     }
                     ImGui.SameLine();
-                    if (ImGui.Button("reset"))
+                    if (ImGui.Button("test"))
                     {
                         PluginLog.Log($"Current Step: {CurrentCraft.CurrentStep}");
                     }

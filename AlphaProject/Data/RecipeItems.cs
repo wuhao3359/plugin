@@ -45,6 +45,23 @@ namespace AlphaProject.Data
 
         // 8-刻木匠 9-锻铁匠 10-铸甲匠 11-雕金匠 12-制革匠 13-裁衣匠
         // 14-炼金术士 15-烹调师
+        public static (uint Id, string Name, byte GetWay)[] Items = {
+
+        };
+
+        public static (uint Id, string Name, byte GetWay) GetItem(uint Id)
+        {
+            foreach ((uint id, string name, byte getWay) in Items)
+            {
+                if (id == Id)
+                {
+                    return (id, name, getWay);
+                }
+            }
+            return (0, null, 0);
+        }
+
+
         public static (int Id, string Name, int Quantity, bool Craft)[] Craft0 = {
         };
         public static (int Id, string Name, int Quantity, bool Craft)[] Craft31652 = {

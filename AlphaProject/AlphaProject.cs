@@ -13,6 +13,7 @@ using AlphaProject.Spearfishing;
 using AlphaProject.Time;
 using AlphaProject.Utility;
 using AlphaProject.Craft;
+using AlphaProject.Enums;
 
 namespace AlphaProject;
 public unsafe class AlphaProject : IDalamudPlugin
@@ -42,7 +43,7 @@ public unsafe class AlphaProject : IDalamudPlugin
     public static string beforePrice = "";
     public static bool getPriceSucceed = false;
 
-    public static string status = "";
+    public static byte status = (byte)TaskState.READY;
 
     public static bool Debug = true;
 

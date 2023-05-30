@@ -7,5 +7,7 @@ namespace AlphaProject.Enums
         GATHER = 0x01,
         SPEARFISH = 0x02,
         FISH = 0x02,
+        CRAFT = 0x03,
+        PRICE = 0x10,
     }
 }

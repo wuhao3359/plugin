@@ -601,7 +601,7 @@ namespace AlphaProject.Bot
                         PluginLog.Log($"执行等待采集任务...");
                         try
                         {
-                            AlphaProject.GameData.GatherBot.RunNormalScript(0, lv);
+                            AlphaProject.GameData.GatherBot.RunGatherById(0);
                         }
                         catch (Exception e)
                         {
@@ -620,7 +620,7 @@ namespace AlphaProject.Bot
                     PluginLog.Log($"执行等待快速制作任务...");
                     try
                     {
-                        AlphaProject.GameData.CraftBot.RunCraftScript();
+                        AlphaProject.GameData.CraftBot.CraftScript();
                     }
                     catch (Exception e)
                     {

@@ -42,7 +42,7 @@ namespace AlphaProject.Craft
 
         public static bool CheckIfCraftFinished()
         {
-            //if (QuickSynthMax > 0 && QuickSynthCurrent == QuickSynthMax) return true;
+            if (QuickSynthMax > 0 && QuickSynthCurrent == QuickSynthMax) return true;
             if (MaxProgress == 0) return false;
             if (CurrentProgress == MaxProgress) return true;
             if (CurrentProgress < MaxProgress && CurrentDurability == 0) return true;
@@ -81,8 +81,6 @@ namespace AlphaProject.Craft
             {
                 currentCraftFinished = true;
             }
-
-            //RepeatTrialCraft();
         }
 
         public void FetchRecommendation(int e)

@@ -153,7 +153,7 @@ namespace AlphaProject.Craft
 
         public static bool ExpertCraftOpenerFinish { get; set; } = false;
 
-        //public static int QuickSynthCurrent { get => quickSynthCurrent; set { if (value != 0 && quickSynthCurrent != value) { CraftingLists.CraftingListFunctions.CurrentIndex++; } quickSynthCurrent = value; } }
+        public static int QuickSynthCurrent { get => quickSynthCurrent; set { quickSynthCurrent = value; } }
         public static int QuickSynthMax { get => quickSynthMax; set => quickSynthMax = value; }
         public static int MacroStep { get; set; } = 0;
 
@@ -212,7 +212,7 @@ namespace AlphaProject.Craft
                             var currentTextNode = (AtkTextNode*)quickSynthWindow->UldManager.NodeList[20];
                             var maxTextNode = (AtkTextNode*)quickSynthWindow->UldManager.NodeList[18];
 
-                            //QuickSynthCurrent = Convert.ToInt32(currentTextNode->NodeText.ToString());
+                            QuickSynthCurrent = Convert.ToInt32(currentTextNode->NodeText.ToString());
                             QuickSynthMax = Convert.ToInt32(maxTextNode->NodeText.ToString());
                         }
                         catch
@@ -224,7 +224,7 @@ namespace AlphaProject.Craft
                 }
                 else
                 {
-                    //QuickSynthCurrent = 0;
+                    QuickSynthCurrent = 0;
                     QuickSynthMax = 0;
                 }
 

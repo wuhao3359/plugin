@@ -18,6 +18,8 @@ namespace AlphaProject
 
         public string ExchangeItem { get; set; } = "";
 
+        public bool QuickSynth { get; set; } = false;
+
         // 任务状态 1-进行任务 2-暂停任务
         public int state { get; set; } = 1;
 
