@@ -214,12 +214,13 @@ public static partial class Fish
 
     internal static void Apply(GameData data)
     {
-        data.ApplyARealmReborn();
-        data.ApplyARealmAwoken();
-        data.ApplyThroughTheMaelstrom();
-        data.ApplyDefendersOfEorzea();
-        data.ApplyDreamsOfIce();
-        data.ApplyBeforeTheFall();
+        // v2.0
+        //data.ApplyARealmReborn();
+        //data.ApplyARealmAwoken();
+        //data.ApplyThroughTheMaelstrom();
+        //data.ApplyDefendersOfEorzea();
+        //data.ApplyDreamsOfIce();
+        //data.ApplyBeforeTheFall();
         data.ApplyHeavensward();
         data.ApplyAsGoesLightSoGoesDarkness();
         data.ApplyRevengeOfTheHorde();
@@ -231,12 +232,13 @@ public static partial class Fish
         data.ApplyUnderTheMoonlight();
         data.ApplyPreludeInViolet();
         data.ApplyARequiemForHeroes();
-        data.ApplyShadowbringers();
-        data.ApplyVowsOfVirtueDeedsOfCruelty();
-        data.ApplyEchoesOfAFallenStar();
-        data.ApplyReflectionsInCrystal();
-        data.ApplyFuturesRewritten();
-        data.ApplyDeathUntoDawn();
+        // v5.0
+        //data.ApplyShadowbringers();
+        //data.ApplyVowsOfVirtueDeedsOfCruelty();
+        //data.ApplyEchoesOfAFallenStar();
+        //data.ApplyReflectionsInCrystal();
+        //data.ApplyFuturesRewritten();
+        //data.ApplyDeathUntoDawn();
         data.ApplyEndwalker();
         data.ApplyNewfoundAdventure();
         data.ApplyBuriedMemory();
