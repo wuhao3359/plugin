@@ -20,9 +20,9 @@ namespace AlphaProject.Bot
     public class CollectionFishBot
     {
 
-        private static SeTugType TugType { get; set; } = null!;
+        //private static SeTugType TugType { get; set; } = null!;
 
-        private FishRecord Record;
+        //private FishRecord Record;
 
         private FishingState LastState = FishingState.None;
         private FishingState FishingState = FishingState.None;
@@ -39,8 +39,8 @@ namespace AlphaProject.Bot
 
         public CollectionFishBot()
         {
-            TugType = new SeTugType(DalamudApi.SigScanner);
-            Record = new FishRecord();
+            //TugType = new SeTugType(DalamudApi.SigScanner);
+            //Record = new FishRecord();
         }
 
         public void Init()
@@ -645,13 +645,13 @@ namespace AlphaProject.Bot
 
         private void OnCollectionFishBite()
         {
-            Record.SetTugHook(TugType.Bite, Record.Hook);
+            //Record.SetTugHook(TugType.Bite, Record.Hook);
             Task task = new(() =>
             {
-                PluginLog.Log($"CFish bit with {Record.Tug} fish time: {fishsw.ElapsedMilliseconds / 1000}");
+                PluginLog.Log($"CFish bit with {AlphaProject.GameData.TugType.Bite} fish time: {fishsw.ElapsedMilliseconds / 1000}");
                 if (fishsw.ElapsedMilliseconds / 1000 >= fishTime)
                 {
-                    switch (Record.Tug.ToString())
+                    switch (AlphaProject.GameData.TugType.Bite.ToString())
                     {
                         case "Weak":
                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
