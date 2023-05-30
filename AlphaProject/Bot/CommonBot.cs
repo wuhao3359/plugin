@@ -22,6 +22,9 @@ namespace AlphaProject.Bot
         // 捕鱼嘉惠
         private static bool useNaturesBounty { get; set; }
 
+        // 刺鱼
+        private static bool useGig { get; set; }
+
         public CommonBot()
         {
             Init();
@@ -793,8 +796,15 @@ namespace AlphaProject.Bot
             int n = 0;
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
-                Thread.Sleep(1000 + new Random().Next(200, 500));
-                if (n < 8) {
+                Thread.Sleep(20);
+
+                if (useGig)
+                {
+                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
+                    Thread.Sleep(new Random().Next(100, 200));
+                }
+
+                if (n < 400) {
                     if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
@@ -824,6 +834,11 @@ namespace AlphaProject.Bot
 
         public void canUseNaturesBounty(bool b) {
             useNaturesBounty = b;
+        }
+
+        public void canUseGig(bool b)
+        {
+            useGig = b;
         }
     }
 }

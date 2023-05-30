@@ -14,9 +14,9 @@ namespace AlphaProject.Bot
 {
     public class HFishBot
     {
-        private static SeTugType TugType { get; set; } = null!;
+        //private static SeTugType TugType { get; set; } = null!;
 
-        private FishRecord Record;
+        //private FishRecord Record;
 
         private FishingState LastState = FishingState.None;
         private FishingState FishingState = FishingState.None;
@@ -24,8 +24,8 @@ namespace AlphaProject.Bot
 
         public HFishBot()
         {
-            TugType = new SeTugType(DalamudApi.SigScanner);
-            Record = new FishRecord();
+            //TugType = new SeTugType(DalamudApi.SigScanner);
+            //Record = new FishRecord();
         }
 
         public void StopScript() {
@@ -91,11 +91,11 @@ namespace AlphaProject.Bot
 
         private void OnHFishBite()
         {
-            Record.SetTugHook(TugType.Bite, Record.Hook);
+            //Record.SetTugHook(TugType.Bite, Record.Hook);
             Task task = new(() =>
             {
-                PluginLog.Log($"HFish bit with {Record.Tug}");
-                switch (Record.Tug.ToString())
+                PluginLog.Log($"HFish bit with {AlphaProject.GameData.TugType.Bite}");
+                switch (AlphaProject.GameData.TugType.Bite.ToString())
                 {
                     case "Weak":
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
