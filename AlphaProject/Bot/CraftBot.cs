@@ -4,7 +4,6 @@ using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
 using AlphaProject.Data;
 using AlphaProject.Managers;
 using AlphaProject.Ui;
@@ -14,7 +13,7 @@ using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
-    public class CraftBot
+    internal class CraftBot
     {
         private static bool closed = false;
 
@@ -126,150 +125,138 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void RunCraftScriptByName()
+        public unsafe void RunCraftScriptByName()
         {
             int error = 0;
-            int i = 0;
+            int craftX = 0;
             uint recipeId = RecipeNoteUi.SearchRecipeId(AlphaProject.Configuration.RecipeName);
             PluginLog.Log($"---> {AlphaProject.Configuration.RecipeName}, {recipeId}");
+            if (recipeId == 0) {
+                PluginLog.Error($"not found recipe...");
+                return;
+            }
             while (!closed)
             {
-                Thread.Sleep(new Random().Next(1500, 2000));
-                if (closed)
+                Thread.Sleep(new Random().Next(1200, 2100));
+
+                if (BagManager.InventoryRemaining() <= 5)
                 {
-                    PluginLog.Log($"craft stopping");
+                    PluginLog.Log("背包容量不足...");
+                    closed = true;
                     return;
                 }
 
-                if (BagManager.InventoryRemaining() > 5)
+                if (CraftHelper.CheckForRecipeIngredients(recipeId, out List<uint> lackItems)) {
+                    if (lackItems.Count > 0) {
+                        PluginLog.Warning("原材料不足...");
+                        AlphaProject.AP.TM.AddTask(lackItems);
+                    }
+                }
+
+                if (!CraftHelper.RecipeNoteWindowOpen() && !CraftHelper.SynthesisWindowOpen())
+                    {
+                    if (!DalamudApi.Condition[ConditionFlag.Crafting])
+                    {
+                        RecipeNoteUi.OpenRecipeNote(recipeId);
+                        Thread.Sleep(new Random().Next(1200, 2000));
+                    }
+                }
+
+                if (CraftHelper.RecipeNoteWindowOpen())
                 {
-                    if (!RecipeNoteUi.RecipeNoteIsOpen() && !RecipeNoteUi.SynthesisIsOpen())
+                    // TODO choose
+                    RecipeNoteUi.SynthesizeButton();
+                    if (error > 3) {
+                        closed = true;
+                        PluginLog.Log($"停止 error: {error}");
+                    }
+                    Thread.Sleep(new Random().Next(1800, 2500));
+                }
+
+                if (RecipeNoteUi.SynthesisIsOpen())
+                {
+                    error = 0;
+                    int n = 0;
+                    while (RecipeNoteUi.SynthesisIsOpen())
                     {
-                        if (!DalamudApi.Condition[ConditionFlag.Crafting]) {
-                            //if (needHQ)
-                            //{
-                            //    recipeId = RecipeNoteUi.SearchRecipeId(AlphaProject.Configuration.RecipeName);
-                            //    PluginLog.Log($"<=======> {AlphaProject.Configuration.RecipeName}, {recipeId}");
-                            //    Thread.Sleep(1000);
-                            //}
-                            RecipeNoteUi.OpenRecipeNote(recipeId);
-                        }
                         Thread.Sleep(new Random().Next(1000, 1200));
-                    }
-
-                    if (RecipeNoteUi.RecipeNoteIsOpen())
-                    {
-                        //if (needHQ) {
-                        //    RecipeNoteUi.Material1HqButton();
-                        //    Thread.Sleep(800);
-                        //    needHQ = false;
-                        //}
-                        RecipeNoteUi.SynthesizeButton();
-                        if (error > 3) {
-                            closed = true;
-                            PluginLog.Log($"停止 error: {error}");
-                        }
-                        Thread.Sleep(new Random().Next(1800, 2500));
-                    }
-
-                    if (RecipeNoteUi.SynthesisIsOpen())
-                    {
-                        error = 0;
-                        int n = 0;
-                        while (RecipeNoteUi.SynthesisIsOpen())
+                        if (closed)
                         {
-                            Thread.Sleep(new Random().Next(1000, 1200));
-                            if (closed)
-                            {
-                                PluginLog.Log($"craft stopping");
-                                return;
-                            }
-                            n++;
-                            if (n > 60)
-                            {
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.e_key);
-                                Thread.Sleep(2000);
-                            }
+                            PluginLog.Log($"craft stopping");
+                            return;
                         }
-                        PluginLog.Log($"Finish: {i} Item: {AlphaProject.Configuration.RecipeName}, {recipeId}");
-                        i++;
-                    }
-                    else {
-                        error++;
-                    }
-                    Thread.Sleep(new Random().Next(500, 800));
-
-                    // 修理装备
-                    if (CommonUi.NeedsRepair())
-                    {
-                        PluginLog.Log($"开始修理装备");
-                        if (RecipeNoteUi.RecipeNoteIsOpen()) {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                            Thread.Sleep(1500);
-                        }
-                        AlphaProject.GameData.param.TryGetValue("repair", out var rep);
-                        PluginLog.Log($"修理装备配置: {rep}");
-                        if (rep == "1")
+                        n++;
+                        if (n > 60)
                         {
-                            if (AlphaProject.GameData.param.TryGetValue("type", out var t) && t == "2") {
-                                AlphaProject.GameData.CommonBot.MovePositions(Positions.RepairNPCA, false);
-                            }
-                            AlphaProject.GameData.CommonBot.NpcRepair("阿里斯特尔");
-                        }
-                        else if (rep == "99")
-                        {
-                            AlphaProject.GameData.CommonBot.Repair();
-                        }
-                        else if (rep == "100")
-                        {
-                            AlphaProject.GameData.CommonBot.NpcRepair("修理工");
+                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.e_key);
+                            Thread.Sleep(2000);
                         }
                     }
-
-                    // 魔晶石精制
-                    int em = CommonUi.CanExtractMateria();
-                    if (em > 2) {
-                        AlphaProject.GameData.CommonBot.ExtractMateria(em);
-                    }
-
-                    if (BagManager.InventoryRemaining() <= 5)
-                    {
-                        if (RecipeNoteUi.RecipeNoteIsOpen())
-                        {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                            Thread.Sleep(new Random().Next(900, 1200));
-                        }
-                        Thread.Sleep(new Random().Next(900, 1200));
-                        // 上交收藏品和交换道具
-                        //if (AlphaProject.Configuration.CraftType == 2) {
-                        //    if (!AlphaProject.GameData.CommonBot.CraftUploadAndExchange())
-                        //    {
-                        //        PluginLog.Log($"params error... plz check");
-                        //        return;
-                        //    }
-                        //    else
-                        //    {
-                        //        PluginLog.Log($"CraftUploadAndExchange End.");
-                        //    }
-                        //}
-                        // 上交重建品和交换道具 TODO
-                    }
-                    Thread.Sleep(new Random().Next(900, 1200));
+                    PluginLog.Log($"Finish: {craftX} Item: {AlphaProject.Configuration.RecipeName}, {recipeId}");
+                    craftX++;
                 }
                 else {
-                    //// 尝试重试一次
-                    //if (AlphaProject.GameData.param.TryGetValue("type", out var t))
-                    //{
-                    //    if (t == "2")
-                    //    {
-                    //        AlphaProject.GameData.CommonBot.CraftUploadAndExchange();
-                    //    }
-                    //}
-                    if (BagManager.InventoryRemaining() <= 5) {
-                        PluginLog.Log($"背包容量不足, 任务停止...");
-                        closed = true;
+                    error++;
+                }
+                Thread.Sleep(new Random().Next(500, 800));
+
+                // 修理装备
+                if (CommonUi.NeedsRepair())
+                {
+                    PluginLog.Log($"开始修理装备");
+                    if (RecipeNoteUi.RecipeNoteIsOpen()) {
+                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        Thread.Sleep(1500);
+                    }
+                    AlphaProject.GameData.param.TryGetValue("repair", out var rep);
+                    PluginLog.Log($"修理装备配置: {rep}");
+                    if (rep == "1")
+                    {
+                        if (AlphaProject.GameData.param.TryGetValue("type", out var t) && t == "2") {
+                            AlphaProject.GameData.CommonBot.MovePositions(Positions.RepairNPCA, false);
+                        }
+                        AlphaProject.GameData.CommonBot.NpcRepair("阿里斯特尔");
+                    }
+                    else if (rep == "99")
+                    {
+                        AlphaProject.GameData.CommonBot.Repair();
+                    }
+                    else if (rep == "100")
+                    {
+                        AlphaProject.GameData.CommonBot.NpcRepair("修理工");
                     }
                 }
+
+                // 魔晶石精制
+                int em = CommonUi.CanExtractMateria();
+                if (em > 2) {
+                    AlphaProject.GameData.CommonBot.ExtractMateria(em);
+                }
+
+                if (BagManager.InventoryRemaining() <= 5)
+                {
+                    if (RecipeNoteUi.RecipeNoteIsOpen())
+                    {
+                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        Thread.Sleep(new Random().Next(900, 1200));
+                    }
+                    Thread.Sleep(new Random().Next(900, 1200));
+                    // 上交收藏品和交换道具
+                    //if (AlphaProject.Configuration.CraftType == 2) {
+                    //    if (!AlphaProject.GameData.CommonBot.CraftUploadAndExchange())
+                    //    {
+                    //        PluginLog.Log($"params error... plz check");
+                    //        return;
+                    //    }
+                    //    else
+                    //    {
+                    //        PluginLog.Log($"CraftUploadAndExchange End.");
+                    //    }
+                    //}
+                    // 上交重建品和交换道具 TODO
+                }
+                Thread.Sleep(new Random().Next(900, 1200));
+
             }
         }
 

@@ -110,7 +110,7 @@ namespace AlphaProject.Bot
                     return;
                 }
 
-                if (CraftHelper.RecipeWindowOpen())
+                if (CraftHelper.RecipeNoteWindowOpen())
                 {
                     if (AlphaProject.Debug) PluginLog.Verbose("Addon visible");
                     if (Tasks.Count == 0)

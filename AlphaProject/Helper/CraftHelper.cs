@@ -23,9 +23,14 @@ namespace AlphaProject.Helper
             .ThenBy(x => x.ItemResult.Value.Name.RawString)
             .ToDictionary(x => x.RowId, x => x);
 
-        public unsafe static bool RecipeWindowOpen()
+        public unsafe static bool RecipeNoteWindowOpen()
         {
             return GenericHelper.TryGetAddonByName<AddonRecipeNote>("RecipeNote", out var addon) && addon->AtkUnitBase.IsVisible;
+        }
+
+        public unsafe static bool SynthesisWindowOpen()
+        {
+            return GenericHelper.TryGetAddonByName<AddonRecipeNote>("Synthesis", out var addon) && addon->AtkUnitBase.IsVisible;
         }
 
         public unsafe static void CloseCraftingMenu()
@@ -42,15 +47,6 @@ namespace AlphaProject.Helper
                     AgentRecipeNote.Instance()->OpenRecipeByRecipeIdInternal(recipeID);
                 }
             }
-        }
-
-        // 原材料是否足够
-        public static bool HasItemsForRecipe(uint currentProcessedItem)
-        {
-            if (currentProcessedItem == 0) return false;
-            var recipe = FilteredList[currentProcessedItem];
-            if (recipe.RowId == 0) return false;
-            return CheckForIngredients(recipe, false);
         }
 
         // 设置物品数量
@@ -101,8 +97,15 @@ namespace AlphaProject.Helper
             }
         }
 
-        public unsafe static bool CheckForIngredients(Recipe recipe, bool fetchFromCache = true)
+        public unsafe static bool CheckForRecipeIngredients(uint recipeId, out List<uint> lackItems, bool fetchFromCache = true)
         {
+            bool res = true;
+            lackItems = new();
+
+            if (recipeId == 0) return false;
+            var recipe = FilteredList[recipeId];
+            if (recipe.RowId == 0) return false;
+
             if (fetchFromCache)
                 if (CraftableItems.TryGetValue(recipe, out bool canCraft)) return canCraft;
 
@@ -119,7 +122,8 @@ namespace AlphaProject.Helper
                         invNumberNQ = null;
 
                         CraftableItems[recipe] = false;
-                        return false;
+                        res = false;
+                        lackItems.Add((uint)value.ItemIngredient);
                     }
 
                     invNumberHQ = null;
@@ -131,7 +135,7 @@ namespace AlphaProject.Helper
             }
 
             CraftableItems[recipe] = true;
-            return true;
+            return res;
         }
     }
 }

@@ -14,124 +14,129 @@ using AlphaProject.Time;
 using AlphaProject.Utility;
 using AlphaProject.Craft;
 
-namespace AlphaProject
+namespace AlphaProject;
+public unsafe class AlphaProject : IDalamudPlugin
 {
-    public sealed class AlphaProject : IDalamudPlugin
+    public string Name => "AlphaProject";
+
+    internal static AlphaProject AP;
+
+    internal TaskManager TM;
+
+    public static SeTime Time { get; private set; }
+    private PluginUI PluginUi { get; init; }
+    public static GameData GameData { get; private set; }
+    internal MarketEventHandler MarketEventHandler { get; private set; }
+
+    internal AutoCraft AutoCraft { get; private set; }
+
+    public static Configuration Configuration { get; private set; }
+
+    public static Executor Executor;
+    public static bool newRequest;
+    //public static GetFilePointer getFilePtr;
+    public static List<MarketBoardCurrentOfferings> _cache = new();
+    public static Lumina.Excel.ExcelSheet<Item> items;
+
+
+    public static string beforePrice = "";
+    public static bool getPriceSucceed = false;
+
+    public static string status = "";
+
+    public static bool Debug = true;
+
+    public static WindowSystem WindowSystem;
+
+    public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
     {
-        public string Name => "AlphaProject";
+        DalamudApi.Initialize(pluginInterface);
 
-        public static SeTime Time { get; private set; }
-        private PluginUI PluginUi { get; init; }
-        public static GameData GameData { get; private set; }
-        internal MarketEventHandler MarketEventHandler { get; private set; }
+        Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+        Configuration.Initialize(DalamudApi.PluginInterface);
 
-        internal AutoCraft AutoCraft { get; private set; }
+        Click.Initialize();
+        //newRequest = false;
+        //MarketEventHandler = new MarketEventHandler();
+        //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+        DalamudApi.ClientState.Login += OnLoginEvent;
+        DalamudApi.ClientState.Logout += OnLogoutEvent;
 
-        public static Configuration Configuration { get; private set; }
-
-        public static Executor Executor;
-        public static bool newRequest;
-        //public static GetFilePointer getFilePtr;
-        public static List<MarketBoardCurrentOfferings> _cache = new();
-        public static Lumina.Excel.ExcelSheet<Item> items;
-
-
-        public static string beforePrice = "";
-        public static bool getPriceSucceed = false;
-
-        public static string status = "";
-
-        public static bool Debug = true;
-
-        public static WindowSystem WindowSystem;
-
-        public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
+        try
         {
-            DalamudApi.Initialize(pluginInterface);
+            GameData = new GameData(DalamudApi.DataManager);
+            AutoCraft = new AutoCraft();
+            //items = GameData.DataManager.GetExcelSheet<Item>();
+            Time = new SeTime();
+            Executor = new Executor();
 
-            Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            Configuration.Initialize(DalamudApi.PluginInterface);
+            WindowSystem = new WindowSystem(Name);
+            WindowSystem.AddWindow(new SpearfishingHelper(GameData));
 
-            Click.Initialize();
-            //newRequest = false;
-            //MarketEventHandler = new MarketEventHandler();
-            //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
-            DalamudApi.ClientState.Login += OnLoginEvent;
-            DalamudApi.ClientState.Logout += OnLogoutEvent;
+            PluginUi = new(Configuration);
 
-            try
-            {
-                GameData = new GameData(DalamudApi.DataManager);
-                AutoCraft = new AutoCraft();
-                //items = GameData.DataManager.GetExcelSheet<Item>();
-                Time = new SeTime();
-                Executor = new Executor();
+            DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
+            DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
+            //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
-                WindowSystem = new WindowSystem(Name);
-                WindowSystem.AddWindow(new SpearfishingHelper(GameData));
-
-                PluginUi = new(Configuration);
-
-                DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
-                DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
-                //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
-            }
-            catch (Exception e)
-            {
-                PluginLog.Error($"Failed loading AlphaProject\n{e}");
-            }
+            TM = new();
+            AP = this;
         }
-
-        //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        //public delegate IntPtr GetFilePointer(byte index);
-
-        public void Dispose()
+        catch (Exception e)
         {
-            PluginUi.Dispose();
-            //MarketEventHandler.Dispose();
-            //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
-            DalamudApi.ClientState.Login -= OnLoginEvent;
-            DalamudApi.ClientState.Logout -= OnLogoutEvent;
-            //MarketCommons.Dispose();
-
-            AutoCraft.Dispose();
-            if (WindowSystem != null)
-                DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
-            WindowSystem?.RemoveAllWindows();
+            PluginLog.Error($"Failed loading AlphaProject\n{e}");
         }
+    }
 
-        private void DrawUI()
-        {
-            PluginUi.Draw();
-        }
+    //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+    //public delegate IntPtr GetFilePointer(byte index);
 
-        private void DrawConfigUI()
-        {
-            PluginUi.SettingsVisible = true;
-        }
+    public void Dispose()
+    {
+        PluginUi.Dispose();
+        //MarketEventHandler.Dispose();
+        //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+        DalamudApi.ClientState.Login -= OnLoginEvent;
+        DalamudApi.ClientState.Logout -= OnLogoutEvent;
+        //MarketCommons.Dispose();
 
-        private void OnLoginEvent(object? sender, EventArgs e)
-        {
-            PluginLog.Log($"=====>>> login...");
-            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-        }
+        AutoCraft.Dispose();
+        if (WindowSystem != null)
+            DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
+        WindowSystem?.RemoveAllWindows();
+    }
 
-        private void OnLogoutEvent(object? sender, EventArgs e)
-        {
-            PluginLog.Log($"=====>>> logout... stop all");
-            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-            GameData.CommonBot.StopScript();
-            GameData.MarketBot.StopScript();
-            GameData.DailyBot.StopScript();
-            GameData.CraftBot.StopScript();
-            GameData.GatherBot.StopScript();
-            GameData.FishBot.StopScript();
-            GameData.HFishBot.StopScript();
-            GameData.CollectionFishBot.StopScript();
-        }
+    private void DrawUI()
+    {
+        PluginUi.Draw();
+    }
 
-        private void AutoKillGame(object sender, ElapsedEventArgs e) {
-            PluginLog.LogError("too long for running, kill game");
-        }
+    private void DrawConfigUI()
+    {
+        PluginUi.SettingsVisible = true;
+    }
+
+    private void OnLoginEvent(object? sender, EventArgs e)
+    {
+        PluginLog.Log($"=====>>> login...");
+        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+    }
+
+    private void OnLogoutEvent(object? sender, EventArgs e)
+    {
+        PluginLog.Log($"=====>>> logout... stop all");
+        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        GameData.CommonBot.StopScript();
+        GameData.MarketBot.StopScript();
+        GameData.DailyBot.StopScript();
+        GameData.CraftBot.StopScript();
+        GameData.GatherBot.StopScript();
+        GameData.FishBot.StopScript();
+        GameData.HFishBot.StopScript();
+        GameData.CollectionFishBot.StopScript();
+    }
+
+    private void AutoKillGame(object sender, ElapsedEventArgs e) {
+        PluginLog.LogError("too long for running, kill game");
     }
 }

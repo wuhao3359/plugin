@@ -6,7 +6,7 @@
 		GatherBuddy		钓鱼	
 		MarketBuddy		自动修改价格
 		AutoRetainer	自动上架物品
-		Artisan			生产求解器	 Artisan.RawInformation.CharacterInfo
+		Artisan			生产求解器	 Artisan.RawInformation.CharacterInfo ActionWatching
 
 8/9
 *  测试移动脚本[√]
@@ -115,4 +115,28 @@
 	钛铁矿		大量需求
 
 2/24
-1. 网络断线重连
+1. 网络断线重连	[x]
+
+5/29
+1. 生产求解器 [√]
+2. UI
+3. 根据求解器重构生产 
+	要求:	普通制作 
+				自动进行生产	[√]
+				自动精炼		[√]
+				自动修理		[√]
+				缺少原材料自动采集
+					兑换原材料
+						白票	[√]
+						紫票	[√]
+						神典石	[x]
+					普通材料(直接采集)	[√]
+					特殊材料
+						限时材料 
+						灵砂			[√]
+					水晶
+						采集(效率低)	[√]
+						市场板购买
+			快速制作
+
+	
