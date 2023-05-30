@@ -7,6 +7,9 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using AlphaProject;
 using AlphaProject.Utility;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using static OtterGui.Widgets.Tutorial;
 
 public class KeyOperates
 {
@@ -14,6 +17,8 @@ public class KeyOperates
     private IntPtr hwnd;
 
     private bool closed = false;
+
+    public Dictionary<Byte, DateTime> keyTimes = new();
 
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -309,12 +314,22 @@ public class KeyOperates
 
     public void KeyDown(Byte key)
     {
+        keyTimes.TryAdd(key, DateTime.Now);
         SendMessage(hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
     }
 
     public void KeyUp(Byte key)
     {
-        SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+        if (keyTimes.TryGetValue(key, out DateTime start)) {
+            DateTime endTime = DateTime.Now;
+            TimeSpan interval = endTime.Subtract(start);
+            double milliseconds = interval.TotalMilliseconds;
+            int sleep = 80 + new Random().Next(20, 80);
+            if (milliseconds >= sleep)
+            {
+                SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+            }
+        }
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
