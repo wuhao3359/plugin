@@ -9,6 +9,7 @@ using AlphaProject.Utility;
 using System;
 using System.Threading;
 using Dalamud.Logging;
+using Serilog;
 
 namespace AlphaProject.Spearfishing;
 
@@ -43,7 +44,6 @@ public partial class SpearfishingHelper : Window
             return;
         }
 
-        AlphaProject.GameData.CommonBot.canUseGig(false);
         AlphaProject.GameData.CommonBot.canUseNaturesBounty(true);
 
         var text = Identify(spot, info);
@@ -57,7 +57,7 @@ public partial class SpearfishingHelper : Window
             double x2 = size.X * 0.75;
             if (idx == 5)
             {   // 第三行
-                float r = new Random().Next(5, 10) / 100;
+                float r = new Random().Next(5, 8) / 100;
                 x1 = size.X * (0.7 + r);
                 x2 = size.X * (0.55 + r);
             }
@@ -69,7 +69,7 @@ public partial class SpearfishingHelper : Window
             }
             else if (idx == 1)
             {   // 第一行
-                float r = new Random().Next(5, 15) / 100;
+                float r = new Random().Next(7, 15) / 100;
                 x1 = size.X * (0.9 + r);
                 x2 = size.X * (0.75 + r);
             }

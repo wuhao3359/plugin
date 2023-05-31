@@ -518,14 +518,17 @@ namespace AlphaProject.Bot
                                     while (!CommonUi.AddonSpearFishingIsOpen() && tt < 7)
                                     {
                                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                                        if (tt == 3 || tt == 4)
+                                        if (tt == 3 || tt == 4 || tt == 4)
                                         {
                                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key);
                                         }
-                                        Thread.Sleep(500 + new Random().Next(300, 800));
+                                        Thread.Sleep(500 + new Random().Next(500, 800));
                                         tt++;
-                                        if (tt >= 5) {
-                                            AlphaProject.GameData.KeyOperates.AdjustHeight(GatherPoint);
+                                        if (tt >= 6) {
+                                            Thread.Sleep(1000 + new Random().Next(500, 1000));
+                                            if (!CommonUi.AddonSpearFishingIsOpen()) {
+                                                AlphaProject.GameData.KeyOperates.AdjustHeight(GatherPoint);
+                                            }
                                         }
                                     }
                                     if (tt >= 7)

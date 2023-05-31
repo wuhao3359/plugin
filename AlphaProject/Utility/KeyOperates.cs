@@ -100,7 +100,7 @@ public class KeyOperates
                     KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 2)
+            else if (height > 5)
             {
                 if (DalamudApi.KeyState[Keys.space_key])
                 {
@@ -293,10 +293,10 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 80 + new Random().Next(20, 150);
+            sleep = 80 + new Random().Next(30, 140);
         }
         else {
-            sleep += new Random().Next(50, 120);
+            sleep += new Random().Next(60, 120);
         }
 
         if (sleep == 0) {
