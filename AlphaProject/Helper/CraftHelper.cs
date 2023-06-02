@@ -8,6 +8,8 @@ using System.Linq;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI;
+using Dalamud.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace AlphaProject.Helper
 {
@@ -115,7 +117,6 @@ namespace AlphaProject.Helper
                 {
                     int? invNumberNQ = invManager->GetInventoryItemCount((uint)value.ItemIngredient);
                     int? invNumberHQ = invManager->GetInventoryItemCount((uint)value.ItemIngredient, true);
-
                     if (value.AmountIngredient > invNumberNQ + invNumberHQ)
                     {
                         invNumberHQ = null;
@@ -133,8 +134,6 @@ namespace AlphaProject.Helper
                 {
                 }
             }
-
-            CraftableItems[recipe] = true;
             return res;
         }
     }

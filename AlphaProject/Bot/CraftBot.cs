@@ -59,6 +59,7 @@ namespace AlphaProject.Bot
 
                 int craftX = 0;
                 while (!closed) {
+                    Thread.Sleep(new Random().Next(900, 1200));
                     // 修理 TODO 重构
                     if (CommonUi.NeedsRepair())
                     {
@@ -102,8 +103,13 @@ namespace AlphaProject.Bot
                         break;
                     }
                     // 原材料检查
-                    if (CraftHelper.CheckForRecipeIngredients(recipe.RowId, out List<uint> lackItems) && lackItems.Count > 0)
-                    {
+                    if (!CraftHelper.CheckForRecipeIngredients(recipe.RowId, out List<uint> lackItems, false) && lackItems.Count > 0) {
+
+                        if (!AlphaProject.Configuration.AutoGather)
+                        {
+                            PluginLog.Error($"原材料不足 未配置自动采集...");
+                            break;
+                        }
                         if (AlphaProject.AP.TM.TaskList.Count == 0)
                         {
                             PluginLog.Warning("原材料不足...");
@@ -112,7 +118,7 @@ namespace AlphaProject.Bot
                         }
                         else {
                             PluginLog.Error($"当前任务因缺少原材料结束...num: {lackItems.Count}");
-                            return;
+                            break;
                         }
                     }
 

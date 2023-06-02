@@ -12,10 +12,11 @@ using AlphaProject.Ui;
 using AlphaProject.UseAction;
 using AlphaProject.Utility;
 using Npc = AlphaProject.Data.Npc;
+using FFXIVClientStructs.FFXIV.Component.GUI;
 
 namespace AlphaProject.Bot
 {
-    public class CommonBot
+    public unsafe class CommonBot
     {
         private bool closed = false;
 
@@ -175,7 +176,7 @@ namespace AlphaProject.Bot
         }
 
         // 精制
-        public bool ExtractMateria(int count)
+        public unsafe bool ExtractMateria(int count)
         {
             if (count < 2)
             {
@@ -214,25 +215,29 @@ namespace AlphaProject.Bot
             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1500 + new Random().Next(100, 200));
             for (int i = 0; i < count; i++) {
-                if (!CommonUi.AddonMaterializeDialogIsOpen())
+                if (!GenericHelper.TryGetAddonByName<AtkUnitBase>("Materialize", out var addon) || !addon->IsVisible)
                 {
                     return true;
                 }
 
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000 + new Random().Next(100, 200));
-                if (CommonUi.AddonMaterializeDialogIsOpen()) {
+                if (GenericHelper.TryGetAddonByName<AtkUnitBase>("MaterializeDialog", out addon) && addon->IsVisible) {
                     CommonUi.SelectMaterializeDialogYesButton();
                     Thread.Sleep(3000 + new Random().Next(100, 200));
                 }
                 Thread.Sleep(500 + new Random().Next(100, 200));
             }
 
-            if (CommonUi.AddonMaterializeDialogIsOpen()) {
+            if (GenericHelper.TryGetAddonByName<AtkUnitBase>("MaterializeDialog", out var materializeDialog) && materializeDialog->IsVisible) {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
             }
 
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            if (GenericHelper.TryGetAddonByName<AtkUnitBase>("Materialize", out var materialize) && materialize->IsVisible)
+            {
+                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            }
+
             Thread.Sleep(500 + new Random().Next(100, 200));
             return true;
         }

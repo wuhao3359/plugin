@@ -234,36 +234,23 @@ namespace AlphaProject
             ImGui.SetNextWindowSize(new Vector2(250, 200), ImGuiCond.FirstUseEver);
             ImGui.SetNextWindowSizeConstraints(new Vector2(200, 200), new Vector2(float.MaxValue, float.MaxValue));
             if (ImGui.Begin("Settings", ref this.settingsVisible)) {
-                string[] options = ImGuiSettings.CraftTypeOptions;
-                float maxWidth = 0f;
-                for (int i = 0; i < options.Length; i++)
-                {
-                    Vector2 textSize = ImGui.CalcTextSize(options[i]);
-                    if (textSize.X > maxWidth)
-                    {
-                        maxWidth = textSize.X;
-                    }
-                }
-
-                ImGui.Text("Craft: ");
+                ImGui.Text("AutoGather: ");
                 ImGui.SameLine();
-                ImGui.SetNextItemWidth(maxWidth * 1.8f);
-                if (ImGui.Combo("##CraftType", ref craftSelectedOption, options, options.Length))
+                bool isChecked = configuration.AutoGather;
+                if (ImGui.Checkbox("##AutoGather", ref isChecked))
                 {
-                    switch (craftSelectedOption)
+                    if (isChecked)
                     {
-                        case 0:
-                            configuration.CraftType = 1;
-                            break;
-                        case 1:
-                            configuration.CraftType = 2;
-                            break;
-                        default:
-                            break;
+                        configuration.AutoGather = true;
+                    }
+                    else {
+                        configuration.AutoGather = false;
                     }
                 }
             }
 
+            ImGui.Text("MaxQuality: ");
+            ImGui.SameLine();
             int maxQuality = configuration.MaxPercentage;
             if (ImGui.SliderInt("##SliderMaxQuality", ref maxQuality, 0, 100, $"%d%%"))
             {

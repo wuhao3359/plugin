@@ -324,7 +324,7 @@ public class KeyOperates
             DateTime endTime = DateTime.Now;
             TimeSpan interval = endTime.Subtract(start);
             double milliseconds = interval.TotalMilliseconds;
-            int sleep = 80 + new Random().Next(20, 80);
+            int sleep = 80 + new Random().Next(20, 50);
             if (milliseconds >= sleep)
             {
                 SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);

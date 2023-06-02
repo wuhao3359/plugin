@@ -12,6 +12,8 @@ namespace AlphaProject
         // 制作类型 1-根据名称普通制作 2-根据名称快速制作
         public int CraftType { get; set; } = 1;
 
+        public bool AutoGather { get; set; } = false;
+
         public int MaxPercentage { get; set; } = 100;
 
         public string RecipeName { get; set; } = "";
