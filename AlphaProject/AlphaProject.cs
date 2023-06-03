@@ -56,12 +56,14 @@ public unsafe class AlphaProject : IDalamudPlugin
         Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(DalamudApi.PluginInterface);
 
-        Click.Initialize();
-        //newRequest = false;
-        //MarketEventHandler = new MarketEventHandler();
-        //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
-        DalamudApi.ClientState.Login += OnLoginEvent;
-        DalamudApi.ClientState.Logout += OnLogoutEvent;
+            //Commands.InitializeCommands();
+            //Configuration.Initialize(DalamudApi.PluginInterface);
+            Click.Initialize();
+            newRequest = false;
+            MarketEventHandler = new MarketEventHandler();
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login += OnLoginEvent;
+            DalamudApi.ClientState.Logout += OnLogoutEvent;
 
         try
         {
@@ -92,14 +94,14 @@ public unsafe class AlphaProject : IDalamudPlugin
     //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     //public delegate IntPtr GetFilePointer(byte index);
 
-    public void Dispose()
-    {
-        PluginUi.Dispose();
-        //MarketEventHandler.Dispose();
-        //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
-        DalamudApi.ClientState.Login -= OnLoginEvent;
-        DalamudApi.ClientState.Logout -= OnLogoutEvent;
-        //MarketCommons.Dispose();
+        public void Dispose()
+        {
+            PluginUi.Dispose();
+            MarketEventHandler.Dispose();
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            DalamudApi.ClientState.Login -= OnLoginEvent;
+            DalamudApi.ClientState.Logout -= OnLogoutEvent;
+            //MarketCommons.Dispose();
 
         AutoCraft.Dispose();
         if (WindowSystem != null)
@@ -117,25 +119,28 @@ public unsafe class AlphaProject : IDalamudPlugin
         PluginUi.SettingsVisible = true;
     }
 
-    private void OnLoginEvent(object? sender, EventArgs e)
-    {
-        PluginLog.Log($"=====>>> login...");
-        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-    }
+        private void OnLoginEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> login...");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+        }
 
-    private void OnLogoutEvent(object? sender, EventArgs e)
-    {
-        PluginLog.Log($"=====>>> logout... stop all");
-        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-        GameData.CommonBot.StopScript();
-        GameData.MarketBot.StopScript();
-        GameData.DailyBot.StopScript();
-        GameData.CraftBot.StopScript();
-        GameData.GatherBot.StopScript();
-        GameData.FishBot.StopScript();
-        GameData.HFishBot.StopScript();
-        GameData.CollectionFishBot.StopScript();
-    }
+        private void OnLogoutEvent(object? sender, EventArgs e)
+        {
+            PluginLog.Log($"=====>>> logout... stop all");
+            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+            GameData.CommonBot.StopScript();
+            GameData.MarketBot.StopScript();
+            GameData.DailyBot.StopScript();
+            GameData.CraftBot.StopScript();
+            GameData.GatherBot.StopScript();
+            GameData.FishBot.StopScript();
+            GameData.HFishBot.StopScript();
+            GameData.CollectionFishBot.StopScript();
+
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+        }
 
     private void AutoKillGame(object sender, ElapsedEventArgs e) {
         PluginLog.LogError("too long for running, kill game");

@@ -153,7 +153,25 @@ namespace AlphaProject.Utility
                 }
             }
             
-            itemPrice = (int)listing.ItemListings[i].PricePerUnit - 1;
+            itemPrice = (int)listing.ItemListings[i].PricePerUnit;
+
+            if (itemPrice > 100000) 
+            {
+                itemPrice -= 100;
+            } 
+            else if (itemPrice > 1000) 
+            {
+                itemPrice -= 20;
+            }
+            else if (itemPrice > 500)
+            {
+                itemPrice -= 3;
+            }
+            else
+            {
+                itemPrice -= 1;
+            }
+
             if (itemPrice <= 0) {
                 itemPrice = 1;
             }
@@ -228,13 +246,13 @@ namespace AlphaProject.Utility
                     if (itemsPrice.TryGetValue(itemName, out var p))
                     {
                         PluginLog.Log($"有缓存数据: {p}");
-                        Thread.Sleep(1000);
+                        Thread.Sleep(800 + new Random().Next(200, 500));
                         SetPrice();
                         AlphaProject.getPriceSucceed = true;
                     }
                     else
                     {
-                        Thread.Sleep(1500);
+                        Thread.Sleep(1200 + new Random().Next(200, 800));
                         // Client::UI::AddonRetainerSell.ReceiveEvent this=0x214C05CB480 evt=EventType.CHANGE               a3=4   a4=0x2146C18C210 (src=0x214C05CB480; tgt=0x214606863B0) a5=0xBB316FE6C8
                         MarketCommons.SendClick(addon, EventType.CHANGE, 4, comparePrices);
                     }
@@ -253,7 +271,7 @@ namespace AlphaProject.Utility
                 Task task = new(() =>
                 {
                     if (retry < 3) {
-                        Thread.Sleep(1200);
+                        Thread.Sleep(1000 + new Random().Next(200, 800));
                         var addonItemSearchResult = MarketCommons.GetUnitBase("ItemSearchResult");
                         if (addonItemSearchResult != null)
                             MarketCommons.SendClick(new IntPtr(addonItemSearchResult->WindowNode->Component), EventType.CHANGE, 2,
@@ -355,8 +373,8 @@ namespace AlphaProject.Utility
                 {
                     Task task = new(() =>
                     {
-                        Thread.Sleep(1200);
-                        GenericHelper.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                        Thread.Sleep(1000 + new Random().Next(200, 800));
+                        GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
                         var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
                         MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
                     });

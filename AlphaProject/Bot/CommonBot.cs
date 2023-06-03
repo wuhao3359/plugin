@@ -806,6 +806,7 @@ namespace AlphaProject.Bot
                 if (useGig)
                 {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
+                    AlphaProject.GameData.CommonBot.canUseGig(false);
                     Thread.Sleep(new Random().Next(100, 200));
                 }
 

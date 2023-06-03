@@ -90,13 +90,13 @@ internal unsafe class Clicker
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 if (MarketCommons.GetUnitBase("ContextMenu") != null) {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(200);
+                    Thread.Sleep(new Random().Next(200, 500));
                     var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
                     if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
                     {
-                        Thread.Sleep(3500);
+                        Thread.Sleep(3000 + new Random().Next(200, 800));
                         if (!AlphaProject.getPriceSucceed) {
-                            Thread.Sleep(2500);
+                            Thread.Sleep(2500 + new Random().Next(200, 800));
                         }
                         var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
                         var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();
