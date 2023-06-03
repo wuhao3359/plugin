@@ -50,9 +50,9 @@ namespace AlphaProject
             //Commands.InitializeCommands();
             //Configuration.Initialize(DalamudApi.PluginInterface);
             Click.Initialize();
-            //newRequest = false;
-            //MarketEventHandler = new MarketEventHandler();
-            //DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+            newRequest = false;
+            MarketEventHandler = new MarketEventHandler();
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
 
@@ -84,8 +84,8 @@ namespace AlphaProject
         public void Dispose()
         {
             PluginUi.Dispose();
-            //MarketEventHandler.Dispose();
-            //DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+            MarketEventHandler.Dispose();
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
             //MarketCommons.Dispose();
@@ -109,6 +109,7 @@ namespace AlphaProject
         {
             PluginLog.Log($"=====>>> login...");
             PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
         }
 
         private void OnLogoutEvent(object? sender, EventArgs e)
@@ -123,6 +124,8 @@ namespace AlphaProject
             GameData.FishBot.StopScript();
             GameData.HFishBot.StopScript();
             GameData.CollectionFishBot.StopScript();
+
+            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
         }
 
         private void AutoKillGame(object sender, ElapsedEventArgs e) {
