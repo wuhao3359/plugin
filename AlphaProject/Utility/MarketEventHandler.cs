@@ -227,7 +227,7 @@ namespace AlphaProject.Utility
             //AddonItemSearchResult_ReceiveEvent_HW.Dispose();
             AddonRetainerSell_OnSetup_HW.Dispose();
             AddonItemSearchResult_OnSetup_HW.Dispose();
-            AddonInventoryContext_OnSetup_HW.Dispose();
+            //AddonInventoryContext_OnSetup_HW.Dispose();
         }
 
         private unsafe IntPtr AddonRetainerSell_OnSetup_Delegate_Detour(IntPtr addon, uint a2, IntPtr dataPtr)
@@ -374,7 +374,7 @@ namespace AlphaProject.Utility
                     Task task = new(() =>
                     {
                         Thread.Sleep(1000 + new Random().Next(200, 800));
-                        GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                        GenericHelper.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
                         var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
                         MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
                     });

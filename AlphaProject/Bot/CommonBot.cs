@@ -801,7 +801,7 @@ namespace AlphaProject.Bot
             int n = 0;
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
-                Thread.Sleep(20);
+                Thread.Sleep(10);
 
                 if (useGig)
                 {
@@ -810,11 +810,11 @@ namespace AlphaProject.Bot
                     Thread.Sleep(new Random().Next(100, 200));
                 }
 
-                if (n < 400) {
+                if (n < 500) {
                     if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
-                        Thread.Sleep(500 + new Random().Next(300, 500));
+                        Thread.Sleep(new Random().Next(100, 300));
                     }
                 }
                 n++;

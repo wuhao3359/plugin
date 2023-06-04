@@ -89,6 +89,11 @@ namespace AlphaProject.Bot
 
         public void RunScript(int NextClick)
         {
+            PluginLog.Log($"Configuration Chanege: {AlphaProject.Configuration.AutoMarket}");
+            if (!AlphaProject.Configuration.AutoMarket) {
+                return;
+            }
+
             AlphaProject.status = (byte)TaskState.PRICE;
             NextClickAt++;
             if (NextClickAt <= NextClick)

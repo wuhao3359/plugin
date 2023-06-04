@@ -286,7 +286,7 @@ internal unsafe class Clicker
 
     internal static void SelectVentureMenu()
     {
-        //if(GenericHelpers.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelpers.IsAddonReady(&select->AtkUnitBase))
+        //if(GenericHelper.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelper.IsAddonReady(&select->AtkUnitBase))
         //{
         //    var textNode = ((AtkTextNode*)select->AtkUnitBase.UldManager.NodeList[3]);
         //    var text = textNode->NodeText.ToString();
@@ -329,7 +329,7 @@ internal unsafe class Clicker
 
     internal static void SelectQuickVenture()
     {
-        //if (GenericHelpers.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelpers.IsAddonReady(&select->AtkUnitBase))
+        //if (GenericHelper.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelper.IsAddonReady(&select->AtkUnitBase))
         //{
         //    var textNode = ((AtkTextNode*)select->AtkUnitBase.UldManager.NodeList[3]);
         //    var text = textNode->NodeText.ToString();

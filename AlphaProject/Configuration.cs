@@ -14,6 +14,9 @@ namespace AlphaProject
 
         public bool AutoGather { get; set; } = false;
 
+        public bool AutoMarket{ get; set; } = false;
+
+
         public int MaxPercentage { get; set; } = 100;
 
         public string RecipeName { get; set; } = "";

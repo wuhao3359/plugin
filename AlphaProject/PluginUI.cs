@@ -247,23 +247,41 @@ namespace AlphaProject
                         configuration.AutoGather = false;
                     }
                 }
-            }
 
-            ImGui.Text("MaxQuality: ");
-            ImGui.SameLine();
-            int maxQuality = configuration.MaxPercentage;
-            if (ImGui.SliderInt("##SliderMaxQuality", ref maxQuality, 0, 100, $"%d%%"))
-            {
-                configuration.MaxPercentage = maxQuality;
-            }
+                ImGui.Text("MaxQuality: ");
+                ImGui.SameLine();
+                int maxQuality = configuration.MaxPercentage;
+                if (ImGui.SliderInt("##SliderMaxQuality", ref maxQuality, 0, 100, $"%d%%"))
+                {
+                    configuration.MaxPercentage = maxQuality;
+                }
 
-            ImGui.Spacing();
-            ImGui.Spacing();
-            ImGui.Spacing();
-            if (ImGui.Button("save"))
-            {
-                configuration.Save();
+
+                ImGui.Text("AutoMarket: ");
+                ImGui.SameLine();
+                bool isMarketChecked = configuration.AutoMarket;
+                if (ImGui.Checkbox("##AutoMarket", ref isMarketChecked))
+                {
+                    if (isMarketChecked)
+                    {
+                        configuration.AutoMarket = true;
+                    }
+                    else
+                    {
+                        configuration.AutoMarket = false;
+                    }
+                }
+
+
+                ImGui.Spacing();
+                ImGui.Spacing();
+                ImGui.Spacing();
+                if (ImGui.Button("save"))
+                {
+                    configuration.Save();
+                }
             }
+            
             ImGui.End();
         }
 
