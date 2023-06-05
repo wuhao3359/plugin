@@ -1,21 +1,14 @@
 ﻿using ClickLib;
-using ClickLib.Enums;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Client.Game;
-using FFXIVClientStructs.FFXIV.Client.Game.Control;
-using FFXIVClientStructs.FFXIV.Client.Game.Object;
-using FFXIVClientStructs.FFXIV.Client.System.String;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Collections.Generic;
 using System.Threading;
 using AlphaProject.Data;
-using AlphaProject.Ui;
 using AlphaProject.Utility;
-using ObjectKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind;
 
 namespace AlphaProject;
 
@@ -97,13 +90,13 @@ internal unsafe class Clicker
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 if (MarketCommons.GetUnitBase("ContextMenu") != null) {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(200);
+                    Thread.Sleep(new Random().Next(200, 500));
                     var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
                     if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
                     {
-                        Thread.Sleep(3500);
+                        Thread.Sleep(3000 + new Random().Next(200, 800));
                         if (!AlphaProject.getPriceSucceed) {
-                            Thread.Sleep(2500);
+                            Thread.Sleep(2500 + new Random().Next(200, 800));
                         }
                         var priceComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[15]->GetComponent();
                         var quantityComponentNumericInput = (AtkComponentNumericInput*)retainerSell->UldManager.NodeList[11]->GetComponent();

@@ -27,6 +27,8 @@ public class GameData
 
     public EventFramework EventFramework { get; private set; } = null!;
 
+    public SeTugType TugType { get; private set; } = null!;
+
     public MarketBot MarketBot { get; init; } = null!;
     public DailyBot DailyBot { get; init; } = null!;
     public FishBot FishBot { get; init; } = null!;
@@ -101,6 +103,7 @@ public class GameData
             PluginLog.Log("Collected {NumFishingSpots} different fishing spots.", FishingSpots.Count);
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);
+            TugType = new SeTugType(DalamudApi.SigScanner);
             KeyOperates = new(this);
             FishBot = new();
             HFishBot = new();

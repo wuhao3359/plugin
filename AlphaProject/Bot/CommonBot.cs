@@ -19,6 +19,12 @@ namespace AlphaProject.Bot
     {
         private bool closed = false;
 
+        // 捕鱼嘉惠
+        private static bool useNaturesBounty { get; set; }
+
+        // 刺鱼
+        private static bool useGig { get; set; }
+
         public CommonBot()
         {
             Init();
@@ -27,6 +33,7 @@ namespace AlphaProject.Bot
         public void Init()
         {
             closed = false;
+            useNaturesBounty = true;
         }
 
         public void StopScript()
@@ -138,9 +145,9 @@ namespace AlphaProject.Bot
             
             if (CommonUi.AddonRepairIsOpen() && CommonUi.AllRepairButton())
             {
-                Thread.Sleep(1000);
+                Thread.Sleep(800 + new Random().Next(200, 300));
                 CommonUi.SelectYesButton();
-                Thread.Sleep(1000);
+                Thread.Sleep(800 + new Random().Next(200, 300));
             }
             else
             {
@@ -243,6 +250,7 @@ namespace AlphaProject.Bot
             for (int i = 0; i < CollectableCount; i++) {
                 if (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    continue;
                 }
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
@@ -525,9 +533,9 @@ namespace AlphaProject.Bot
             }
 
             DalamudApi.TargetManager.SetTarget(target);
-            Thread.Sleep(200);
+            Thread.Sleep(200 + new Random().Next(100, 200));
             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(800);
+            Thread.Sleep(600 + new Random().Next(200, 400));
             return true;
         }
 
@@ -569,7 +577,7 @@ namespace AlphaProject.Bot
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F2_key);
                         gp -= 500;
                         action++;
-                        Thread.Sleep(2000);
+                        Thread.Sleep(2000 + new Random().Next(100, 300));
                     }
                 }
                 else
@@ -579,7 +587,7 @@ namespace AlphaProject.Bot
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                         gp -= 400;
                         action++;
-                        Thread.Sleep(2000);
+                        Thread.Sleep(2000 + new Random().Next(100, 300));
                     }
                 }
             }
@@ -588,7 +596,7 @@ namespace AlphaProject.Bot
             while (CommonUi.AddonGatheringIsOpen() && tt < 15)
             {
                 CommonUi.GatheringButton(GatherIndex);
-                Thread.Sleep(2000);
+                Thread.Sleep(2000 + new Random().Next(100, 300));
                 tt++;
                 if (tt == 4)
                 {
@@ -603,7 +611,7 @@ namespace AlphaProject.Bot
                             if (level >= 90)
                             {
                                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
-                                Thread.Sleep(1000);
+                                Thread.Sleep(1000 + new Random().Next(200, 400));
                             }
                         }
                     }
@@ -671,7 +679,7 @@ namespace AlphaProject.Bot
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F2_key);
                     gp -= 500;
                     action++;
-                    Thread.Sleep(2000);
+                    Thread.Sleep(2000 + new Random().Next(100, 300));
                 }
             }
             else
@@ -681,7 +689,7 @@ namespace AlphaProject.Bot
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
                     gp -= 400;
                     action++;
-                    Thread.Sleep(2000);
+                    Thread.Sleep(2000 + new Random().Next(100, 300));
                 }
             }
 
@@ -689,7 +697,7 @@ namespace AlphaProject.Bot
             while (CommonUi.AddonGatheringIsOpen() && tt < 15)
             {
                 CommonUi.GatheringButton(GatherIndex);
-                Thread.Sleep(2000);
+                Thread.Sleep(2000 + new Random().Next(100, 300));
                 tt++;
                 if (tt == 4)
                 {
@@ -731,44 +739,44 @@ namespace AlphaProject.Bot
            
             (int GatherIndex, string name) = CommonUi.GetGatheringIndex(list);
             CommonUi.GatheringButton(GatherIndex);
-            Thread.Sleep(2000);
+            Thread.Sleep(2000 + new Random().Next(100, 300));
 
             int action = 0;
             if (gp >= 700)
             {
                 action++;
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F6_key);
-                Thread.Sleep(2000);
+                Thread.Sleep(1800 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F7_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F6_key);
-                Thread.Sleep(2000);
+                Thread.Sleep(1800 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F7_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F9_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
 
                 if (gp >= 300 && action > 0)
                 {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
-                    Thread.Sleep(1500);
+                    Thread.Sleep(1500 + new Random().Next(0, 200));
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
-                    Thread.Sleep(1000);
+                    Thread.Sleep(1000 + new Random().Next(0, 200));
                 }
             }
             else {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
-                Thread.Sleep(2500);
+                Thread.Sleep(2400 + new Random().Next(200, 500));
             }
             int tt = 0;
             while (CommonUi.AddonGatheringMasterpieceIsOpen() && tt < 7)
             {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F5_key);
-                Thread.Sleep(2800);
+                Thread.Sleep(2500 + new Random().Next(300, 800));
                 tt++;
             }
             return true;
@@ -776,17 +784,23 @@ namespace AlphaProject.Bot
 
         // 刺鱼
         public bool SpearfishMethod() {
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
             int n = 0;
-
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
-                Thread.Sleep(1000);
-                if (n < 10) {
-                    if (!CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
+                Thread.Sleep(20);
+
+                if (useGig)
+                {
+                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
+                    AlphaProject.GameData.CommonBot.canUseGig(false);
+                    Thread.Sleep(new Random().Next(100, 200));
+                }
+
+                if (n < 400) {
+                    if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
-                        Thread.Sleep(700);
+                        Thread.Sleep(500 + new Random().Next(300, 500));
                     }
                 }
                 n++;
@@ -808,6 +822,15 @@ namespace AlphaProject.Bot
                 position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], DalamudApi.ClientState.TerritoryType, UseMount, false);
             }
             return position;
+        }
+
+        public void canUseNaturesBounty(bool b) {
+            useNaturesBounty = b;
+        }
+
+        public void canUseGig(bool b)
+        {
+            useGig = b;
         }
     }
 }

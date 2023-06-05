@@ -42,7 +42,7 @@ namespace AlphaProject.Bot
                 Init();
 
                 // 参数解析
-                string command = "craft";
+                string command = Tasks.GCraft;
                 AlphaProject.GameData.param = Util.CommandParse(command, args);
 
                 AlphaProject.GameData.param.TryGetValue("pressKey", out var p);

@@ -2,13 +2,14 @@
 using Dalamud.Logging;
 using System;
 using System.Diagnostics;
-using System.Drawing;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Threading;
 using AlphaProject;
-using AlphaProject.UseAction;
 using AlphaProject.Utility;
+using System.Collections.Generic;
+using System.Security.Cryptography;
+using static OtterGui.Widgets.Tutorial;
 
 public class KeyOperates
 {
@@ -16,6 +17,8 @@ public class KeyOperates
     private IntPtr hwnd;
 
     private bool closed = false;
+
+    public Dictionary<Byte, DateTime> keyTimes = new();
 
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
@@ -56,7 +59,7 @@ public class KeyOperates
         int n = 0;
         while (UseMount && !DalamudApi.Condition[ConditionFlag.Mounted] && n < 3) {
             KeyMethod(Keys.q_key);
-            Thread.Sleep(2500);
+            Thread.Sleep(2300 + new Random().Next(200, 500));
             n++;
         }
 
@@ -97,7 +100,7 @@ public class KeyOperates
                     KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 2)
+            else if (height > 5)
             {
                 if (DalamudApi.KeyState[Keys.space_key])
                 {
@@ -129,7 +132,7 @@ public class KeyOperates
                 }
             }
 
-            if (notMove >= 20)
+            if (notMove >= 18)
             {
                 KeyMethod(Keys.d_key, 1000);
                 if (!DalamudApi.KeyState[Keys.w_key])
@@ -152,7 +155,7 @@ public class KeyOperates
             // 旋转角度速度 100毫秒 35度左右 6.3 = 360 100=0.62
             int time = Convert.ToInt32(angle / 33 * 100);
             //PluginLog.Log($"distance: {distance} angle: {angle} time: {time}");
-            if (time > 50)
+            if (time > 60)
             {
                 if (time > 200) {
                     if (DalamudApi.KeyState[Keys.w_key])
@@ -160,6 +163,7 @@ public class KeyOperates
                         KeyUp(Keys.w_key);
                     }
                 }
+                time -= 30;
                 if (DirectionOfPoint < 0)
                 {
                     if (!DalamudApi.KeyState[Keys.a_key])
@@ -221,7 +225,7 @@ public class KeyOperates
             positionA = GetUserPosition(SizeFactor);
             height = Maths.Height(positionA, positionB);
             PluginLog.Log($"height {height} <====> {positionA.Y} <---------> {positionB.Y}");
-            Thread.Sleep(500);
+            Thread.Sleep(500 + new Random().Next(100, 200));
             i++;
         }
         FlyStop();
@@ -289,10 +293,10 @@ public class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 100 + new Random().Next(40, 80);
+            sleep = 80 + new Random().Next(30, 140);
         }
         else {
-            sleep += new Random().Next(40, 80);
+            sleep += new Random().Next(60, 120);
         }
 
         if (sleep == 0) {
@@ -310,16 +314,26 @@ public class KeyOperates
 
     public void KeyDown(Byte key)
     {
+        keyTimes.TryAdd(key, DateTime.Now);
         SendMessage(hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
     }
 
     public void KeyUp(Byte key)
     {
-        SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+        if (keyTimes.TryGetValue(key, out DateTime start)) {
+            DateTime endTime = DateTime.Now;
+            TimeSpan interval = endTime.Subtract(start);
+            double milliseconds = interval.TotalMilliseconds;
+            int sleep = 80 + new Random().Next(20, 80);
+            if (milliseconds >= sleep)
+            {
+                SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+            }
+        }
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
-        return Revise(positionB, 200);
+        return Revise(positionB, 30);
     }
 
     public Vector3 Revise(Vector3 positionB, int tt) {
@@ -349,7 +363,23 @@ public class KeyOperates
         {
             KeyMethod(Keys.d_key, time);
         }
-        Thread.Sleep(100);
         return positionC;
+    }
+
+    public Vector3 MovePositions(Vector3[] Path, bool UseMount)
+    {
+        ushort territoryType = DalamudApi.ClientState.TerritoryType;
+        ushort SizeFactor = AlphaProject.AlphaProject.GameData.GetSizeFactor(territoryType);
+        Vector3 position = GetUserPosition(SizeFactor);
+        for (int i = 0; i < Path.Length; i++)
+        {
+            if (closed)
+            {
+                PluginLog.Log($"多路径移动 中途结束");
+                return GetUserPosition(SizeFactor);
+            }
+            position = MoveToPoint(position, Path[i], territoryType, UseMount, false);
+        }
+        return position;
     }
 }

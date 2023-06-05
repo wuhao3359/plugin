@@ -104,9 +104,9 @@ namespace AlphaProject
         }
 
         // 收藏品-鱼
-        public static void CollectibleFish(string CFish, string args)
+        public static void CollectibleFish(string args)
         {
-            PluginLog.Log($"collectionfish: {args}");
+            PluginLog.Log($"collectionfish:{CFish} --- {args}");
             if (args.Length == 0)
             {
                 AlphaProject.GameData.CollectionFishBot.StopScript();
@@ -158,7 +158,7 @@ namespace AlphaProject
             task.Start();
         }
 
-        public static void GatherInisland(string IGather, string args)
+        public static void GatherInisland(string args)
         {
             PluginLog.Log($"ygather: {args}");
             if (args.Length == 0)
