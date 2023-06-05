@@ -12,6 +12,7 @@ using AlphaProject.SeFunctions;
 using AlphaProject.Spearfishing;
 using AlphaProject.Time;
 using AlphaProject.Utility;
+using System.Diagnostics;
 
 namespace AlphaProject
 {
@@ -39,6 +40,9 @@ namespace AlphaProject
 
         public static WindowSystem WindowSystem;
 
+        // 定时器
+        private Timer timer = new();
+
         public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
         {
             DalamudApi.Initialize(pluginInterface);
@@ -55,6 +59,10 @@ namespace AlphaProject
             DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
+
+            timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
+            timer.Elapsed += AutoKillGame;
+            timer.Start();
 
             try
             {
@@ -88,7 +96,7 @@ namespace AlphaProject
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
-            //MarketCommons.Dispose();
+            MarketCommons.Dispose();
 
             if (WindowSystem != null)
                 DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
@@ -130,6 +138,8 @@ namespace AlphaProject
 
         private void AutoKillGame(object sender, ElapsedEventArgs e) {
             PluginLog.LogError("too long for running, kill game");
+            Process.GetCurrentProcess().Kill();
+            // 文本指令  	/shutdown
         }
     }
 }
