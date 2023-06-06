@@ -11,6 +11,8 @@ using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
 using AlphaProject.UseAction;
 using AlphaProject.Utility;
+using AlphaProject.Helper;
+using AlphaProject.Enums;
 
 namespace AlphaProject.Bot
 {
@@ -25,19 +27,16 @@ namespace AlphaProject.Bot
         {
         }
 
-        public void test() {
-        }
-
         public void Init()
         {
+            AlphaProject.status = (byte)TaskState.GATHER;
             closed = false;
         }
 
-        public void NormalScript(string args) {
-            closed = false;
-            int n = 0;
-            string[] str = args.Split('-');
-            while (!closed & n < 1000)
+        public void GatherByName(string name) {
+            Init();
+            int X = 0;
+            while (!closed & X < 1000)
             {
                 if (closed)
                 {
@@ -46,50 +45,54 @@ namespace AlphaProject.Bot
                 }
                 try
                 {
-                    for (int i = 0; i < str.Length; i++) {
-                        int id = Positions.GetIdByName(str[i]);
-                        if (id == 0) {
-                            PluginLog.Log($"错误名称: {str[i]}");
-                            continue;
-                        }
-                        RunNormalScript(id, "100");
-                        Thread.Sleep(3000);
+                    int id = Positions.GetIdByName(name);
+                    if (id == 0)
+                    {
+                        PluginLog.Error($"错误名称: {name}");
+                        break;
                     }
+                    RunGatherById(id);
+                    Thread.Sleep(3000);
                 }
                 catch (Exception e)
                 {
                     PluginLog.Error($"error!!!\n{e}");
                 }
 
-                n++;
-                PluginLog.Log($"{n} 次结束");
+                X++;
+                PluginLog.Log($"{X} 次结束");
             }
+            AlphaProject.status = (byte)TaskState.READY;
+        }
+
+        public void RunGatherById(int id) {
+            RunGatherById(id, "100");
         }
 
         // 普通采集点
-        public bool RunNormalScript(int id, string lv)
+        public void RunGatherById(int id, string lv)
         {
             Init();
 
             (int Id, int MaxBackPack, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area) = GetData(id, lv);
             if (Id <= 0) {
                 PluginLog.Log($"param error");
-                return false;
+                return;
             }
             if (Tp != 0)
             {
                 Teleporter.Teleport(Tp);
                 if (!CommonUi.CurrentJob(Job))
                 {
-                    Thread.Sleep(2000);
-                    AlphaProject.Executor.DoGearChange(JobName);
-                    Thread.Sleep(500);
+                    Thread.Sleep(1800 + new Random().Next(200, 500));
+                    CommandProcessorHelper.DoGearChange(JobName);
+                    Thread.Sleep(200 + new Random().Next(200, 400));
                 }
                 MovePositions(Path, true);
             }
-            int n = 0;
+            int X = 0;
             int error = 0;
-            while (!closed & n < 100)
+            while (!closed & X < 100)
             {
                 ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
@@ -102,7 +105,7 @@ namespace AlphaProject.Bot
                     if (closed)
                     {
                         PluginLog.Log($"中途结束");
-                        return false;
+                        return;
                     }
                     if (gameObjects.ToArray().Length == 0 && Area[k] == i && j < CanCollectPoints.Length)
                     {
@@ -116,7 +119,7 @@ namespace AlphaProject.Bot
                             error++;
                             if (error >= 1) {
                                 PluginLog.Log($"出现错误停止");
-                                return false;
+                                return;
                             }
                         }
                     }
@@ -142,7 +145,6 @@ namespace AlphaProject.Bot
                                 float x = Maths.GetCoordinate(go.Position.X, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float y = Maths.GetCoordinate(go.Position.Y, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float z = Maths.GetCoordinate(go.Position.Z, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
-                                PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType))} < ---> 辅助点高度: {y}");
                                 Vector3 GatherPoint = new(x, y, z);
                                 position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
                                 position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
@@ -159,13 +161,13 @@ namespace AlphaProject.Bot
                                             AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
                                         }
                                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                                        Thread.Sleep(1000);
+                                        Thread.Sleep(800 + new Random().Next(200, 500));
                                         tt++;
 
                                         if (closed)
                                         {
                                             PluginLog.Log($"task stopping");
-                                            return true;
+                                            return;
                                         }
                                     }
 
@@ -174,7 +176,7 @@ namespace AlphaProject.Bot
                                     while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
                                     {
                                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                                        Thread.Sleep(800);
+                                        Thread.Sleep(800 + new Random().Next(200, 500));
                                         tt++;
                                     }
                                     if (tt >= 7)
@@ -187,7 +189,7 @@ namespace AlphaProject.Bot
                                         }
                                         continue;
                                     }
-                                    Thread.Sleep(1000);
+                                    Thread.Sleep(800 + new Random().Next(200, 500));
 
                                     if (CommonUi.AddonGatheringIsOpen())
                                     {
@@ -212,15 +214,14 @@ namespace AlphaProject.Bot
                         position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                     }
                 }
-                n++;
+                X++;
             }
-            return true;
         }
 
         public void YGatherScript(string args) {
             closed = false;
-            int n = 0;
-            while (!closed && n < 20)
+            int X = 0;
+            while (!closed && X < 20)
             {
                 try
                 {
@@ -250,7 +251,7 @@ namespace AlphaProject.Bot
                 }
 
                 Thread.Sleep(3000);
-                n++;
+                X++;
             }
         }
 
@@ -398,7 +399,7 @@ namespace AlphaProject.Bot
                             continue;
                         }
                         position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
-                        PluginLog.Log($"到达可采集点: {position.X} {position.Y} {position.Z}");
+                        PluginLog.Log($"到达可采集点: K: {k} {position.X} {position.Y} {position.Z}");
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
 

@@ -7,6 +7,7 @@ using System.Threading;
 using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
+using AlphaProject.Enums;
 
 namespace AlphaProject.Bot
 {
@@ -88,7 +89,12 @@ namespace AlphaProject.Bot
 
         public void RunScript(int NextClick)
         {
-            AlphaProject.status = "change price";
+            PluginLog.Log($"Configuration Chanege: {AlphaProject.Configuration.AutoMarket}");
+            if (!AlphaProject.Configuration.AutoMarket) {
+                return;
+            }
+
+            AlphaProject.status = (byte)TaskState.PRICE;
             NextClickAt++;
             if (NextClickAt <= NextClick)
             {
@@ -104,7 +110,7 @@ namespace AlphaProject.Bot
                 Thread.Sleep(1000);
                 n++;
             }
-            AlphaProject.status = "";
+            AlphaProject.status = (byte)TaskState.READY;
         }
 
         private Vector3 MovePositions(Vector3[] Path, bool UseMount)

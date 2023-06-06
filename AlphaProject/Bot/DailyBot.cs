@@ -11,6 +11,7 @@ using AlphaProject.SeFunctions;
 using AlphaProject.Time;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
@@ -202,7 +203,7 @@ namespace AlphaProject.Bot
                     if (!CommonUi.CurrentJob(Job))
                     {
                         Thread.Sleep(2000);
-                        AlphaProject.Executor.DoGearChange(JobName);
+                        CommandProcessorHelper.DoGearChange(JobName);
                         Thread.Sleep(200 + new Random().Next(300, 800));
                     }
                     Thread.Sleep(800 + new Random().Next(300, 800));
@@ -395,7 +396,7 @@ namespace AlphaProject.Bot
                 if (!CommonUi.CurrentJob(Job))
                 {
                     Thread.Sleep(1800 + new Random().Next(300, 800));
-                    AlphaProject.Executor.DoGearChange(JobName);
+                    CommandProcessorHelper.DoGearChange(JobName);
                     Thread.Sleep(200 + new Random().Next(300, 800));
                 }
                 Thread.Sleep(500 + new Random().Next(300, 800));
@@ -600,7 +601,7 @@ namespace AlphaProject.Bot
                         PluginLog.Log($"执行等待采集任务...");
                         try
                         {
-                            AlphaProject.GameData.GatherBot.RunNormalScript(0, lv);
+                            AlphaProject.GameData.GatherBot.RunGatherById(0);
                         }
                         catch (Exception e)
                         {
@@ -619,7 +620,7 @@ namespace AlphaProject.Bot
                     PluginLog.Log($"执行等待快速制作任务...");
                     try
                     {
-                        AlphaProject.GameData.CraftBot.RunCraftScript();
+                        AlphaProject.GameData.CraftBot.CraftScript();
                     }
                     catch (Exception e)
                     {
@@ -643,7 +644,7 @@ namespace AlphaProject.Bot
                     if (!CommonUi.CurrentJob(18))
                     {
                         Thread.Sleep(200 + new Random().Next(300, 800));
-                        AlphaProject.Executor.DoGearChange("捕鱼人");
+                        CommandProcessorHelper.DoGearChange("捕鱼人");
                         Thread.Sleep(200 + new Random().Next(300, 800));
                     }
 
@@ -680,7 +681,7 @@ namespace AlphaProject.Bot
                     if (!CommonUi.CurrentJob(18))
                     {
                         Thread.Sleep(500 + new Random().Next(100, 300));
-                        AlphaProject.Executor.DoGearChange("捕鱼人");
+                        CommandProcessorHelper.DoGearChange("捕鱼人");
                         Thread.Sleep(500 + new Random().Next(100, 300));
                     }
 

@@ -131,7 +131,7 @@ namespace AlphaProject
             task.Start();
         }
 
-        public static void GeneralGather(string GGather, string args)
+        public static void GeneralGather(string args)
         {
             PluginLog.Log($"gather: {args}");
             if (args.Length == 0)
@@ -151,7 +151,7 @@ namespace AlphaProject
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.GatherBot.NormalScript(args);
+                AlphaProject.GameData.GatherBot.GatherByName(args);
                 taskRunning = false;
                 PluginLog.Log($"end...");
             });
@@ -185,7 +185,7 @@ namespace AlphaProject
             task.Start();
         }
 
-        public static void GeneralCraft(string GCraft, string args)
+        public static void GeneralCraft(string args)
         {
             string[] str = args.Split(' ');
             PluginLog.Log($"craft: {args} length: {args.Length}");
@@ -208,7 +208,7 @@ namespace AlphaProject
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.CraftBot.CraftScript(args);
+                AlphaProject.GameData.CraftBot.CraftScript();
                 PluginLog.Log($"end...");
                 taskRunning = false;
             });
