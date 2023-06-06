@@ -14,6 +14,7 @@ using AlphaProject.Time;
 using AlphaProject.Utility;
 using AlphaProject.Craft;
 using AlphaProject.Enums;
+using System.Diagnostics;
 
 namespace AlphaProject;
 public unsafe class AlphaProject : IDalamudPlugin
@@ -49,9 +50,12 @@ public unsafe class AlphaProject : IDalamudPlugin
 
     public static WindowSystem WindowSystem;
 
-    public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
-    {
-        DalamudApi.Initialize(pluginInterface);
+        // 定时器
+        private Timer timer = new();
+
+        public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
+        {
+            DalamudApi.Initialize(pluginInterface);
 
         Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(DalamudApi.PluginInterface);
@@ -65,13 +69,16 @@ public unsafe class AlphaProject : IDalamudPlugin
             DalamudApi.ClientState.Login += OnLoginEvent;
             DalamudApi.ClientState.Logout += OnLogoutEvent;
 
-        try
-        {
-            GameData = new GameData(DalamudApi.DataManager);
-            AutoCraft = new AutoCraft();
-            //items = GameData.DataManager.GetExcelSheet<Item>();
-            Time = new SeTime();
-            Executor = new Executor();
+            timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
+            timer.Elapsed += AutoKillGame;
+            timer.Start();
+
+            try
+            {
+                GameData = new GameData(DalamudApi.DataManager);
+                //items = GameData.DataManager.GetExcelSheet<Item>();
+                Time = new SeTime();
+                Executor = new Executor();
 
             WindowSystem = new WindowSystem(Name);
             WindowSystem.AddWindow(new SpearfishingHelper(GameData));
@@ -101,7 +108,7 @@ public unsafe class AlphaProject : IDalamudPlugin
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
             DalamudApi.ClientState.Login -= OnLoginEvent;
             DalamudApi.ClientState.Logout -= OnLogoutEvent;
-            //MarketCommons.Dispose();
+            MarketCommons.Dispose();
 
         AutoCraft.Dispose();
         if (WindowSystem != null)
@@ -142,7 +149,10 @@ public unsafe class AlphaProject : IDalamudPlugin
             DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
         }
 
-    private void AutoKillGame(object sender, ElapsedEventArgs e) {
-        PluginLog.LogError("too long for running, kill game");
+        private void AutoKillGame(object sender, ElapsedEventArgs e) {
+            PluginLog.LogError("too long for running, kill game");
+            Process.GetCurrentProcess().Kill();
+            // 文本指令  	/shutdown
+        }
     }
 }
