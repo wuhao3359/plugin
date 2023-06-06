@@ -50,35 +50,35 @@ public unsafe class AlphaProject : IDalamudPlugin
 
     public static WindowSystem WindowSystem;
 
-        // 定时器
-        private Timer timer = new();
+    // 定时器
+    private Timer timer = new();
 
-        public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
-        {
-            DalamudApi.Initialize(pluginInterface);
+    public AlphaProject(DalamudPluginInterface pluginInterface, GameNetwork network)
+    {
+        DalamudApi.Initialize(pluginInterface);
 
         Configuration = DalamudApi.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
         Configuration.Initialize(DalamudApi.PluginInterface);
 
-            //Commands.InitializeCommands();
-            //Configuration.Initialize(DalamudApi.PluginInterface);
-            Click.Initialize();
-            newRequest = false;
-            MarketEventHandler = new MarketEventHandler();
-            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
-            DalamudApi.ClientState.Login += OnLoginEvent;
-            DalamudApi.ClientState.Logout += OnLogoutEvent;
+        //Commands.InitializeCommands();
+        //Configuration.Initialize(DalamudApi.PluginInterface);
+        Click.Initialize();
+        newRequest = false;
+        MarketEventHandler = new MarketEventHandler();
+        DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+        DalamudApi.ClientState.Login += OnLoginEvent;
+        DalamudApi.ClientState.Logout += OnLogoutEvent;
 
-            timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
-            timer.Elapsed += AutoKillGame;
-            timer.Start();
+        timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
+        timer.Elapsed += AutoKillGame;
+        timer.Start();
 
-            try
-            {
-                GameData = new GameData(DalamudApi.DataManager);
-                //items = GameData.DataManager.GetExcelSheet<Item>();
-                Time = new SeTime();
-                Executor = new Executor();
+        try
+        {
+            GameData = new GameData(DalamudApi.DataManager);
+            //items = GameData.DataManager.GetExcelSheet<Item>();
+            Time = new SeTime();
+            Executor = new Executor();
 
             WindowSystem = new WindowSystem(Name);
             WindowSystem.AddWindow(new SpearfishingHelper(GameData));
@@ -101,19 +101,19 @@ public unsafe class AlphaProject : IDalamudPlugin
     //[UnmanagedFunctionPointer(CallingConvention.Cdecl)]
     //public delegate IntPtr GetFilePointer(byte index);
 
-        public void Dispose()
-        {
-            PluginUi.Dispose();
-            MarketEventHandler.Dispose();
-            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
-            DalamudApi.ClientState.Login -= OnLoginEvent;
-            DalamudApi.ClientState.Logout -= OnLogoutEvent;
-            MarketCommons.Dispose();
+    public void Dispose()
+    {
+        PluginUi.Dispose();
+        MarketEventHandler.Dispose();
+        DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+        DalamudApi.ClientState.Login -= OnLoginEvent;
+        DalamudApi.ClientState.Logout -= OnLogoutEvent;
+        MarketCommons.Dispose();
 
-        AutoCraft.Dispose();
-        if (WindowSystem != null)
-            DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
-        WindowSystem?.RemoveAllWindows();
+    AutoCraft.Dispose();
+    if (WindowSystem != null)
+        DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
+    WindowSystem?.RemoveAllWindows();
     }
 
     private void DrawUI()
@@ -126,33 +126,32 @@ public unsafe class AlphaProject : IDalamudPlugin
         PluginUi.SettingsVisible = true;
     }
 
-        private void OnLoginEvent(object? sender, EventArgs e)
-        {
-            PluginLog.Log($"=====>>> login...");
-            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-            DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
-        }
+    private void OnLoginEvent(object? sender, EventArgs e)
+    {
+        PluginLog.Log($"=====>>> login...");
+        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        DalamudApi.GameNetwork.NetworkMessage += MarketEventHandler.OnNetworkEvent;
+    }
 
-        private void OnLogoutEvent(object? sender, EventArgs e)
-        {
-            PluginLog.Log($"=====>>> logout... stop all");
-            PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-            GameData.CommonBot.StopScript();
-            GameData.MarketBot.StopScript();
-            GameData.DailyBot.StopScript();
-            GameData.CraftBot.StopScript();
-            GameData.GatherBot.StopScript();
-            GameData.FishBot.StopScript();
-            GameData.HFishBot.StopScript();
-            GameData.CollectionFishBot.StopScript();
+    private void OnLogoutEvent(object? sender, EventArgs e)
+    {
+        PluginLog.Log($"=====>>> logout... stop all");
+        PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
+        GameData.CommonBot.StopScript();
+        GameData.MarketBot.StopScript();
+        GameData.DailyBot.StopScript();
+        GameData.CraftBot.StopScript();
+        GameData.GatherBot.StopScript();
+        GameData.FishBot.StopScript();
+        GameData.HFishBot.StopScript();
+        GameData.CollectionFishBot.StopScript();
 
-            DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
-        }
+        DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
+    }
 
-        private void AutoKillGame(object sender, ElapsedEventArgs e) {
-            PluginLog.LogError("too long for running, kill game");
-            Process.GetCurrentProcess().Kill();
-            // 文本指令  	/shutdown
-        }
+    private void AutoKillGame(object sender, ElapsedEventArgs e) {
+        PluginLog.LogError("too long for running, kill game");
+        Process.GetCurrentProcess().Kill();
+        // 文本指令  	/shutdown
     }
 }
