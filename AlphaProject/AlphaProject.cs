@@ -76,7 +76,6 @@ public unsafe class AlphaProject : IDalamudPlugin
         try
         {
             GameData = new GameData(DalamudApi.DataManager);
-            //items = GameData.DataManager.GetExcelSheet<Item>();
             Time = new SeTime();
             Executor = new Executor();
 
@@ -87,8 +86,8 @@ public unsafe class AlphaProject : IDalamudPlugin
 
             DalamudApi.PluginInterface.UiBuilder.Draw += WindowSystem.Draw;
             DalamudApi.PluginInterface.UiBuilder.Draw += DrawUI;
-            //DalamudApi.PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
 
+            AutoCraft = new();
             TM = new();
             AP = this;
         }
@@ -108,12 +107,12 @@ public unsafe class AlphaProject : IDalamudPlugin
         DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
         DalamudApi.ClientState.Login -= OnLoginEvent;
         DalamudApi.ClientState.Logout -= OnLogoutEvent;
-        MarketCommons.Dispose();
+        //MarketCommons.Dispose();
 
-    AutoCraft.Dispose();
-    if (WindowSystem != null)
-        DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
-    WindowSystem?.RemoveAllWindows();
+        AutoCraft.Dispose();
+        if (WindowSystem != null)
+            DalamudApi.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw;
+        WindowSystem?.RemoveAllWindows();
     }
 
     private void DrawUI()

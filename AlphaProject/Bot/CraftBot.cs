@@ -130,6 +130,9 @@ namespace AlphaProject.Bot
                             RecipeNoteUi.OpenRecipeNote(recipe.RowId);
                             Thread.Sleep(new Random().Next(1200, 2000));
                         }
+                    } else
+                    {
+                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
                     }
                     if (!recipe.CanQuickSynth)
                     {

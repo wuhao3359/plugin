@@ -220,7 +220,7 @@ namespace AlphaProject.Utility
             //AddonItemSearchResult_ReceiveEvent_HW.Dispose();
             AddonRetainerSell_OnSetup_HW.Dispose();
             AddonItemSearchResult_OnSetup_HW.Dispose();
-            //AddonInventoryContext_OnSetup_HW.Dispose();
+            AddonInventoryContext_OnSetup_HW.Dispose();
         }
 
         private unsafe IntPtr AddonRetainerSell_OnSetup_Delegate_Detour(IntPtr addon, uint a2, IntPtr dataPtr)

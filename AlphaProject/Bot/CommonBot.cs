@@ -809,12 +809,15 @@ namespace AlphaProject.Bot
                     AlphaProject.GameData.CommonBot.canUseGig(false);
                     Thread.Sleep(new Random().Next(100, 200));
                 }
-
-                if (n < 500) {
+                if (CommonUi.HasStatus("刺鱼人的直觉") && player.CurrentGp >= 300) {
+                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F9_key);
+                    Thread.Sleep(new Random().Next(200, 250));
+                }
+                if (n < 200) {
                     if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
-                        Thread.Sleep(new Random().Next(100, 300));
+                        Thread.Sleep(new Random().Next(300, 350));
                     }
                 }
                 n++;
