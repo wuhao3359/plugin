@@ -17,7 +17,6 @@ namespace AlphaProject.Craft
 {
     public unsafe class AutoCraft : IDisposable
     {
-        public static readonly object _lockObj = new();
         public static List<Task> Tasks = new();
 
         public static bool currentCraftFinished = false;
@@ -85,40 +84,40 @@ namespace AlphaProject.Craft
 
         public void FetchRecommendation(int e)
         {
-            lock (_lockObj)
+            if (Tasks.Count > 0) {
+                return;
+            }
+            try
             {
-                try
-                {
-                    CurrentRecommendation = Recipe.IsExpert ? GetExpertRecommendation() : GetRecommendation();
-                    RecommendationName = CurrentRecommendation.NameOfAction();
+                CurrentRecommendation = Recipe.IsExpert ? GetExpertRecommendation() : GetRecommendation();
+                RecommendationName = CurrentRecommendation.NameOfAction();
 
-                    PluginLog.Log($"{CurrentRecommendation} - {RecommendationName}");
-                    if (CurrentRecommendation != 0)
+                PluginLog.Log($"{CurrentRecommendation} - {RecommendationName}");
+                if (CurrentRecommendation != 0)
+                {
+                    if (LuminaSheets.ActionSheet.TryGetValue(CurrentRecommendation, out var normalAct))
                     {
-                        if (LuminaSheets.ActionSheet.TryGetValue(CurrentRecommendation, out var normalAct))
+                        if (normalAct.ClassJob.Value.RowId != CharacterInfo.JobID())
                         {
-                            if (normalAct.ClassJob.Value.RowId != CharacterInfo.JobID())
-                            {
-                                var newAct = LuminaSheets.ActionSheet.Values.Where(x => x.Name.RawString == normalAct.Name.RawString && x.ClassJob.Row == CharacterInfo.JobID()).FirstOrDefault();
-                                CurrentRecommendation = newAct.RowId;
-                            }
+                            var newAct = LuminaSheets.ActionSheet.Values.Where(x => x.Name.RawString == normalAct.Name.RawString && x.ClassJob.Row == CharacterInfo.JobID()).FirstOrDefault();
+                            CurrentRecommendation = newAct.RowId;
                         }
-
-                        if (LuminaSheets.CraftActions.TryGetValue(CurrentRecommendation, out var craftAction))
-                        {
-                            if (craftAction.ClassJob.Row != CharacterInfo.JobID())
-                            {
-                                var newAct = LuminaSheets.CraftActions.Values.Where(x => x.Name.RawString == craftAction.Name.RawString && x.ClassJob.Row == CharacterInfo.JobID()).FirstOrDefault();
-                                CurrentRecommendation = newAct.RowId;
-                            }
-                        }
-                        DalamudApi.Framework.RunOnTick(() => Hotbars.ExecuteRecommended(CurrentRecommendation), TimeSpan.FromMilliseconds(new Random().Next(800, 1100)));
                     }
+
+                    if (LuminaSheets.CraftActions.TryGetValue(CurrentRecommendation, out var craftAction))
+                    {
+                        if (craftAction.ClassJob.Row != CharacterInfo.JobID())
+                        {
+                            var newAct = LuminaSheets.CraftActions.Values.Where(x => x.Name.RawString == craftAction.Name.RawString && x.ClassJob.Row == CharacterInfo.JobID()).FirstOrDefault();
+                            CurrentRecommendation = newAct.RowId;
+                        }
+                    }
+                    DalamudApi.Framework.RunOnTick(() => Hotbars.ExecuteRecommended(CurrentRecommendation), TimeSpan.FromMilliseconds(new Random().Next(800, 1100)));
                 }
-                catch (Exception ex)
-                {
-                    PluginLog.Error(ex, "FetchRecommendation");
-                }
+            }
+            catch (Exception ex)
+            {
+                PluginLog.Error(ex, "FetchRecommendation");
             }
         }
 

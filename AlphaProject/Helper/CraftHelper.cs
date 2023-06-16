@@ -52,7 +52,7 @@ namespace AlphaProject.Helper
         }
 
         // 设置物品数量
-        private unsafe static void SetIngredients()
+        public unsafe static void SetIngredients()
         {
             if (GenericHelper.TryGetAddonByName<AtkUnitBase>("RecipeNote", out var addon) && addon->IsVisible)
             {
