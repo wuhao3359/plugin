@@ -217,48 +217,122 @@ namespace AlphaProject.Bot
             var recipeWindow = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
             if (recipeWindow == IntPtr.Zero)
                 return;
-            ClickRecipeNote.Using(recipeWindow).QuickSynthesis();
+
+            var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
+            if (quickSynthPTR == IntPtr.Zero) {
+                ClickRecipeNote.Using(recipeWindow).QuickSynthesis();
+                Thread.Sleep(new Random().Next(1000, 2000));
+                quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
+            }
+
+            if (quickSynthPTR == IntPtr.Zero)
+                return;
+
+            var quickSynthWindow = (AtkUnitBase*)quickSynthPTR;
+            if (quickSynthWindow == null)
+                return;
+
+            var numericInput = (AtkComponentNode*)quickSynthWindow->UldManager.NodeList[4];
+            if (numericInput == null)
+                return;
+            var numericComponent = (AtkComponentNumericInput*)numericInput->Component;
+
+            var values = stackalloc AtkValue[2];
+            values[0] = new()
+            {
+                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                Int = numericComponent->Data.Max,
+            };
+            values[1] = new()
+            {
+                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Bool,
+                Byte = 1,
+            };
+            quickSynthWindow->FireCallback(3, values);
+
+
+            int seconds = numericComponent->Data.Max * 2 + new Random().Next(8, 18);
+            DateTime start = DateTime.Now;
+            DateTime end = DateTime.Now;
+            while (end.Subtract(start).Seconds < seconds || !AutoCraft.currentCraftFinished)
+            {
+                PluginLog.Log($"wait quick synth: {end.Subtract(start).Seconds} to {seconds}");
+                Thread.Sleep(new Random().Next(8000, 15000));
+                end = DateTime.Now;
+
+                if (DalamudApi.GameGui.GetAddonByName("SynthesisSimple", 1) == IntPtr.Zero) {
+                    return;
+                }
+            }
+
+            CloseQuickSynthWindow();
+        }
+
+        public unsafe void CloseQuickSynthWindow()
+        {
+            try
+            {
+                var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimple", 1);
+                if (quickSynthPTR == IntPtr.Zero)
+                    return;
+
+                var quickSynthWindow = (AtkUnitBase*)quickSynthPTR;
+                if (quickSynthWindow == null)
+                    return;
+
+                var qsynthButton = (AtkComponentButton*)quickSynthWindow->UldManager.NodeList[2];
+                if (qsynthButton != null && !qsynthButton->IsEnabled)
+                {
+                    qsynthButton->AtkComponentBase.OwnerNode->AtkResNode.Flags ^= 1 << 5;
+                }
+                AtkResNodeFunctions.ClickButton(quickSynthWindow, qsynthButton, 0);
+            }
+            catch (Exception e)
+            {
+                PluginLog.Log($"close quick window error: {e.Message}");
+            }
+        }
+
+        public unsafe void test() {
+            //var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
+            //if (quickSynthPTR == IntPtr.Zero)
+            //    return;
+
+            //var quickSynthWindow = (AtkUnitBase*)quickSynthPTR;
+            //var qsynthButton = (AtkComponentButton*)quickSynthWindow->UldManager.NodeList[3];
+            //if (qsynthButton != null && !qsynthButton->IsEnabled)
+            //{
+            //    qsynthButton->AtkComponentBase.OwnerNode->AtkResNode.Flags ^= 1 << 5;
+            //}
+
+            //AtkResNodeFunctions.ClickButton(quickSynthWindow, qsynthButton, 1);
 
             var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
             if (quickSynthPTR == IntPtr.Zero)
                 return;
 
             var quickSynthWindow = (AtkUnitBase*)quickSynthPTR;
-            var qsynthButton = (AtkComponentButton*)quickSynthWindow->UldManager.NodeList[3];
-            if (qsynthButton != null && !qsynthButton->IsEnabled)
-            {
-                qsynthButton->AtkComponentBase.OwnerNode->AtkResNode.Flags ^= 1 << 5;
-            }
-
-            var checkboxNode = (AtkComponentNode*)quickSynthWindow->UldManager.NodeList[5];
-            if (checkboxNode == null)
+            if (quickSynthWindow == null)
                 return;
-            var checkboxComponent = (AtkComponentCheckBox*)checkboxNode->Component;
-            if (!checkboxComponent->IsChecked)
-            {
-                checkboxComponent->AtkComponentButton.Flags ^= 0x40000;
-                AtkResNode* checkmarkNode = checkboxComponent->AtkComponentButton.ButtonBGNode->PrevSiblingNode;
-                checkmarkNode->Color.A = (byte)(true ? 0xFF : 0x7F);
-                checkmarkNode->Flags ^= 0x10;
-            }
 
             var numericInput = (AtkComponentNode*)quickSynthWindow->UldManager.NodeList[4];
             if (numericInput == null)
                 return;
             var numericComponent = (AtkComponentNumericInput*)numericInput->Component;
-            numericComponent->SetValue(numericComponent->Data.Max);
+            //numericComponent->SetValue(numericComponent->Data.Max);
 
-            AtkResNodeFunctions.ClickButton(quickSynthWindow, qsynthButton, 1);
-
-            DateTime start = DateTime.Now;
-            DateTime end = DateTime.Now;
-            int r = new Random().Next(50, 70);
-
-            while (end.Subtract(start).Minutes < 10 && !AutoCraft.currentCraftFinished)
+            var values = stackalloc AtkValue[2];
+            values[0] = new()
             {
-                end = DateTime.Now;
-                Thread.Sleep(new Random().Next(8000, 15000));
-            }
+                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Int,
+                Int = numericComponent->Data.Max,
+            };
+            values[1] = new()
+            {
+                Type = FFXIVClientStructs.FFXIV.Component.GUI.ValueType.Bool,
+                Byte = 1,
+            };
+            quickSynthWindow->FireCallback(3, values);
         }
     }
 }

@@ -2,6 +2,7 @@
 using AlphaProject.Data;
 using Dalamud.Logging;
 using ImGuiNET;
+using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Numerics;
 
@@ -216,7 +217,8 @@ namespace AlphaProject
                     ImGui.SameLine();
                     if (ImGui.Button("test"))
                     {
-                        PluginLog.Log($"Current Step: {CurrentCraft.CurrentStep}");
+                        PluginLog.Log($"test");
+                        AlphaProject.GameData.CraftBot.test();
                     }
                 }
                 ImGui.EndChild();
