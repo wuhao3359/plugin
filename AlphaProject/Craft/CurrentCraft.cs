@@ -557,6 +557,9 @@ namespace AlphaProject.Craft
             if (CanUse(Skills.TrainedEye) && (HighQualityPercentage < AlphaProject.Configuration.MaxPercentage || Recipe.ItemResult.Value.IsCollectable) && Recipe.CanHq) return Skills.TrainedEye;
             if (CanUse(Skills.Tricks) && CurrentStep > 2 && ((CurrentCondition == Condition.Good) || (CurrentCondition == Condition.Excellent))) return Skills.Tricks;
 
+            if (CharacterInfo.CurrentCP < 7 && CanUse(Skills.Tricks)) return Skills.Tricks;
+            if (CurrentDurability <= 10 && CanUse(Skills.MastersMend)) return Skills.MastersMend;
+
             if (MaxQuality == 0 || AlphaProject.Configuration.MaxPercentage == 0 || !Recipe.CanHq)
             {
                 if (CurrentStep == 1 && CanUse(Skills.MuscleMemory)) return Skills.MuscleMemory;
@@ -564,8 +567,6 @@ namespace AlphaProject.Craft
                 if (GetStatus(Buffs.Veneration) == null && CanUse(Skills.Veneration)) return Skills.Veneration;
                 return act;
             }
-
-            if (CurrentDurability <= 10 && CanUse(Skills.MastersMend)) return Skills.MastersMend;
 
             if (CharacterInfo.CurrentCP > 0)
             {
@@ -1212,22 +1213,23 @@ namespace AlphaProject.Craft
                     return true;
                 }
 
-                //if (PreviousActionSameAs(Skills.Observe) && progressActions->FocusedSynthesis.IsAvailable())
-                //{
-                //    action = Skills.FocusedSynthesis;
-                //    return progressActions->FocusedSynthesis.ProgressIncrease >= remainingProgress;
-                //}
+                if (PreviousActionSameAs(Skills.Observe) && progressActions->FocusedSynthesis.Status == ActionStatus.Available)
+                {
+                    action = Skills.FocusedSynthesis;
+                    return progressActions->FocusedSynthesis.ProgressIncrease >= remainingProgress;
+                }
 
-                //// Prudent:
-                //// Not MP efficient unless we're intentionally conserving Durability
-                ////if (progressActions->PrudentSynthesis.CanComplete(remainingProgress) == allowComplete)
-                ////    return ActionId.PrudentSynthesis;
+                if (progressActions->PrudentSynthesis.Status == ActionStatus.Available && CharacterInfo.CurrentCP < 88)
+                {
+                    action = Skills.PrudentSynthesis;
+                    return progressActions->PrudentSynthesis.ProgressIncrease >= remainingProgress;
+                }
 
-                //if (progressActions->CarefulSynthesis.IsAvailable())
-                //{
-                //    action = Skills.CarefulSynthesis;
-                //    return progressActions->CarefulSynthesis.ProgressIncrease >= remainingProgress;
-                //}
+                if (progressActions->CarefulSynthesis.Status == ActionStatus.Available)
+                {
+                    action = Skills.CarefulSynthesis;
+                    return progressActions->CarefulSynthesis.ProgressIncrease >= remainingProgress;
+                }
             }
             else
             {
@@ -1256,11 +1258,6 @@ namespace AlphaProject.Craft
                     return false;
                 }
 
-                // Prudent:
-                // Not MP efficient unless we're intentionally conserving Durability
-                //if (progressActions->PrudentSynthesis.CanComplete(remainingProgress) == allowComplete)
-                //    return ActionId.PrudentSynthesis;
-
                 if (progressActions->CarefulSynthesis.ProgressIncrease >= remainingProgress == false)
                 {
                     action = Skills.CarefulSynthesis;
@@ -1268,11 +1265,49 @@ namespace AlphaProject.Craft
                 }
             }
 
+            if (CanSpamBasicToComplete())
+            {
+                action = Skills.BasicSynth;
+                return progressActions->BasicSynthesis.ProgressIncrease >= remainingProgress;
+            }
+
             action = Skills.BasicSynth;
             return progressActions->BasicSynthesis.ProgressIncrease >= remainingProgress;
         }
-    }
 
+        private unsafe static bool CanSpamBasicToComplete()
+        {
+            var agentCraftActionSimulator = AgentModule.Instance()->GetAgentCraftActionSimulator();
+            var remainingProgress = (uint)RemainingProgress();
+            var progressActions = agentCraftActionSimulator->Progress;
+
+            var firstUse = progressActions->BasicSynthesis.ProgressIncrease;
+            if (progressActions->BasicSynthesis.ProgressIncrease >= remainingProgress)
+                return true;
+
+            var progressAfterFirst = remainingProgress - firstUse;
+            var durabilityAfterFirst = CurrentDurability - (10 / (GetStatus(Buffs.WasteNot) != null || GetStatus(Buffs.WasteNot2) != null ? 2 : 1)) + (GetStatus(Buffs.Manipulation) != null ? 5 : 0);
+
+            var manipStacks = GetStatus(Buffs.Manipulation) != null ? GetStatus(Buffs.Manipulation).StackCount - 1 : 0;
+            var wasteNotStacks = GetStatus(Buffs.WasteNot) != null ? GetStatus(Buffs.WasteNot).StackCount - 1 : 0;
+            var wasteNot2Stacks = GetStatus(Buffs.WasteNot2) != null ? GetStatus(Buffs.WasteNot2).StackCount - 1 : 0;
+            var totalwastestacks = wasteNot2Stacks + wasteNotStacks;
+
+            var basicIncrease = Math.Floor(BaseProgression() * GetMultiplier(Skills.BasicSynth));
+
+            while (durabilityAfterFirst > 0)
+            {
+                var progressAfterNext = progressAfterFirst - basicIncrease;
+                if (progressAfterNext <= 0)
+                    return true;
+
+                durabilityAfterFirst = durabilityAfterFirst - (10 / (totalwastestacks > 0 ? 2 : 1) + (manipStacks > 0 ? 5 : 0));
+
+                PluginLog.Debug($"{durabilityAfterFirst} {progressAfterNext}");
+            }
+            return false;
+        }
+    }
 
 
     public static class CraftingActionExtensions

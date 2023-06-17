@@ -182,11 +182,11 @@ namespace AlphaProject.Bot
         public unsafe void RunSynthByRecipe(Recipe recipe)
         {
             int error = 0;
-
-
             if (CraftHelper.RecipeNoteWindowOpen())
             {
-                // TODO choose HQ
+                // TODO choose HQ Test
+                CraftHelper.SetIngredients();
+
                 RecipeNoteUi.SynthesizeButton();
                 if (error > 3) {
                     closed = true;
