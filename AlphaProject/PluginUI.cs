@@ -1,10 +1,13 @@
 ﻿using AlphaProject.Craft;
 using AlphaProject.Data;
+using AlphaProject.Helper;
 using Dalamud.Logging;
 using ImGuiNET;
 using Lumina.Excel.GeneratedSheets;
 using System;
 using System.Numerics;
+using System.Threading.Tasks;
+using static AlphaProject.Craft.CurrentCraft;
 
 namespace AlphaProject
 {
@@ -94,7 +97,14 @@ namespace AlphaProject
                 ImGui.SameLine();
                 if (ImGui.Button("Test"))
                 {
-                    PluginLog.Log($"configuration: {configuration.CraftType}");
+                    //CraftHelper.test();
+
+                    Task task = new(() =>
+                    {
+                        TicketHelper.CraftUploadAndExchange("收藏用巨人新薯煎饼", "魔匠7");
+                    });
+                    task.Start();
+                    
                 }
                 ImGui.Spacing();
 
@@ -148,7 +158,7 @@ namespace AlphaProject
                 float windowHeight = ImGui.GetWindowHeight();
                 float topHeight = windowHeight * 0.15f;
                 ImGui.BeginChild("TopRegion", new Vector2(0, topHeight), true);
-                if (ImGui.Button("Button 1"))
+                if (ImGui.Button("gather"))
                 {
                     refresh = true;
                     selectedButton = 1;
@@ -167,18 +177,26 @@ namespace AlphaProject
                 }
                 ImGui.EndChild();
 
-
-
                 ImGui.BeginChild("BottomRegion", new Vector2(0, windowHeight * 0.5f), true);
-                string input1 = "input1";
                 if (selectedButton == 1)
                 {
-                    refresh = true;
-                    ImGui.Text("Content for Button 1");
-                    ImGui.InputText("Input 1", ref input1, 100); // 假设 input1 是存储输入框内容的变量
-                    if (ImGui.Button("Submit 1"))
+                    string GatherName = configuration.GatherName;
+                    ImGui.Text("GatherName");
+                    ImGui.SameLine();
+                    if (ImGui.InputText("##GatherName", ref GatherName, 50))
                     {
-                        // 处理 Button 1 对应的 Submit 1 按钮点击事件
+                        configuration.GatherName = GatherName;
+                        configuration.Save();
+                    }
+
+                    if (ImGui.Button("run"))
+                    {
+                        Tasks.GeneralGather(GatherName);
+                    }
+                    ImGui.SameLine();
+                    if (ImGui.Button("stop"))
+                    {
+                        Tasks.GeneralGather("");
                     }
                 }
                 else if (selectedButton == 2)

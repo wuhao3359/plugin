@@ -18,6 +18,8 @@ namespace AlphaProject
 
 
         public int MaxPercentage { get; set; } = 100;
+        public string GatherName { get; set; } = "";
+
 
         public string RecipeName { get; set; } = "";
 

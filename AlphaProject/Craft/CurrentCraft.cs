@@ -199,6 +199,13 @@ namespace AlphaProject.Craft
 
         public unsafe static bool GetCraft()
         {
+            CurrentDurability =0;
+            MaxDurability = 0;
+            CurrentProgress = 0;
+            MaxProgress = 0;
+            CurrentQuality = 0;
+            MaxQuality = 0;
+
             try
             {
                 var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimple", 1);
@@ -555,7 +562,7 @@ namespace AlphaProject.Craft
             if (CanFinishCraft(act)) return act;
 
             if (CanUse(Skills.TrainedEye) && (HighQualityPercentage < AlphaProject.Configuration.MaxPercentage || Recipe.ItemResult.Value.IsCollectable) && Recipe.CanHq) return Skills.TrainedEye;
-            if (CanUse(Skills.Tricks) && CurrentStep > 2 && ((CurrentCondition == Condition.Good) || (CurrentCondition == Condition.Excellent))) return Skills.Tricks;
+            //if (CanUse(Skills.Tricks) && CurrentStep > 2 && ((CurrentCondition == Condition.Good) || (CurrentCondition == Condition.Excellent))) return Skills.Tricks;
 
             if (CharacterInfo.CurrentCP < 7 && CanUse(Skills.Tricks)) return Skills.Tricks;
             if (CurrentDurability <= 10 && CanUse(Skills.MastersMend)) return Skills.MastersMend;

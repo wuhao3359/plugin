@@ -42,10 +42,10 @@ namespace AlphaProject.Craft
         public static bool CheckIfCraftFinished()
         {
             if (QuickSynthMax > 0 && QuickSynthCurrent == QuickSynthMax) return true;
-            if (MaxProgress == 0) return false;
-            if (CurrentProgress == MaxProgress) return true;
-            if (CurrentProgress < MaxProgress && CurrentDurability == 0) return true;
+            if (CurrentProgress != 0 && CurrentProgress == MaxProgress) return true;
+            if (CurrentProgress != 0 && CurrentProgress < MaxProgress && CurrentDurability == 0) return true;
             currentCraftFinished = false;
+            if (MaxProgress == 0) return false;
             return false;
         }
 
@@ -84,7 +84,8 @@ namespace AlphaProject.Craft
 
         public void FetchRecommendation(int e)
         {
-            if (Tasks.Count > 0) {
+            if (Tasks.Count > 1)
+            {
                 return;
             }
             try

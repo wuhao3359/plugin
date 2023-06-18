@@ -33,10 +33,15 @@ public unsafe static class CommandProcessorHelper
     {
         if (!GenericHelper.TryGetAddonByName<AddonRecipeNote>("RecipeNote", out var addon))
         {
-            if (Throttler.Throttle(1000))
-            {
-                ExecuteThrottled("/clog");
-            }
+            ExecuteThrottled("/clog");
+        }
+    }
+
+    public unsafe static void CloseCraftingMenu()
+    {
+        if (GenericHelper.TryGetAddonByName<AddonRecipeNote>("RecipeNote", out var addon))
+        {
+            ExecuteThrottled("/clog");
         }
     }
 }

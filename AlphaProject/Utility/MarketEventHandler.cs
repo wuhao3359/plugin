@@ -118,6 +118,9 @@ namespace AlphaProject.Utility
 
         public void OnNetworkEvent(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
         {
+            if (direction == null) {
+                return;
+            }
             if (direction != NetworkMessageDirection.ZoneDown) return;
             if (!AlphaProject.GameData.DataManager.IsDataReady) return;
             if (opCode == AlphaProject.GameData.DataManager.ServerOpCodes["MarketBoardItemRequestStart"])

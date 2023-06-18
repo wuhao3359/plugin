@@ -13,6 +13,8 @@ using FFXIVClientStructs.FFXIV.Component.GUI;
 using AlphaProject.RawInformation;
 using ClickLib.Clicks;
 using AlphaProject.Craft;
+using AlphaProject.Data;
+using AlphaProject.SeFunctions;
 
 namespace AlphaProject.Bot
 {
@@ -22,12 +24,15 @@ namespace AlphaProject.Bot
 
         private List<uint> jobIds = new();
 
+        private uint job = 0;
+
         public CraftBot() {}
 
-        public void Init()
+        public void Init(uint job)
         {
             closed = false;
             jobIds = new();
+            this.job = job;
             AlphaProject.GameData.CommonBot.Init();
             AlphaProject.status = (byte)TaskState.CRAFT;
         }
@@ -39,17 +44,17 @@ namespace AlphaProject.Bot
         }
 
         public void CraftScript() {
-            CraftScript(AlphaProject.Configuration.RecipeName);
+            CraftScript(AlphaProject.Configuration.RecipeName, 15);
         }
 
-        public void CraftScript(string recipeName)
+        public void CraftScript(string recipeName, uint job)
         {
-            Init();
+            Init(job);
             try
             {
                 uint recipeId = RecipeNoteUi.SearchRecipeId(recipeName);
                 var recipe = CraftHelper.FilteredList[recipeId];
-                PluginLog.Log($"---> {AlphaProject.Configuration.RecipeName}, {recipeId}");
+                PluginLog.Log($"---> {recipeName}, {recipeId}");
 
                 if (recipe == null)
                 {
@@ -60,40 +65,33 @@ namespace AlphaProject.Bot
                 int craftX = 0;
                 while (!closed) {
                     Thread.Sleep(new Random().Next(900, 1200));
-                    // 修理 TODO 重构
+                    // 修理
                     if (CommonUi.NeedsRepair())
                     {
-                        PluginLog.Log($"开始修理装备");
-                        if (RecipeNoteUi.RecipeNoteIsOpen())
+                        PluginLog.Error("Repaair...");
+                        Thread.Sleep(3000);
+                        if (CraftHelper.RecipeNoteWindowOpen())
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                            Thread.Sleep(1500);
+                            CraftHelper.CloseCraftingMenu();
                         }
-                        AlphaProject.GameData.param.TryGetValue("repair", out var rep);
-                        PluginLog.Log($"修理装备配置: {rep}");
-                        if (rep == "1")
-                        {
-                            if (AlphaProject.GameData.param.TryGetValue("type", out var t) && t == "2")
-                            {
-                                AlphaProject.GameData.CommonBot.MovePositions(Positions.RepairNPCA, false);
-                            }
-                            AlphaProject.GameData.CommonBot.NpcRepair("阿里斯特尔");
-                        }
-                        else if (rep == "99")
-                        {
-                            AlphaProject.GameData.CommonBot.Repair();
-                        }
-                        else if (rep == "100")
-                        {
-                            AlphaProject.GameData.CommonBot.NpcRepair("修理工");
-                        }
+
+                        Teleporter.Teleport(Positions.ShopTp);
+                        AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
+                        AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
+                        Thread.Sleep(500 + new Random().Next(100, 300));
                     }
-                    // 魔晶石精制
-                    int em = CommonUi.CanExtractMateria();
-                    if (em > 2)
-                    {
-                        AlphaProject.GameData.CommonBot.ExtractMateria(em);
-                    }
+                    // 魔晶石精制 TODO
+                    //int em = CommonUi.CanExtractMateria();
+                    //if (em > 2)
+                    //{
+                    //    if (CraftHelper.RecipeNoteWindowOpen())
+                    //    {
+                    //        CraftHelper.CloseCraftingMenu();
+                    //    }
+                    //    PluginLog.Error("ExtractMateria...");
+                    //    Thread.Sleep(3000);
+                    //    AlphaProject.GameData.CommonBot.ExtractMateria(em);
+                    //}
                     // 食物 TODO
                     // 背包容量检查
                     if (BagManager.InventoryRemaining() <= 5)
@@ -104,7 +102,6 @@ namespace AlphaProject.Bot
                     }
                     // 原材料检查
                     if (!CraftHelper.CheckForRecipeIngredients(recipe.RowId, out List<uint> lackItems, false) && lackItems.Count > 0) {
-
                         if (!AlphaProject.Configuration.AutoGather)
                         {
                             PluginLog.Error($"原材料不足 未配置自动采集...");
@@ -112,14 +109,26 @@ namespace AlphaProject.Bot
                         }
                         if (AlphaProject.AP.TM.TaskList.Count == 0)
                         {
-                            PluginLog.Warning("原材料不足...");
+                            PluginLog.Warning($"{lackItems.Count}, 原材料不足...");
                             AlphaProject.AP.TM.AddTask(lackItems);
+                            if (CraftHelper.RecipeNoteWindowOpen()) {
+                                CraftHelper.CloseCraftingMenu();
+                            }
                             AlphaProject.AP.TM.RunTask();
+                            closed = false;
                         }
                         else {
                             PluginLog.Error($"当前任务因缺少原材料结束...num: {lackItems.Count}");
                             break;
                         }
+                    }
+
+                    if (this.job != 0 && !CommonUi.CurrentJob(this.job))
+                    {
+                        Thread.Sleep(1800 + new Random().Next(200, 500));
+                        string jobName = RecipeItems.GetJobName(this.job);
+                        CommandProcessorHelper.DoGearChange(jobName);
+                        Thread.Sleep(200 + new Random().Next(200, 400));
                     }
 
                     // Synth
@@ -148,29 +157,22 @@ namespace AlphaProject.Bot
                     // 提交收藏品
                     if (recipe.ItemResult.Value.Name.ToString().Contains("收藏") && BagManager.InventoryRemaining() <= 5)
                     {
-                        if (RecipeNoteUi.RecipeNoteIsOpen())
+                        Thread.Sleep(3000);
+                        if (CraftHelper.RecipeNoteWindowOpen())
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                            Thread.Sleep(new Random().Next(900, 1200));
+                            CraftHelper.CloseCraftingMenu();
                         }
                         Thread.Sleep(new Random().Next(900, 1200));
                         // 上交收藏品和交换道具
-                        //if (AlphaProject.Configuration.CraftType == 2) {
-                        //    if (!AlphaProject.GameData.CommonBot.CraftUploadAndExchange())
-                        //    {
-                        //        PluginLog.Log($"params error... plz check");
-                        //        return;
-                        //    }
-                        //    else
-                        //    {
-                        //        PluginLog.Log($"CraftUploadAndExchange End.");
-                        //    }
-                        //}
+                        TicketHelper.CraftUploadAndExchange(AlphaProject.Configuration.RecipeName, AlphaProject.Configuration.ExchangeItem);
                         // 上交重建品和交换道具 TODO
                     }
                     Thread.Sleep(new Random().Next(900, 1200));
                 }
                 PluginLog.Log($"Finish: {craftX} Item: {AlphaProject.Configuration.RecipeName}, {recipe.RowId}");
+                if (CraftHelper.RecipeNoteWindowOpen()) {
+                    CraftHelper.CloseCraftingMenu();
+                }
             }
             catch (Exception e)
             {
@@ -184,7 +186,6 @@ namespace AlphaProject.Bot
             int error = 0;
             if (CraftHelper.RecipeNoteWindowOpen())
             {
-                // TODO choose HQ Test
                 CraftHelper.SetIngredients();
 
                 RecipeNoteUi.SynthesizeButton();
@@ -250,22 +251,22 @@ namespace AlphaProject.Bot
             };
             quickSynthWindow->FireCallback(3, values);
 
-
-            int seconds = numericComponent->Data.Max * 2 + new Random().Next(8, 18);
-            DateTime start = DateTime.Now;
-            DateTime end = DateTime.Now;
-            while (end.Subtract(start).Seconds < seconds || !AutoCraft.currentCraftFinished)
+            Thread.Sleep(new Random().Next(1000, 2000));
+            while (!AutoCraft.currentCraftFinished)
             {
-                PluginLog.Log($"wait quick synth: {end.Subtract(start).Seconds} to {seconds}");
+                PluginLog.Log($"wait quick synth: {AutoCraft.currentCraftFinished}");
                 Thread.Sleep(new Random().Next(8000, 15000));
-                end = DateTime.Now;
 
-                if (DalamudApi.GameGui.GetAddonByName("SynthesisSimple", 1) == IntPtr.Zero) {
+                if (!CraftHelper.SynthesisSimpleWindowOpen()) {
                     return;
                 }
             }
+            PluginLog.Log($"end quick synth: {AutoCraft.currentCraftFinished}");
 
-            CloseQuickSynthWindow();
+            if (CraftHelper.SynthesisSimpleWindowOpen())
+            {
+                CloseQuickSynthWindow();
+            }
         }
 
         public unsafe void CloseQuickSynthWindow()

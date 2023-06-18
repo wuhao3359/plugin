@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading;
-using AlphaProject.Data;
 using AlphaProject.Managers;
 using AlphaProject.Ui;
 using AlphaProject.UseAction;
@@ -273,30 +272,6 @@ namespace AlphaProject.Bot
             while (CommonUi.AddonPurifyItemSelectorIsOpen() || CommonUi.AddonPurifyResultIsOpen()) {
                 AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(500 + new Random().Next(100, 200));
-            }
-            return true;
-        }
-
-        public bool CraftUploadAndExchange()
-        {
-            AlphaProject.GameData.param.TryGetValue("recipeName", out var r);
-            AlphaProject.GameData.param.TryGetValue("exchangeItem", out var e);
-            AlphaProject.GameData.param.TryGetValue("uploadNPC", out var up);
-            if (up == "1") {
-                MovePositions(Positions.UploadNPCA, false);
-            }
-
-            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
-            int tt = 0;
-            while (BagManager.GetInventoryItemCountById(ItemId) > 0 && tt < 5) {
-                if (closed)
-                {
-                    PluginLog.Log($"CraftUploadAndExchange stopping");
-                    return true;
-                }
-                CraftUpload(Category, Sub, ItemId);
-                CraftExchange(int.Parse(e));
-                tt++;
             }
             return true;
         }
@@ -668,14 +643,13 @@ namespace AlphaProject.Bot
             }
             
             (int GatherIndex, string name) = CommonUi.GetNormalGatheringIndex(list, coolDown);
-            PluginLog.Log($"开始采集: {Names}, {coolDown}");
+            PluginLog.Log($"预计采集: {Names}, {coolDown} {GatherIndex}");
             int action = 0;
             if (name.Contains("之水晶"))
             {
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
-                PluginLog.Log($"开始采集: {Names}, {count}");
-                if (count < 9000 && gp >= 200)
+                if (count < 9000 && gp >= 200 && !name.Contains("冰之水晶"))
                 {
                     AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
@@ -707,6 +681,7 @@ namespace AlphaProject.Bot
                 }
             }
 
+            PluginLog.Log($"开始采集: {name}");
             int tt = 0;
             while (CommonUi.AddonGatheringIsOpen() && tt < 15)
             {
@@ -823,22 +798,6 @@ namespace AlphaProject.Bot
                 n++;
             }
             return true;
-        }
-
-        public Vector3 MovePositions(Vector3[] Path, bool UseMount)
-        {
-            ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            for (int i = 0; i < Path.Length; i++)
-            {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-                }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], DalamudApi.ClientState.TerritoryType, UseMount, false);
-            }
-            return position;
         }
 
         public void canUseNaturesBounty(bool b) {

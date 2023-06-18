@@ -21,7 +21,12 @@ namespace AlphaProject.SeFunctions
             retry = r;
             bool flag = true;
             int ii = 0;
-            while (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing] || DalamudApi.Condition[ConditionFlag.Casting])
+            while (DalamudApi.Condition[ConditionFlag.Gathering] 
+                || DalamudApi.Condition[ConditionFlag.Fishing] 
+                || DalamudApi.Condition[ConditionFlag.Casting]
+                || DalamudApi.Condition[ConditionFlag.Crafting]
+                || DalamudApi.Condition[ConditionFlag.PreparingToCraft]
+                || DalamudApi.Condition[ConditionFlag.Crafting40])
             {
                 PluginLog.Log($"当前状态无法TP, 等待一次...");
                 Thread.Sleep(1000 + new Random().Next(500, 2000));
@@ -45,7 +50,7 @@ namespace AlphaProject.SeFunctions
                     Teleport(aetheryte, 1);
                 }
             }
-            Thread.Sleep(15000 + new Random().Next(1000, 5000));
+            Thread.Sleep(12000 + new Random().Next(2000, 3000));
             return flag;
         }
     }

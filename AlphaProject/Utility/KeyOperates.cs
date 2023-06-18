@@ -63,7 +63,7 @@ public class KeyOperates
             n++;
         }
 
-        double errorDisntance = 4.5;
+        double errorDisntance = 3.8;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
         positionA = ReviseNoTime(positionB);
@@ -81,7 +81,7 @@ public class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(20);
+            Thread.Sleep(10);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);
@@ -132,14 +132,14 @@ public class KeyOperates
                 }
             }
 
-            if (notMove >= 18)
+            if (notMove >= 20)
             {
-                KeyMethod(Keys.d_key, 1000);
+                KeyMethod(Keys.d_key, 800);
                 if (!DalamudApi.KeyState[Keys.w_key])
                 {
                     KeyDown(Keys.w_key);
                 }
-                KeyMethod(Keys.space_key, 2000);
+                KeyMethod(Keys.space_key, 1500);
                 notMove = 0;
             }
 
@@ -199,9 +199,9 @@ public class KeyOperates
             }
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 6;
+                errorDisntance = 5;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
-                errorDisntance = 4.5;
+                errorDisntance = 3.8;
             }
         }
         Stop();
@@ -296,7 +296,7 @@ public class KeyOperates
             sleep = 80 + new Random().Next(30, 140);
         }
         else {
-            sleep += new Random().Next(60, 120);
+            sleep += new Random().Next(60, 100);
         }
 
         if (sleep == 0) {
@@ -333,7 +333,7 @@ public class KeyOperates
     }
 
     public Vector3 ReviseNoTime(Vector3 positionB) {
-        return Revise(positionB, 30);
+        return Revise(positionB, 20);
     }
 
     public Vector3 Revise(Vector3 positionB, int tt) {
@@ -368,6 +368,7 @@ public class KeyOperates
 
     public Vector3 MovePositions(Vector3[] Path, bool UseMount)
     {
+        closed = false;
         ushort territoryType = DalamudApi.ClientState.TerritoryType;
         ushort SizeFactor = AlphaProject.AlphaProject.GameData.GetSizeFactor(territoryType);
         Vector3 position = GetUserPosition(SizeFactor);

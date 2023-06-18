@@ -62,6 +62,10 @@ namespace AlphaProject.Bot
                 X++;
                 PluginLog.Log($"{X} 次结束");
             }
+            Teleporter.Teleport(Positions.randomTp());
+            if (DalamudApi.Condition[ConditionFlag.Mounted]) {
+                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+            }
             AlphaProject.status = (byte)TaskState.READY;
         }
 
@@ -117,8 +121,9 @@ namespace AlphaProject.Bot
                         }
                         if (gameObjects.ToArray().Length == 0) {
                             error++;
-                            if (error >= 1) {
+                            if (error >= 3) {
                                 PluginLog.Log($"出现错误停止");
+                                error = 0;
                                 return;
                             }
                         }

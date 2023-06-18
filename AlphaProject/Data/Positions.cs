@@ -409,6 +409,13 @@ namespace AlphaProject.Utility
             new Vector3 (1174, 1126, 984),
         };
 
+        // 游末邦
+        public static uint ShopATp = 134;
+        public static Vector3[] ExchangeAndUploadANPC = {
+            new Vector3 (1128, 1289, 1108),
+            new Vector3 (1158, 1289, 1086),
+        };
+
         // 海都
         public static uint ShopTpA = 183;
         public static ushort ShopTerritoryTypeA = 963;
@@ -944,6 +951,47 @@ namespace AlphaProject.Utility
             1, 7, 13
         };
 
+        public static Vector3[] path27834 = {
+            new Vector3 (1925, 2208, 2801),
+            new Vector3 (1684, 2301, 2680),
+            new Vector3 (1156, 2235, 2115),
+        };
+        public static Vector3[] Points27834 = {
+            new Vector3 (1214, 2183, 2141), // 进入A
+            new Vector3 (1245, 2173, 2075), // 
+            new Vector3 (1241, 2182, 2040),
+            new Vector3 (1246, 2172, 2070), // 
+            new Vector3 (1235, 2176, 2067),
+            new Vector3 (1221, 2175, 2064),
+            new Vector3 (1215, 2175, 2082),
+            new Vector3 (1179, 2176, 2124), // 离开A
+            new Vector3 (928, 2175, 2166), // 进入B
+            new Vector3 (908, 2153, 2187),  //
+            new Vector3 (937, 2154, 2206),
+            new Vector3 (928, 2156, 2221),  //
+            new Vector3 (945, 2158, 2221),
+            new Vector3 (925, 2160, 2233),
+            new Vector3 (928, 2156, 2221),  //
+            new Vector3 (899, 2157, 2206),
+            new Vector3 (842, 2177, 2148), // 离开B
+            new Vector3 (864, 2181, 1921), // 进入C
+            new Vector3 (840, 2180, 1890),
+            new Vector3 (861, 2176, 1913),  //
+            new Vector3 (871, 2180, 1889),
+            new Vector3 (872, 2187, 1877),
+            new Vector3 (886, 2186, 1880),
+            new Vector3 (1024, 2189, 1997), // 离开C
+        };
+        public static int[] CanCollectPoints27834 = {
+            2, 4, 5, 6, 10, 12, 13, 15, 18, 20, 21, 22
+        };
+        public static int[] UnknownPointsNum27834 = {
+            4, 4, 4
+        };
+        public static int[] Area27834 = {
+            2, 10, 18
+        };
+
         public static Vector3[] path27687 = {
             new Vector3 (1167, 2375, 1069),
         };
@@ -1049,10 +1097,40 @@ namespace AlphaProject.Utility
         };
 
         public static Vector3[] path36089 = {
+            new Vector3 (2297, 2200, 2294),
+        };
+        public static Vector3[] Points36089 = {
+            new Vector3 (2174, 2165, 2310), // 进入A
+            new Vector3 (2219, 2155, 2284),
+            new Vector3 (2245, 2164, 2328),
+            new Vector3 (2239, 2162, 2347),
+            new Vector3 (2209, 2177, 2406), // 离开A
+            new Vector3 (2131, 2163, 2524), // 进入B
+            new Vector3 (2123, 2157, 2567),
+            new Vector3 (2065, 2147, 2496),
+            new Vector3 (2016, 2142, 2541),
+            new Vector3 (1978, 2151, 2471), // 离开B
+            new Vector3 (1935, 2136, 2363), // 进入C
+            new Vector3 (1900, 2125, 2328),
+            new Vector3 (1967, 2131, 2287),
+            new Vector3 (1914, 2124, 2225),
+            new Vector3 (2034, 2158, 2259), // 离开C
+        };
+        public static int[] CanCollectPoints36089 = {
+            1, 2, 3, 6, 7, 8, 11, 12, 13
+        };
+        public static int[] UnknownPointsNum36089 = {
+            3, 3, 3
+        };
+        public static int[] Area36089 = {
+            1, 6, 11
+        };
+
+        public static Vector3[] path36096 = {
             new Vector3 (1008, 2505, 1907),
             new Vector3 (946, 2449, 2074),
         };
-        public static Vector3[] Points36089 = {
+        public static Vector3[] Points36096 = {
             new Vector3 (957, 2442, 2145), // 进入A
             new Vector3 (1027, 2439, 2100),
             new Vector3 (1004, 2440, 2133), //
@@ -1074,13 +1152,13 @@ namespace AlphaProject.Utility
             new Vector3 (1053, 2453, 2434),
             new Vector3 (957, 2463, 2219), // 离开C
         };
-        public static int[] CanCollectPoints36089 = {
+        public static int[] CanCollectPoints36096 = {
             1, 3, 4, 5, 8, 9, 10, 11, 14, 15, 17, 18
         };
-        public static int[] UnknownPointsNum36089 = {
+        public static int[] UnknownPointsNum36096 = {
             4, 4, 4
         };
-        public static int[] Area36089 = {
+        public static int[] Area36096 = {
             1, 8, 14
         };
 
@@ -1228,7 +1306,7 @@ namespace AlphaProject.Utility
             (27785, 900, "光芒大丁草", 17, "园艺工", 80, 132, path27784, Points27784, CanCollectPoints27784, UnknownPointsNum27784, Area27784), // 雷克兰德
 
             (27832, 900, "山地小麦", 17, "园艺工", 78, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), // 珂露西亚岛
-            //(27834, 1800, "大蜜蜂的巢", 17, "园艺工", 80, 138, path27832, Points27832, CanCollectPoints27832, UnknownPointsNum27832, Area27832), //
+            (27834, 900, "大蜜蜂的巢", 17, "园艺工", 80, 142, path27834, Points27834, CanCollectPoints27834, UnknownPointsNum27834, Area27834), // 拉凯提卡大森林 蛇行枝
             (27687, 900, "愈疮木原木", 17, "园艺工", 78, 136, path27687, Points27687, CanCollectPoints27687, UnknownPointsNum27687, Area27687), // 雷克兰德 
             (27703, 900, "暗银矿", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
             (27782, 1800, "地下天然水", 16, "采矿工", 80, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 雷克兰德
@@ -1240,8 +1318,9 @@ namespace AlphaProject.Utility
             //(36085, 2700, "萨维奈紫苏", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
             (36086, 1800, "棕榈糖浆", 17, "园艺工", 88, 170, path36086, Points36086, CanCollectPoints36086, UnknownPointsNum36086, Area36086), // 代米尔遗烈乡
             //(36087, 1800, "椰子", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), // 
-            //(36089, 1800, "巨人新薯", 16, "采矿工", 88, 132, path27703, Points27703, CanCollectPoints27703, UnknownPointsNum27703, Area27703), //
-            (36096, 1800, "无花果", 17, "园艺工", 88, 178, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 创作者之家
+            (36089, 1800, "巨人新薯", 17, "园艺工", 88, 176, path36089, Points36089, CanCollectPoints36089, UnknownPointsNum36089, Area36089), // 醒悟天测园
+            (36095, 1800, "古代肉豆蔻", 17, "园艺工", 88, 178, path36096, Points36096, CanCollectPoints36096, UnknownPointsNum36096, Area36096), // 创作者之家
+            (36096, 1800, "无花果", 17, "园艺工", 88, 178, path36096, Points36096, CanCollectPoints36096, UnknownPointsNum36096, Area36096), // 创作者之家
         };
 
         public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] Spearfishs = {
@@ -1255,6 +1334,23 @@ namespace AlphaProject.Utility
         public static string[] fishs = {
             "鱼龙", "顶髻鱼", "铜绿虹鳉", "拉诺西亚龙"
         };
+
+        public static uint[] Tps = {
+            75, // 田园郡
+        };
+
+        public static int TpN = 0;
+
+        public static uint randomTp()
+        {
+            if (TpN >= Tps.Length)
+            {
+                TpN = 0;
+            }
+            uint f = Tps[TpN];
+            TpN++;
+            return f;
+        }
 
         public static bool IsNeedSpearfish(string text)
         {

@@ -10,11 +10,20 @@ using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Client.UI;
 using Dalamud.Logging;
 using Newtonsoft.Json.Linq;
+using AlphaProject.Data;
+using AlphaProject.Managers;
+using AlphaProject.Ui;
+using AlphaProject.Utility;
+using System.Threading;
 
 namespace AlphaProject.Helper
 {
     public unsafe static class CraftHelper
     {
+        public static int white { get; set; } = 0;
+        public static int purple { get; set; } = 0;
+
+
         public static List<uint> InsufficientMaterials = new();
         public static Dictionary<Recipe, bool> CraftableItems = new();
         public unsafe static InventoryManager* invManager = InventoryManager.Instance();
@@ -35,9 +44,14 @@ namespace AlphaProject.Helper
             return GenericHelper.TryGetAddonByName<AddonRecipeNote>("Synthesis", out var addon) && addon->AtkUnitBase.IsVisible;
         }
 
+        public unsafe static bool SynthesisSimpleWindowOpen()
+        {
+            return GenericHelper.TryGetAddonByName<AddonRecipeNote>("SynthesisSimple", out var addon) && addon->AtkUnitBase.IsVisible;
+        }
+
         public unsafe static void CloseCraftingMenu()
         {
-            CommandProcessorHelper.OpenCraftingMenu();
+            CommandProcessorHelper.CloseCraftingMenu();
         }
 
         public unsafe static void OpenRecipeByID(uint recipeID, bool skipThrottle = false)
@@ -135,6 +149,10 @@ namespace AlphaProject.Helper
                 }
             }
             return res;
+        }
+
+        public unsafe static void test() { 
+        
         }
     }
 }
