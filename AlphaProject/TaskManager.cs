@@ -1,3 +1,4 @@
+using AlphaProject.Bot;
 using AlphaProject.Data;
 using AlphaProject.Enums;
 using AlphaProject.Exceptions;
@@ -99,11 +100,11 @@ public class TaskManager
                 PluginLog.Log($"CRAFT 已经执行时间: {end.Subtract(start).Minutes}, 总共: {r}");
                 Thread.Sleep(10000);
             }
-            AlphaProject.GameData.CraftBot.StopScript();
+            CraftBot.StopScript();
         });
         task.Start();
 
-        AlphaProject.GameData.CraftBot.CraftScript(item2, item4);
+        CraftBot.CraftScript(item2, item4);
         AlphaProject.status = (byte)TaskState.READY;
     }
 
@@ -142,11 +143,11 @@ public class TaskManager
                 PluginLog.Log($"GATHER 已经执行时间: {end.Subtract(start).Minutes}, 总共: {r}");
                 Thread.Sleep(10000);
             }
-            AlphaProject.GameData.GatherBot.StopScript();
+            GatherBot.StopScript();
         });
         task.Start();
 
-        AlphaProject.GameData.GatherBot.GatherByName(item2);
+        GatherBot.GatherByName(item2);
         AlphaProject.status = (byte)TaskState.READY;
     }
 

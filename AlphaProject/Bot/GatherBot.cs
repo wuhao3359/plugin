@@ -16,29 +16,25 @@ using AlphaProject.Enums;
 
 namespace AlphaProject.Bot
 {
-    public class GatherBot
+    public static class GatherBot
     {
-        private static bool closed = false;
-        private int gatherCount = 0;
+        private static bool Closed = false;
+        private static int gatherCount = 0;
 
-        public Dictionary<string, string> param;
+        public static Dictionary<string, string> param;
 
-        public GatherBot()
-        {
-        }
-
-        public void Init()
+        public static void Init()
         {
             AlphaProject.status = (byte)TaskState.GATHER;
-            closed = false;
+            Closed = false;
         }
 
-        public void GatherByName(string name) {
+        public static void GatherByName(string name) {
             Init();
             int X = 0;
-            while (!closed & X < 1000)
+            while ((!Closed & X < 1000) || Tasks.TaskRun)
             {
-                if (closed)
+                if (Closed)
                 {
                     PluginLog.Log($"中途结束");
                     return;
@@ -64,17 +60,17 @@ namespace AlphaProject.Bot
             }
             Teleporter.Teleport(Positions.randomTp());
             if (DalamudApi.Condition[ConditionFlag.Mounted]) {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                KeyOperates.KeyMethod(Keys.q_key);
             }
             AlphaProject.status = (byte)TaskState.READY;
         }
 
-        public void RunGatherById(int id) {
+        public static void RunGatherById(int id) {
             RunGatherById(id, "100");
         }
 
         // 普通采集点
-        public void RunGatherById(int id, string lv)
+        public static void RunGatherById(int id, string lv)
         {
             Init();
 
@@ -92,21 +88,21 @@ namespace AlphaProject.Bot
                     CommandProcessorHelper.DoGearChange(JobName);
                     Thread.Sleep(200 + new Random().Next(200, 400));
                 }
-                MovePositions(Path, true);
+                KeyOperates.MovePositions(Path, true);
             }
             int X = 0;
             int error = 0;
-            while (!closed & X < 100)
+            while (!Closed & X < 100)
             {
                 ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-                Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 List<GameObject> gameObjects = new();
                 List<int> gameObjectsIndex = new();
 
                 for (int i = 0, j = 0, k = 0; i < Points.Length; i++)
                 {
-                    if (closed)
+                    if (Closed)
                     {
                         PluginLog.Log($"中途结束");
                         return;
@@ -144,15 +140,15 @@ namespace AlphaProject.Bot
                             {
                                 if (!DalamudApi.Condition[ConditionFlag.Mounted])
                                 {
-                                    AlphaProject.GameData.CommonBot.UseItem();
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.e_key);
+                                    CommonBot.UseItem();
+                                    KeyOperates.KeyMethod(Keys.e_key);
                                 }
                                 float x = Maths.GetCoordinate(go.Position.X, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float y = Maths.GetCoordinate(go.Position.Y, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 float z = Maths.GetCoordinate(go.Position.Z, AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType));
                                 Vector3 GatherPoint = new(x, y, z);
-                                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
-                                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                position = KeyOperates.MoveToPoint(position, Points[i], territoryType, false, false);
+                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                                 if (go.ObjectKind == Dalamud.Game.ClientState.Objects.Enums.ObjectKind.GatheringPoint)
                                 {
                                     var targetMgr = DalamudApi.TargetManager;
@@ -163,24 +159,24 @@ namespace AlphaProject.Bot
                                     {
                                         if (tt >= 2)
                                         {
-                                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                            KeyOperates.KeyMethod(Keys.w_key, 200);
                                         }
-                                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                                        KeyOperates.KeyMethod(Keys.q_key);
                                         Thread.Sleep(800 + new Random().Next(200, 500));
                                         tt++;
 
-                                        if (closed)
+                                        if (Closed)
                                         {
                                             PluginLog.Log($"task stopping");
                                             return;
                                         }
                                     }
 
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                    KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                     tt = 0;
                                     while (!CommonUi.AddonGatheringIsOpen() && tt < 7)
                                     {
-                                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                                        KeyOperates.KeyMethod(Keys.num0_key);
                                         Thread.Sleep(800 + new Random().Next(200, 500));
                                         tt++;
                                     }
@@ -198,14 +194,14 @@ namespace AlphaProject.Bot
 
                                     if (CommonUi.AddonGatheringIsOpen())
                                     {
-                                        AlphaProject.GameData.CommonBot.NormalMaterialsMethod(Name);
+                                        CommonBot.NormalMaterialsMethod(Name);
                                     }
                                     if (gameObjects.ToArray().Length > 0)
                                     {
                                         gameObjects.RemoveAt(0);
                                         gameObjectsIndex.RemoveAt(0);
                                     }
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                                    KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                                 }
                             }
                             else
@@ -216,17 +212,17 @@ namespace AlphaProject.Bot
                     }
                     else
                     {
-                        position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
+                        position = KeyOperates.MoveToPoint(position, Points[i], territoryType, true, false);
                     }
                 }
                 X++;
             }
         }
 
-        public void YGatherScript(string args) {
-            closed = false;
+        public static void YGatherScript(string args) {
+            Closed = false;
             int X = 0;
-            while (!closed && X < 20)
+            while (!Closed && X < 20)
             {
                 try
                 {
@@ -261,7 +257,7 @@ namespace AlphaProject.Bot
         }
 
         // 进入空岛
-        public bool RunIntoYunGuanScript()
+        public static bool RunIntoYunGuanScript()
         {
             if (DalamudApi.ClientState.TerritoryType - Positions.TianQiongJieTerritoryType != 0)
             {
@@ -274,13 +270,13 @@ namespace AlphaProject.Bot
             {
                 // 移动到指定NPC 路径点
                 Vector3[] ToArea = Positions.YunGuanNPC;
-                MovePositions(ToArea, false);
+                KeyOperates.MovePositions(ToArea, false);
                 // 进入空岛
                 if (!CommonUi.AddonSelectStringIsOpen() && !CommonUi.AddonSelectYesnoIsOpen())
                 {
-                    AlphaProject.GameData.CommonBot.SetTarget("奥瓦埃尔");
+                    CommonHelper.SetTarget("奥瓦埃尔");
                     Thread.Sleep(500);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                     CommonUi.SelectString1Button();
                 }
 
@@ -307,34 +303,16 @@ namespace AlphaProject.Bot
             return true;
         }
 
-        private Vector3 MovePositions(Vector3[] ToArea, bool UseMount)
-        {
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            for (int i = 0; i < ToArea.Length; i++)
-            {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-                }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
-                PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
-            }
-            return position;
-        }
-
-        public void RunYGatherScript(string args) {
+        public static void RunYGatherScript(string args) {
             string[] str = args.Split(' ');
             int area = int.Parse(str[0]);
             int repair = 0;
 
             Init();
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
+            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
             ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
             ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
+            Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
 
             if (!AlphaProject.GameData.param.TryGetValue("extractMateria", out var v)) {
                 AlphaProject.GameData.param.Add("extractMateria", "1");
@@ -342,14 +320,14 @@ namespace AlphaProject.Bot
             if (CommonUi.CanRepair())
             {
                 PluginLog.Log($"修理装备...");
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Positions.YunGuanRepairNPC, territoryType, false);
+                position = KeyOperates.MoveToPoint(position, Positions.YunGuanRepairNPC, territoryType, false);
                 if (repair > 0)
                 {
-                    AlphaProject.GameData.CommonBot.Repair();
+
                 }
                 else
                 {
-                    AlphaProject.GameData.CommonBot.NpcRepair("修理工");
+                    CommonBot.NpcRepair("修理工");
                 }
             }
             else
@@ -361,23 +339,23 @@ namespace AlphaProject.Bot
             if (count >= 5)
             {
                 PluginLog.Log($"开始精制魔晶石...");
-                AlphaProject.GameData.CommonBot.ExtractMateria(count);
+                CommonBot.ExtractMateria(count);
             }
 
             (Vector3[] AreaPosition, int[] Tp, int[] GatherPosition, int GathingButton) = GetAreaByType(area);
 
             for (int k = 0; k < AreaPosition.Length; k++) {
-                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                if (Closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {
                     PluginLog.Log($"YGathing stopping");
                     return;
                 }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
+                position = KeyOperates.MoveToPoint(position, AreaPosition[k], territoryType, true, false);
                 // 默认为移动点
                 // 传送点
                 if (Array.IndexOf(Tp, k) != -1) {
                     if (!DalamudApi.Condition[ConditionFlag.Jumping]) {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 1000);
+                        KeyOperates.KeyMethod(Keys.w_key, 1000);
                     }
                     if (DalamudApi.Condition[ConditionFlag.Jumping])
                     {
@@ -392,7 +370,7 @@ namespace AlphaProject.Bot
 
                 // 采集点
                 if (Array.IndexOf(GatherPosition, k) != -1) {
-                    GameObject? go = Util.CurrentYPositionCanGather(AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
+                    GameObject? go = Util.CurrentYPositionCanGather(KeyOperates.GetUserPosition(SizeFactor), SizeFactor);
                     if (go != null)
                     {
                         float x = Maths.GetCoordinate(go.Position.X, SizeFactor);
@@ -403,7 +381,7 @@ namespace AlphaProject.Bot
                             PluginLog.Log($"可采集点太远");
                             continue;
                         }
-                        position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
                         PluginLog.Log($"到达可采集点: K: {k} {position.X} {position.Y} {position.Z}");
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
@@ -412,13 +390,13 @@ namespace AlphaProject.Bot
                         while (DalamudApi.Condition[ConditionFlag.Mounted] && n < 7)
                         {
                             if (n >= 3) {
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                KeyOperates.KeyMethod(Keys.w_key, 200);
                             }
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                            KeyOperates.KeyMethod(Keys.q_key);
                             Thread.Sleep(1000);
                             n++;
 
-                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                            if (Closed || territoryType != DalamudApi.ClientState.TerritoryType)
                             {
                                 PluginLog.Log($"YGathing stopping");
                                 return;
@@ -428,9 +406,9 @@ namespace AlphaProject.Bot
                         int t = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && t < 5)
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                            KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(500);
-                            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                            if (Closed || territoryType != DalamudApi.ClientState.TerritoryType)
                             {
                                 PluginLog.Log($"YGathing stopping");
                                 return;
@@ -452,7 +430,7 @@ namespace AlphaProject.Bot
                             {
                                 if (gp >= 500)
                                 {
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                                    KeyOperates.KeyMethod(Keys.F2_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -460,7 +438,7 @@ namespace AlphaProject.Bot
                             {
                                 if (gp >= 400)
                                 {
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                                    KeyOperates.KeyMethod(Keys.F1_key);
                                     Thread.Sleep(2000);
                                 }
                             }
@@ -488,7 +466,7 @@ namespace AlphaProject.Bot
                             k--;
                         }
                         if (gatherCount >= 40) {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                            KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                             Thread.Sleep(500);
                             try
                             {
@@ -502,14 +480,14 @@ namespace AlphaProject.Bot
                                 gatherCount -= 40;
                                 Thread.Sleep(6800);
                             }
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
+                            KeyOperates.KeyMethod(Keys.down_arrow_key, 225);
                         }
                     }
                     else {
                         PluginLog.Log($"null gather point");
                     }
                 }
-                if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+                if (Closed || territoryType != DalamudApi.ClientState.TerritoryType)
                 {
                     PluginLog.Log($"YGathing stopping");
                     return;
@@ -517,13 +495,13 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void StopScript()
+        public static void StopScript()
         {
-            closed = true;
-            AlphaProject.GameData.KeyOperates.ForceStop();
+            Closed = true;
+            KeyOperates.ForceStop();
         }
 
-        public (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, string lv) {
+        public static (int, int, string, uint, string, uint, uint, Vector3[], Vector3[], int[], int[], int[]) GetData(int id, string lv) {
             if (id == 0)
             {
                 List<int> list = Positions.GetMateriaId(lv);
@@ -558,7 +536,7 @@ namespace AlphaProject.Bot
             }
         }
 
-        public (Vector3[], int[], int[], int) GetAreaByType(int type) {
+        public static (Vector3[], int[], int[], int) GetAreaByType(int type) {
             Vector3[] AreaPosition = Array.Empty<Vector3>();
             int[] Tp = Array.Empty<int>();
             int[] GatherPosition = Array.Empty<int>();

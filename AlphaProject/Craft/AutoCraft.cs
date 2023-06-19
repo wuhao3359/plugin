@@ -52,7 +52,6 @@ namespace AlphaProject.Craft
         private void EnableBot(Framework framework) {
             if (!DalamudApi.ClientState.IsLoggedIn)
             {
-                AutoCraftBot.AutoCraftBotEnable = false;
                 return;
             }
 

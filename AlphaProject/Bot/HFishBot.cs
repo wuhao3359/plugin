@@ -12,32 +12,27 @@ using AlphaProject.Utility;
 
 namespace AlphaProject.Bot
 {
-    public class HFishBot
+    public static class HFishBot
     {
         //private static SeTugType TugType { get; set; } = null!;
 
         //private FishRecord Record;
 
-        private FishingState LastState = FishingState.None;
-        private FishingState FishingState = FishingState.None;
-        private bool closed = false;
+        private static FishingState LastState = FishingState.None;
+        private static FishingState FishingState = FishingState.None;
+        private static bool Closed = false;
 
-        public HFishBot()
-        {
-            //TugType = new SeTugType(DalamudApi.SigScanner);
-            //Record = new FishRecord();
+
+        public static void StopScript() {
+            Closed = true;
         }
 
-        public void StopScript() {
-            closed = true;
-        }
-
-        public void Script()
+        public static void Script()
         {
-            closed = false;
+            Closed = false;
             DalamudApi.Framework.Update += OnHFishUpdate;
             int n = 0;
-            while (!closed && n < 150)
+            while (!Closed && n < 150)
             {
                 try
                 {
@@ -54,14 +49,14 @@ namespace AlphaProject.Bot
             DalamudApi.Framework.Update -= OnHFishUpdate;
         }
 
-        public void RunScript() {
+        public static void RunScript() {
             if (!DalamudApi.Condition[ConditionFlag.OccupiedInCutSceneEvent] && !DalamudApi.Condition[ConditionFlag.Fishing])
             {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n2_key);
+                KeyOperates.KeyMethod(Keys.n2_key);
             }
         }
 
-        public void OnHFishUpdate(Framework _)
+        public static void OnHFishUpdate(Framework _)
         {
             if (AlphaProject.GameData.EventFramework != null)
             {
@@ -89,7 +84,7 @@ namespace AlphaProject.Bot
             }
         }
 
-        private void OnHFishBite()
+        private static void OnHFishBite()
         {
             //Record.SetTugHook(TugType.Bite, Record.Hook);
             Task task = new(() =>
@@ -98,23 +93,23 @@ namespace AlphaProject.Bot
                 switch (AlphaProject.GameData.TugType.Bite.ToString())
                 {
                     case "Weak":
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                        KeyOperates.KeyMethod(Keys.n3_key);
                         break;
                     case "Strong":
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                        KeyOperates.KeyMethod(Keys.n4_key);
                         break;
                     case "Legendary":
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                        KeyOperates.KeyMethod(Keys.n4_key);
                         break;
                     default:
                         break;
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n1_key);
+                KeyOperates.KeyMethod(Keys.n1_key);
             });
             task.Start();
         }
 
-        private void HFishScript()
+        private static void HFishScript()
         {
             Task task = new(() =>
             {
@@ -145,35 +140,35 @@ namespace AlphaProject.Bot
                 {
                     if (stackCount >= 3)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n0_key);
+                        KeyOperates.KeyMethod(Keys.n0_key);
                         gp += 150;
                         Thread.Sleep(1000);
                     }
                 }
                 if (gp < maxGp * 0.5)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+                    KeyOperates.KeyMethod(Keys.plus_key);
                     Thread.Sleep(1500);
                 }
                 if (!existStatus)
                 {
                     if (gp > 560)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
+                        KeyOperates.KeyMethod(Keys.F4_key);
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 560;
                     }
                     else if (gp > 200)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F3_key);
+                        KeyOperates.KeyMethod(Keys.F3_key);
                         Thread.Sleep(1000);
                         existStatus = true;
                         gp -= 200;
                     }
                 }
                 Thread.Sleep(500);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n2_key);
+                KeyOperates.KeyMethod(Keys.n2_key);
             });
             task.Start();
         }

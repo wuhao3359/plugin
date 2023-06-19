@@ -1,4 +1,5 @@
-﻿using AlphaProject.Craft;
+﻿using AlphaProject.Bot;
+using AlphaProject.Craft;
 using AlphaProject.Data;
 using AlphaProject.Helper;
 using Dalamud.Logging;
@@ -236,7 +237,7 @@ namespace AlphaProject
                     if (ImGui.Button("test"))
                     {
                         PluginLog.Log($"test");
-                        AlphaProject.GameData.CraftBot.test();
+                        CraftBot.test();
                     }
                 }
                 ImGui.EndChild();

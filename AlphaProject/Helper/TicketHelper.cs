@@ -21,7 +21,7 @@ namespace AlphaProject.Helper
 {
     public unsafe static class TicketHelper
     {
-        public static bool closed { get; set; } = false;
+        public static bool Closed { get; set; } = false;
 
         public static int white { get; set; } = 0;
         public static int purple { get; set; } = 0;
@@ -65,7 +65,7 @@ namespace AlphaProject.Helper
         {
             // 位置
             Teleporter.Teleport(Positions.ShopATp);
-            AlphaProject.GameData.KeyOperates.MovePositions(Positions.ExchangeAndUploadANPC, false);
+            KeyOperates.MovePositions(Positions.ExchangeAndUploadANPC, false);
             // 提交物品
             (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(itemName);
             for (int i = 0; i <= 3 && BagManager.GetInventoryItemCountById(ItemId) > 0; i++) {
@@ -88,25 +88,25 @@ namespace AlphaProject.Helper
             {
                 for (int i = 1; i < Category; i++)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
 
                 for (int i = 0; i < Sub; i++)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
 
                 int count = BagManager.GetInventoryItemCountById(ItemId);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(900 + new Random().Next(100, 200));
                 int error = 0;
                 while (!RecipeNoteUi.SelectYesnoIsOpen() && count > 0)
                 {
                     GetWhiteAndPurple();
-                    if (white >= 3800 || purple >= 3800 || closed) {
+                    if (white >= 3800 || purple >= 3800 || Closed) {
                         break;
                     }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(100 + new Random().Next(100, 200));
                     if (RecipeNoteUi.SelectYesnoIsOpen())
                     {
@@ -116,7 +116,7 @@ namespace AlphaProject.Helper
                     if (count == after) {
                         error++;
                         if (error >= 2) {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                            KeyOperates.KeyMethod(Keys.num2_key);
                             break;
                         }
                     }
@@ -125,12 +125,12 @@ namespace AlphaProject.Helper
 
                 if (RecipeNoteUi.SelectYesnoIsOpen())
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    KeyOperates.KeyMethod(Keys.esc_key);
                     Thread.Sleep(600 + new Random().Next(100, 200));
                 }
                 while (CommonUi.AddonCollectablesShopIsOpen())
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    KeyOperates.KeyMethod(Keys.esc_key);
                     Thread.Sleep(600 + new Random().Next(100, 200));
                 }
                 Thread.Sleep(3000);
@@ -153,11 +153,11 @@ namespace AlphaProject.Helper
                 PluginLog.Error($"not support Category: {Category}");
             }
             CommonHelper.SetTarget("工票交易员");
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+            KeyOperates.KeyMethod(Keys.num0_key);
+            KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(2000);
 
-            if (closed)
+            if (Closed)
             {
                 PluginLog.Log($"exchange stopping");
                 return;
@@ -168,11 +168,11 @@ namespace AlphaProject.Helper
                 // 1 
                 if (Category == 1)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
                 // 2-大地白票 随机采集魔晶石
                 else if (Category == 2)
@@ -187,31 +187,31 @@ namespace AlphaProject.Helper
                     {
                         r = 18;
                     }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
                     for (int k = 0; k < r; k++)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                        KeyOperates.KeyMethod(Keys.num2_key);
                     }
                 }
                 else if (Category == 72)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
                 else if (Category >= 80 && Category <= 99)
                 {
@@ -224,84 +224,84 @@ namespace AlphaProject.Helper
                     {
                         r = 18;
                     }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
                     for (int k = 0; k < r; k++)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                        KeyOperates.KeyMethod(Keys.num2_key);
                     }
                 }
                 else if (Category == 101)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
                 else if (Category == 102)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
                 }
                 else if (Category >= 1000 && Category <= 1100)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
                     for (int k = 0; k < Sub; k++)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                        KeyOperates.KeyMethod(Keys.num2_key);
                     }
                 }
 
                 else if (Category == 100007)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num8_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
 
                     for (int k = 0; k < Sub; k++)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                        KeyOperates.KeyMethod(Keys.num2_key);
                     }
                 }
 
-                if (closed)
+                if (Closed)
                 {
                     PluginLog.Log($"exchange stopping");
                     return;
                 }
 
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num6_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num9_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                KeyOperates.KeyMethod(Keys.num6_key);
+                KeyOperates.KeyMethod(Keys.num9_key);
+                KeyOperates.KeyMethod(Keys.num4_key);
+                KeyOperates.KeyMethod(Keys.num0_key);
+                KeyOperates.KeyMethod(Keys.num4_key);
+                KeyOperates.KeyMethod(Keys.num0_key);
 
                 while (CommonUi.AddonInclusionShopIsOpen())
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    KeyOperates.KeyMethod(Keys.esc_key);
                     Thread.Sleep(1000);
                 }
             }

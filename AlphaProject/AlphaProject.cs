@@ -15,6 +15,7 @@ using AlphaProject.Utility;
 using AlphaProject.Craft;
 using AlphaProject.Enums;
 using System.Diagnostics;
+using AlphaProject.Bot;
 
 namespace AlphaProject;
 public unsafe class AlphaProject : IDalamudPlugin
@@ -136,15 +137,16 @@ public unsafe class AlphaProject : IDalamudPlugin
     {
         PluginLog.Log($"=====>>> logout... stop all");
         PluginLog.Log($"=====>>> {DalamudApi.ClientState.IsLoggedIn}");
-        GameData.CommonBot.StopScript();
-        GameData.MarketBot.StopScript();
-        GameData.DailyBot.StopScript();
-        GameData.CraftBot.StopScript();
-        GameData.GatherBot.StopScript();
-        GameData.FishBot.StopScript();
-        GameData.HFishBot.StopScript();
-        GameData.CollectionFishBot.StopScript();
+        CommonBot.StopScript();
+        MarketBot.StopScript();
+        DailyBot.StopScript();
+        CraftBot.StopScript();
+        GatherBot.StopScript();
+        FishBot.StopScript();
+        HFishBot.StopScript();
+        CollectionFishBot.StopScript();
 
+        Tasks.TaskRun = false;
         DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
     }
 

@@ -14,40 +14,38 @@ using AlphaProject.RawInformation;
 using ClickLib.Clicks;
 using AlphaProject.Craft;
 using AlphaProject.Data;
-using AlphaProject.SeFunctions;
 
 namespace AlphaProject.Bot
 {
-    public class CraftBot
+    public static class CraftBot
     {
-        private static bool closed = false;
+        private static bool Closed = false;
 
-        private List<uint> jobIds = new();
+        private static List<uint> JobIds = new();
 
-        private uint job = 0;
+        private static uint Job = 0;
 
-        public CraftBot() {}
 
-        public void Init(uint job)
+        public static void Init(uint job)
         {
-            closed = false;
-            jobIds = new();
-            this.job = job;
-            AlphaProject.GameData.CommonBot.Init();
+            Closed = false;
+            JobIds = new();
+            Job = job;
+            CommonBot.Init();
             AlphaProject.status = (byte)TaskState.CRAFT;
         }
 
-        public void StopScript()
+        public static void StopScript()
         {
-            closed = true;
-            AlphaProject.GameData.CommonBot.StopScript();
+            Closed = true;
+            CommonBot.StopScript();
         }
 
-        public void CraftScript() {
+        public static void CraftScript() {
             CraftScript(AlphaProject.Configuration.RecipeName, 15);
         }
 
-        public void CraftScript(string recipeName, uint job)
+        public static void CraftScript(string recipeName, uint job)
         {
             Init(job);
             try
@@ -63,41 +61,24 @@ namespace AlphaProject.Bot
                 }
 
                 int craftX = 0;
-                while (!closed) {
+                while (!Closed || Tasks.TaskRun) {
                     Thread.Sleep(new Random().Next(900, 1200));
-                    // 修理
-                    if (CommonUi.NeedsRepair())
-                    {
-                        PluginLog.Error("Repaair...");
-                        Thread.Sleep(3000);
-                        if (CraftHelper.RecipeNoteWindowOpen())
-                        {
-                            CraftHelper.CloseCraftingMenu();
-                        }
 
-                        Teleporter.Teleport(Positions.ShopTp);
-                        AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
-                        AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
-                        Thread.Sleep(500 + new Random().Next(100, 300));
+                    if (DalamudApi.Condition[ConditionFlag.Occupied39])
+                    {
+                        Throttler.Rethrottle(1000);
                     }
-                    // 魔晶石精制 TODO
-                    //int em = CommonUi.CanExtractMateria();
-                    //if (em > 2)
-                    //{
-                    //    if (CraftHelper.RecipeNoteWindowOpen())
-                    //    {
-                    //        CraftHelper.CloseCraftingMenu();
-                    //    }
-                    //    PluginLog.Error("ExtractMateria...");
-                    //    Thread.Sleep(3000);
-                    //    AlphaProject.GameData.CommonBot.ExtractMateria(em);
-                    //}
+
+                    // 修理
+                    if (!CommonHelper.RepairTask()) continue;
+                    // 精制
+                    if (!CommonHelper.ExtractMateriaTask()) continue;
                     // 食物 TODO
                     // 背包容量检查
                     if (BagManager.InventoryRemaining() <= 5)
                     {
                         PluginLog.Log("背包容量不足...");
-                        closed = true;
+                        Closed = true;
                         break;
                     }
                     // 原材料检查
@@ -115,7 +96,8 @@ namespace AlphaProject.Bot
                                 CraftHelper.CloseCraftingMenu();
                             }
                             AlphaProject.AP.TM.RunTask();
-                            closed = false;
+                            
+                            Closed = false;
                         }
                         else {
                             PluginLog.Error($"当前任务因缺少原材料结束...num: {lackItems.Count}");
@@ -123,10 +105,10 @@ namespace AlphaProject.Bot
                         }
                     }
 
-                    if (this.job != 0 && !CommonUi.CurrentJob(this.job))
+                    if (Job != 0 && !CommonUi.CurrentJob(Job))
                     {
                         Thread.Sleep(1800 + new Random().Next(200, 500));
-                        string jobName = RecipeItems.GetJobName(this.job);
+                        string jobName = RecipeItems.GetJobName(Job);
                         CommandProcessorHelper.DoGearChange(jobName);
                         Thread.Sleep(200 + new Random().Next(200, 400));
                     }
@@ -141,7 +123,7 @@ namespace AlphaProject.Bot
                         }
                     } else
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                        KeyOperates.KeyMethod(Keys.num0_key);
                     }
                     if (!recipe.CanQuickSynth)
                     {
@@ -181,7 +163,7 @@ namespace AlphaProject.Bot
             AlphaProject.status = (byte)TaskState.READY;
         }
 
-        public unsafe void RunSynthByRecipe(Recipe recipe)
+        public unsafe static void RunSynthByRecipe(Recipe recipe)
         {
             int error = 0;
             if (CraftHelper.RecipeNoteWindowOpen())
@@ -190,7 +172,7 @@ namespace AlphaProject.Bot
 
                 RecipeNoteUi.SynthesizeButton();
                 if (error > 3) {
-                    closed = true;
+                    Closed = true;
                     PluginLog.Log($"停止 error: {error}");
                 }
                 Thread.Sleep(new Random().Next(1800, 2500));
@@ -201,7 +183,7 @@ namespace AlphaProject.Bot
                 while (RecipeNoteUi.SynthesisIsOpen())
                 {
                     Thread.Sleep(new Random().Next(1000, 1200));
-                    if (closed)
+                    if (Closed)
                     {
                         PluginLog.Log($"craft stopping");
                         return;
@@ -214,7 +196,7 @@ namespace AlphaProject.Bot
             Thread.Sleep(new Random().Next(1000, 2000));
         }
 
-        public unsafe void RunQuickSynthByRecipe(Recipe recipe) {
+        public unsafe static void RunQuickSynthByRecipe(Recipe recipe) {
             var recipeWindow = DalamudApi.GameGui.GetAddonByName("RecipeNote", 1);
             if (recipeWindow == IntPtr.Zero)
                 return;
@@ -269,7 +251,7 @@ namespace AlphaProject.Bot
             }
         }
 
-        public unsafe void CloseQuickSynthWindow()
+        public unsafe static void CloseQuickSynthWindow()
         {
             try
             {
@@ -294,20 +276,7 @@ namespace AlphaProject.Bot
             }
         }
 
-        public unsafe void test() {
-            //var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
-            //if (quickSynthPTR == IntPtr.Zero)
-            //    return;
-
-            //var quickSynthWindow = (AtkUnitBase*)quickSynthPTR;
-            //var qsynthButton = (AtkComponentButton*)quickSynthWindow->UldManager.NodeList[3];
-            //if (qsynthButton != null && !qsynthButton->IsEnabled)
-            //{
-            //    qsynthButton->AtkComponentBase.OwnerNode->AtkResNode.Flags ^= 1 << 5;
-            //}
-
-            //AtkResNodeFunctions.ClickButton(quickSynthWindow, qsynthButton, 1);
-
+        public unsafe static void test() {
             var quickSynthPTR = DalamudApi.GameGui.GetAddonByName("SynthesisSimpleDialog", 1);
             if (quickSynthPTR == IntPtr.Zero)
                 return;

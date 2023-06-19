@@ -175,7 +175,7 @@ public partial class FileSystemSelector<T, TStateStorage> : IDisposable
     }
 
 
-    // Add or remove descendants of the given folder depending on if it is opened or closed.
+    // Add or remove descendants of the given folder depending on if it is opened or Closed.
     private void AddOrRemoveDescendants(FileSystem<T>.Folder folder, bool open)
     {
         if (open)

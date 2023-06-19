@@ -15,47 +15,44 @@ using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
-    public class DailyBot
+    public static class DailyBot
     {
-        private bool closed = false;
+        private static bool Closed = false;
 
-        private bool othetRun = false;
+        private static bool OthetRun = false;
 
-        private bool needTp = true;
+        private static bool NeedTp = true;
 
-        private string otherTaskParam = "0";
+        private static string OtherTaskParam = "0";
 
-        int hour = 0;
+        static int hour = 0;
 
-        int et = 0;
+        static int et = 0;
 
-        public DailyBot()
-        {}
-
-        public void Init()
+        public static void Init()
         {
-            closed = false;
+            Closed = false;
             Teleporter.count = 0;
-            AlphaProject.GameData.CraftBot.Init(0);
-            AlphaProject.GameData.CommonBot.Init();
-            AlphaProject.GameData.KeyOperates.Init();
-            AlphaProject.GameData.CollectionFishBot.Init();
+            CraftBot.Init(0);
+            CommonBot.Init();
+            KeyOperates.Init();
+            CollectionFishBot.Init();
         }
 
-        public void StopScript()
+        public static void StopScript()
         {
-            closed = true;
+            Closed = true;
             Teleporter.count = 0;
-            AlphaProject.GameData.CommonBot.StopScript();
-            AlphaProject.GameData.GatherBot.StopScript();
-            AlphaProject.GameData.CollectionFishBot.StopScript();
-            AlphaProject.GameData.MarketBot.StopScript();
+            CommonBot.StopScript();
+            GatherBot.StopScript();
+            CollectionFishBot.StopScript();
+            MarketBot.StopScript();
         }
 
-        public void DailyScript(string args)
+        public static void DailyScript(string args)
         {
             Init();
-            closed = false;
+            Closed = false;
             try {
                 // 参数解析
                 string command = Tasks.Daily;
@@ -63,7 +60,7 @@ namespace AlphaProject.Bot
 
                 if (AlphaProject.GameData.param.TryGetValue("otherTask", out var ot))
                 {
-                    otherTaskParam = ot;
+                    OtherTaskParam = ot;
                 }
 
                 string lv = "50";
@@ -98,7 +95,7 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void LimitTimeSinglePlan(string lv)
+        public static void LimitTimeSinglePlan(string lv)
         {
             int n = 0;
             
@@ -108,7 +105,7 @@ namespace AlphaProject.Bot
             AlphaProject.Time.Update();
             hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             et = hour;
-            while (!closed && n < 1000)
+            while (!Closed && n < 1000)
             {
                 if (et >= 24) {
                     et = 0;
@@ -130,28 +127,28 @@ namespace AlphaProject.Bot
                 }
 
                 while (hour != et) {
-                    if (closed)
+                    if (Closed)
                     {
                         PluginLog.Log($"中途结束");
                         return;
                     }
 
-                    if (otherTaskParam != "1" && needTp)
+                    if (OtherTaskParam != "1" && NeedTp)
                     {
                         foreach (int id in ids)
                         {
                             (string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, uint Type) = LimitMaterials.GetMaterialById(id);
                             Teleporter.Teleport(Tp);
-                            needTp = false;
+                            NeedTp = false;
                             break;
                         }
                     }
 
                     RunWaitTask(lv);
-                    while (othetRun) {
+                    while (OthetRun) {
                         AlphaProject.Time.Update();
                         hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
-                        if (closed)
+                        if (Closed)
                         {
                             PluginLog.Log($"中途结束");
                             return;
@@ -169,7 +166,7 @@ namespace AlphaProject.Bot
 
                 int num = 0;
                 foreach (int id in ids) {
-                    if (closed)
+                    if (Closed)
                     {
                         PluginLog.Log($"中途结束");
                         return;
@@ -189,14 +186,14 @@ namespace AlphaProject.Bot
                         continue;
                     }
 
-                    if (needTp)
+                    if (NeedTp)
                     {
                         Teleporter.Teleport(Tp);
                     }
                     else {
-                        needTp = true;
+                        NeedTp = true;
                     }
-                    AlphaProject.GameData.CommonBot.UseItem();
+                    CommonBot.UseItem();
 
                     PluginLog.Log($"开始执行任务, id: {id} ");
                     // 切换职业 
@@ -207,7 +204,7 @@ namespace AlphaProject.Bot
                         Thread.Sleep(200 + new Random().Next(300, 800));
                     }
                     Thread.Sleep(800 + new Random().Next(300, 800));
-                    Vector3 position = AlphaProject.GameData.KeyOperates.MovePositions(Path, true);
+                    Vector3 position = KeyOperates.MovePositions(Path, true);
                     // 找最近的采集点
                     ushort territoryType = DalamudApi.ClientState.TerritoryType;
                     ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(territoryType);
@@ -220,8 +217,8 @@ namespace AlphaProject.Bot
                         float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                         PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, SizeFactor)} < ---> 辅助点高度: {y}");
                         Vector3 GatherPoint = new(x, y, z);
-                        position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, point, territoryType, true, false);
-                        position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                        position = KeyOperates.MoveToPoint(position, point, territoryType, true, false);
+                        position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
                         var targetMgr = DalamudApi.TargetManager;
                         targetMgr.SetTarget(go);
@@ -231,20 +228,20 @@ namespace AlphaProject.Bot
                         {
                             if (tt >= 3)
                             {
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                KeyOperates.KeyMethod(Keys.w_key, 200);
                             }
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                            KeyOperates.KeyMethod(Keys.q_key);
                             Thread.Sleep(800 + new Random().Next(300, 800));
                             tt++;
 
-                            if (closed)
+                            if (Closed)
                             {
                                 PluginLog.Log($"dailyTask stopping");
                                 return;
                             }
                         }
 
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                        KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
 
                         if (Type == 2) {
                             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
@@ -258,9 +255,9 @@ namespace AlphaProject.Bot
                         tt = 0;
                         while (!CommonUi.AddonGatheringIsOpen() && tt < 5)
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                            KeyOperates.KeyMethod(Keys.num0_key);
                             Thread.Sleep(200 + new Random().Next(300, 800));
-                            if (closed)
+                            if (Closed)
                             {
                                 PluginLog.Log($"dailyTask stopping");
                                 return;
@@ -279,13 +276,13 @@ namespace AlphaProject.Bot
                         {
                             if (Type == 2)
                             {
-                                AlphaProject.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
+                                CommonBot.LimitMultiMaterialsMethod(Name);
                             }
                             else {
-                                AlphaProject.GameData.CommonBot.LimitMaterialsMethod(Name);
+                                CommonBot.LimitMaterialsMethod(Name);
                             }
                         }
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
+                        KeyOperates.KeyMethod(Keys.up_arrow_key, 200);
                     }
                     else {
                         PluginLog.Log($"未知原因未找到数据, skip {id}..");
@@ -303,13 +300,13 @@ namespace AlphaProject.Bot
                     int count = CommonUi.CanExtractMateria();
                     if (count >= 5)
                     {
-                        AlphaProject.GameData.CommonBot.ExtractMateria(count);
+                        CommonBot.ExtractMateria(count);
                     }
                     if (CommonUi.NeedsRepair())
                     {
                         Teleporter.Teleport(Positions.ShopTp);
-                        AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
-                        AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
+                        KeyOperates.MovePositions(Positions.RepairNPC, false);
+                        CommonBot.NpcRepair("阿塔帕");
                     }
                 }
                 PluginLog.Log($"当前et: {et}, 总共{ids.Count}, 成功执行{num}个任务..");
@@ -317,16 +314,16 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void LimitTimeMultiPlan(string lv)
+        public static void LimitTimeMultiPlan(string lv)
         {
             int n = 0;
             bool first = true;
             AlphaProject.Time.Update();
             int hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             int et = hour;
-            while (!closed && n < 1000)
+            while (!Closed && n < 1000)
             {
-                AlphaProject.GameData.MarketBot.RunScript(2);
+                MarketBot.RunScript(2);
                 if (first)
                 {
                     et--;
@@ -354,15 +351,15 @@ namespace AlphaProject.Bot
                 
                 while (hour != et)
                 {
-                    if (closed)
+                    if (Closed)
                     {
                         PluginLog.Log($"中途结束");
                         return;
                     }
                     RunWaitTask(lv);
-                    while (othetRun)
+                    while (OthetRun)
                     {
-                        if (closed)
+                        if (Closed)
                         {
                             PluginLog.Log($"中途结束");
                             return;
@@ -389,7 +386,7 @@ namespace AlphaProject.Bot
                 }
                 Teleporter.Teleport(Tp);
                 
-                AlphaProject.GameData.CommonBot.UseItem();
+                CommonBot.UseItem();
                 ushort territoryType = DalamudApi.ClientState.TerritoryType;
                 ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(territoryType);
                 // 切换职业 
@@ -400,7 +397,7 @@ namespace AlphaProject.Bot
                     Thread.Sleep(200 + new Random().Next(300, 800));
                 }
                 Thread.Sleep(500 + new Random().Next(300, 800));
-                Vector3 position = AlphaProject.GameData.KeyOperates.MovePositions(Path, true);
+                Vector3 position = KeyOperates.MovePositions(Path, true);
                 while (hour >= MinEt && hour <= MaxEt) {
                     AlphaProject.Time.Update();
                     hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
@@ -418,12 +415,12 @@ namespace AlphaProject.Bot
                             PluginLog.Log($"时间不够...");
                             break;
                         }
-                        if (closed)
+                        if (Closed)
                         {
                             PluginLog.Log($"中途结束");
                             return;
                         }
-                        AlphaProject.GameData.KeyOperates.MoveToPoint(position, Points[t], territoryType, true, false);
+                        KeyOperates.MoveToPoint(position, Points[t], territoryType, true, false);
                         if (Array.IndexOf(CanGatherIndex, t) != -1)
                         {
                             GameObject go = Util.CurrentPositionCanGather(Points[t], SizeFactor);
@@ -434,7 +431,7 @@ namespace AlphaProject.Bot
                                 float z = Maths.GetCoordinate(go.Position.Z, SizeFactor);
                                 PluginLog.Log($"目标高度: {Maths.GetCoordinate(go.Position.Y, SizeFactor)} <---> 辅助点高度: {y}");
                                 Vector3 GatherPoint = new(x, y, z);
-                                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
+                                position = KeyOperates.MoveToPoint(position, GatherPoint, territoryType, false, false);
 
                                 AlphaProject.Time.Update();
                                 hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
@@ -451,20 +448,20 @@ namespace AlphaProject.Bot
                                 {
                                     if (tt >= 3)
                                     {
-                                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                                        KeyOperates.KeyMethod(Keys.w_key, 200);
                                     }
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                                    KeyOperates.KeyMethod(Keys.q_key);
                                     Thread.Sleep(500 + new Random().Next(300, 800));
                                     tt++;
                                 }
 
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
+                                KeyOperates.KeyMethod(Keys.down_arrow_key, 200);
                                 tt = 0;
                                 while (!CommonUi.AddonGatheringIsOpen() && tt < 4)
                                 {
-                                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                                    KeyOperates.KeyMethod(Keys.num0_key);
                                     Thread.Sleep(100 + new Random().Next(300, 800));
-                                    if (closed)
+                                    if (Closed)
                                     {
                                         PluginLog.Log($"stopping");
                                         return;
@@ -480,10 +477,10 @@ namespace AlphaProject.Bot
 
                                 if (CommonUi.AddonGatheringIsOpen())
                                 {
-                                    AlphaProject.GameData.CommonBot.LimitMultiMaterialsMethod(Name);
-                                    AlphaProject.GameData.CommonBot.UseItem(0.65);
+                                    CommonBot.LimitMultiMaterialsMethod(Name);
+                                    CommonBot.UseItem(0.65);
                                 }
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.up_arrow_key, 150);
+                                KeyOperates.KeyMethod(Keys.up_arrow_key, 150);
                             }
                             else
                             {
@@ -503,18 +500,18 @@ namespace AlphaProject.Bot
                 int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
                 {
-                    AlphaProject.GameData.CommonBot.ExtractMateria(count);
+                    CommonBot.ExtractMateria(count);
                 }
                 int CollectableCount = CommonUi.CanExtractMateriaCollectable();
                 if (CollectableCount > 0)
                 {
-                    AlphaProject.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                    CommonBot.ExtractMateriaCollectable(CollectableCount);
                 }
                 if (CommonUi.NeedsRepair())
                 {
                     Teleporter.Teleport(Positions.ShopTp);
-                    AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
-                    AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
+                    KeyOperates.MovePositions(Positions.RepairNPC, false);
+                    CommonBot.NpcRepair("阿塔帕");
                 }
                 
                 AlphaProject.Time.Update();
@@ -522,22 +519,22 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void OnlySpearfishPlan()
+        public static void OnlySpearfishPlan()
         {
             int n = 0;
             AlphaProject.Time.Update();
             int hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             bool run = false;
-            while (!closed && n < 1000)
+            while (!Closed && n < 1000)
             {
                 if (hour == 0) {
                     run = true;
                 }
-                AlphaProject.GameData.MarketBot.RunScript(2);
+                MarketBot.RunScript(2);
                 RunWaitTask("90");
-                while (othetRun)
+                while (OthetRun)
                 {
-                    if (closed) return;
+                    if (Closed) return;
                     AlphaProject.Time.Update();
                     hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
                     if (hour != 0)
@@ -555,72 +552,72 @@ namespace AlphaProject.Bot
                 int count = CommonUi.CanExtractMateria();
                 if (count >= 5)
                 {
-                    AlphaProject.GameData.CommonBot.ExtractMateria(count);
+                    CommonBot.ExtractMateria(count);
                 }
                 int CollectableCount = CommonUi.CanExtractMateriaCollectable();
                 if (CollectableCount > 0)
                 {
-                    AlphaProject.GameData.CommonBot.ExtractMateriaCollectable(CollectableCount);
+                    CommonBot.ExtractMateriaCollectable(CollectableCount);
                 }
                 AlphaProject.Time.Update();
                 hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             }
         }
 
-        private void RunWaitTask(string lv) {
+        private static void RunWaitTask(string lv) {
             AlphaProject.Time.Update();
             hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             int minute = AlphaProject.Time.ServerTime.CurrentEorzeaMinute();
-            othetRun = true;
+            OthetRun = true;
             
-            if (otherTaskParam == "0") {
-                othetRun = true;
-                PluginLog.Log($"当前配置: {otherTaskParam}, 不执行其他任务");
+            if (OtherTaskParam == "0") {
+                OthetRun = true;
+                PluginLog.Log($"当前配置: {OtherTaskParam}, 不执行其他任务");
                 Task task = new(() =>
                 {
                     Thread.Sleep(5000 + new Random().Next(2000, 4000));
-                    othetRun = false;
+                    OthetRun = false;
                 });
                 task.Start();
-            } else if (otherTaskParam == "1") {
-                PluginLog.Log($"当前配置: {otherTaskParam}, 采集任务");
+            } else if (OtherTaskParam == "1") {
+                PluginLog.Log($"当前配置: {OtherTaskParam}, 采集任务");
                 if ((et - hour == 1 && minute > 20) || (hour - et > 3 && 24 - hour == 1 && minute > 20))
                 {
                     PluginLog.Log($"间隔时间短暂, 不执行其他任务 hour: {hour}, minute: {minute}, 下个et: {et}");
                     Task task = new(() =>
                     {
                         Thread.Sleep(5000 + new Random().Next(2000, 4000));
-                        othetRun = false;
+                        OthetRun = false;
                     });
                     task.Start();
                 }
                 else {
-                    needTp = true;
+                    NeedTp = true;
                     Task task = new(() =>
                     {
                         PluginLog.Log($"执行等待采集任务...");
                         try
                         {
-                            AlphaProject.GameData.GatherBot.RunGatherById(0);
+                            GatherBot.RunGatherById(0);
                         }
                         catch (Exception e)
                         {
                             PluginLog.Error($"其他任务, error!!!\n{e}");
                         }
                         PluginLog.Log($"其他任务结束...");
-                        othetRun = false;
+                        OthetRun = false;
                     });
                     task.Start();
                 }
-            } else if (otherTaskParam == "2") {
-                othetRun = true;
-                PluginLog.Log($"当前配置: {otherTaskParam}, 快速制作任务");
+            } else if (OtherTaskParam == "2") {
+                OthetRun = true;
+                PluginLog.Log($"当前配置: {OtherTaskParam}, 快速制作任务");
                 Task task = new(() =>
                 {
                     PluginLog.Log($"执行等待快速制作任务...");
                     try
                     {
-                        AlphaProject.GameData.CraftBot.CraftScript();
+                        CraftBot.CraftScript();
                     }
                     catch (Exception e)
                     {
@@ -628,17 +625,17 @@ namespace AlphaProject.Bot
                     }
                     if (RecipeNoteUi.RecipeNoteIsOpen())
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        KeyOperates.KeyMethod(Keys.esc_key);
                     }
                     PluginLog.Log($"其他任务结束...");
-                    othetRun = false;
+                    OthetRun = false;
                 });
                 task.Start();
             }
-            else if (otherTaskParam == "4")
+            else if (OtherTaskParam == "4")
             {
-                othetRun = true;
-                PluginLog.Log($"当前配置: {otherTaskParam}, 捕鱼灵砂任务");
+                OthetRun = true;
+                PluginLog.Log($"当前配置: {OtherTaskParam}, 捕鱼灵砂任务");
                 Task task = new(() =>
                 {
                     if (!CommonUi.CurrentJob(18))
@@ -651,8 +648,8 @@ namespace AlphaProject.Bot
                     if (CommonUi.CanRepair())
                     {
                         Teleporter.Teleport(Positions.ShopTp);
-                        AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
-                        AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
+                        KeyOperates.MovePositions(Positions.RepairNPC, false);
+                        CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500 + new Random().Next(100, 300));
                     }
                     try
@@ -661,21 +658,21 @@ namespace AlphaProject.Bot
                         int t = r.Next(3, 5);
                         string args = "ftype:" + t + " fexchangeItem:0";
                         PluginLog.Log($"执行等待捕鱼灵砂任务: {args}");
-                        AlphaProject.GameData.CollectionFishBot.CollectionFishScript(args);
+                        CollectionFishBot.CollectionFishScript(args);
                     }
                     catch (Exception e)
                     {
                         PluginLog.Error($"执行等待捕鱼灵砂任务, error!!!\n{e}");
                     }
                     PluginLog.Log($"执行等待捕鱼灵砂任务结束...");
-                    othetRun = false;
+                    OthetRun = false;
                 });
                 task.Start();
             }
-            else if (otherTaskParam == "5")
+            else if (OtherTaskParam == "5")
             {
-                othetRun = true;
-                PluginLog.Log($"当前配置: {otherTaskParam}, 刺鱼灵砂任务");
+                OthetRun = true;
+                PluginLog.Log($"当前配置: {OtherTaskParam}, 刺鱼灵砂任务");
                 Task task = new(() =>
                 {
                     if (!CommonUi.CurrentJob(18))
@@ -688,50 +685,32 @@ namespace AlphaProject.Bot
                     if (CommonUi.CanRepair())
                     {
                         Teleporter.Teleport(Positions.ShopTp);
-                        AlphaProject.GameData.KeyOperates.MovePositions(Positions.RepairNPC, false);
-                        AlphaProject.GameData.CommonBot.NpcRepair("阿塔帕");
+                        KeyOperates.MovePositions(Positions.RepairNPC, false);
+                        CommonBot.NpcRepair("阿塔帕");
                         Thread.Sleep(500 + new Random().Next(100, 300));
                     }
                     try
                     {
                         string args = "ftype:5";
                         PluginLog.Log($"执行等待刺鱼灵砂任务: {args}");
-                        AlphaProject.GameData.CollectionFishBot.SpearfishScript(args);
+                        CollectionFishBot.SpearfishScript(args);
                     }
                     catch (Exception e)
                     {
                         PluginLog.Error($"执行等待刺鱼灵砂任务, error!!!\n{e}");
                     }
                     PluginLog.Log($"执行等待刺鱼灵砂任务结束...");
-                    othetRun = false;
+                    OthetRun = false;
                 });
                 task.Start();
             }
         }
 
-        private void StopWaitTask()
+        private static void StopWaitTask()
         {
-            AlphaProject.GameData.GatherBot.StopScript();
-            AlphaProject.GameData.CraftBot.StopScript();
-            AlphaProject.GameData.CollectionFishBot.StopScript();
+            GatherBot.StopScript();
+            CraftBot.StopScript();
+            CollectionFishBot.StopScript();
         }
-
-        private Vector3 MovePositions(Vector3[] Path, bool UseMount)
-        {
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            for (int i = 0; i < Path.Length; i++)
-            {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-                }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
-            }
-            return position;
-        }
-
     }
 }

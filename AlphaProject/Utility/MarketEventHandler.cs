@@ -231,7 +231,7 @@ namespace AlphaProject.Utility
             PluginLog.Log($"AddonRetainerSell.OnSetup, {a2} {dataPtr.ToInt64}");
             var result = AddonRetainerSell_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (Tasks.taskRunning) {
+            if (Tasks.TaskRun) {
                 Task task = new(() =>
                 {
                     var addonRetainerSell = (AddonRetainerSell*)addon;
@@ -263,7 +263,7 @@ namespace AlphaProject.Utility
             PluginLog.Log($"AddonItemSearchResult.OnSetup, {a2}, {dataPtr.ToInt64}");
             var result = AddonItemSearchResult_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.taskRunning) {
+            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.TaskRun) {
                 Task task = new(() =>
                 {
                     if (retry < 3) {
@@ -298,7 +298,7 @@ namespace AlphaProject.Utility
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
             var aId = agent->AgentInterface.GetAddonID();
 
-            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.taskRunning) {
+            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.TaskRun) {
                 try
                 {
                     var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);

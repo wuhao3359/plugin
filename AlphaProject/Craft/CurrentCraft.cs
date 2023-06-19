@@ -911,7 +911,6 @@ namespace AlphaProject.Craft
 
                 var synthButton = addonPtr->TrialSynthesisButton;
                 ClickRecipeNote.Using(recipeWindow).TrialSynthesis();
-                AutoCraftBot.Tasks.Clear();
             }
             catch (Exception ex)
             {

@@ -8,29 +8,27 @@ using System.Threading;
 using AlphaProject;
 using AlphaProject.Utility;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using static OtterGui.Widgets.Tutorial;
 
-public class KeyOperates
+public static class KeyOperates
 {
-    private GameData GameData { get; init; }
-    private IntPtr hwnd;
+    private static GameData GameData;
+    private static IntPtr Hwnd;
 
-    private bool closed = false;
+    private static bool Closed = false;
 
-    public Dictionary<Byte, DateTime> keyTimes = new();
+    public static Dictionary<Byte, DateTime> KeyTimes = new();
 
     [DllImport("user32.dll")]
     public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
-    public KeyOperates(GameData GameData)
+    public static void Initialize(GameData gameData)
     {
-        this.GameData = GameData;
+        GameData = gameData;
         Process pro = Process.GetCurrentProcess();
-        this.hwnd = Process.GetProcessById(pro.Id).MainWindowHandle;
+        Hwnd = Process.GetProcessById(pro.Id).MainWindowHandle;
     }
 
-    public Vector3 GetUserPosition(ushort SizeFactor)
+    public static Vector3 GetUserPosition(ushort SizeFactor)
     {
         Vector3 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
         float x = Maths.GetCoordinate(playerPosition.X, SizeFactor);
@@ -40,17 +38,17 @@ public class KeyOperates
         return position;
     }
 
-    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType)
+    public static Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType)
     {
         return MoveToPoint(positionA, positionB, territoryType, false, true);
     }
 
-    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount)
+    public static Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount)
     {
         return MoveToPoint(positionA, positionB, territoryType, UseMount, true);
     }
 
-    public Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount, bool log)
+    public static Vector3 MoveToPoint(Vector3 positionA, Vector3 positionB, ushort territoryType, bool UseMount, bool log)
     {
         Init();
 
@@ -75,9 +73,9 @@ public class KeyOperates
 
         while (distance > errorDisntance && index < 2400)
         {
-            if (closed || territoryType != DalamudApi.ClientState.TerritoryType)
+            if (Closed || territoryType != DalamudApi.ClientState.TerritoryType || !Tasks.TaskRun)
             {
-                PluginLog.Log($"移动中途结束 {closed} {territoryType} {DalamudApi.ClientState.TerritoryType}");
+                PluginLog.Log($"移动中途结束 {Closed} {territoryType} {DalamudApi.ClientState.TerritoryType}");
                 Stop();
                 break;
             }
@@ -208,7 +206,7 @@ public class KeyOperates
         return GetUserPosition(SizeFactor);
     }
 
-    public void AdjustHeight(Vector3 positionB) {
+    public static void AdjustHeight(Vector3 positionB) {
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
         Vector3 positionA = GetUserPosition(SizeFactor);
         double height = Maths.Height(positionA, positionB);
@@ -232,26 +230,26 @@ public class KeyOperates
     }
 
 
-    public void Stop()
+    public static void Stop()
     {
         MoveStop();
         FlyStop();
         Init();
     }
 
-    public void ForceStop()
+    public static void ForceStop()
     {
         Stop();
-        closed = true;
+        Closed = true;
     }
 
-    public void Init() {
-        closed = false;
+    public static void Init() {
+        Closed = false;
         FlyStop();
         MoveStop();
     }
 
-    private void MoveStop()
+    private static void MoveStop()
     {
         if (DalamudApi.KeyState[Keys.w_key])
         {
@@ -267,7 +265,7 @@ public class KeyOperates
         }
     }
 
-    private void FlyStop()
+    private static void FlyStop()
     {
         if (DalamudApi.KeyState[Keys.space_key])
         {
@@ -279,17 +277,17 @@ public class KeyOperates
         }
     }
 
-    public void KeyMethod(Byte key)
+    public static void KeyMethod(Byte key)
     {
         KeyMethod(key, 100, true);
     }
 
-    public void KeyMethod(Byte key, int sleep)
+    public static void KeyMethod(Byte key, int sleep)
     {
         KeyMethod(key, sleep, false);
     }
 
-    public void KeyMethod(Byte key, int sleep, bool shortPress)
+    public static void KeyMethod(Byte key, int sleep, bool shortPress)
     {
         if (shortPress)
         {
@@ -303,40 +301,40 @@ public class KeyOperates
             return;
         }
 
-        SendMessage(hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
+        SendMessage(Hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
         Thread.Sleep(sleep);
-        SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+        SendMessage(Hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
         if (shortPress)
         {
             Thread.Sleep(new Random().Next(100, 200));
         }
     }
 
-    public void KeyDown(Byte key)
+    public static void KeyDown(Byte key)
     {
-        keyTimes.TryAdd(key, DateTime.Now);
-        SendMessage(hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
+        KeyTimes.TryAdd(key, DateTime.Now);
+        SendMessage(Hwnd, Keys.WM_KEYDOWN, (IntPtr)key, (IntPtr)1);
     }
 
-    public void KeyUp(Byte key)
+    public static void KeyUp(Byte key)
     {
-        if (keyTimes.TryGetValue(key, out DateTime start)) {
+        if (KeyTimes.TryGetValue(key, out DateTime start)) {
             DateTime endTime = DateTime.Now;
             TimeSpan interval = endTime.Subtract(start);
             double milliseconds = interval.TotalMilliseconds;
             int sleep = 80 + new Random().Next(20, 50);
             if (milliseconds >= sleep)
             {
-                SendMessage(hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
+                SendMessage(Hwnd, Keys.WM_KEYUP, (IntPtr)key, (IntPtr)1);
             }
         }
     }
 
-    public Vector3 ReviseNoTime(Vector3 positionB) {
+    public static Vector3 ReviseNoTime(Vector3 positionB) {
         return Revise(positionB, 20);
     }
 
-    public Vector3 Revise(Vector3 positionB, int tt) {
+    public static Vector3 Revise(Vector3 positionB, int tt) {
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
         Vector3 positionA = GetUserPosition(SizeFactor);
         KeyMethod(Keys.w_key, tt);
@@ -366,15 +364,34 @@ public class KeyOperates
         return positionC;
     }
 
-    public Vector3 MovePositions(Vector3[] Path, bool UseMount)
+    public static Vector3 MovePositions(Vector3[] ToArea, bool UseMount, ushort territoryType)
     {
-        closed = false;
+        Closed = false;
+        ushort SizeFactor = AlphaProject.AlphaProject.GameData.GetSizeFactor(territoryType);
+        Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
+        for (int i = 0; i < ToArea.Length; i++)
+        {
+            if (Closed || territoryType != DalamudApi.ClientState.TerritoryType || !Tasks.TaskRun)
+            {
+                PluginLog.Log($"中途结束");
+                return KeyOperates.GetUserPosition(SizeFactor);
+            }
+            position = KeyOperates.MoveToPoint(position, ToArea[i], territoryType, UseMount, false);
+            //PluginLog.Log($"到达点{i} {position.X} {position.Y} {position.Z}");
+            Thread.Sleep(500);
+        }
+        return position;
+    }
+
+    public static Vector3 MovePositions(Vector3[] Path, bool UseMount)
+    {
+        Closed = false;
         ushort territoryType = DalamudApi.ClientState.TerritoryType;
         ushort SizeFactor = AlphaProject.AlphaProject.GameData.GetSizeFactor(territoryType);
         Vector3 position = GetUserPosition(SizeFactor);
         for (int i = 0; i < Path.Length; i++)
         {
-            if (closed)
+            if (Closed || !Tasks.TaskRun)
             {
                 PluginLog.Log($"多路径移动 中途结束");
                 return GetUserPosition(SizeFactor);
