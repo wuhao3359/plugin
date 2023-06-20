@@ -10,6 +10,11 @@ using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using AlphaProject.SeFunctions;
 using AlphaProject.Bot;
+using System.Diagnostics;
+using System.Timers;
+using ClickLib.Clicks;
+using AlphaProject.Enums;
+using System.Threading.Tasks;
 
 namespace AlphaProject.Helper
 {
@@ -102,5 +107,29 @@ namespace AlphaProject.Helper
             return (ret / 300);
         }
 
+        internal static void ShutdownGame(object sender, ElapsedEventArgs e)
+        {
+            PluginLog.LogError("too long for running, shutdown");
+            Tasks.TaskRun = false;
+
+            Task task = new(() =>
+            {
+                while (Tasks.Status != (byte)TaskState.READY)
+                {
+                    PluginLog.Log("wait for curennt task...");
+                    Thread.Sleep(5000);
+                }
+
+                // 拉扎罕
+                Teleporter.Teleport(183);
+                CommandProcessorHelper.ExecuteThrottled("/shutdown");
+                var addon = (AtkUnitBase*)DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
+                if (addon != null)
+                {
+                    ClickSelectYesNo.Using((nint)addon).Yes();
+                }
+            });
+            task.Start();
+        }
     }
 }

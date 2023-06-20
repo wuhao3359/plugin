@@ -32,7 +32,7 @@ namespace AlphaProject.Bot
             JobIds = new();
             Job = job;
             CommonBot.Init();
-            AlphaProject.status = (byte)TaskState.CRAFT;
+            Tasks.Status = (byte)TaskState.CRAFT;
         }
 
         public static void StopScript()
@@ -160,7 +160,7 @@ namespace AlphaProject.Bot
             {
                 PluginLog.Error($"error!!!\n{e}");
             }
-            AlphaProject.status = (byte)TaskState.READY;
+            Tasks.Status = (byte)TaskState.READY;
         }
 
         public unsafe static void RunSynthByRecipe(Recipe recipe)

@@ -25,7 +25,7 @@ namespace AlphaProject.Bot
 
         public static void Init()
         {
-            AlphaProject.status = (byte)TaskState.GATHER;
+            Tasks.Status = (byte)TaskState.GATHER;
             Closed = false;
         }
 
@@ -62,7 +62,7 @@ namespace AlphaProject.Bot
             if (DalamudApi.Condition[ConditionFlag.Mounted]) {
                 KeyOperates.KeyMethod(Keys.q_key);
             }
-            AlphaProject.status = (byte)TaskState.READY;
+            Tasks.Status = (byte)TaskState.READY;
         }
 
         public static void RunGatherById(int id) {

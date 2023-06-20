@@ -16,6 +16,7 @@ using AlphaProject.Craft;
 using AlphaProject.Enums;
 using System.Diagnostics;
 using AlphaProject.Bot;
+using AlphaProject.Helper;
 
 namespace AlphaProject;
 public unsafe class AlphaProject : IDalamudPlugin
@@ -45,7 +46,7 @@ public unsafe class AlphaProject : IDalamudPlugin
     public static string beforePrice = "";
     public static bool getPriceSucceed = false;
 
-    public static byte status = (byte)TaskState.READY;
+
 
     public static bool Debug = true;
 
@@ -71,7 +72,7 @@ public unsafe class AlphaProject : IDalamudPlugin
         DalamudApi.ClientState.Logout += OnLogoutEvent;
 
         timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
-        timer.Elapsed += AutoKillGame;
+        timer.Elapsed += CommonHelper.ShutdownGame;
         timer.Start();
 
         try
@@ -148,11 +149,5 @@ public unsafe class AlphaProject : IDalamudPlugin
 
         Tasks.TaskRun = false;
         DalamudApi.GameNetwork.NetworkMessage -= MarketEventHandler.OnNetworkEvent;
-    }
-
-    private void AutoKillGame(object sender, ElapsedEventArgs e) {
-        PluginLog.LogError("too long for running, kill game");
-        Process.GetCurrentProcess().Kill();
-        // 文本指令  	/shutdown
     }
 }

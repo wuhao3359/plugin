@@ -33,7 +33,7 @@ public class TaskManager
             CraftHelper.CloseCraftingMenu();
         }
 
-        AlphaProject.status = (byte)TaskState.READY;
+        Tasks.Status = (byte)TaskState.READY;
         PluginLog.Log($"总共任务: {TaskList.Count}");
 
         for (int i = 0; i <= TaskList.Count - 1; i++) {
@@ -44,8 +44,8 @@ public class TaskManager
         for (int i = 0; i <= TaskList.Count - 1; i++)
         {
             var task = TaskList[i];
-            while (AlphaProject.status != (byte)TaskState.READY) {
-                PluginLog.Log($"等待可执行任务状态... {AlphaProject.status}");
+            while (Tasks.Status != (byte)TaskState.READY) {
+                PluginLog.Log($"等待可执行任务状态... {Tasks.Status}");
                 Thread.Sleep(new Random().Next(7000, 12000));
             }
 
@@ -93,8 +93,8 @@ public class TaskManager
 
         Task task = new(() =>
         {
-            AlphaProject.status = (byte)TaskState.CRAFT;
-            while (end.Subtract(start).Minutes < r && AlphaProject.status == (byte)TaskState.CRAFT)
+            Tasks.Status = (byte)TaskState.CRAFT;
+            while (end.Subtract(start).Minutes < r && Tasks.Status == (byte)TaskState.CRAFT)
             {
                 end = DateTime.Now;
                 PluginLog.Log($"CRAFT 已经执行时间: {end.Subtract(start).Minutes}, 总共: {r}");
@@ -105,7 +105,7 @@ public class TaskManager
         task.Start();
 
         CraftBot.CraftScript(item2, item4);
-        AlphaProject.status = (byte)TaskState.READY;
+        Tasks.Status = (byte)TaskState.READY;
     }
 
     private void RunMarketTask(uint item1, string item2)
@@ -136,8 +136,8 @@ public class TaskManager
 
         Task task = new(() =>
         {
-            AlphaProject.status = (byte)TaskState.GATHER;
-            while (end.Subtract(start).Minutes < r && AlphaProject.status == (byte)TaskState.GATHER)
+            Tasks.Status = (byte)TaskState.GATHER;
+            while (end.Subtract(start).Minutes < r && Tasks.Status == (byte)TaskState.GATHER)
             {
                 end = DateTime.Now;
                 PluginLog.Log($"GATHER 已经执行时间: {end.Subtract(start).Minutes}, 总共: {r}");
@@ -148,7 +148,7 @@ public class TaskManager
         task.Start();
 
         GatherBot.GatherByName(item2);
-        AlphaProject.status = (byte)TaskState.READY;
+        Tasks.Status = (byte)TaskState.READY;
     }
 
     public void AddTask(List<uint> lackItems)

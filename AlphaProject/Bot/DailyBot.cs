@@ -12,6 +12,7 @@ using AlphaProject.Time;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
 using AlphaProject.Helper;
+using AlphaProject.Enums;
 
 namespace AlphaProject.Bot
 {
@@ -32,7 +33,7 @@ namespace AlphaProject.Bot
         public static void Init()
         {
             Closed = false;
-            Teleporter.count = 0;
+            Teleporter.Count = 0;
             CraftBot.Init(0);
             CommonBot.Init();
             KeyOperates.Init();
@@ -42,7 +43,7 @@ namespace AlphaProject.Bot
         public static void StopScript()
         {
             Closed = true;
-            Teleporter.count = 0;
+            Teleporter.Count = 0;
             CommonBot.StopScript();
             GatherBot.StopScript();
             CollectionFishBot.StopScript();
@@ -83,6 +84,7 @@ namespace AlphaProject.Bot
                     }
                     else if (d == "3")
                     {
+                        Tasks.Status = (byte)TaskState.SPEARFISH;
                         // 灵砂刺鱼
                         OnlySpearfishPlan();
                     }
@@ -93,6 +95,7 @@ namespace AlphaProject.Bot
             } catch (Exception ex) {
                 PluginLog.Error($"error!!!\n{ex}");
             }
+            Tasks.Status = (byte)TaskState.READY;
         }
 
         public static void LimitTimeSinglePlan(string lv)
@@ -525,7 +528,7 @@ namespace AlphaProject.Bot
             AlphaProject.Time.Update();
             int hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             bool run = false;
-            while (!Closed && n < 1000)
+            while ((!Closed && n < 1000) || Tasks.TaskRun)
             {
                 if (hour == 0) {
                     run = true;

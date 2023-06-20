@@ -90,7 +90,7 @@ namespace AlphaProject.Bot
                 return;
             }
 
-            AlphaProject.status = (byte)TaskState.PRICE;
+            Tasks.Status = (byte)TaskState.PRICE;
             NextClickAt++;
             if (NextClickAt <= NextClick)
             {
@@ -106,7 +106,7 @@ namespace AlphaProject.Bot
                 Thread.Sleep(1000);
                 n++;
             }
-            AlphaProject.status = (byte)TaskState.READY;
+            Tasks.Status = (byte)TaskState.READY;
         }
     }
 }

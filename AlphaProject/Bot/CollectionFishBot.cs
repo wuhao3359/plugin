@@ -229,7 +229,7 @@ namespace AlphaProject.Bot
                 Thread.Sleep(300 + new Random().Next(200, 500));
             }
 
-            while (!Closed && n < 10) {
+            while ((!Closed && n < 10) || Tasks.TaskRun) {
                 if (Closed)
                 {
                     PluginLog.Log($"task fish stopping");
@@ -440,7 +440,7 @@ namespace AlphaProject.Bot
                 Thread.Sleep(200 + new Random().Next(300, 800));
             }
             int n = 0;
-            while (!Closed & n < 100)
+            while ((!Closed & n < 100) || Tasks.TaskRun)
             {
                 ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
                 Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
@@ -450,7 +450,7 @@ namespace AlphaProject.Bot
 
                 for (int i = 0, j = 0, k = 0; i < Points.Length; i++)
                 {
-                    if (Closed)
+                    if (Closed || Tasks.TaskRun)
                     {
                         PluginLog.Log($"中途结束");
                         return false;

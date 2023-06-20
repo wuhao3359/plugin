@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using AlphaProject.Utility;
 using AlphaProject.Helper;
 using AlphaProject.Bot;
+using AlphaProject.Enums;
 
 namespace AlphaProject
 {
@@ -24,6 +25,7 @@ namespace AlphaProject
         public const string SpearFish = "SpearFish";
 
         public static bool TaskRun = false;
+        public static byte Status = (byte)TaskState.READY;
 
         // 当前坐标信息
         public static void GetCurrentPosition()
