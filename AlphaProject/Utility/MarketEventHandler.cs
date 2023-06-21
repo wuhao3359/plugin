@@ -23,6 +23,7 @@ using System.Collections.Generic;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 using Dalamud.Game.ClientState.Conditions;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Utility
 {
@@ -44,6 +45,9 @@ namespace AlphaProject.Utility
 
         private readonly string AddonRetainerSellList_OnFinalize_Signature =
             "40 53 48 83 EC 20 80 B9 ?? ?? ?? ?? ?? 48 8B D9 74 0E 45 33 C9";
+
+        private readonly string AddonInventoryContext_OnSetup_Signature =
+            "83 B9 ?? ?? ?? ?? ?? 7E 11";
 
         private HookWrapper<Addon_ReceiveEvent_Delegate> AddonItemSearchResult_ReceiveEvent_HW;
         private HookWrapper<Addon_OnSetup_Delegate> AddonRetainerSell_OnSetup_HW;
@@ -105,11 +109,18 @@ namespace AlphaProject.Utility
                 AddonRetainerSellList_OnFinalize_Signature,
                 AddonRetainerSellList_OnFinalize_Delegate_Detour);
 
+            AddonInventoryContext_OnSetup_HW = MarketCommons.Hook<AddonInventoryContext_OnSetup_Delegate>(
+                AddonInventoryContext_OnSetup_Signature,
+                AddonInventoryContext_OnSetup_Delegate_Detour);
+
             UiHelper.Setup();
         }
 
         public void OnNetworkEvent(IntPtr dataPtr, ushort opCode, uint sourceActorId, uint targetActorId, NetworkMessageDirection direction)
         {
+            if (direction == null) {
+                return;
+            }
             if (direction != NetworkMessageDirection.ZoneDown) return;
             if (!AlphaProject.GameData.DataManager.IsDataReady) return;
             if (opCode == AlphaProject.GameData.DataManager.ServerOpCodes["MarketBoardItemRequestStart"])
@@ -185,20 +196,6 @@ namespace AlphaProject.Utility
             AlphaProject.newRequest = false;
         }
 
-        internal unsafe bool AddonRetainerSellList_Position(out Vector2 position)
-        {
-            position = Vector2.One;
-            if (AddonRetainerSellList == IntPtr.Zero)
-                return false;
-
-            position = new Vector2(
-                ((AtkUnitBase*)AddonRetainerSellList)->X,
-                ((AtkUnitBase*)AddonRetainerSellList)->Y
-            );
-            PluginLog.Log($"AddonRetainerSellList : {position.X}, {position.Y}");
-            return true;
-        }
-
         private void AddonRetainerSellList_OnFinalize_Delegate_Detour(IntPtr addon)
         {
             AddonRetainerSellList = IntPtr.Zero;
@@ -234,7 +231,7 @@ namespace AlphaProject.Utility
             PluginLog.Log($"AddonRetainerSell.OnSetup, {a2} {dataPtr.ToInt64}");
             var result = AddonRetainerSell_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (Tasks.taskRunning) {
+            if (Tasks.TaskRun) {
                 Task task = new(() =>
                 {
                     var addonRetainerSell = (AddonRetainerSell*)addon;
@@ -266,7 +263,7 @@ namespace AlphaProject.Utility
             PluginLog.Log($"AddonItemSearchResult.OnSetup, {a2}, {dataPtr.ToInt64}");
             var result = AddonItemSearchResult_OnSetup_HW.Original(addon, a2, dataPtr);
 
-            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.taskRunning) {
+            if (!CommonUi.ItemSearchIsOpen() && DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.TaskRun) {
                 Task task = new(() =>
                 {
                     if (retry < 3) {
@@ -301,7 +298,7 @@ namespace AlphaProject.Utility
                 AddonInventoryContext_OnSetup_HW.Original(agent, inventoryType, slot, a4, a5, a6);
             var aId = agent->AgentInterface.GetAddonID();
 
-            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.taskRunning) {
+            if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] && Tasks.TaskRun) {
                 try
                 {
                     var inventory = InventoryManager.Instance()->GetInventoryContainer(inventoryType);
@@ -373,7 +370,7 @@ namespace AlphaProject.Utility
                     Task task = new(() =>
                     {
                         Thread.Sleep(1000 + new Random().Next(200, 800));
-                        GenericHelpers.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
+                        GenericHelper.TryGetAddonByName<AddonRetainerSell>("RetainerSell", out var addon);
                         var comparePrices = addon->ComparePrices->AtkComponentBase.OwnerNode;
                         MarketCommons.SendClick(new IntPtr(addon), EventType.CHANGE, 4, comparePrices);
                     });

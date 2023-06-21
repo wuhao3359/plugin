@@ -4,20 +4,20 @@ using Dalamud.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Threading;
-using AlphaProject.Data;
 using AlphaProject.Managers;
 using AlphaProject.Ui;
 using AlphaProject.UseAction;
 using AlphaProject.Utility;
 using Npc = AlphaProject.Data.Npc;
+using FFXIVClientStructs.FFXIV.Component.GUI;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
-    public class CommonBot
+    public unsafe static class CommonBot
     {
-        private bool closed = false;
+        private static bool Closed = false;
 
         // 捕鱼嘉惠
         private static bool useNaturesBounty { get; set; }
@@ -25,85 +25,35 @@ namespace AlphaProject.Bot
         // 刺鱼
         private static bool useGig { get; set; }
 
-        public CommonBot()
+        public static void Init()
         {
-            Init();
-        }
-
-        public void Init()
-        {
-            closed = false;
+            Closed = false;
             useNaturesBounty = true;
         }
 
-        public void StopScript()
+        public static void StopScript()
         {
-            closed = true;
+            Closed = true;
         }
 
         // TODO 关闭所有可能打开的ui
-        public void CloseAllIfOpen() {
+        public static void CloseAllIfOpen() {
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
                 Thread.Sleep(300 + new Random().Next(100, 200));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(300 + new Random().Next(100, 200));
             }
             if (CommonUi.AddonMaterializeDialogIsOpen())
             {
                 Thread.Sleep(300 + new Random().Next(100, 200));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(300 + new Random().Next(100, 200));
             }
         }
 
         // 修理
-        public bool Repair() {
-            int n = 0;
-            while (DalamudApi.Condition[ConditionFlag.Mounted])
-            {
-                if (n >= 3)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
-                }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
-                Thread.Sleep(1000 + new Random().Next(100, 200));
-                n++;
-
-                if (closed)
-                {
-                    PluginLog.Log($"Repair stopping");
-                    return true;
-                }
-            }
-            bool flag = true;
-            if (closed)
-            {
-                PluginLog.Log($"Repair stopping");
-                return flag;
-            }
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F12_key);
-            Thread.Sleep(1000 + new Random().Next(100, 200));
-            if (CommonUi.AllRepairButton())
-            {
-                Thread.Sleep(800 + new Random().Next(100, 200));
-                CommonUi.SelectYesButton();
-                Thread.Sleep(3500 + new Random().Next(100, 200));
-            }
-            else {
-                flag = false;
-            }
-
-            n = 0;
-            while (CommonUi.AddonRepairIsOpen() && n < 3)
-            {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            }
-            Thread.Sleep(500);
-            return flag;
-        }
-
-        public bool NpcRepair(string npc)
+        public static bool NpcRepair(string npc)
         {
             if (npc == "") {
                 AutoChooseNpc(out bool succeed, out npc);
@@ -122,20 +72,20 @@ namespace AlphaProject.Bot
             {
                 if (n >= 3)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000 + new Random().Next(100, 200));
                 n++;
 
-                if (closed)
+                if (Closed)
                 {
                     PluginLog.Log($"NpcRepair stopping");
                     return true;
                 }
             }
             bool flag = true;
-            SetTarget(npc);
+            CommonHelper.SetTarget(npc);
             Thread.Sleep(1500);
             if (CommonUi.AddonSelectIconStringIsOpen())
             {
@@ -153,17 +103,17 @@ namespace AlphaProject.Bot
             {
                 flag = false;
             }
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-            Thread.Sleep(500);
+            KeyOperates.KeyMethod(Keys.esc_key);
+            Thread.Sleep(1000);
             return flag;
         }
 
-        public void AutoChooseNpc(out bool succeed, out string npc) {
+        public static void AutoChooseNpc(out bool succeed, out string npc) {
             succeed = false;
             npc = "";
             List<string> names = Npc.NpcNames;
             foreach (string name in names) {
-                if (closed) return;
+                if (Closed) return;
                 var target = DalamudApi.ObjectTable.FirstOrDefault(obj => obj.Name.TextValue.ToLowerInvariant() == name);
                 if (target != default)
                 {
@@ -175,7 +125,7 @@ namespace AlphaProject.Bot
         }
 
         // 精制
-        public bool ExtractMateria(int count)
+        public unsafe static bool ExtractMateria(int count)
         {
             if (count < 2)
             {
@@ -189,358 +139,118 @@ namespace AlphaProject.Bot
             {
                 if (n >= 3)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key, 200);
+                    KeyOperates.KeyMethod(Keys.q_key, 200);
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(1000 + new Random().Next(100, 200));
                 n++;
 
-                if (closed)
+                if (Closed)
                 {
                     PluginLog.Log($"ExtractMateria stopping");
                     return true;
                 }
             }
-            if (closed)
+            if (Closed)
             {
                 PluginLog.Log($"ExtractMateria stopping");
                 return true;
             }
             if (RecipeNoteUi.RecipeNoteIsOpen())
             {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(2000 + new Random().Next(100, 200));
             }
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F11_key);
+            KeyOperates.KeyMethod(Keys.F11_key);
             Thread.Sleep(1500 + new Random().Next(100, 200));
             for (int i = 0; i < count; i++) {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                if (!GenericHelper.TryGetAddonByName<AtkUnitBase>("Materialize", out var addon) || !addon->IsVisible)
+                {
+                    return true;
+                }
+
+                KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(1000 + new Random().Next(100, 200));
-                if (CommonUi.AddonMaterializeDialogIsOpen()) {
+                if (GenericHelper.TryGetAddonByName<AtkUnitBase>("MaterializeDialog", out addon) && addon->IsVisible) {
                     CommonUi.SelectMaterializeDialogYesButton();
                     Thread.Sleep(3000 + new Random().Next(100, 200));
                 }
                 Thread.Sleep(500 + new Random().Next(100, 200));
             }
 
-            if (CommonUi.AddonMaterializeDialogIsOpen()) {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            if (GenericHelper.TryGetAddonByName<AtkUnitBase>("MaterializeDialog", out var materializeDialog) && materializeDialog->IsVisible) {
+                KeyOperates.KeyMethod(Keys.esc_key);
             }
 
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            if (GenericHelper.TryGetAddonByName<AtkUnitBase>("Materialize", out var materialize) && materialize->IsVisible)
+            {
+                KeyOperates.KeyMethod(Keys.esc_key);
+            }
+
             Thread.Sleep(500 + new Random().Next(100, 200));
             return true;
         }
 
         // 精选
-        public unsafe bool ExtractMateriaCollectable(int CollectableCount)
+        public unsafe static bool ExtractMateriaCollectable(int CollectableCount)
         {
             int tt = 0;
             while (DalamudApi.Condition[ConditionFlag.Mounted] && tt < 5)
             {
                 if (tt >= 3)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.w_key, 200);
+                    KeyOperates.KeyMethod(Keys.w_key, 200);
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.q_key);
+                KeyOperates.KeyMethod(Keys.q_key);
                 Thread.Sleep(900 + new Random().Next(50, 80));
                 tt++;
             }
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F10_key);
+            KeyOperates.KeyMethod(Keys.F10_key);
             for (int i = 0; i < CollectableCount; i++) {
                 if (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing]) {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    KeyOperates.KeyMethod(Keys.F1_key);
                     continue;
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                if (!CommonUi.AddonPurifyItemSelectorIsOpen())
+                {
+                    return true;
+                }
+                KeyOperates.KeyMethod(Keys.num0_key);
+                KeyOperates.KeyMethod(Keys.num0_key);
                 Thread.Sleep(2800 + new Random().Next(100, 300));
             }
             while (CommonUi.AddonPurifyItemSelectorIsOpen() || CommonUi.AddonPurifyResultIsOpen()) {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(500 + new Random().Next(100, 200));
             }
             return true;
         }
-
-        public bool CraftUploadAndExchange()
-        {
-            AlphaProject.GameData.param.TryGetValue("recipeName", out var r);
-            AlphaProject.GameData.param.TryGetValue("exchangeItem", out var e);
-            AlphaProject.GameData.param.TryGetValue("uploadNPC", out var up);
-            if (up == "1") {
-                MovePositions(Positions.UploadNPCA, false);
-            }
-
-            (uint Category, uint Sub, uint ItemId) = RecipeItems.UploadApply(r);
-            int tt = 0;
-            while (BagManager.GetInventoryItemCountById(ItemId) > 0 && tt < 5) {
-                if (closed)
-                {
-                    PluginLog.Log($"CraftUploadAndExchange stopping");
-                    return true;
-                }
-                CraftUpload(Category, Sub, ItemId);
-                CraftExchange(int.Parse(e));
-                tt++;
-            }
-            return true;
-        }
-
-        // 交收藏品
-        public bool CraftUpload(uint Category, uint Sub, uint ItemId)
-        {
-            PluginLog.Log($"CraftUploading");
-            if (Category == 0 && Sub == 0) {
-                return true;
-            }
-            bool flag = true;
-            Thread.Sleep(900 + new Random().Next(100, 200));
-            SetTarget("收藏品交易员");
-            Thread.Sleep(2500);
-            if (CommonUi.AddonCollectablesShopIsOpen()) {
-                for (int i = 1; i < Category; i++)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-
-                for (int i = 0; i < Sub; i++)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-
-                int n = 0;
-                int count = BagManager.GetInventoryItemCountById(ItemId);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                Thread.Sleep(900 + new Random().Next(100, 200));
-                while (!RecipeNoteUi.SelectYesnoIsOpen() && n < 25 && count > 0)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(100 + new Random().Next(100, 200));
-                    if (RecipeNoteUi.SelectYesnoIsOpen()) {
-                        break;
-                    }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    Thread.Sleep(600 + new Random().Next(100, 200));
-                    n++;
-                    if (closed)
-                    {
-                        PluginLog.Log($"upload stopping");
-                        return true;
-                    }
-                    if (count == BagManager.GetInventoryItemCountById(ItemId))
-                    {
-                        flag = false;
-                        break;
-                    }
-                    else
-                    {
-                        count = BagManager.GetInventoryItemCountById(ItemId);
-                    }
-                }
-
-                if (RecipeNoteUi.SelectYesnoIsOpen())
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                }
-                while (CommonUi.AddonCollectablesShopIsOpen())
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                }
-                Thread.Sleep(3000);
-            }
-            return flag;
-        }
-
-        // TODO 关闭界面
-        // 交换道具
-        public bool CraftExchange(int item)
-        {
-            PluginLog.Log($"CraftExchanging");
-            Thread.Sleep(2000);
-            SetTarget("工票交易员");
-            Thread.Sleep(500);
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(2000);
-
-            if (closed)
-            {
-                PluginLog.Log($"exchange stopping");
-                return true;
-            }
-
-            if (CommonUi.AddonInclusionShopIsOpen()) {
-                // 1 
-                if (item == 1)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-                // 2-大地白票 随机采集魔晶石
-                else if (item == 2)
-                {
-                    Random rd = new();
-                    int r = rd.Next(19);
-                    if (r <= 0) {
-                        r = 0;
-                    }
-                    if (r >= 18)
-                    {
-                        r = 18;
-                    }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    for (int k = 0; k < r; k++) {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    }
-                }
-                else if (item == 72)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-                else if (item >= 80 && item <= 99)
-                {
-                    int r = item - 80;
-                    if (r <= 0)
-                    {
-                        r = 0;
-                    }
-                    if (r >= 18)
-                    {
-                        r = 18;
-                    }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    for (int k = 0; k < r; k++)
-                    {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    }
-                }
-                else if (item == 101)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-                else if (item == 102)
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                }
-                else if (item >= 1000 && item <= 1100)
-                {
-                    int r = item - 1000;
-                    if (r <= 0)
-                    {
-                        r = 0;
-                    }
-                    if (r >= 1006)
-                    {
-                        r = 5;
-                    }
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num8_key);
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                    for (int k = 0; k < r; k++)
-                    {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                    }
-                }
-
-                if (closed)
-                {
-                    PluginLog.Log($"exchange stopping");
-                    return true;
-                }
-
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num6_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num9_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num4_key);
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-
-                while (CommonUi.AddonInclusionShopIsOpen())
-                {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
-                    Thread.Sleep(1000);
-                }
-            }
-            return true;
-        }
         
-        public bool UseItem() {
+        public static bool UseItem() {
             //PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             //uint gp = player.CurrentGp;
             //if (gp < player.MaxGp * 0.6)
             //{
-            //    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+            //    KeyOperates.KeyMethod(Keys.plus_key);
             //    Thread.Sleep(2000);
             //}
             return true;
         }
 
-        public bool UseItem(double factor)
+        public static bool UseItem(double factor)
         {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
             if (gp < player.MaxGp * factor)
             {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.plus_key);
+                KeyOperates.KeyMethod(Keys.plus_key);
                 Thread.Sleep(2000);
             }
             return true;
         }
 
-        public bool SetTarget(string targetName) {
-            var target = DalamudApi.ObjectTable.FirstOrDefault(obj => obj.Name.TextValue.ToLowerInvariant() == targetName);
-            if (target == default) {
-                return false;
-            }
-
-            DalamudApi.TargetManager.SetTarget(target);
-            Thread.Sleep(200 + new Random().Next(100, 200));
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            Thread.Sleep(600 + new Random().Next(200, 400));
-            return true;
-        }
-
         // 限时材料采集手法
-        public bool LimitMaterialsMethod(string Names) {
+        public static bool LimitMaterialsMethod(string Names) {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
 
             uint gp = player.CurrentGp;
@@ -557,12 +267,12 @@ namespace AlphaProject.Bot
             if (name.Contains("雷之") || name.Contains("火之") || name.Contains("风之") || name.Contains("水之") || name.Contains("冰之") || name.Contains("土之")) {
                 if (gp >= 200)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
+                    KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
                     action++;
                 }
                 else if (gp >= 150) {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F3_key);
+                    KeyOperates.KeyMethod(Keys.F3_key);
                     gp -= 150;
                     action++;
                 }
@@ -574,7 +284,7 @@ namespace AlphaProject.Bot
                 {
                     if (gp >= 500)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                        KeyOperates.KeyMethod(Keys.F2_key);
                         gp -= 500;
                         action++;
                         Thread.Sleep(2000 + new Random().Next(100, 300));
@@ -584,7 +294,7 @@ namespace AlphaProject.Bot
                 {
                     if (gp >= 400)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                        KeyOperates.KeyMethod(Keys.F1_key);
                         gp -= 400;
                         action++;
                         Thread.Sleep(2000 + new Random().Next(100, 300));
@@ -606,11 +316,11 @@ namespace AlphaProject.Bot
                     {
                         if (level >= 25)
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                            KeyOperates.KeyMethod(Keys.n3_key);
                             Thread.Sleep(1500);
                             if (level >= 90)
                             {
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                                KeyOperates.KeyMethod(Keys.n4_key);
                                 Thread.Sleep(1000 + new Random().Next(200, 400));
                             }
                         }
@@ -628,7 +338,7 @@ namespace AlphaProject.Bot
         }
 
         // 普通材料采集手法 TODO GetRecastTimeElapsed 技能CD测试
-        public bool NormalMaterialsMethod(string Names)
+        public static bool NormalMaterialsMethod(string Names)
         {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
 
@@ -654,16 +364,15 @@ namespace AlphaProject.Bot
             }
             
             (int GatherIndex, string name) = CommonUi.GetNormalGatheringIndex(list, coolDown);
-            PluginLog.Log($"开始采集: {Names}, {coolDown}");
+            PluginLog.Log($"预计采集: {Names}, {coolDown} {GatherIndex}");
             int action = 0;
             if (name.Contains("之水晶"))
             {
                 int id = NormalItems.GetNormalItemId(name);
                 int count = BagManager.GetInventoryItemCount((uint)id);
-                PluginLog.Log($"开始采集: {Names}, {count}");
-                if (count < 9000 && gp >= 200)
+                if (count < 9000 && gp >= 200 && !name.Contains("冰之水晶"))
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F4_key);
+                    KeyOperates.KeyMethod(Keys.F4_key);
                     gp -= 200;
                     action++;
                 }
@@ -676,7 +385,7 @@ namespace AlphaProject.Bot
             {
                 if (gp >= 500)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F2_key);
+                    KeyOperates.KeyMethod(Keys.F2_key);
                     gp -= 500;
                     action++;
                     Thread.Sleep(2000 + new Random().Next(100, 300));
@@ -686,13 +395,14 @@ namespace AlphaProject.Bot
             {
                 if (gp >= 400)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F1_key);
+                    KeyOperates.KeyMethod(Keys.F1_key);
                     gp -= 400;
                     action++;
                     Thread.Sleep(2000 + new Random().Next(100, 300));
                 }
             }
 
+            PluginLog.Log($"开始采集: {name}");
             int tt = 0;
             while (CommonUi.AddonGatheringIsOpen() && tt < 15)
             {
@@ -707,11 +417,11 @@ namespace AlphaProject.Bot
                     {
                         if (level >= 25)
                         {
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                            KeyOperates.KeyMethod(Keys.n3_key);
                             Thread.Sleep(1500);
                             if (level >= 90)
                             {
-                                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                                KeyOperates.KeyMethod(Keys.n4_key);
                                 Thread.Sleep(1000);
                             }
                         }
@@ -729,7 +439,7 @@ namespace AlphaProject.Bot
         }
 
         // 限时收藏品采集手法
-        public bool LimitMultiMaterialsMethod(string Name)
+        public static bool LimitMultiMaterialsMethod(string Name)
         {
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             uint gp = player.CurrentGp;
@@ -745,37 +455,37 @@ namespace AlphaProject.Bot
             if (gp >= 700)
             {
                 action++;
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F6_key);
+                KeyOperates.KeyMethod(Keys.F6_key);
                 Thread.Sleep(1800 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F7_key);
+                KeyOperates.KeyMethod(Keys.F7_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F6_key);
+                KeyOperates.KeyMethod(Keys.F6_key);
                 Thread.Sleep(1800 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F7_key);
+                KeyOperates.KeyMethod(Keys.F7_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F9_key);
+                KeyOperates.KeyMethod(Keys.F9_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
 
                 if (gp >= 300 && action > 0)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n3_key);
+                    KeyOperates.KeyMethod(Keys.n3_key);
                     Thread.Sleep(1500 + new Random().Next(0, 200));
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.n4_key);
+                    KeyOperates.KeyMethod(Keys.n4_key);
                     Thread.Sleep(1000 + new Random().Next(0, 200));
                 }
             }
             else {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                KeyOperates.KeyMethod(Keys.F8_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                KeyOperates.KeyMethod(Keys.F8_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F8_key);
+                KeyOperates.KeyMethod(Keys.F8_key);
                 Thread.Sleep(2400 + new Random().Next(200, 500));
             }
             int tt = 0;
             while (CommonUi.AddonGatheringMasterpieceIsOpen() && tt < 7)
             {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.F5_key);
+                KeyOperates.KeyMethod(Keys.F5_key);
                 Thread.Sleep(2500 + new Random().Next(300, 800));
                 tt++;
             }
@@ -783,24 +493,27 @@ namespace AlphaProject.Bot
         }
 
         // 刺鱼
-        public bool SpearfishMethod() {
+        public static bool SpearfishMethod() {
             int n = 0;
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
-                Thread.Sleep(20);
+                Thread.Sleep(10);
 
                 if (useGig)
                 {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.r_key);
-                    AlphaProject.GameData.CommonBot.canUseGig(false);
+                    KeyOperates.KeyMethod(Keys.r_key);
+                    CommonBot.canUseGig(false);
                     Thread.Sleep(new Random().Next(100, 200));
                 }
-
-                if (n < 400) {
+                if (CommonUi.HasStatus("刺鱼人的直觉") && player.CurrentGp >= 300) {
+                    KeyOperates.KeyMethod(Keys.F9_key);
+                    Thread.Sleep(new Random().Next(200, 250));
+                }
+                if (n < 200) {
                     if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.t_key);
-                        Thread.Sleep(500 + new Random().Next(300, 500));
+                        KeyOperates.KeyMethod(Keys.t_key);
+                        Thread.Sleep(new Random().Next(300, 350));
                     }
                 }
                 n++;
@@ -808,27 +521,11 @@ namespace AlphaProject.Bot
             return true;
         }
 
-        public Vector3 MovePositions(Vector3[] Path, bool UseMount)
-        {
-            ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            for (int i = 0; i < Path.Length; i++)
-            {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-                }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], DalamudApi.ClientState.TerritoryType, UseMount, false);
-            }
-            return position;
-        }
-
-        public void canUseNaturesBounty(bool b) {
+        public static void canUseNaturesBounty(bool b) {
             useNaturesBounty = b;
         }
 
-        public void canUseGig(bool b)
+        public static void canUseGig(bool b)
         {
             useGig = b;
         }

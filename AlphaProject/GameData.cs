@@ -29,19 +29,9 @@ public class GameData
 
     public SeTugType TugType { get; private set; } = null!;
 
-    public MarketBot MarketBot { get; init; } = null!;
-    public DailyBot DailyBot { get; init; } = null!;
-    public FishBot FishBot { get; init; } = null!;
-    public HFishBot HFishBot { get; init; } = null!;
-    public CollectionFishBot CollectionFishBot { get; init; } = null!;
-    public GatherBot GatherBot { get; init; } = null!;
-    public CraftBot CraftBot { get; init; } = null!;
-    public CommonBot CommonBot { get; init; } = null!;
-    public KeyOperates KeyOperates { get; init; } = null!;
+    public bool Closed = false;
 
-    public bool closed = false;
-
-    public bool othetRun = false;
+    public bool OthetRun = false;
 
     public Dictionary<string, string> param = new();
     public GameData(DataManager gameData)
@@ -104,15 +94,7 @@ public class GameData
 
             EventFramework = new EventFramework(DalamudApi.SigScanner);
             TugType = new SeTugType(DalamudApi.SigScanner);
-            KeyOperates = new(this);
-            FishBot = new();
-            HFishBot = new();
-            CollectionFishBot = new();
-            GatherBot = new();
-            DailyBot = new();
-            MarketBot = new();
-            CraftBot = new();
-            CommonBot = new();
+            KeyOperates.Initialize(this);
         }
         catch (Exception e)
         {

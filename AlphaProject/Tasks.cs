@@ -3,6 +3,9 @@ using System;
 using System.Numerics;
 using System.Threading.Tasks;
 using AlphaProject.Utility;
+using AlphaProject.Helper;
+using AlphaProject.Bot;
+using AlphaProject.Enums;
 
 namespace AlphaProject
 {
@@ -21,7 +24,8 @@ namespace AlphaProject
 
         public const string SpearFish = "SpearFish";
 
-        public static bool taskRunning = false;
+        public static bool TaskRun = false;
+        public static byte Status = (byte)TaskState.READY;
 
         // 当前坐标信息
         public static void GetCurrentPosition()
@@ -36,7 +40,7 @@ namespace AlphaProject
                     float y = Maths.GetCoordinate(playerPosition.Y, SizeFactor);
                     float z = Maths.GetCoordinate(playerPosition.Z, SizeFactor);
                     PluginLog.Log($"{DalamudApi.ClientState.TerritoryType}  {x}   {y}   {z}");
-                    //Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
+                    //Vector3 position = KeyOperates.GetUserPosition(SizeFactor);
                     //GameObject go = Util.CurrentFishCanGather(position, SizeFactor);
                 }
                 catch (Exception)
@@ -52,25 +56,25 @@ namespace AlphaProject
             PluginLog.Log($"IFish:{IFish} --- {args}");
             if (args.Length == 0)
             {
-                AlphaProject.GameData.FishBot.StopScript();
-                taskRunning = false;
+                FishBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.FishBot.YFishScript(args);
+                FishBot.YFishScript(args);
                 PluginLog.Log($"end...");
-                taskRunning = false;
-                AlphaProject.GameData.FishBot.Init();
+                TaskRun = false;
+                FishBot.Init();
             });
             task.Start();
         }
@@ -81,24 +85,24 @@ namespace AlphaProject
             PluginLog.Log($"SFish:{SFish} --- {args}");
             if (args.Length == 0)
             {
-                taskRunning = false;
-                AlphaProject.GameData.HFishBot.StopScript();
+                TaskRun = false;
+                HFishBot.StopScript();
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.HFishBot.Script();
+                HFishBot.Script();
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
@@ -109,50 +113,50 @@ namespace AlphaProject
             PluginLog.Log($"collectionfish:{CFish} --- {args}");
             if (args.Length == 0)
             {
-                AlphaProject.GameData.CollectionFishBot.StopScript();
-                taskRunning = false;
+                CollectionFishBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.CollectionFishBot.CollectionFishScript(args);
+                CollectionFishBot.CollectionFishScript(args);
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
 
-        public static void GeneralGather(string GGather, string args)
+        public static void GeneralGather(string args)
         {
             PluginLog.Log($"gather: {args}");
             if (args.Length == 0)
             {
-                AlphaProject.GameData.GatherBot.StopScript();
-                taskRunning = false;
+                GatherBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.GatherBot.NormalScript(args);
-                taskRunning = false;
+                GatherBot.GatherByName(args);
+                TaskRun = false;
                 PluginLog.Log($"end...");
             });
             task.Start();
@@ -163,29 +167,29 @@ namespace AlphaProject
             PluginLog.Log($"ygather: {args}");
             if (args.Length == 0)
             {
-                AlphaProject.GameData.GatherBot.StopScript();
-                taskRunning = false;
+                GatherBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.GatherBot.YGatherScript(args);
+                GatherBot.YGatherScript(args);
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
 
-        public static void GeneralCraft(string GCraft, string args)
+        public static void GeneralCraft(string args)
         {
             string[] str = args.Split(' ');
             PluginLog.Log($"craft: {args} length: {args.Length}");
@@ -193,24 +197,24 @@ namespace AlphaProject
             if (args.Length <= 1)
             {
                 PluginLog.Log($"stop");
-                AlphaProject.GameData.CraftBot.StopScript();
-                taskRunning = false;
+                CraftBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.CraftBot.CraftScript(args);
+                CraftBot.CraftScript();
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
@@ -221,24 +225,24 @@ namespace AlphaProject
             if (args.Length == 0)
             {
                 PluginLog.Log($"stop");
-                AlphaProject.GameData.DailyBot.StopScript();
-                taskRunning = false;
+                DailyBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.DailyBot.DailyScript(args);
+                DailyBot.DailyScript(args);
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
@@ -250,24 +254,24 @@ namespace AlphaProject
             if (args.Length == 0)
             {
                 PluginLog.Log($"stop");
-                AlphaProject.GameData.DailyBot.StopScript();
-                taskRunning = false;
+                DailyBot.StopScript();
+                TaskRun = false;
                 return;
             }
 
-            if (taskRunning)
+            if (TaskRun)
             {
                 PluginLog.Log($"stop first");
                 return;
             }
 
-            taskRunning = true;
+            TaskRun = true;
             Task task = new(() =>
             {
                 PluginLog.Log($"start...");
-                AlphaProject.GameData.MarketBot.RunScript(1);
+                MarketBot.RunScript(1);
                 PluginLog.Log($"end...");
-                taskRunning = false;
+                TaskRun = false;
             });
             task.Start();
         }
@@ -313,7 +317,7 @@ namespace AlphaProject
                 Vector3 A = new Vector3(1436, 1636, 1789);
                 PluginLog.Log($"------------{Maths.Distance(position, A)}---------------");
 
-                AlphaProject.GameData.KeyOperates.MoveToPoint(position, A, DalamudApi.ClientState.TerritoryType, false, false);
+                KeyOperates.MoveToPoint(position, A, DalamudApi.ClientState.TerritoryType, false, false);
 
                 playerPosition = DalamudApi.ClientState.LocalPlayer.Position;
                 x = Maths.GetCoordinate(playerPosition.X, SizeFactor);

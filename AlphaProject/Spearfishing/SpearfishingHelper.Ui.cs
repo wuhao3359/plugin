@@ -10,6 +10,7 @@ using System;
 using System.Threading;
 using Dalamud.Logging;
 using Serilog;
+using AlphaProject.Bot;
 
 namespace AlphaProject.Spearfishing;
 
@@ -39,12 +40,12 @@ public partial class SpearfishingHelper : Window
             return;
 
         if (!DalamudApi.ClientState.IsLoggedIn) {
-            AlphaProject.GameData.CommonBot.canUseNaturesBounty(false);
-            AlphaProject.GameData.CommonBot.canUseGig(false);
+            CommonBot.canUseNaturesBounty(false);
+            CommonBot.canUseGig(false);
             return;
         }
 
-        AlphaProject.GameData.CommonBot.canUseNaturesBounty(true);
+        CommonBot.canUseNaturesBounty(true);
 
         var text = Identify(spot, info);
         var size = ImGui.CalcTextSize(text);
@@ -52,7 +53,7 @@ public partial class SpearfishingHelper : Window
                 (node->Y + fishLines->Y + node->Height / 2f) * _uiScale - (size.Y + ImGui.GetStyle().FramePadding.Y) / 2f);
 
         if (Positions.IsNeedSpearfish(text)) {
-            AlphaProject.GameData.CommonBot.canUseNaturesBounty(false);
+            CommonBot.canUseNaturesBounty(false);
             double x1 = size.X * 0.9;
             double x2 = size.X * 0.75;
             if (idx == 5)
@@ -77,7 +78,7 @@ public partial class SpearfishingHelper : Window
             if (x > _uiSize.X / 2 - x1 && x < _uiSize.X / 2 + x2)
             {
                 lock (lockObject) {
-                    AlphaProject.GameData.CommonBot.canUseGig(true);
+                    CommonBot.canUseGig(true);
                 }
             }
         }

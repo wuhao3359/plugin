@@ -8,9 +8,9 @@ namespace AlphaProject.SeFunctions
 {
     public static unsafe class Teleporter
     {
-        public static int count = 0;
+        public static int Count = 0;
 
-        public static int retry = 0;
+        public static int Retry = 0;
         public static bool Teleport(uint aetheryte)
         {
             return Teleport(aetheryte, 0);
@@ -18,10 +18,15 @@ namespace AlphaProject.SeFunctions
 
         public static bool Teleport(uint aetheryte, int r)
         {
-            retry = r;
+            Retry = r;
             bool flag = true;
             int ii = 0;
-            while (DalamudApi.Condition[ConditionFlag.Gathering] || DalamudApi.Condition[ConditionFlag.Fishing] || DalamudApi.Condition[ConditionFlag.Casting])
+            while (DalamudApi.Condition[ConditionFlag.Gathering] 
+                || DalamudApi.Condition[ConditionFlag.Fishing] 
+                || DalamudApi.Condition[ConditionFlag.Casting]
+                || DalamudApi.Condition[ConditionFlag.Crafting]
+                || DalamudApi.Condition[ConditionFlag.PreparingToCraft]
+                || DalamudApi.Condition[ConditionFlag.Crafting40])
             {
                 PluginLog.Log($"当前状态无法TP, 等待一次...");
                 Thread.Sleep(1000 + new Random().Next(500, 2000));
@@ -31,21 +36,21 @@ namespace AlphaProject.SeFunctions
                 }
                 ii++;
             }
-            PluginLog.Log($"开始传送, 累计次数: {count}");
+            PluginLog.Log($"开始传送, 累计次数: {Count}");
             Telepo.Instance()->Teleport(aetheryte, 0);
-            Thread.Sleep(2500 + new Random().Next(200, 1000));
-            count++;
+            Thread.Sleep(2500);
+            Count++;
             if (!DalamudApi.Condition[ConditionFlag.Casting])
             {
                 PluginLog.Log($"传送失败, 重试一次");
                 flag = false;
-                if (retry < 1)
+                if (Retry < 1)
                 {
                     Thread.Sleep(500 + new Random().Next(500, 1500));
                     Teleport(aetheryte, 1);
                 }
             }
-            Thread.Sleep(15000 + new Random().Next(1000, 5000));
+            Thread.Sleep(12000 + new Random().Next(2000, 3000));
             return flag;
         }
     }

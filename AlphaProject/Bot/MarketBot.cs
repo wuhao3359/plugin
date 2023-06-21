@@ -7,41 +7,38 @@ using System.Threading;
 using AlphaProject.SeFunctions;
 using AlphaProject.Ui;
 using AlphaProject.Utility;
+using AlphaProject.Enums;
+using AlphaProject.Helper;
 
 namespace AlphaProject.Bot
 {
-    public class MarketBot
+    public static class MarketBot
     {
         static int NextClickAt = 0;
-        private bool closed = false;
+        private static bool Closed = false;
 
-        public MarketBot()
+        public static void Init()
         {
-            
-        }
-
-        public void Init()
-        {
-            closed = false;
+            Closed = false;
             Clicker.Init();
         }
 
-        public void StopScript() {
-            closed = true;
+        public static void StopScript() {
+            Closed = true;
             Clicker.Stop();
         }
 
-        public void Script()
+        public static void Script()
         {
             Init();
             // 传送并移动到雇员铃
             Teleporter.Teleport(Positions.RetainerBellTp);
-            MovePositions(Positions.RetainerBell, false);
+            KeyOperates.MovePositions(Positions.RetainerBell, false);
             Thread.Sleep(2000 + new Random().Next(200, 500));
             // 打开雇员铃
-            AlphaProject.GameData.CommonBot.SetTarget("雇员铃");
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+            CommonHelper.SetTarget("雇员铃");
+            KeyOperates.KeyMethod(Keys.num0_key);
+            KeyOperates.KeyMethod(Keys.num0_key);
             Thread.Sleep(1000 + new Random().Next(200, 500));
             // 点击雇员 判断 RetainerSellList 正在出售数量selling 根据selling进行改价 然后上架20-selling商品
             if (DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell])
@@ -53,7 +50,7 @@ namespace AlphaProject.Bot
                     {
                         Clicker.SelectRetainerByIndex(i);
                         Thread.Sleep(2500 + new Random().Next(200, 800));
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                        KeyOperates.KeyMethod(Keys.num0_key);
                         Thread.Sleep(1000 + new Random().Next(200, 500));
                         if (CommonUi.AddonSelectStringIsOpen())
                         {
@@ -86,9 +83,14 @@ namespace AlphaProject.Bot
             }
         }
 
-        public void RunScript(int NextClick)
+        public static void RunScript(int NextClick)
         {
-            AlphaProject.status = "change price";
+            PluginLog.Log($"Configuration Chanege: {AlphaProject.Configuration.AutoMarket}");
+            if (!AlphaProject.Configuration.AutoMarket) {
+                return;
+            }
+
+            Tasks.Status = (byte)TaskState.PRICE;
             NextClickAt++;
             if (NextClickAt <= NextClick)
             {
@@ -100,29 +102,11 @@ namespace AlphaProject.Bot
             Script();
             int n = 0;
             while ((DalamudApi.Condition[ConditionFlag.OccupiedSummoningBell] || DalamudApi.Condition[ConditionFlag.OccupiedInQuestEvent]) && n < 5) {
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                KeyOperates.KeyMethod(Keys.esc_key);
                 Thread.Sleep(1000);
                 n++;
             }
-            AlphaProject.status = "";
+            Tasks.Status = (byte)TaskState.READY;
         }
-
-        private Vector3 MovePositions(Vector3[] Path, bool UseMount)
-        {
-            ushort territoryType = DalamudApi.ClientState.TerritoryType;
-            ushort SizeFactor = AlphaProject.GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
-            Vector3 position = AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-            for (int i = 0; i < Path.Length; i++)
-            {
-                if (closed)
-                {
-                    PluginLog.Log($"中途结束");
-                    return AlphaProject.GameData.KeyOperates.GetUserPosition(SizeFactor);
-                }
-                position = AlphaProject.GameData.KeyOperates.MoveToPoint(position, Path[i], territoryType, UseMount, false);
-            }
-            return position;
-        }
-
     }
 }

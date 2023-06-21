@@ -10,7 +10,7 @@ using Sheets = Lumina.Excel.GeneratedSheets;
 
 namespace AlphaProject.Ui
 {
-    public static class RecipeNoteUi
+    public unsafe class RecipeNoteUi
     {
         public static bool SynthesisIsOpen()
         {
@@ -133,7 +133,7 @@ namespace AlphaProject.Ui
 
             switch (recipes.Count)
             {
-                case 0: throw new MacroCommandError("Recipe not found");
+                case 0: return 0;
                 case 1: return recipes.First().RowId;
                 default:
                     var jobId = DalamudApi.ClientState.LocalPlayer?.ClassJob.Id;

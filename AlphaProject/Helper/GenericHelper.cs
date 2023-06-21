@@ -15,10 +15,12 @@ using System.Diagnostics.CodeAnalysis;
 using ValueType = FFXIVClientStructs.FFXIV.Component.GUI.ValueType;
 using Newtonsoft.Json;
 using Dalamud.Logging;
+using FFXIVClientStructs.FFXIV.Client.System.String;
+using System.Runtime.InteropServices;
 
 namespace AlphaProject;
 
-public static unsafe class GenericHelpers
+public static unsafe class GenericHelper
 {
     public static T JSONClone<T>(this T obj)
     {
@@ -56,13 +58,13 @@ public static unsafe class GenericHelpers
 
     public static int? ParseInt(this string number)
     {
-        if(int.TryParse(number, out var result))
+        if (int.TryParse(number, out var result))
         {
             return result;
         }
         return null;
     }
-    
+
     public static string Print<T>(this IEnumerable<T> x)
     {
         return x.Select(x => x.ToString()).Join(", ");
@@ -74,7 +76,7 @@ public static unsafe class GenericHelpers
         {
             Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(path, Microsoft.VisualBasic.FileIO.UIOption.OnlyErrorDialogs, Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             e.LogWarning();
         }
@@ -82,14 +84,14 @@ public static unsafe class GenericHelpers
 
     public static V GetSafe<K, V>(this IDictionary<K, V> dic, K key, V Default = default)
     {
-        if(dic?.TryGetValue(key, out var value) == true)
+        if (dic?.TryGetValue(key, out var value) == true)
         {
             return value;
         }
         return Default;
     }
 
-    public static V GetOrCreate<K, V>(this IDictionary<K, V> dictionary, K key) where V:new()
+    public static V GetOrCreate<K, V>(this IDictionary<K, V> dictionary, K key) where V : new()
     {
         if (dictionary.TryGetValue(key, out var result))
         {
@@ -102,7 +104,7 @@ public static unsafe class GenericHelpers
 
     public static void Each<T>(this IEnumerable<T> collection, Action<T> function)
     {
-        foreach(var x in collection)
+        foreach (var x in collection)
         {
             function(x);
         }
@@ -113,7 +115,7 @@ public static unsafe class GenericHelpers
         return func(obj);
     }
 
-    public static bool NotNull<T>(this T obj, [NotNullWhen(true)]out T outobj)
+    public static bool NotNull<T>(this T obj, [NotNullWhen(true)] out T outobj)
     {
         outobj = obj;
         return obj != null;
@@ -144,6 +146,12 @@ public static unsafe class GenericHelpers
         return addon->AtkResNode.IsVisible && addon->Component->UldManager.LoadedState == AtkLoadState.Loaded;
     }
 
+    public static string ExtractText(this Utf8String s, bool onlyFirst = false)
+    {
+        var str = ReadSeString(&s);
+        return str.ExtractText(false);
+    }
+
     public static string ExtractText(this Lumina.Text.SeString s, bool onlyFirst = false)
     {
         return s.ToDalamudString().ExtractText(onlyFirst);
@@ -152,15 +160,56 @@ public static unsafe class GenericHelpers
     public static string ExtractText(this SeString seStr, bool onlyFirst = false)
     {
         StringBuilder sb = new();
-        foreach(var x in seStr.Payloads)
+        foreach (var x in seStr.Payloads)
         {
-            if(x is TextPayload tp)
+            if (x is TextPayload tp)
             {
                 sb.Append(tp.Text);
                 if (onlyFirst) break;
             }
         }
         return sb.ToString();
+    }
+
+    public static unsafe SeString ReadSeString(Utf8String* utf8String)
+    {
+        if (utf8String == null)
+            return string.Empty;
+
+        var ptr = utf8String->StringPtr;
+        if (ptr == null)
+            return string.Empty;
+
+        var len = Math.Max(utf8String->BufUsed, utf8String->StringLength);
+
+        return ReadSeString((IntPtr)ptr, (int)len);
+    }
+
+    public static SeString ReadSeString(IntPtr memoryAddress, int maxLength)
+    {
+        ReadRaw(memoryAddress, maxLength, out var buffer);
+
+        var eos = Array.IndexOf(buffer, (byte)0);
+        if (eos < 0)
+        {
+            return SeString.Parse(buffer);
+        }
+        else
+        {
+            var newBuffer = new byte[eos];
+            Buffer.BlockCopy(buffer, 0, newBuffer, 0, eos);
+            return SeString.Parse(newBuffer);
+        }
+    }
+
+    public static void ReadRaw(IntPtr memoryAddress, int length, out byte[] value)
+    => value = ReadRaw(memoryAddress, length);
+
+    public static byte[] ReadRaw(IntPtr memoryAddress, int length)
+    {
+        var value = new byte[length];
+        Marshal.Copy(memoryAddress, value, 0, value.Length);
+        return value;
     }
 
     public static bool StartsWithAny(this string source, params string[] values)
@@ -175,7 +224,7 @@ public static unsafe class GenericHelpers
 
     public static bool StartsWithAny(this string source, IEnumerable<string> compareTo, StringComparison stringComparison = StringComparison.Ordinal)
     {
-        foreach(var x in compareTo)
+        foreach (var x in compareTo)
         {
             if (source.StartsWith(x, stringComparison)) return true;
         }
@@ -184,7 +233,7 @@ public static unsafe class GenericHelpers
 
     public static SeStringBuilder Add(this SeStringBuilder b, IEnumerable<Payload> payloads)
     {
-        foreach(var x in payloads)
+        foreach (var x in payloads)
         {
             b = b.Add(x);
         }
@@ -219,7 +268,7 @@ public static unsafe class GenericHelpers
 
     public static T FirstOr0<T>(this IEnumerable<T> collection, Func<T, bool> predicate)
     {
-        foreach(var x in collection)
+        foreach (var x in collection)
         {
             if (predicate(x))
             {
@@ -252,16 +301,16 @@ public static unsafe class GenericHelpers
 
     public static IEnumerable<R> SelectMulti<T, R>(this IEnumerable<T> values, params Func<T, R>[] funcs)
     {
-        foreach(var v in values)
-        foreach(var x in funcs)
-        {
+        foreach (var v in values)
+            foreach (var x in funcs)
+            {
                 yield return x(v);
-        }
+            }
     }
 
-    public static bool TryGetWorldByName(string world, out World worldId) 
+    public static bool TryGetWorldByName(string world, out World worldId)
     {
-        if(DalamudApi.DataManager.GetExcelSheet<World>().TryGetFirst(x => x.Name.ToString().Equals(world, StringComparison.OrdinalIgnoreCase), out var w))
+        if (DalamudApi.DataManager.GetExcelSheet<World>().TryGetFirst(x => x.Name.ToString().Equals(world, StringComparison.OrdinalIgnoreCase), out var w))
         {
             worldId = w;
             return true;
@@ -292,11 +341,11 @@ public static unsafe class GenericHelpers
         return ref i;
     }
 
-        public static ref float ValidateRange(this ref float i, float min, float max)
-        {
-            if (i > max) i = max;
-            if (i < min) i = min;
-            return ref i;
+    public static ref float ValidateRange(this ref float i, float min, float max)
+    {
+        if (i > max) i = max;
+        if (i < min) i = min;
+        return ref i;
     }
 
     public static void LogWarning(this Exception e)
@@ -317,7 +366,7 @@ public static unsafe class GenericHelpers
     public static bool IsNoConditions()
     {
         if (!DalamudApi.Condition[ConditionFlag.NormalConditions]) return false;
-        for(var i = 2; i < 100; i++)
+        for (var i = 2; i < 100; i++)
         {
             if (i == (int)ConditionFlag.ParticipatingInCrossWorldPartyOrAlliance) continue;
             if (DalamudApi.Condition[i]) return false;
@@ -332,7 +381,7 @@ public static unsafe class GenericHelpers
 
     public static bool ContainsAll<T>(this IEnumerable<T> source, IEnumerable<T> values)
     {
-        foreach(var x in values)
+        foreach (var x in values)
         {
             if (!source.Contains(x)) return false;
         }
@@ -362,23 +411,23 @@ public static unsafe class GenericHelpers
 
     public static ushort GetParsedSeSetingColor(int percent)
     {
-        if(percent < 25)
+        if (percent < 25)
         {
             return 3;
         }
-        else if(percent < 50)
+        else if (percent < 50)
         {
             return 45;
         }
-        else if(percent < 75)
+        else if (percent < 75)
         {
             return 37;
         }
-        else if(percent < 95)
+        else if (percent < 95)
         {
             return 541;
         }
-        else if(percent < 99)
+        else if (percent < 99)
         {
             return 500;
         }
@@ -399,7 +448,7 @@ public static unsafe class GenericHelpers
     public static string Repeat(this string s, int num)
     {
         StringBuilder str = new();
-        for(var i = 0; i < num; i++)
+        for (var i = 0; i < num; i++)
         {
             str.Append(s);
         }
@@ -447,7 +496,7 @@ public static unsafe class GenericHelpers
             {
                 fail(e.Message);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 PluginLog.Error("Error while trying to process error handler:");
                 PluginLog.Error($"{ex.Message}\n{ex.StackTrace ?? ""}");
@@ -553,7 +602,7 @@ public static unsafe class GenericHelpers
 
     public static IEnumerable<K> FindKeysByValue<K, V>(this IDictionary<K, V> dictionary, V value)
     {
-        foreach(var x in dictionary)
+        foreach (var x in dictionary)
         {
             if (value.Equals(x.Value))
             {
@@ -569,7 +618,7 @@ public static unsafe class GenericHelpers
             keyValuePair = dictionary.First(predicate);
             return true;
         }
-        catch(Exception)
+        catch (Exception)
         {
             keyValuePair = default;
             return false;
@@ -626,7 +675,7 @@ public static unsafe class GenericHelpers
             AddonPtr = null;
             return false;
         }
-        AddonPtr = (T*) a;
+        AddonPtr = (T*)a;
         return true;
     }
 
@@ -634,11 +683,11 @@ public static unsafe class GenericHelpers
     {
         var col = textNodePtr->TextColor;
         //EEE1C5FF
-        return (col.A == 0xFF && col.R == 0xEE && col.G == 0xE1 && col.B == 0xC5)
+        return col.A == 0xFF && col.R == 0xEE && col.G == 0xE1 && col.B == 0xC5
             //7D523BFF
-            || (col.A == 0xFF && col.R == 0x7D && col.G == 0x52 && col.B == 0x3B)
-            || (col.A == 0xFF && col.R == 0xFF && col.G == 0xFF && col.B == 0xFF)
+            || col.A == 0xFF && col.R == 0x7D && col.G == 0x52 && col.B == 0x3B
+            || col.A == 0xFF && col.R == 0xFF && col.G == 0xFF && col.B == 0xFF
             // EEE1C5FF
-            || (col.A == 0xFF && col.R == 0xEE && col.G == 0xE1 && col.B == 0xC5);
+            || col.A == 0xFF && col.R == 0xEE && col.G == 0xE1 && col.B == 0xC5;
     }
 }

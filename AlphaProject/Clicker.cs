@@ -16,16 +16,16 @@ internal unsafe class Clicker
 {
     internal static ActionType lastAction = ActionType.None;
 
-    private static bool closed = false;
+    private static bool Closed = false;
 
     public static void Init()
     {
-        closed = false;
+        Closed = false;
     }
 
     public static void Stop()
     {
-        closed = true;
+        Closed = true;
     }
 
     internal enum ActionType
@@ -43,7 +43,7 @@ internal unsafe class Clicker
         foreach ((uint Id, string ItemName, int RetainerIndex, int LowestPrice, int MaxSlot) in items){
             sellingList.Add((Id, 0));
         }
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
+        if (GenericHelper.TryGetAddonByName<AtkUnitBase>("RetainerSellList", out var retainerList) && GenericHelper.IsAddonReady(retainerList))
         {
             var im = InventoryManager.Instance();
             if (im == null)
@@ -62,7 +62,7 @@ internal unsafe class Clicker
             bool replace = false;
             for (var i = 0; i < marketContainer->Size; i++)
             {
-                if (closed) return;
+                if (Closed) return;
                 var item = marketContainer->GetInventorySlot(i);
                 if (item == null || item->ItemID == 0)
                     continue;
@@ -86,10 +86,10 @@ internal unsafe class Clicker
                 replace = false;
             }
             for (int i = 0; i < selling; i++) {
-                if (closed) return;
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                if (Closed) return;
+                KeyOperates.KeyMethod(Keys.num0_key);
                 if (MarketCommons.GetUnitBase("ContextMenu") != null) {
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
                     Thread.Sleep(new Random().Next(200, 500));
                     var retainerSell = MarketCommons.GetUnitBase("RetainerSell");
                     if (retainerSell != null && retainerSell->UldManager.NodeListCount == 23)
@@ -108,9 +108,9 @@ internal unsafe class Clicker
                         if (AlphaProject.getPriceSucceed && AlphaProject.beforePrice != "" && AlphaProject.beforePrice != afterPrice)
                         {
                             PluginLog.Log("click addon Confirm");
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
-                            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num0_key);
+                            KeyOperates.KeyMethod(Keys.num2_key);
+                            KeyOperates.KeyMethod(Keys.num2_key);
+                            KeyOperates.KeyMethod(Keys.num0_key);
                         }
                         AlphaProject.beforePrice = "";
                         AlphaProject.getPriceSucceed = false;
@@ -121,16 +121,16 @@ internal unsafe class Clicker
                     }
                     if (MarketCommons.GetUnitBase("RetainerSell") != null) {
                         PluginLog.Log("close addon RetainerSell");
-                        AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                        KeyOperates.KeyMethod(Keys.esc_key);
                     }
                 }
                 Thread.Sleep(500);
-                if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var contextMenu) && GenericHelpers.IsAddonReady(contextMenu))
+                if (GenericHelper.TryGetAddonByName<AtkUnitBase>("ContextMenu", out var contextMenu) && GenericHelper.IsAddonReady(contextMenu))
                 {
                     PluginLog.Log("close addon ContextMenu");
-                    AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+                    KeyOperates.KeyMethod(Keys.esc_key);
                 }
-                AlphaProject.GameData.KeyOperates.KeyMethod(Keys.num2_key);
+                KeyOperates.KeyMethod(Keys.num2_key);
             }
             succeed = true;
         }
@@ -200,33 +200,33 @@ internal unsafe class Clicker
     internal static void CloseMarketAddon() {
         int n = 0;
         while (MarketCommons.GetUnitBase("RetainerSell") != null && n < 5) {
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            KeyOperates.KeyMethod(Keys.esc_key);
             n++;
             PluginLog.Log("close addon RetainerSell");
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
         }
         n = 0;
         while (MarketCommons.GetUnitBase("RetainerSellList") != null && n < 5)
         {
             n++;
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
         }
         n = 0;
         while (MarketCommons.GetUnitBase("SelectString") != null && n < 5)
         {
             n++;
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(500);
-            AlphaProject.GameData.KeyOperates.KeyMethod(Keys.esc_key);
+            KeyOperates.KeyMethod(Keys.esc_key);
             Thread.Sleep(1000);
         }
     }
 
     internal static void SelectRetainerByIndex(int index)
     {
-        if (GenericHelpers.TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && GenericHelpers.IsAddonReady(retainerList))
+        if (GenericHelper.TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && GenericHelper.IsAddonReady(retainerList))
         {
             var list = (AtkComponentNode*)retainerList->UldManager.NodeList[2];
             var retainerEntry = (AtkComponentNode*)list->Component->UldManager.NodeList[index];
@@ -286,7 +286,7 @@ internal unsafe class Clicker
 
     internal static void SelectVentureMenu()
     {
-        //if(GenericHelpers.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelpers.IsAddonReady(&select->AtkUnitBase))
+        //if(GenericHelper.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelper.IsAddonReady(&select->AtkUnitBase))
         //{
         //    var textNode = ((AtkTextNode*)select->AtkUnitBase.UldManager.NodeList[3]);
         //    var text = textNode->NodeText.ToString();
@@ -329,7 +329,7 @@ internal unsafe class Clicker
 
     internal static void SelectQuickVenture()
     {
-        //if (GenericHelpers.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelpers.IsAddonReady(&select->AtkUnitBase))
+        //if (GenericHelper.TryGetAddonByName<AddonSelectString>("SelectString", out var select) && GenericHelper.IsAddonReady(&select->AtkUnitBase))
         //{
         //    var textNode = ((AtkTextNode*)select->AtkUnitBase.UldManager.NodeList[3]);
         //    var text = textNode->NodeText.ToString();
