@@ -18,7 +18,7 @@ namespace AlphaProject.Bot
 {
     public static class GatherBot
     {
-        private static bool Closed = false;
+        public static bool Closed = false;
         private static int gatherCount = 0;
 
         public static Dictionary<string, string> param;

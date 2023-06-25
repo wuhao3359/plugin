@@ -98,13 +98,13 @@ namespace AlphaProject
                 ImGui.SameLine();
                 if (ImGui.Button("Test"))
                 {
-                    //CraftHelper.test();
+                    CommonHelper.ShutdownGame();
 
-                    Task task = new(() =>
-                    {
-                        TicketHelper.CraftUploadAndExchange("收藏用巨人新薯煎饼", "魔匠7");
-                    });
-                    task.Start();
+                    //Task task = new(() =>
+                    //{
+                    //    TicketHelper.CraftUploadAndExchange("收藏用巨人新薯煎饼", "魔匠7");
+                    //});
+                    //task.Start();
                     
                 }
                 ImGui.Spacing();

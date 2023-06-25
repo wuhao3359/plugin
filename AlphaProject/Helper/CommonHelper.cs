@@ -6,15 +6,14 @@ using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Logging;
 using FFXIVClientStructs.FFXIV.Component.GUI;
 using AlphaProject.RawInformation;
-using FFXIVClientStructs.FFXIV.Client.UI;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using AlphaProject.SeFunctions;
 using AlphaProject.Bot;
-using System.Diagnostics;
 using System.Timers;
 using ClickLib.Clicks;
 using AlphaProject.Enums;
 using System.Threading.Tasks;
+using ClickLib;
 
 namespace AlphaProject.Helper
 {
@@ -114,6 +113,39 @@ namespace AlphaProject.Helper
 
             Task task = new(() =>
             {
+                while (Tasks.Status != (byte)TaskState.READY && 
+                (DalamudApi.Condition[ConditionFlag.Gathering]
+                || DalamudApi.Condition[ConditionFlag.Fishing]
+                || DalamudApi.Condition[ConditionFlag.Casting]
+                || DalamudApi.Condition[ConditionFlag.Crafting]
+                || DalamudApi.Condition[ConditionFlag.PreparingToCraft]
+                || DalamudApi.Condition[ConditionFlag.Crafting40]))
+                {
+                    PluginLog.Log("wait for curennt task...");
+                    Thread.Sleep(5000);
+                }
+
+                // 拉扎罕
+                Teleporter.Teleport(183);
+                Thread.Sleep(3000);
+                CommandProcessorHelper.ExecuteThrottled("/shutdown");
+                Thread.Sleep(3000);
+                var addon = (AtkUnitBase*)DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
+                if (addon != null)
+                {
+                    ClickSelectYesNo.Using((nint)addon).Yes();
+                }
+            });
+            task.Start();
+        }
+
+        internal static void ShutdownGame()
+        {
+            PluginLog.LogError("too long for running, shutdown");
+            AlphaProject.CloseAllBot();
+
+            Task task = new(() =>
+            {
                 while (Tasks.Status != (byte)TaskState.READY)
                 {
                     PluginLog.Log("wait for curennt task...");
@@ -123,10 +155,11 @@ namespace AlphaProject.Helper
                 // 拉扎罕
                 Teleporter.Teleport(183);
                 CommandProcessorHelper.ExecuteThrottled("/shutdown");
-                var addon = (AtkUnitBase*)DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
-                if (addon != null)
+                Thread.Sleep(3000);
+                var addon = DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
+                if (addon != IntPtr.Zero)
                 {
-                    ClickSelectYesNo.Using((nint)addon).Yes();
+                    Click.TrySendClick("select_yes");
                 }
             });
             task.Start();

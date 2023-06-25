@@ -15,7 +15,7 @@ namespace AlphaProject.Bot
     public static class MarketBot
     {
         static int NextClickAt = 0;
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         public static void Init()
         {

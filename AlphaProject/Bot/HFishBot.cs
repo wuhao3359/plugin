@@ -20,7 +20,7 @@ namespace AlphaProject.Bot
 
         private static FishingState LastState = FishingState.None;
         private static FishingState FishingState = FishingState.None;
-        private static bool Closed = false;
+        public static bool Closed = false;
 
 
         public static void StopScript() {

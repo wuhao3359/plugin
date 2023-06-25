@@ -17,7 +17,7 @@ namespace AlphaProject.Bot
 {
     public unsafe static class CommonBot
     {
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         // 捕鱼嘉惠
         private static bool useNaturesBounty { get; set; }
@@ -494,7 +494,8 @@ namespace AlphaProject.Bot
 
         // 刺鱼
         public static bool SpearfishMethod() {
-            int n = 0;
+            bool naturesBountyUsed = false;
+            bool actionUsed = false;
             PlayerCharacter? player = DalamudApi.ClientState.LocalPlayer;
             while (CommonUi.AddonSpearFishingIsOpen()) {
                 Thread.Sleep(10);
@@ -505,18 +506,17 @@ namespace AlphaProject.Bot
                     CommonBot.canUseGig(false);
                     Thread.Sleep(new Random().Next(100, 200));
                 }
-                if (CommonUi.HasStatus("刺鱼人的直觉") && player.CurrentGp >= 300) {
+                if (CommonUi.HasStatus("刺鱼人的直觉") && player.CurrentGp >= 300 && !actionUsed) {
                     KeyOperates.KeyMethod(Keys.F9_key);
-                    Thread.Sleep(new Random().Next(200, 250));
+                    actionUsed = true;
                 }
-                if (n < 200) {
+                if (!naturesBountyUsed) {
                     if (useNaturesBounty && !CommonUi.HasStatus("嘉惠") && player.CurrentGp >= 100)
                     {
                         KeyOperates.KeyMethod(Keys.t_key);
-                        Thread.Sleep(new Random().Next(300, 350));
+                        naturesBountyUsed = true; 
                     }
                 }
-                n++;
             }
             return true;
         }

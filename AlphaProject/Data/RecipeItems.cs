@@ -52,6 +52,7 @@ namespace AlphaProject.Data
             (27842, "黄金蜂蜜", (byte)GetWay.CRAFT, 15),
             (27834, "大蜜蜂的巢", (byte)GetWay.GATHER, 17),
             (36095, "古代肉豆蔻", (byte)GetWay.GATHER, 15),
+            (36079, "紫苏油", (byte)GetWay.CRAFT, 15),
             (36089, "巨人新薯", (byte)GetWay.GATHER, 15),
         };
 

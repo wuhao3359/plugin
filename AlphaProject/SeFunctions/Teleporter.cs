@@ -18,6 +18,10 @@ namespace AlphaProject.SeFunctions
 
         public static bool Teleport(uint aetheryte, int r)
         {
+            if (!DalamudApi.ClientState.IsLoggedIn)
+            {
+                return false;
+            }
             Retry = r;
             bool flag = true;
             int ii = 0;
@@ -30,7 +34,7 @@ namespace AlphaProject.SeFunctions
             {
                 PluginLog.Log($"当前状态无法TP, 等待一次...");
                 Thread.Sleep(1000 + new Random().Next(500, 2000));
-                if (ii > 10)
+                if (ii > 20)
                 {
                     break;
                 }

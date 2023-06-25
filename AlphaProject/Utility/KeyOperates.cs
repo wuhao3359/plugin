@@ -14,7 +14,7 @@ public static class KeyOperates
     private static GameData GameData;
     private static IntPtr Hwnd;
 
-    private static bool Closed = false;
+    public static bool Closed = false;
 
     public static Dictionary<Byte, DateTime> KeyTimes = new();
 
@@ -79,7 +79,7 @@ public static class KeyOperates
                 Stop();
                 break;
             }
-            Thread.Sleep(10);
+            Thread.Sleep(15);
 
             Vector3 positionC = GetUserPosition(SizeFactor);
             double DirectionOfPoint = Maths.DirectionOfPoint(positionA, positionB, positionC);

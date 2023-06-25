@@ -55,6 +55,12 @@ namespace AlphaProject.Craft
                 return;
             }
 
+            if (!(DalamudApi.Condition[ConditionFlag.Crafting] 
+                || DalamudApi.Condition[ConditionFlag.PreparingToCraft]))
+            {
+                return;
+            }
+
             GetCraft();
 
             if (CanUse(Skills.BasicSynth) && CurrentRecommendation == 0 && Tasks.Count == 0 && CurrentStep >= 1)

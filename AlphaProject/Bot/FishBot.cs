@@ -23,7 +23,7 @@ namespace AlphaProject.Bot
         static Stopwatch Sw = new();
         private static bool CanMove = false;
         private static bool ReadyMove = false;
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         private static int CurrentGround = 0;
         private static int CurrentPoint = 0;

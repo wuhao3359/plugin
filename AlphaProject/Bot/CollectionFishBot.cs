@@ -30,7 +30,7 @@ namespace AlphaProject.Bot
         static Stopwatch Fishsw = new();
         private static bool CanMove = false;
         private static bool readyMove = false;
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         private static bool LastFish = false;
 
@@ -41,6 +41,7 @@ namespace AlphaProject.Bot
 
         public static void Init()
         {
+            Closed = false;
             CanMove = false;
             readyMove = false;
             CommonBot.Init();
@@ -100,7 +101,7 @@ namespace AlphaProject.Bot
             }
 
             DalamudApi.Framework.Update += OnCollectionFishUpdate;
-            while (!Closed && n < 10)
+            while (!Closed && n < 10 && Tasks.TaskRun)
             {
                 if (Closed)
                 {
@@ -326,7 +327,7 @@ namespace AlphaProject.Bot
             {
                 Init();
                 sw.Reset();
-                if (Closed)
+                if (Closed || !Tasks.TaskRun)
                 {
                     PluginLog.Log($"中途结束...");
                     int ii = 0;
@@ -450,7 +451,7 @@ namespace AlphaProject.Bot
 
                 for (int i = 0, j = 0, k = 0; i < Points.Length; i++)
                 {
-                    if (Closed || Tasks.TaskRun)
+                    if (Closed || !Tasks.TaskRun)
                     {
                         PluginLog.Log($"中途结束");
                         return false;
@@ -512,7 +513,7 @@ namespace AlphaProject.Bot
                                         }
                                     }
                                     tt = 0;
-                                    while (!CommonUi.AddonSpearFishingIsOpen() && tt < 7)
+                                    while (!CommonUi.AddonSpearFishingIsOpen() && tt < 8)
                                     {
                                         KeyOperates.KeyMethod(Keys.num0_key);
                                         if (tt == 3 || tt == 4 || tt == 4)
@@ -528,7 +529,7 @@ namespace AlphaProject.Bot
                                             }
                                         }
                                     }
-                                    if (tt >= 7)
+                                    if (tt >= 8)
                                     {
                                         PluginLog.Log($"未打开采集面板, skip {i}..");
                                         if (gameObjects.ToArray().Length > 0)
@@ -538,7 +539,6 @@ namespace AlphaProject.Bot
                                         }
                                         continue;
                                     }
-                                    Thread.Sleep(300 + new Random().Next(200, 500));
                                     if (CommonUi.AddonSpearFishingIsOpen())
                                     {
                                         CommonBot.SpearfishMethod();

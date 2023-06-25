@@ -19,7 +19,7 @@ namespace AlphaProject.Bot
 {
     public static class CraftBot
     {
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         private static List<uint> JobIds = new();
 
@@ -98,9 +98,11 @@ namespace AlphaProject.Bot
                             AlphaProject.AP.TM.RunTask();
                             
                             Closed = false;
+                            break;
                         }
                         else {
-                            PluginLog.Error($"当前任务因缺少原材料结束...num: {lackItems.Count}");
+                            PluginLog.Error($"当前: {recipe.ItemResult.Value.Name}, 任务因缺少原材料结束...num: {lackItems.Count}");
+                            AlphaProject.AP.TM.TaskList.Clear();
                             break;
                         }
                     }

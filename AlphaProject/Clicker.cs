@@ -16,7 +16,7 @@ internal unsafe class Clicker
 {
     internal static ActionType lastAction = ActionType.None;
 
-    private static bool Closed = false;
+    public static bool Closed = false;
 
     public static void Init()
     {

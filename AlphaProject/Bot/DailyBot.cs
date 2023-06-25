@@ -18,7 +18,7 @@ namespace AlphaProject.Bot
 {
     public static class DailyBot
     {
-        private static bool Closed = false;
+        public static bool Closed = false;
 
         private static bool OthetRun = false;
 
