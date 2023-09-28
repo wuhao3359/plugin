@@ -53,7 +53,6 @@ namespace AlphaProject.Bot
         public static void DailyScript(string args)
         {
             Init();
-            Closed = false;
             try {
                 // 参数解析
                 string command = Tasks.Daily;
@@ -528,7 +527,7 @@ namespace AlphaProject.Bot
             AlphaProject.Time.Update();
             int hour = AlphaProject.Time.ServerTime.CurrentEorzeaHour();
             bool run = false;
-            while ((!Closed && n < 1000) || Tasks.TaskRun)
+            while ((!Closed && n < 1000) && Tasks.TaskRun)
             {
                 if (hour == 0) {
                     run = true;

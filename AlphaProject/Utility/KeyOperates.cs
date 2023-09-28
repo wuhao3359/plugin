@@ -61,7 +61,7 @@ public static class KeyOperates
             n++;
         }
 
-        double errorDisntance = 3.8;
+        double errorDisntance = 3.9;
         ushort SizeFactor = GameData.GetSizeFactor(DalamudApi.ClientState.TerritoryType);
 
         positionA = ReviseNoTime(positionB);
@@ -98,7 +98,7 @@ public static class KeyOperates
                     KeyDown(Keys.space_key);
                 }
             }
-            else if (height > 5)
+            else if (height > 4)
             {
                 if (DalamudApi.KeyState[Keys.space_key])
                 {
@@ -197,9 +197,9 @@ public static class KeyOperates
             }
             if (!DalamudApi.Condition[ConditionFlag.InFlight])
             {
-                errorDisntance = 5;
+                errorDisntance = 5.1;
             } else if (!DalamudApi.Condition[ConditionFlag.Mounted]) {
-                errorDisntance = 3.8;
+                errorDisntance = 3.9;
             }
         }
         Stop();
@@ -291,7 +291,7 @@ public static class KeyOperates
     {
         if (shortPress)
         {
-            sleep = 80 + new Random().Next(30, 140);
+            sleep = 80 + new Random().Next(40, 100);
         }
         else {
             sleep += new Random().Next(60, 100);

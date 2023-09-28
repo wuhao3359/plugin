@@ -49,6 +49,11 @@ public class TaskManager
                 Thread.Sleep(new Random().Next(7000, 12000));
             }
 
+            if (CraftHelper.RecipeNoteWindowOpen())
+            {
+                CraftHelper.CloseCraftingMenu();
+            }
+
             PluginLog.Log($"хннЯ: {task.Item1} {task.Item2} {task.Item3}");
             switch (task.Item3)
             {

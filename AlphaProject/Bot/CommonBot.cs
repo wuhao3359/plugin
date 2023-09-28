@@ -507,6 +507,7 @@ namespace AlphaProject.Bot
                     Thread.Sleep(new Random().Next(100, 200));
                 }
                 if (CommonUi.HasStatus("刺鱼人的直觉") && player.CurrentGp >= 300 && !actionUsed) {
+                    Thread.Sleep(100);
                     KeyOperates.KeyMethod(Keys.F9_key);
                     actionUsed = true;
                 }

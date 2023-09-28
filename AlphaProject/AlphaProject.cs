@@ -71,7 +71,7 @@ public unsafe class AlphaProject : IDalamudPlugin
         DalamudApi.ClientState.Login += OnLoginEvent;
         DalamudApi.ClientState.Logout += OnLogoutEvent;
 
-        timer.Interval = new Random().Next(990, 1020) * 60 * 1000; // 16.5h - 17h
+        timer.Interval = new Random().Next(1080, 1110) * 60 * 1000; // 18h - 18.5h
         timer.Elapsed += CommonHelper.ShutdownGame;
         timer.Start();
 

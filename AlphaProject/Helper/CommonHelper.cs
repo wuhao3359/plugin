@@ -113,27 +113,31 @@ namespace AlphaProject.Helper
 
             Task task = new(() =>
             {
-                while (Tasks.Status != (byte)TaskState.READY && 
-                (DalamudApi.Condition[ConditionFlag.Gathering]
-                || DalamudApi.Condition[ConditionFlag.Fishing]
-                || DalamudApi.Condition[ConditionFlag.Casting]
-                || DalamudApi.Condition[ConditionFlag.Crafting]
-                || DalamudApi.Condition[ConditionFlag.PreparingToCraft]
-                || DalamudApi.Condition[ConditionFlag.Crafting40]))
-                {
-                    PluginLog.Log("wait for curennt task...");
-                    Thread.Sleep(5000);
-                }
+                for (int i = 0; i < 3; i++) {
+                    while (Tasks.Status != (byte)TaskState.READY &&
+                    (DalamudApi.Condition[ConditionFlag.Gathering]
+                    || DalamudApi.Condition[ConditionFlag.Fishing]
+                    || DalamudApi.Condition[ConditionFlag.Casting]
+                    || DalamudApi.Condition[ConditionFlag.Crafting]
+                    || DalamudApi.Condition[ConditionFlag.PreparingToCraft]
+                    || DalamudApi.Condition[ConditionFlag.Crafting40]))
+                    {
+                        PluginLog.Log("wait for curennt task...");
+                        Thread.Sleep(5000);
+                    }
 
-                // 拉扎罕
-                Teleporter.Teleport(183);
-                Thread.Sleep(3000);
-                CommandProcessorHelper.ExecuteThrottled("/shutdown");
-                Thread.Sleep(3000);
-                var addon = (AtkUnitBase*)DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
-                if (addon != null)
-                {
-                    ClickSelectYesNo.Using((nint)addon).Yes();
+                    PluginLog.Log("wait for tp...");
+                    Thread.Sleep(10000);
+                    // 拉扎罕
+                    Teleporter.Teleport(183);
+                    CommandProcessorHelper.ExecuteThrottled("/shutdown");
+                    Thread.Sleep(5000);
+                    var addon = (AtkUnitBase*)DalamudApi.GameGui.GetAddonByName("SelectYesno", 1);
+                    if (addon != null)
+                    {
+                        ClickSelectYesNo.Using((nint)addon).Yes();
+                    }
+                    Thread.Sleep(20000);
                 }
             });
             task.Start();
@@ -152,7 +156,11 @@ namespace AlphaProject.Helper
                     Thread.Sleep(5000);
                 }
 
+                Thread.Sleep(60000);
                 // 拉扎罕
+                if (!DalamudApi.ClientState.IsLoggedIn) {
+                    return;
+                }
                 Teleporter.Teleport(183);
                 CommandProcessorHelper.ExecuteThrottled("/shutdown");
                 Thread.Sleep(3000);

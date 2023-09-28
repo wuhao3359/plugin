@@ -958,7 +958,7 @@ namespace AlphaProject.Utility
         };
         public static Vector3[] Points27834 = {
             new Vector3 (1214, 2183, 2141), // 进入A
-            new Vector3 (1245, 2173, 2075), // 
+            new Vector3 (1245, 2170, 2075), // 
             new Vector3 (1241, 2182, 2040),
             new Vector3 (1246, 2172, 2070), // 
             new Vector3 (1235, 2176, 2067),
@@ -975,7 +975,7 @@ namespace AlphaProject.Utility
             new Vector3 (899, 2157, 2206),
             new Vector3 (842, 2177, 2148), // 离开B
             new Vector3 (864, 2181, 1921), // 进入C
-            new Vector3 (840, 2180, 1890),
+            new Vector3 (840, 2177, 1890),
             new Vector3 (861, 2176, 1913),  //
             new Vector3 (871, 2180, 1889),
             new Vector3 (872, 2187, 1877),
@@ -1131,26 +1131,26 @@ namespace AlphaProject.Utility
             new Vector3 (946, 2449, 2074),
         };
         public static Vector3[] Points36096 = {
-            new Vector3 (957, 2442, 2145), // 进入A
-            new Vector3 (1027, 2439, 2100),
-            new Vector3 (1004, 2440, 2133), //
-            new Vector3 (996, 2439, 2114),
-            new Vector3 (973, 2442, 2145),
-            new Vector3 (912, 2438, 2143),
-            new Vector3 (962, 2459, 2209), // 离开A
-            new Vector3 (782, 2461, 2333), // 进入B
-            new Vector3 (757, 2456, 2393),
-            new Vector3 (734, 2459, 2405),
-            new Vector3 (708, 2460, 2379),
-            new Vector3 (694, 2458, 2316),
-            new Vector3 (835, 2468, 2397), // 离开B
-            new Vector3 (995, 2458, 2460), // 进入C
-            new Vector3 (1000, 2460, 2491),
-            new Vector3 (1042, 2460, 2482),
-            new Vector3 (1018, 2455, 2454), // 
-            new Vector3 (1038, 2455, 2454),
-            new Vector3 (1053, 2453, 2434),
-            new Vector3 (957, 2463, 2219), // 离开C
+            new Vector3 (987, 2441, 2145), // 进入A
+            new Vector3 (1020, 2435, 2096),
+            new Vector3 (1003, 2438, 2136), //
+            new Vector3 (997, 2439, 2112),
+            new Vector3 (974, 2438, 2096),
+            new Vector3 (914, 2437, 2145),
+            new Vector3 (962, 2459, 2161), // 离开A
+            new Vector3 (745, 2465, 2357), // 进入B
+            new Vector3 (693, 2448, 2316),
+            new Vector3 (711, 2459, 2378),
+            new Vector3 (733, 2459, 2406),
+            new Vector3 (753, 2456, 2386),
+            new Vector3 (752, 2465, 2365), // 离开B
+            new Vector3 (999, 2460, 2458), // 进入C
+            new Vector3 (961, 2451, 2487),
+            new Vector3 (1044, 2458, 2477),
+            new Vector3 (1022, 2455, 2457), // 
+            new Vector3 (1038, 2455, 2453),
+            new Vector3 (1052, 2453, 2437),
+            new Vector3 (960, 2480, 2262), // 离开C
         };
         public static int[] CanCollectPoints36096 = {
             1, 3, 4, 5, 8, 9, 10, 11, 14, 15, 17, 18
@@ -1327,8 +1327,7 @@ namespace AlphaProject.Utility
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
             (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
-            (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
-        //    (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
+            (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
         };
 
         public static string[] fishs = {
@@ -1336,7 +1335,8 @@ namespace AlphaProject.Utility
         };
 
         public static uint[] Tps = {
-            75, // 田园郡
+            // 75, // 田园郡
+            183, // 拉扎罕
         };
 
         public static int TpN = 0;

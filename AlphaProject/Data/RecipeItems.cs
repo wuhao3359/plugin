@@ -18,6 +18,7 @@ namespace AlphaProject.Data
         public static readonly (int Id, string ItemName, int Category, int Sub)[] ExchangeItems =
         {
             (100007, "魔匠7", 100007, 9),
+            (100092, "炼金药", 100092, 2),
         };
 
         public static (uint Category, uint Sub, uint ItemId) UploadApply(string ItemName)
@@ -53,7 +54,11 @@ namespace AlphaProject.Data
             (27834, "大蜜蜂的巢", (byte)GetWay.GATHER, 17),
             (36095, "古代肉豆蔻", (byte)GetWay.GATHER, 15),
             (36079, "紫苏油", (byte)GetWay.CRAFT, 15),
-            (36089, "巨人新薯", (byte)GetWay.GATHER, 15),
+            (36089, "巨人新薯", (byte)GetWay.GATHER, 17),
+            (36080, "棕榈糖", (byte)GetWay.CRAFT, 15),
+            (36080, "棕榈糖", (byte)GetWay.CRAFT, 15),
+            (36086, "棕榈糖浆", (byte)GetWay.GATHER, 17),
+            (36096, "无花果", (byte)GetWay.GATHER, 17),
         };
 
         public static (uint Id, string JobName)[] Jobs = {

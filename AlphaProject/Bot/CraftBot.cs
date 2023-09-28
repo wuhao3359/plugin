@@ -14,6 +14,7 @@ using AlphaProject.RawInformation;
 using ClickLib.Clicks;
 using AlphaProject.Craft;
 using AlphaProject.Data;
+using AlphaProject.SeFunctions;
 
 namespace AlphaProject.Bot
 {
@@ -33,6 +34,11 @@ namespace AlphaProject.Bot
             Job = job;
             CommonBot.Init();
             Tasks.Status = (byte)TaskState.CRAFT;
+
+            if (DalamudApi.Condition[ConditionFlag.Mounted]) {
+                Thread.Sleep(3000);
+                Teleporter.Teleport(Positions.randomTp());
+            }
         }
 
         public static void StopScript()
@@ -61,7 +67,7 @@ namespace AlphaProject.Bot
                 }
 
                 int craftX = 0;
-                while (!Closed || Tasks.TaskRun) {
+                while (!Closed && Tasks.TaskRun) {
                     Thread.Sleep(new Random().Next(900, 1200));
 
                     if (DalamudApi.Condition[ConditionFlag.Occupied39])
@@ -86,6 +92,7 @@ namespace AlphaProject.Bot
                         if (!AlphaProject.Configuration.AutoGather)
                         {
                             PluginLog.Error($"原材料不足 未配置自动采集...");
+                            Closed = true;
                             break;
                         }
                         if (AlphaProject.AP.TM.TaskList.Count == 0)
@@ -96,13 +103,12 @@ namespace AlphaProject.Bot
                                 CraftHelper.CloseCraftingMenu();
                             }
                             AlphaProject.AP.TM.RunTask();
-                            
+                            Thread.Sleep(10000);
                             Closed = false;
-                            break;
                         }
                         else {
                             PluginLog.Error($"当前: {recipe.ItemResult.Value.Name}, 任务因缺少原材料结束...num: {lackItems.Count}");
-                            AlphaProject.AP.TM.TaskList.Clear();
+                            //AlphaProject.AP.TM.TaskList.Clear();
                             break;
                         }
                     }
@@ -246,7 +252,7 @@ namespace AlphaProject.Bot
                 }
             }
             PluginLog.Log($"end quick synth: {AutoCraft.currentCraftFinished}");
-
+            Thread.Sleep(new Random().Next(3000, 5000));
             if (CraftHelper.SynthesisSimpleWindowOpen())
             {
                 CloseQuickSynthWindow();

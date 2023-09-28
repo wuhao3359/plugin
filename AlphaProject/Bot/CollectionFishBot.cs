@@ -211,7 +211,9 @@ namespace AlphaProject.Bot
 
         // 刺鱼
         public static void SpearfishScript(string args) {
-            Closed = false;
+            if (Tasks.TaskRun) { 
+                Closed = false;
+            }
             int n = 0;
             string command = Tasks.SpearFish;
             AlphaProject.GameData.param = Util.CommandParse(command, args);
@@ -230,7 +232,7 @@ namespace AlphaProject.Bot
                 Thread.Sleep(300 + new Random().Next(200, 500));
             }
 
-            while ((!Closed && n < 10) || Tasks.TaskRun) {
+            while ((!Closed && n < 10) && Tasks.TaskRun) {
                 if (Closed)
                 {
                     PluginLog.Log($"task fish stopping");
@@ -424,7 +426,10 @@ namespace AlphaProject.Bot
                 PluginLog.Log($"数据异常, skip {Id}..");
                 return false;
             }
-            Teleporter.Teleport(Tp);
+
+            if (Tasks.TaskRun) { 
+                Teleporter.Teleport(Tp);
+            }
 
             CommonBot.UseItem();
             // 切换职业 

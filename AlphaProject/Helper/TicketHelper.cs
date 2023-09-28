@@ -268,6 +268,7 @@ namespace AlphaProject.Helper
                     }
                 }
 
+                // 魔匠7
                 else if (Category == 100007)
                 {
                     KeyOperates.KeyMethod(Keys.num8_key);
@@ -278,6 +279,20 @@ namespace AlphaProject.Helper
                     KeyOperates.KeyMethod(Keys.num2_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
                     KeyOperates.KeyMethod(Keys.num2_key);
+                    KeyOperates.KeyMethod(Keys.num0_key);
+
+                    for (int k = 0; k < Sub; k++)
+                    {
+                        KeyOperates.KeyMethod(Keys.num2_key);
+                    }
+                }
+
+                // 炼金药
+                else if (Category == 100092)
+                {
+                    KeyOperates.KeyMethod(Keys.num0_key);
+
+                    KeyOperates.KeyMethod(Keys.num8_key);
                     KeyOperates.KeyMethod(Keys.num0_key);
 
                     for (int k = 0; k < Sub; k++)
