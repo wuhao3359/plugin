@@ -9,6 +9,7 @@ using AlphaProject.Classes;
 using AlphaProject.SeFunctions;
 using Fish = AlphaProject.Classes.Fish;
 using FishingSpot = AlphaProject.Classes.FishingSpot;
+using Serilog;
 
 namespace AlphaProject;
 
@@ -65,18 +66,20 @@ public class GameData
             //?? new Dictionary<uint, Recipe>();
             //PluginLog.Log("Collected {NumGatherables} different recipes items.", Recipes.Count);
 
-            //Fishes = DataManager.GetExcelSheet<FishParameter>()?
-            //    .Where(f => f.Item != 0 && f.Item < 1000000)
-            //    .Select(f => new Fish(DataManager, f))
-            //    .Concat(DataManager.GetExcelSheet<SpearfishingItem>()?
-            //    .Where(sf => sf.Item.Row != 0 && sf.Item.Row < 1000000)
-            //    .Select(sf => new Fish(DataManager, sf))
-            //    ?? Array.Empty<Fish>())
-            //    .GroupBy(f => f.ItemId)
-            //    .Select(group => group.First())
-            //    .ToDictionary(f => f.ItemId, f => f)
-            //    ?? new Dictionary<uint, Fish>();
-            //PluginLog.Log("Collected {NumFishes} different types of fish.", Fishes.Count);
+            var catchData = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.FishingNoteInfo>()!;
+            PluginLog.Log("Test");
+            Fishes = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.FishParameter>()?
+                .Where(f => f.Item != 0 && f.Item < 1000000)
+                .Select(f => new Fish(DataManager, f, catchData))
+                .Concat(DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.SpearfishingItem>()?
+                    .Where(sf => sf.Item.Row != 0 && sf.Item.Row < 1000000)
+                    .Select(sf => new Fish(DataManager, sf, catchData))
+                ?? Array.Empty<Fish>())
+                .GroupBy(f => f.ItemId)
+                .Select(group => group.First())
+                .ToDictionary(f => f.ItemId, f => f)
+                ?? new Dictionary<uint, Fish>();
+            PluginLog.Log("Collected {NumFishes} different types of fish.", Fishes.Count);
             Data.Fish.Apply(this);
 
             FishingSpots = DataManager.GetExcelSheet<Lumina.Excel.GeneratedSheets.FishingSpot>()?

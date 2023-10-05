@@ -1325,7 +1325,7 @@ namespace AlphaProject.Utility
 
         public static (int Id, string Name, uint Job, string JobName, uint Lv, uint Tp, Vector3[] Path, Vector3[] Points, int[] CanCollectPoints, int[] UnknownPointsNum, int[] Area)[] Spearfishs = {
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
-            (36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
+            //(36525, "顶髻鱼", 18, "捕鱼人", 90, 169, path36525, Points36525, CanCollectPoints36525, UnknownPointsNum36525, Area36525),    // 新港
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
             (38939, "铜绿虹鳉", 18, "捕鱼人", 90, 15, path38939, Points38939, CanCollectPoints38939, UnknownPointsNum38939, Area38939),    // 拉诺西亚高地 石绿湖营地
         };
